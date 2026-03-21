@@ -1,29 +1,300 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Página Inicial | Meu Projeto Multi-Page</title>
+    <title>Portal de Monitoramento | Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        body { font-family: sans-serif; padding: 20px; background-color: #f4f4f4; }
-        nav { background: #333; padding: 10px; border-radius: 5px; }
-        nav a { color: white; text-decoration: none; margin-right: 15px; }
-        nav a:hover { text-decoration: underline; }
-        .container { background: white; padding: 20px; margin-top: 20px; border-radius: 5px; }
+        /* --- Importação da Fonte Customizada --- */
+        @font-face {
+            font-family: 'A760-Roman-Smc';
+            src: url('A760-Roman-Smc Regular.ttf') format('truetype'); 
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        :root {
+            --bg-color: #1a1c20;          
+            --card-bg: #070b14;            
+            --card-hover: #111827;        
+            --card-border: #1f2937;       
+            --accent-dark: #d1b38b;       
+            --accent-light: #f4e9d8;      
+            --text-main: #f4e9d8;         
+            --text-muted: #d1b38b;
+            --border-radius: 10px;
+
+            /* CORES DE STATUS */
+            --status-ok: #48bb3a;      
+            --status-process: #3ba0e2; 
+            --status-warn: #ff683b;    
+            --status-error: #ef4e4e;   
+
+            /* Fonte padrão (semelhante ao navegador/interface do Gemini) */
+            --font-standard: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-standard);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+        }
+
+        .auth-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--border-radius);
+            padding: 40px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            transition: background-color 0.3s ease;
+        }
+
+        .auth-card:hover {
+            background-color: var(--card-hover);
+        }
+
+        h1 {
+            font-family: 'A760-Roman-Smc', sans-serif;
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 10px;
+            color: var(--accent-light);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        p.subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 30px;
+        }
+
+        /* Formulários */
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        input {
+            background-color: #111827;
+            border: 1px solid var(--card-border);
+            border-radius: 6px;
+            padding: 12px;
+            color: var(--text-main);
+            font-family: var(--font-standard);
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            border-color: var(--accent-dark);
+        }
+
+        .btn-primary {
+            background-color: var(--accent-dark);
+            color: var(--card-bg);
+            border: none;
+            border-radius: 6px;
+            padding: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+            margin-top: 10px;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-light);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        /* Divisor */
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 25px 0;
+            color: var(--card-border);
+        }
+
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .divider span {
+            padding: 0 10px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        /* Login Social */
+        .social-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .btn-social {
+            background-color: transparent;
+            border: 1px solid var(--card-border);
+            border-radius: 6px;
+            padding: 10px;
+            color: var(--text-main);
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .btn-social:hover {
+            border-color: var(--accent-dark);
+            background-color: rgba(209, 179, 139, 0.1);
+        }
+
+        .footer-link {
+            margin-top: 25px;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .footer-link a {
+            color: var(--accent-dark);
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .footer-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* Toggle entre Login e Signup */
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
 
-    <nav>
-        <a href="index.html">Início</a>
-        <a href="sobre.html">Sobre Nós</a>
-    </nav>
+<div class="container">
+    <div class="auth-card">
+        <div id="login-section">
+            <h1>Monitoramento</h1>
+            <p class="subtitle">Acesse sua central de sensores</p>
+            
+            <form class="auth-form" onsubmit="event.preventDefault();">
+                <div class="input-group">
+                    <label>E-mail ou Usuário</label>
+                    <input type="text" placeholder="exemplo@servidor.com">
+                </div>
+                <div class="input-group">
+                    <label>Senha</label>
+                    <input type="password" placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn-primary">ENTRAR</button>
+            </form>
 
-    <div class="container">
-        <h1>Bem-vindo à Página Inicial</h1>
-        <p>Este é um exemplo de um site com várias páginas hospedado em um único projeto no GitHub.</p>
-        <p>Clique em "Sobre Nós" no menu acima para ir para a segunda página.</p>
+            <div class="divider">
+                <span>Ou entre com</span>
+            </div>
+
+            <div class="social-grid">
+                <button class="btn-social" title="Google"><i class="fab fa-google"></i></button>
+                <button class="btn-social" title="LinkedIn"><i class="fab fa-linkedin-in"></i></button>
+                <button class="btn-social" title="Facebook"><i class="fab fa-facebook-f"></i></button>
+            </div>
+
+            <p class="footer-link">
+                Não tem uma conta? <a href="#" onclick="toggleAuth()">Cadastre-se</a>
+            </p>
+        </div>
+
+        <div id="signup-section" class="hidden">
+            <h1>Criar Conta</h1>
+            <p class="subtitle">Registre-se no portal de clientes</p>
+            
+            <form class="auth-form" onsubmit="event.preventDefault();">
+                <div class="input-group">
+                    <label>Nome Completo</label>
+                    <input type="text" placeholder="Nome Sobrenome">
+                </div>
+                <div class="input-group">
+                    <label>E-mail Profissional</label>
+                    <input type="email" placeholder="nome@empresa.com">
+                </div>
+                <div class="input-group">
+                    <label>Senha</label>
+                    <input type="password" placeholder="Crie uma senha forte">
+                </div>
+                <button type="submit" class="btn-primary">FINALIZAR CADASTRO</button>
+            </form>
+
+            <div class="divider">
+                <span>Ou registre-se com</span>
+            </div>
+
+            <div class="social-grid">
+                <button class="btn-social" title="Google"><i class="fab fa-google"></i></button>
+                <button class="btn-social" title="LinkedIn"><i class="fab fa-linkedin-in"></i></button>
+                <button class="btn-social" title="Facebook"><i class="fab fa-facebook-f"></i></button>
+            </div>
+
+            <p class="footer-link">
+                Já possui acesso? <a href="#" onclick="toggleAuth()">Faça login</a>
+            </p>
+        </div>
     </div>
+</div>
+
+<script>
+    // Função simples para alternar entre Login e Signup
+    function toggleAuth() {
+        const login = document.getElementById('login-section');
+        const signup = document.getElementById('signup-section');
+        
+        login.classList.toggle('hidden');
+        signup.classList.toggle('hidden');
+    }
+</script>
 
 </body>
 </html>
