@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monitoring Portal | Auth System</title>
+    <title>Monitoring Portal | Authentication</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
+        /* --- Custom Font Import --- */
         @font-face {
             font-family: 'A760-Roman-Smc';
             src: url('A760-Roman-Smc Regular.ttf') format('truetype'); 
@@ -24,9 +25,9 @@
             --text-main: #f4e9d8;         
             --text-muted: #d1b38b;
             --border-radius: 10px;
-            --status-error: #ef4e4e;
-            --status-ok: #48bb3a;
-            --font-standard: 'Inter', sans-serif;
+            --status-ok: #48bb3a;      
+            --status-error: #ef4e4e;   
+            --font-standard: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -39,30 +40,41 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
-        /* Ajuste de Flexibilidade do Card */
+        .container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+
         .auth-card {
             background-color: var(--card-bg);
             border: 1px solid var(--card-border);
             border-radius: var(--border-radius);
             padding: 40px;
-            width: fit-content; /* Ajusta ao conteúdo */
-            min-width: 350px;
-            max-width: 90vw;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            transition: background-color 0.3s ease;
+            width: fit-content; /* Flexível ao tamanho do conteúdo */
+            min-width: 400px;
         }
+
+        .auth-card:hover { background-color: var(--card-hover); }
 
         h1 {
             font-family: 'A760-Roman-Smc', sans-serif;
             font-size: 2.2rem;
             text-align: center;
-            margin-bottom: 5px;
+            margin-bottom: 10px;
             color: var(--accent-light);
-            white-space: nowrap; /* Evita quebra do título */
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            white-space: nowrap; /* Impede quebra do título */
         }
 
-        .subtitle {
+        p.subtitle {
             text-align: center;
             color: var(--text-muted);
             font-size: 0.9rem;
@@ -70,9 +82,7 @@
         }
 
         .auth-form { display: flex; flex-direction: column; gap: 15px; }
-
         .input-group { display: flex; flex-direction: column; gap: 5px; }
-
         label { font-size: 0.85rem; color: var(--text-muted); }
 
         input {
@@ -81,7 +91,9 @@
             border-radius: 6px;
             padding: 12px;
             color: var(--text-main);
+            font-family: var(--font-standard);
             outline: none;
+            transition: border-color 0.3s;
         }
 
         input:focus { border-color: var(--accent-dark); }
@@ -94,42 +106,41 @@
             padding: 12px;
             font-weight: bold;
             cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
             margin-top: 10px;
         }
 
+        .btn-primary:hover { background-color: var(--accent-light); }
+        .btn-primary:active { transform: scale(0.98); }
+
         .divider {
-            display: flex;
-            align-items: center;
-            margin: 25px 0;
-            color: var(--card-border);
+            display: flex; align-items: center; text-align: center;
+            margin: 25px 0; color: var(--card-border);
         }
 
         .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid var(--card-border); }
-        .divider span { padding: 0 10px; font-size: 0.75rem; color: var(--text-muted); }
+        .divider span { padding: 0 10px; font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); }
 
         .social-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
 
         .btn-social {
-            background: none;
+            background-color: transparent;
             border: 1px solid var(--card-border);
             border-radius: 6px;
             padding: 10px;
             color: var(--text-main);
             cursor: pointer;
+            font-size: 1.2rem;
+            display: flex; justify-content: center; align-items: center;
         }
 
-        .btn-social:hover { border-color: var(--accent-dark); }
+        .btn-social:hover { border-color: var(--accent-dark); background-color: rgba(209, 179, 139, 0.1); }
 
         .footer-link { margin-top: 25px; text-align: center; font-size: 0.85rem; color: var(--text-muted); }
         .footer-link a { color: var(--accent-dark); text-decoration: none; font-weight: bold; }
+        .footer-link a:hover { text-decoration: underline; }
 
-        .message {
-            font-size: 0.8rem;
-            text-align: center;
-            margin-top: 10px;
-            min-height: 1.2rem;
-        }
-
+        .message { font-size: 0.8rem; text-align: center; margin-top: 10px; min-height: 1.2rem; }
         .error { color: var(--status-error); }
         .success { color: var(--status-ok); }
         .hidden { display: none; }
@@ -137,111 +148,136 @@
 </head>
 <body>
 
-<div class="auth-card">
-    <div id="login-section">
-        <h1>MONITORING</h1>
-        <p class="subtitle">Access your sensor hub</p>
-        
-        <form class="auth-form" id="loginForm">
-            <div class="input-group">
-                <label>Email</label>
-                <input type="email" id="loginEmail" required>
-            </div>
-            <div class="input-group">
-                <label>Password</label>
-                <input type="password" id="loginPass" required>
-            </div>
-            <button type="submit" class="btn-primary">SIGN IN</button>
-            <div id="loginMsg" class="message"></div>
-        </form>
+<div class="container">
+    <div class="auth-card">
+        <div id="login-section">
+            <h1>TerraConnect Technologies</h1>
+            <p class="subtitle">Access your sensor hub</p>
+            
+            <form class="auth-form" id="loginForm">
+                <div class="input-group">
+                    <label>Email or Username</label>
+                    <input type="email" id="loginEmail" placeholder="example@server.com" required>
+                </div>
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPass" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn-primary">SIGN IN</button>
+                <div id="loginMsg" class="message"></div>
+            </form>
 
-        <div class="divider"><span>Or sign in with</span></div>
-        <div class="social-grid">
-            <button class="btn-social"><i class="fab fa-google"></i></button>
-            <button class="btn-social"><i class="fab fa-linkedin-in"></i></button>
-            <button class="btn-social"><i class="fab fa-facebook-f"></i></button>
+            <div class="divider"><span>Or sign in with</span></div>
+            <div class="social-grid">
+                <button class="btn-social" title="Google"><i class="fab fa-google"></i></button>
+                <button class="btn-social" title="LinkedIn"><i class="fab fa-linkedin-in"></i></button>
+                <button class="btn-social" title="Facebook"><i class="fab fa-facebook-f"></i></button>
+            </div>
+            <p class="footer-link">Don't have an account? <a href="#" onclick="toggleAuth()">Sign up</a></p>
         </div>
-        <p class="footer-link">Don't have an account? <a href="#" onclick="toggleAuth()">Sign up</a></p>
-    </div>
 
-    <div id="signup-section" class="hidden">
-        <h1>CREATE ACCOUNT</h1>
-        <p class="subtitle">Register for the client portal</p>
-        
-        <form class="auth-form" id="signupForm">
-            <div class="input-group">
-                <label>Full Name</label>
-                <input type="text" id="regName" required>
-            </div>
-            <div class="input-group">
-                <label>Work Email</label>
-                <input type="email" id="regEmail" required>
-            </div>
-            <div class="input-group">
-                <label>Password</label>
-                <input type="password" id="regPass" required>
-            </div>
-            <button type="submit" class="btn-primary">REGISTER</button>
-            <div id="signupMsg" class="message"></div>
-        </form>
+        <div id="signup-section" class="hidden">
+            <h1>Create Account</h1>
+            <p class="subtitle">Register for the client portal</p>
+            
+            <form class="auth-form" id="signupForm">
+                <div class="input-group">
+                    <label>Full Name</label>
+                    <input type="text" id="regName" placeholder="John Doe" required>
+                </div>
+                <div class="input-group">
+                    <label>Work Email</label>
+                    <input type="email" id="regEmail" placeholder="name@company.com" required>
+                </div>
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" id="regPass" placeholder="Create a strong password" required>
+                </div>
+                <button type="submit" class="btn-primary">COMPLETE REGISTRATION</button>
+                <div id="signupMsg" class="message"></div>
+            </form>
 
-        <p class="footer-link">Already have access? <a href="#" onclick="toggleAuth()">Sign in</a></p>
+            <div class="divider"><span>Or register with</span></div>
+            <div class="social-grid">
+                <button class="btn-social" title="Google"><i class="fab fa-google"></i></button>
+                <button class="btn-social" title="LinkedIn"><i class="fab fa-linkedin-in"></i></button>
+                <button class="btn-social" title="Facebook"><i class="fab fa-facebook-f"></i></button>
+            </div>
+            <p class="footer-link">Already have access? <a href="#" onclick="toggleAuth()">Sign in</a></p>
+        </div>
     </div>
 </div>
 
 <script>
-    // --- DATABASE LOGIC (LocalStorage) ---
+    const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTLog7uhFw___9q5ossjzRuKZq6VkC3HqgsD52RAd1y5FigIwCqmEyFeLc-_qgS1RAwtlcIhr_zK-nn/pub?gid=0&single=true&output=csv';
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxLkfFo5kzslFuUbvrcUISi7w96fOlSG1WM68boKVX5u8yV3v789b4cpfhby92tPZs/exec';
 
-    // Get users from "database"
-    const getUsers = () => JSON.parse(localStorage.getItem('portal_users')) || [];
-
-    // Save user
-    const saveUser = (user) => {
-        const users = getUsers();
-        users.push(user);
-        localStorage.setItem('portal_users', JSON.stringify(users));
-    };
-
-    // --- FORM HANDLING ---
-
-    // Signup Logic
-    document.getElementById('signupForm').addEventListener('submit', (e) => {
-        e.preventDefault();
-        const name = document.getElementById('regName').value;
-        const email = document.getElementById('regEmail').value;
-        const pass = document.getElementById('regPass').value;
-        const msg = document.getElementById('signupMsg');
-
-        const users = getUsers();
-        const userExists = users.find(u => u.email === email);
-
-        if (userExists) {
-            msg.innerText = "User already registered!";
-            msg.className = "message error";
-        } else {
-            saveUser({ name, email, pass });
-            msg.innerText = "Account created! You can now log in.";
-            msg.className = "message success";
-            e.target.reset();
+    async function fetchUsers() {
+        try {
+            const response = await fetch(CSV_URL);
+            const data = await response.text();
+            const rows = data.split('\n').slice(1);
+            return rows.map(row => {
+                const columns = row.split(',');
+                return { name: columns[0]?.trim(), email: columns[1]?.trim(), pass: columns[2]?.trim() };
+            });
+        } catch (error) {
+            console.error("Database error:", error);
+            return [];
         }
-    });
+    }
 
     // Login Logic
-    document.getElementById('loginForm').addEventListener('submit', (e) => {
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
         e.preventDefault();
+        const msg = document.getElementById('loginMsg');
         const email = document.getElementById('loginEmail').value;
         const pass = document.getElementById('loginPass').value;
-        const msg = document.getElementById('loginMsg');
 
-        const users = getUsers();
+        msg.innerText = "Authenticating...";
+        msg.className = "message";
+
+        const users = await fetchUsers();
         const user = users.find(u => u.email === email && u.pass === pass);
 
         if (user) {
-            msg.innerText = `Welcome, ${user.name}! Redirecting...`;
+            msg.innerText = "Login Successful!";
             msg.className = "message success";
-            // Here you would redirect: window.location.href = 'dashboard.html';
         } else {
             msg.innerText = "Invalid email or password.";
+            msg.className = "message error";
+        }
+    });
+
+    // Signup Logic
+    document.getElementById('signupForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const msg = document.getElementById('signupMsg');
+        const name = document.getElementById('regName').value;
+        const email = document.getElementById('regEmail').value;
+        const pass = document.getElementById('regPass').value;
+
+        msg.innerText = "Processing registration...";
+        msg.className = "message";
+
+        const users = await fetchUsers();
+        if (users.find(u => u.email === email)) {
+            msg.innerText = "User already exists!";
+            msg.className = "message error";
+            return;
+        }
+
+        try {
+            await fetch(SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: JSON.stringify({ name, email, pass })
+            });
+            msg.innerText = "Registration complete! You can now log in.";
+            msg.className = "message success";
+            e.target.reset();
+        } catch (error) {
+            msg.innerText = "Service unavailable. Try again later.";
             msg.className = "message error";
         }
     });
@@ -249,8 +285,6 @@
     function toggleAuth() {
         document.getElementById('login-section').classList.toggle('hidden');
         document.getElementById('signup-section').classList.toggle('hidden');
-        document.getElementById('loginMsg').innerText = "";
-        document.getElementById('signupMsg').innerText = "";
     }
 </script>
 
