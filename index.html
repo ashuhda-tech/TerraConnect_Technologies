@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal de Monitoramento | Login</title>
+    <title>Monitoring Portal | Authentication</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* --- Importação da Fonte Customizada --- */
+        /* --- Custom Font Import --- */
         @font-face {
             font-family: 'A760-Roman-Smc';
             src: url('A760-Roman-Smc Regular.ttf') format('truetype'); 
@@ -26,13 +26,13 @@
             --text-muted: #d1b38b;
             --border-radius: 10px;
 
-            /* CORES DE STATUS */
+            /* STATUS COLORS */
             --status-ok: #48bb3a;      
             --status-process: #3ba0e2; 
             --status-warn: #ff683b;    
             --status-error: #ef4e4e;   
 
-            /* Fonte padrão (semelhante ao navegador/interface do Gemini) */
+            /* Standard UI Font */
             --font-standard: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
@@ -89,7 +89,7 @@
             margin-bottom: 30px;
         }
 
-        /* Formulários */
+        /* Forms */
         .auth-form {
             display: flex;
             flex-direction: column;
@@ -142,7 +142,7 @@
             transform: scale(0.98);
         }
 
-        /* Divisor */
+        /* Divider */
         .divider {
             display: flex;
             align-items: center;
@@ -164,7 +164,7 @@
             color: var(--text-muted);
         }
 
-        /* Login Social */
+        /* Social Auth Grid */
         .social-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -207,7 +207,7 @@
             text-decoration: underline;
         }
 
-        /* Toggle entre Login e Signup */
+        /* Auth View Toggle */
         .hidden {
             display: none;
         }
@@ -218,23 +218,23 @@
 <div class="container">
     <div class="auth-card">
         <div id="login-section">
-            <h1>Monitoramento</h1>
-            <p class="subtitle">Acesse sua central de sensores</p>
+            <h1>TerraConnect Technologies</h1>
+            <p class="subtitle">Access your sensor hub</p>
             
             <form class="auth-form" onsubmit="event.preventDefault();">
                 <div class="input-group">
-                    <label>E-mail ou Usuário</label>
-                    <input type="text" placeholder="exemplo@servidor.com">
+                    <label>Email or Username</label>
+                    <input type="text" placeholder="example@server.com">
                 </div>
                 <div class="input-group">
-                    <label>Senha</label>
+                    <label>Password</label>
                     <input type="password" placeholder="••••••••">
                 </div>
-                <button type="submit" class="btn-primary">ENTRAR</button>
+                <button type="submit" class="btn-primary">SIGN IN</button>
             </form>
 
             <div class="divider">
-                <span>Ou entre com</span>
+                <span>Or sign in with</span>
             </div>
 
             <div class="social-grid">
@@ -244,32 +244,32 @@
             </div>
 
             <p class="footer-link">
-                Não tem uma conta? <a href="#" onclick="toggleAuth()">Cadastre-se</a>
+                Don't have an account? <a href="#" onclick="toggleAuth()">Sign up</a>
             </p>
         </div>
 
         <div id="signup-section" class="hidden">
-            <h1>Criar Conta</h1>
-            <p class="subtitle">Registre-se no portal de clientes</p>
+            <h1>Create Account</h1>
+            <p class="subtitle">Register for the client portal</p>
             
             <form class="auth-form" onsubmit="event.preventDefault();">
                 <div class="input-group">
-                    <label>Nome Completo</label>
-                    <input type="text" placeholder="Nome Sobrenome">
+                    <label>Full Name</label>
+                    <input type="text" placeholder="John Doe">
                 </div>
                 <div class="input-group">
-                    <label>E-mail Profissional</label>
-                    <input type="email" placeholder="nome@empresa.com">
+                    <label>Work Email</label>
+                    <input type="email" placeholder="name@company.com">
                 </div>
                 <div class="input-group">
-                    <label>Senha</label>
-                    <input type="password" placeholder="Crie uma senha forte">
+                    <label>Password</label>
+                    <input type="password" placeholder="Create a strong password">
                 </div>
-                <button type="submit" class="btn-primary">FINALIZAR CADASTRO</button>
+                <button type="submit" class="btn-primary">COMPLETE REGISTRATION</button>
             </form>
 
             <div class="divider">
-                <span>Ou registre-se com</span>
+                <span>Or register with</span>
             </div>
 
             <div class="social-grid">
@@ -279,14 +279,14 @@
             </div>
 
             <p class="footer-link">
-                Já possui acesso? <a href="#" onclick="toggleAuth()">Faça login</a>
+                Already have access? <a href="#" onclick="toggleAuth()">Sign in</a>
             </p>
         </div>
     </div>
 </div>
 
 <script>
-    // Função simples para alternar entre Login e Signup
+    // Toggle between Login and Signup views
     function toggleAuth() {
         const login = document.getElementById('login-section');
         const signup = document.getElementById('signup-section');
