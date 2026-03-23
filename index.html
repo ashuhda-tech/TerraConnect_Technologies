@@ -57,7 +57,7 @@
             padding: 40px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
             transition: background-color 0.3s ease;
-            width: fit-content; /* Flexível ao tamanho do conteúdo */
+            width: fit-content;
             min-width: 400px;
         }
 
@@ -71,7 +71,7 @@
             color: var(--accent-light);
             text-transform: uppercase;
             letter-spacing: 2px;
-            white-space: nowrap; /* Impede quebra do título */
+            white-space: nowrap;
         }
 
         p.subtitle {
@@ -197,12 +197,6 @@
                 <div id="signupMsg" class="message"></div>
             </form>
 
-            <div class="divider"><span>Or register with</span></div>
-            <div class="social-grid">
-                <button class="btn-social" title="Google"><i class="fab fa-google"></i></button>
-                <button class="btn-social" title="LinkedIn"><i class="fab fa-linkedin-in"></i></button>
-                <button class="btn-social" title="Facebook"><i class="fab fa-facebook-f"></i></button>
-            </div>
             <p class="footer-link">Already have access? <a href="#" onclick="toggleAuth()">Sign in</a></p>
         </div>
     </div>
@@ -210,19 +204,29 @@
 
 <script>
     const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTLog7uhFw___9q5ossjzRuKZq6VkC3HqgsD52RAd1y5FigIwCqmEyFeLc-_qgS1RAwtlcIhr_zK-nn/pub?gid=0&single=true&output=csv';
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxLkfFo5kzslFuUbvrcUISi7w96fOlSG1WM68boKVX5u8yV3v789b4cpfhby92tPZs/exec';
+    
+    // ATENÇÃO: Verifique se esta URL termina em /exec
+    const SCRIPT_URL = 'COLOQUE_SUA_URL_DO_APPS_SCRIPT_AQUI';
 
     async function fetchUsers() {
         try {
-            const response = await fetch(CSV_URL);
+            // Adicionamos um timestamp para evitar cache do navegador
+            const response = await fetch(`${CSV_URL}&t=${new Date().getTime()}`);
             const data = await response.text();
-            const rows = data.split('\n').slice(1);
+            
+            // Filtra linhas vazias para evitar erros de leitura
+            const rows = data.split(/\r?\n/).filter(row => row.trim() !== "").slice(1);
+            
             return rows.map(row => {
                 const columns = row.split(',');
-                return { name: columns[0]?.trim(), email: columns[1]?.trim(), pass: columns[2]?.trim() };
+                return { 
+                    name: columns[0]?.trim(), 
+                    email: columns[1]?.trim().toLowerCase(), 
+                    pass: columns[2]?.trim() 
+                };
             });
         } catch (error) {
-            console.error("Database error:", error);
+            console.error("Database fetch error:", error);
             return [];
         }
     }
@@ -231,20 +235,24 @@
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const msg = document.getElementById('loginMsg');
-        const email = document.getElementById('loginEmail').value;
-        const pass = document.getElementById('loginPass').value;
+        const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+        const pass = document.getElementById('loginPass').value.trim();
 
         msg.innerText = "Authenticating...";
         msg.className = "message";
 
         const users = await fetchUsers();
+        
+        // Debug no console para você ver o que o JS está recebendo do Excel
+        console.log("Users found in DB:", users);
+
         const user = users.find(u => u.email === email && u.pass === pass);
 
         if (user) {
-            msg.innerText = "Login Successful!";
+            msg.innerText = `Success! Welcome, ${user.name}.`;
             msg.className = "message success";
         } else {
-            msg.innerText = "Invalid email or password.";
+            msg.innerText = "Invalid email or password. (Wait 5 min for sync if you just registered)";
             msg.className = "message error";
         }
     });
@@ -253,31 +261,28 @@
     document.getElementById('signupForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const msg = document.getElementById('signupMsg');
-        const name = document.getElementById('regName').value;
-        const email = document.getElementById('regEmail').value;
-        const pass = document.getElementById('regPass').value;
+        const name = document.getElementById('regName').value.trim();
+        const email = document.getElementById('regEmail').value.trim().toLowerCase();
+        const pass = document.getElementById('regPass').value.trim();
 
-        msg.innerText = "Processing registration...";
+        msg.innerText = "Sending to cloud...";
         msg.className = "message";
 
-        const users = await fetchUsers();
-        if (users.find(u => u.email === email)) {
-            msg.innerText = "User already exists!";
-            msg.className = "message error";
-            return;
-        }
-
         try {
-            await fetch(SCRIPT_URL, {
+            // Enviamos os dados para o Apps Script
+            const response = await fetch(SCRIPT_URL, {
                 method: 'POST',
-                mode: 'no-cors',
+                mode: 'no-cors', // Google Apps Script exige no-cors para fetch direto
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, email, pass })
             });
-            msg.innerText = "Registration complete! You can now log in.";
+
+            msg.innerText = "Registration sent! Check your spreadsheet. It may take minutes to allow login.";
             msg.className = "message success";
             e.target.reset();
         } catch (error) {
-            msg.innerText = "Service unavailable. Try again later.";
+            console.error("Signup error:", error);
+            msg.innerText = "Error connecting to script.";
             msg.className = "message error";
         }
     });
@@ -285,6 +290,8 @@
     function toggleAuth() {
         document.getElementById('login-section').classList.toggle('hidden');
         document.getElementById('signup-section').classList.toggle('hidden');
+        document.getElementById('loginMsg').innerText = "";
+        document.getElementById('signupMsg').innerText = "";
     }
 </script>
 
