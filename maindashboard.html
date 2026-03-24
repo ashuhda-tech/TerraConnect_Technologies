@@ -3,92 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TerraConnect | Dashboard</title>
+    <title>TerraConnect | Painel Hela</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --bg-color: #1a1c20;
-            --card-bg: #070b14;
+            --bg: #0f1115;
+            --sidebar-bg: #070b14;
+            --card-bg: #1a1c20;
             --accent: #d1b38b;
             --text: #f4e9d8;
+            --border: #2d3139;
         }
-        body {
-            background-color: var(--bg-color);
-            color: var(--text);
-            font-family: 'Segoe UI', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-        }
-        .dashboard-card {
-            background-color: var(--card-bg);
-            padding: 40px;
-            border-radius: 12px;
-            border: 1px solid #1f2937;
-            text-align: center;
-            max-width: 500px;
-            width: 90%;
-        }
-        h1 { color: var(--accent); margin-bottom: 10px; }
-        .user-id { font-family: monospace; background: #111827; padding: 10px; border-radius: 5px; font-size: 0.8rem; margin: 20px 0; display: block; border: 1px solid #2d3139; }
-        .btn-logout {
-            background: transparent;
-            border: 1px solid var(--accent);
-            color: var(--accent);
-            padding: 10px 20px;
-            cursor: pointer;
-            border-radius: 6px;
-            margin-top: 20px;
-        }
+        body { background-color: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; margin: 0; display: flex; }
+        .sidebar { width: 260px; height: 100vh; background-color: var(--sidebar-bg); border-right: 1px solid var(--border); padding: 30px 20px; position: fixed; box-sizing: border-box; }
+        .main-content { margin-left: 260px; padding: 40px; width: calc(100% - 260px); }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-top: 30px; }
+        .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 25px; text-align: center; }
+        .value { font-size: 2.5rem; font-weight: bold; color: var(--accent); display: block; margin: 15px 0; }
+        .chart-box { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-top: 40px; }
+        .btn-exit { background: transparent; border: 1px solid #ef4e4e; color: #ef4e4e; padding: 10px; width: 100%; border-radius: 6px; cursor: pointer; margin-top: 50px; }
     </style>
 </head>
 <body>
 
-<div class="dashboard-card">
-    <i class="fas fa-user-circle fa-4x" style="color: var(--accent); margin-bottom: 20px;"></i>
-    <h1>Bem-vindo, <span id="userName">Usuário</span>!</h1>
-    <p>Seu registro no portal TerraConnect foi localizado.</p>
-    
-    <div class="user-id">
-        <strong>USER_ID:</strong> <span id="userIdDisplay">Validando dados...</span>
+<div class="sidebar">
+    <h2 style="color: var(--accent); margin-bottom: 5px;">TERRACONNECT</h2>
+    <div style="background: #111827; padding: 15px; border-radius: 8px; border: 1px solid var(--border); margin-top: 20px;">
+        <p style="font-size: 0.8rem; color: #9ca3af;">Usuário:</p>
+        <p id="nav-user" style="font-weight: bold; margin: 5px 0;"></p>
+        <p id="nav-id" style="font-size: 0.6rem; color: var(--accent); word-break: break-all;"></p>
+    </div>
+    <button class="btn-exit" onclick="logout()">Sair</button>
+</div>
+
+<div class="main-content">
+    <header>
+        <h1>Painel de Controle</h1>
+        <p style="color: #9ca3af;">Hela's Smarthouse | Monitoramento Real-Time</p>
+    </header>
+
+    <div class="grid">
+        <div class="card">
+            <i class="fas fa-thermometer-half fa-2x"></i>
+            <p>Temperatura</p>
+            <span id="temp-val" class="value">--°C</span>
+        </div>
+        <div class="card">
+            <i class="fas fa-tint fa-2x"></i>
+            <p>Umidade</p>
+            <span id="humi-val" class="value">--%</span>
+        </div>
+        <div class="card">
+            <i class="fas fa-leaf fa-2x"></i>
+            <p>Bio Data (CO2)</p>
+            <span id="bio-val" class="value">--</span>
+        </div>
     </div>
 
-    <p id="statusMsg" style="font-size: 0.9rem; color: #9ca3af;">Verificando conexão com sensores...</p>
-    
-    <button class="btn-logout" onclick="logout()">Sair do Portal</button>
+    <div class="chart-box">
+        <h3>Histórico Recente</h3>
+        <canvas id="mainChart" height="100"></canvas>
+    </div>
 </div>
 
 <script>
-    // 1. GESTÃO DE SESSÃO
     const user = JSON.parse(localStorage.getItem('currentUser'));
-    if (!user) { 
-        window.location.href = 'index.html'; 
-    } else {
-        // Correção dos nomes para bater com o HTML acima
-        document.getElementById('userName').innerText = user.name || "Usuário";
-        document.getElementById('userIdDisplay').innerText = user.id || "---";
+    if (!user || !user.channelId) { window.location.href = 'index.html'; }
 
-        // 2. LÓGICA DE REDIRECIONAMENTO
-        setTimeout(() => {
-            if (user.channelId && user.apiKey) {
-                document.getElementById('statusMsg').innerText = "Sensores localizados! Entrando no painel...";
-                document.getElementById('statusMsg').style.color = "#48bb3a";
+    // Preenche dados da sidebar
+    document.getElementById('nav-user').innerText = user.name;
+    document.getElementById('nav-id').innerText = `ID: ${user.id}`;
+
+    // Configuração da URL do ThingSpeak
+    const TS_URL = `https://api.thingspeak.com/channels/${user.channelId}/feeds.json?api_key=${user.apiKey}&results=15`;
+
+    // Inicialização do Gráfico
+    const ctx = document.getElementById('mainChart').getContext('2d');
+    const mainChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'Temperatura (°C)',
+                data: [],
+                borderColor: '#d1b38b',
+                tension: 0.4,
+                fill: true,
+                backgroundColor: 'rgba(209, 179, 139, 0.1)'
+            }]
+        }
+    });
+
+    async function fetchData() {
+        try {
+            const response = await fetch(TS_URL);
+            const data = await response.json();
+            if (data.feeds && data.feeds.length > 0) {
+                const last = data.feeds[data.feeds.length - 1];
                 
-                // Redireciona para o painel principal após 2 segundos
-                setTimeout(() => { window.location.href = 'maindashboard.html'; }, 2000);
-            } else {
-                document.getElementById('statusMsg').innerHTML = 
-                    '<span style="color: #ef4e4e;">Erro: ChannelID ou API Key não encontrados no Excel para este usuário.</span>';
+                // Atualiza Interface
+                document.getElementById('temp-val').innerText = `${last.field1 || 0}°C`;
+                document.getElementById('humi-val').innerText = `${last.field2 || 0}%`;
+                document.getElementById('bio-val').innerText = last.field3 || 0;
+
+                // Atualiza Gráfico
+                mainChart.data.labels = data.feeds.map(f => new Date(f.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}));
+                mainChart.data.datasets[0].data = data.feeds.map(f => f.field1);
+                mainChart.update();
             }
-        }, 1500);
+        } catch (e) {
+            console.error("Erro na busca do ThingSpeak:", e);
+        }
     }
 
     function logout() {
         localStorage.removeItem('currentUser');
         window.location.href = 'index.html';
     }
+
+    // Inicia e agenda atualizações (20s)
+    fetchData();
+    setInterval(fetchData, 20000);
 </script>
 </body>
 </html>
