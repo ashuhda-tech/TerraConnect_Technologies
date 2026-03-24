@@ -1,3 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TerraConnect | Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #1a1c20;
+            --card-bg: #070b14;
+            --accent: #d1b38b;
+            --text: #f4e9d8;
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text);
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .dashboard-card {
+            background-color: var(--card-bg);
+            padding: 40px;
+            border-radius: 12px;
+            border: 1px solid #1f2937;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+        h1 { color: var(--accent); margin-bottom: 10px; }
+        .user-id { font-family: monospace; background: #111827; padding: 10px; border-radius: 5px; font-size: 0.8rem; margin: 20px 0; display: block; }
+        .btn-logout {
+            background: transparent;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 6px;
+            margin-top: 20px;
+        }
+        .btn-logout:hover { background: var(--accent); color: var(--card-bg); }
+    </style>
+</head>
+<body>
+
+<div class="dashboard-card">
+    <i class="fas fa-user-circle fa-4x" style="color: var(--accent); margin-bottom: 20px;"></i>
+    <h1>Bem-vindo, <span id="userName">Usuário</span>!</h1>
+    <p>Seu registro no portal TerraConnect foi localizado.</p>
+    
+    <div class="user-id">
+        <strong>USER_ID:</strong> <span id="userIdDisplay">Carregando...</span>
+    </div>
+
+    <p style="font-size: 0.9rem; color: #9ca3af;">Aqui serão exibidos os dados dos seus sensores em breve.</p>
+    
+    <button class="btn-logout" onclick="logout()">Sair do Portal</button>
+</div>
+
 <script>
     // 1. GESTÃO DE SESSÃO DINÂMICA
     const user = JSON.parse(localStorage.getItem('currentUser'));
@@ -37,3 +100,6 @@
     setInterval(updateDashboard, 20000);
     updateDashboard();
 </script>
+
+</body>
+</html>
