@@ -208,54 +208,53 @@
     // ATENÇÃO: Verifique se esta URL termina em /exec
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzFT1YQSMLpJ2zLJQ-bD1JOUzaUJJsRcmCBkpseXd87iGvJXm5Ig7p1gYJf-PmHVwQ/exec';
 
-    async function fetchUsers() {
-        try {
-            // Adicionamos um timestamp para evitar cache do navegador
-            const response = await fetch(`${CSV_URL}&t=${new Date().getTime()}`);
-            const data = await response.text();
-            
-            // Filtra linhas vazias para evitar erros de leitura
-            const rows = data.split(/\r?\n/).filter(row => row.trim() !== "").slice(1);
-            
-            return rows.map(row => {
-                const columns = row.split(',');
-                return { 
-                    name: columns[0]?.trim(), 
-                    email: columns[1]?.trim().toLowerCase(), 
-                    pass: columns[2]?.trim() 
-                };
-            });
-        } catch (error) {
-            console.error("Database fetch error:", error);
-            return [];
-        }
-    }
-
-    // Login Logic
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const msg = document.getElementById('loginMsg');
-        const email = document.getElementById('loginEmail').value.trim().toLowerCase();
-        const pass = document.getElementById('loginPass').value.trim();
-
-        msg.innerText = "Authenticating...";
-        msg.className = "message";
-
-        const users = await fetchUsers();
+async function fetchUsers() {
+    try {
+        const response = await fetch(`${CSV_URL}&t=${new Date().getTime()}`);
+        const data = await response.text();
+        const rows = data.split(/\r?\n/).filter(row => row.trim() !== "").slice(1);
         
-        // Debug no console para você ver o que o JS está recebendo do Excel
-        console.log("Users found in DB:", users);
+        return rows.map(row => {
+            const columns = row.split(',');
+            return { 
+                name: columns[0]?.trim(), 
+                email: columns[1]?.trim().toLowerCase(), 
+                pass: columns[2]?.trim(),
+                id: columns[3]?.trim() // Captura o ID da Coluna D
+            };
+        });
+    } catch (error) {
+        return [];
+    }
+}
 
-        const user = users.find(u => u.email === email && u.pass === pass);
+// Lógica de Login com Redirecionamento
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const msg = document.getElementById('loginMsg');
+    const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+    const pass = document.getElementById('loginPass').value.trim();
 
-        if (user) {
-            msg.innerText = `Success! Welcome, ${user.name}.`;
-            msg.className = "message success";
-        } else {
-            msg.innerText = "Invalid email or password. (Wait 5 min for sync if you just registered)";
-            msg.className = "message error";
-        }
-    });
+    msg.innerText = "Autenticando...";
+    const users = await fetchUsers();
+    const user = users.find(u => u.email === email && u.pass === pass);
+
+    if (user) {
+        // SALVA OS DADOS NO NAVEGADOR
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        
+        msg.innerText = "Sucesso! Redirecionando...";
+        msg.className = "message success";
+        
+        // Redireciona para a nova página após 1 segundo
+        setTimeout(() => {
+            window.location.href = 'home.html'; 
+        }, 1000);
+    } else {
+        msg.innerText = "E-mail ou senha inválidos.";
+        msg.className = "message error";
+    }
+});
 
     // Signup Logic
     document.getElementById('signupForm').addEventListener('submit', async (e) => {
