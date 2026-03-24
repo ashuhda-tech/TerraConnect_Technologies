@@ -209,26 +209,29 @@
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzFT1YQSMLpJ2zLJQ-bD1JOUzaUJJsRcmCBkpseXd87iGvJXm5Ig7p1gYJf-PmHVwQ/exec';
 
 async function fetchUsers() {
-        try {
-            const response = await fetch(`${CSV_URL}&t=${new Date().getTime()}`);
-            const data = await response.text();
-            const rows = data.split(/\r?\n/).filter(row => row.trim() !== "").slice(1);
-            
-            return rows.map(row => {
-                const col = row.split(',');
-                return { 
-                    name: col[0]?.trim(), 
-                    email: col[1]?.trim().toLowerCase(), 
-                    pass: col[2]?.trim(),
-                    id: col[3]?.trim(),
-                    channelId: col[4]?.trim(), // Coluna E
-                    apiKey: col[5]?.trim()    // Coluna F
-                };
-            });
-        } catch (error) {
-            return [];
-        }
+    try {
+        const response = await fetch(`${CSV_URL}&t=${new Date().getTime()}`);
+        const data = await response.text();
+        const rows = data.split(/\r?\n/).filter(row => row.trim() !== "").slice(1);
+        
+        return rows.map(row => {
+            const col = row.split(',');
+            return { 
+                name: col[0]?.trim(), 
+                email: col[1]?.trim().toLowerCase(), 
+                pass: col[2]?.trim(),
+                id: col[3]?.trim(),
+                // Limpeza: remove qualquer caractere que não seja número do ID do canal
+                channelId: col[4]?.trim().replace(/[^0-9]/g, ''), 
+                // Limpeza: remove espaços extras da chave
+                apiKey: col[5]?.trim().replace(/\s/g, '') 
+            };
+        });
+    } catch (error) {
+        console.error("Erro ao processar usuários:", error);
+        return [];
     }
+}
 
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
         e.preventDefault();
