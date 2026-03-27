@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TerraConnect | Hela Smarthome</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        :root {
+            --bg-dark: #070b14;
+            --sidebar-bg: #0d1117;
+            --accent: #d1b38b; 
+            --text-light: #f4e9d8;
+            --gray-panel: #1e1e1e;
+            --border: #2d3139;
+            --ok-green: #48bb3a;
+        }
+
+        body { background-color: var(--bg-dark); color: var(--text-light); font-family: 'Inter', sans-serif; margin: 0; display: flex; height: 100vh; overflow: hidden; }
+        .a70-font { font-family: 'Cinzel', serif; letter-spacing: 1px; }
+
+        /* SIDEBAR (REPLICADA PARA MANTER A IDENTIDADE) */
+        .sidebar { width: 300px; background-color: var(--sidebar-bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 20px; box-sizing: border-box; }
+        .nav-section { flex-grow: 1; display: flex; flex-direction: column; gap: 10px; }
+        .ambient-card { background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); padding: 12px 15px; border-radius: 4px; display: flex; align-items: center; gap: 15px; cursor: pointer; transition: 0.3s; text-decoration: none; color: var(--text-light); font-size: 0.85rem; }
+        .ambient-card.active { background: var(--accent); color: var(--bg-dark); }
+        .ambient-card:hover:not(.active) { background: rgba(209, 179, 139, 0.1); transform: translateX(5px); }
+        .ambient-card svg, .ambient-card i { width: 20px; text-align: center; color: inherit; }
+        
+        .brand-logo { text-align: center; margin: 25px 0; border-top: 1px solid var(--border); padding-top: 20px; }
+        .brand-logo h2 { font-size: 1rem; margin: 0; color: var(--accent); }
+        .user-card { background: rgba(209, 179, 139, 0.05); border: 1px solid rgba(209, 179, 139, 0.2); padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+        .social-links { display: flex; justify-content: center; gap: 30px; margin-bottom: 20px; }
+        .social-links a { color: var(--text-light); font-size: 1.1rem; text-decoration: none; display: flex; flex-direction: column; align-items: center; }
+        .btn-exit { background: transparent; border: 1px solid #ef4e4e; color: #ef4e4e; padding: 8px; border-radius: 4px; width: 100%; cursor: pointer; }
+
+        /* PAINEL DE MONITORAMENTO (ESTILO WEB2.JPG) */
+        .main-panel { flex-grow: 1; background-color: var(--gray-panel); margin: 20px; border-radius: 40px; padding: 40px; display: flex; flex-direction: column; overflow-y: auto; border: 1px solid var(--border); }
+        
+        .header-monitor { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .header-monitor h1 { font-size: 2.5rem; margin: 0; color: var(--text-light); }
+        
+        .status-badges { display: flex; gap: 20px; }
+        .status-item { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.3); padding: 10px 20px; border-radius: 50px; font-size: 0.8rem; border: 1px solid var(--border); }
+        .status-item i { color: var(--ok-green); }
+
+        .data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; flex-grow: 1; }
+        .monitor-card { background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 20px; padding: 25px; display: flex; flex-direction: column; align-items: center; }
+        .monitor-card h3 { font-size: 0.9rem; color: var(--accent); margin-bottom: 20px; }
+        
+        .live-value { font-size: 3.5rem; font-weight: bold; margin: 10px 0; }
+        .unit { font-size: 1.2rem; color: var(--accent); }
+
+        .chart-container { width: 100%; height: 180px; margin-top: 20px; }
+
+        .footer-label { margin-top: 30px; text-align: center; opacity: 0.5; font-size: 0.7rem; letter-spacing: 4px; }
+
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="nav-section">
+            <a href="hela_smarthome.html" class="ambient-card active a70-font">
+                <i class="fas fa-snake"></i> HELA SMARTHOME
+            </a>
+            <a href="#" class="ambient-card a70-font">
+                <i class="fas fa-owl"></i> FREIA TERRARIUM
+            </a>
+            </div>
+
+        <div class="brand-logo a70-font">
+            <h2>TERRACONNECT</h2>
+            <span>TECHNOLOGIES</span>
+        </div>
+
+        <div class="user-card">
+            <label style="font-size: 0.7rem; opacity: 0.6;">Usuário:</label>
+            <span id="userName" style="display: block; font-weight: bold;">Rodrigo Julian Santillan</span>
+            <span id="userId" style="font-size: 0.6rem; color: var(--accent); word-break: break-all;">c94e0254...</span>
+        </div>
+
+        <div class="social-links a70-font">
+            <a href="#"><i class="fas fa-asterisk"></i><span style="font-size: 0.5rem;">LINKTREE</span></a>
+            <a href="#"><i class="fab fa-instagram"></i><span style="font-size: 0.5rem;">INSTAGRAM</span></a>
+        </div>
+        <button class="btn-exit" onclick="location.href='maindashboard.html'">Voltar</button>
+    </div>
+
+    <div class="main-panel">
+        <div class="header-monitor">
+            <h1 class="a70-font">HELA SMARTHOME</h1>
+            <div class="status-badges a70-font">
+                <div class="status-item"><i class="fas fa-check-circle"></i> TEMPERATURA OK</div>
+                <div class="status-item"><i class="fas fa-check-circle"></i> UMIDADE OK</div>
+            </div>
+        </div>
+
+        <div class="data-grid">
+            <div class="monitor-card">
+                <h3 class="a70-font">LIVE TEMPERATURE</h3>
+                <div class="live-value" id="tempValue">--<span class="unit">°C</span></div>
+                <div class="chart-container">
+                    <canvas id="tempChart"></canvas>
+                </div>
+            </div>
+
+            <div class="monitor-card">
+                <h3 class="a70-font">LIVE HUMIDITY</h3>
+                <div class="live-value" id="humValue">--<span class="unit">%</span></div>
+                <div class="chart-container">
+                    <canvas id="humChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-label a70-font">HELA'S SMARTHOUSE</div>
+    </div>
+
+    <script>
+        // Configuração dos Gráficos (Baseado no seu txt)
+        const chartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { display: false },
+                y: { grid: { color: '#2d3139' }, ticks: { color: '#d1b38b', font: { size: 10 } } }
+            }
+        };
+
+        const ctxTemp = document.getElementById('tempChart').getContext('2d');
+        const tempChart = new Chart(ctxTemp, {
+            type: 'line',
+            data: { labels: [], datasets: [{ data: [], borderColor: '#d1b38b', tension: 0.4, fill: true, backgroundColor: 'rgba(209, 179, 139, 0.1)' }] },
+            options: chartOptions
+        });
+
+        const ctxHum = document.getElementById('humChart').getContext('2d');
+        const humChart = new Chart(ctxHum, {
+            type: 'line',
+            data: { labels: [], datasets: [{ data: [], borderColor: '#48bb3a', tension: 0.4, fill: true, backgroundColor: 'rgba(72, 187, 58, 0.1)' }] },
+            options: chartOptions
+        });
+
+        // Função para buscar dados do ThingSpeak (Exemplo conforme hela_smarthome.txt)
+        async function updateData() {
+            try {
+                const response = await fetch('https://api.thingspeak.com/channels/2246700/feeds.json?results=10');
+                const data = await response.json();
+                const lastFeed = data.feeds[data.feeds.length - 1];
+
+                document.getElementById('tempValue').innerHTML = `${parseFloat(lastFeed.field1).toFixed(1)}<span class="unit">°C</span>`;
+                document.getElementById('humValue').innerHTML = `${parseFloat(lastFeed.field2).toFixed(1)}<span class="unit">%</span>`;
+
+                // Atualizar Gráficos
+                const labels = data.feeds.map(f => new Date(f.created_at).toLocaleTimeString());
+                tempChart.data.labels = labels;
+                tempChart.data.datasets[0].data = data.feeds.map(f => f.field1);
+                tempChart.update();
+
+                humChart.data.labels = labels;
+                humChart.data.datasets[0].data = data.feeds.map(f => f.field2);
+                humChart.update();
+
+            } catch (error) { console.error("Erro ThingSpeak:", error); }
+        }
+
+        setInterval(updateData, 15000); // Atualiza a cada 15s
+        updateData();
+    </script>
+</body>
+</html>
