@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TerraConnect | New Registration</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #070b14;
+            --accent: #d1b38b;
+            --border: #2d3139;
+            --text-light: #f4e9d8;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .register-container {
+            background: #0d1117;
+            padding: 40px;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .a70-font { font-family: 'Cinzel', serif; letter-spacing: 2px; }
+
+        h1 { color: var(--accent); font-size: 1.2rem; margin-bottom: 30px; }
+
+        .input-group { text-align: left; margin-bottom: 20px; }
+        
+        label { font-size: 0.7rem; color: var(--accent); display: block; margin-bottom: 8px; }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            color: white;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .info-box {
+            background: rgba(209, 179, 139, 0.05);
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            margin-bottom: 25px;
+            border: 1px solid rgba(209, 179, 139, 0.1);
+        }
+
+        .btn-save {
+            background: var(--accent);
+            color: var(--bg-dark);
+            border: none;
+            width: 100%;
+            padding: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: 0.3s;
+        }
+
+        .btn-save:hover { filter: brightness(1.1); }
+
+        .btn-back {
+            display: block;
+            margin-top: 15px;
+            color: #9ca3af;
+            text-decoration: none;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="register-container">
+        <h1 class="a70-font">NEW AMBIENT REGISTRATION</h1>
+        
+        <div class="info-box">
+            <span style="display: block;">User ID Detectado:</span>
+            <strong id="displayUserId">---</strong>
+        </div>
+
+        <div class="input-group">
+            <label class="a70-font">AMBIENT NAME</label>
+            <input type="text" id="ambientName" placeholder="Ex: Freia Terrarium">
+        </div>
+
+        <button class="btn-save a70-font" onclick="processRegistration()">COMPLETE REGISTRATION</button>
+        
+        <a href="maindashboard.html" class="btn-back">CANCEL AND BACK</a>
+    </div>
+
+    <script>
+        // Recupera o usuário logado para vincular o registro
+        const user = JSON.parse(localStorage.getItem('currentUser'));
+        if (!user) { window.location.href = 'index.html'; }
+
+        document.getElementById('displayUserId').innerText = user.id;
+
+        async function processRegistration() {
+            const name = document.getElementById('ambientName').value;
+            if (!name) return alert("Please enter a name.");
+
+            // Gerador de PageID único
+            const pageId = 'PG-' + Math.random().toString(36).substr(2, 6).toUpperCase();
+            
+            const payload = {
+                userID: user.id,
+                pageID: pageId,
+                ambientName: name,
+                timestamp: new Date().toISOString()
+            };
+
+            try {
+                // Aqui vai a URL do seu Google Apps Script (conforme discutimos antes)
+                const scriptURL = 'SUA_URL_DO_SCRIPT_AQUI';
+
+                /* // Exemplo de envio Real:
+                await fetch(scriptURL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: JSON.stringify(payload)
+                });
+                */
+
+                alert(`SUCCESS!\nPageID: ${pageId}\nEnvironment ${name} linked to your account.`);
+                window.location.href = 'maindashboard.html';
+
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Connection failed.");
+            }
+        }
+    </script>
+</body>
+</html>
