@@ -123,6 +123,49 @@
         document.getElementById('userName').innerText = user.name || "User";
         document.getElementById('userId').innerText = `ID: ${user.id}`;
 
+        // URL do seu segundo Excel (o de registros) em formato CSV
+const REGISTRY_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTeBz5FwvcmPue3hJ6TKwmrNZeMrz2_Su7co-mPuzKj1ZJv--5BBvPjlszF3yyEHOVuEeGT9mmwZqOp/pub?gid=0&single=true&output=csv';
+
+async function loadUserAmbients() {
+    try {
+        const response = await fetch(REGISTRY_SHEET_URL);
+        const data = await response.text();
+        
+        // Converte CSV em Array de objetos
+        const rows = data.split('\n').slice(1); // Pula o cabeçalho
+        const navSection = document.querySelector('.nav-section');
+        
+        // Limpa os cards estáticos (exceto o botão de ADD NEW)
+        const addCard = document.querySelector('.add-card').outerHTML;
+        navSection.innerHTML = '';
+
+        rows.forEach(row => {
+            const columns = row.split(',');
+            const dbUserId = columns[0]?.trim();
+            const dbPageId = columns[1]?.trim();
+            const dbName = columns[2]?.trim();
+
+            // Só mostra os ambientes que pertencem ao usuário logado
+            if (dbUserId === user.id) {
+                const card = document.createElement('a');
+                card.href = `ambient_view.html?id=${dbPageId}`; // Link dinâmico
+                card.className = 'ambient-card a70-font';
+                card.innerHTML = `<i class="fas fa-microchip"></i> ${dbName.toUpperCase()}`;
+                navSection.appendChild(card);
+            }
+        });
+
+        // Reinsere o botão de adicionar no final
+        navSection.insertAdjacentHTML('beforeend', addCard);
+
+    } catch (error) {
+        console.error("Erro ao carregar ambientes:", error);
+    }
+}
+
+// Chama a função ao carregar a página
+loadUserAmbients();
+        
         function logout() {
             localStorage.removeItem('currentUser');
             window.location.href = 'index.html';
