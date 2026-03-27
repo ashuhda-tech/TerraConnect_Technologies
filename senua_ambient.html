@@ -58,6 +58,9 @@
 
         .footer-label { margin-top: 20px; text-align: center; opacity: 0.4; font-size: 0.7rem; letter-spacing: 5px; }
 
+        .btn-back { background: transparent; border: 1px solid #d1b38b; color: #d1b38b; padding: 8px; border-radius: 4px; width: 100%; cursor: pointer; transition: 0.3s; }
+        .btn-back:hover { background: #d1b38b; color: #070b14; }
+        
         .btn-exit { background: transparent; border: 1px solid #ef4e4e; color: #ef4e4e; padding: 8px; border-radius: 4px; width: 100%; cursor: pointer; transition: 0.3s; }
         .btn-exit:hover { background: #ef4e4e; color: white; }
     </style>
@@ -86,20 +89,21 @@
         </div>
 
         <div class="user-card">
-            <label style="font-size: 0.7rem;">Usuário:</label>
-            <span id="userName" style="display: block; font-weight: bold; font-size: 0.9rem;">Carregando...</span>
+            <label style="font-size: 0.7rem;">User:</label>
+            <span id="userName" style="display: block; font-weight: bold; font-size: 0.9rem;">Loading...</span>
             <span id="userId" style="font-size: 0.6rem; color: var(--accent); word-break: break-all;">---</span>
         </div>
 
-        <button class="btn-exit" onclick="location.href='maindashboard.html'">Voltar</button>
+        <button class="btn-back" onclick="location.href='maindashboard.html'">Back</button>
+        <button class="btn-exit" onclick="location.href='index.html'">Log out</button>
     </div>
 
     <div class="main-panel">
         <div class="header-monitor">
-            <h1 id="mainTitle"class="a70-font">CARREGANDO...</h1>
+            <h1 id="mainTitle"class="a70-font">Loading...</h1>
             <div class="status-badges a70-font">
-                <div class="status-item"><i class="fas fa-check-circle"></i> AMBIENTE ESTÁVEL</div>
-                <div class="status-item"><i class="fas fa-wifi"></i> CONECTADO</div>
+                <div class="status-item"><i class="fas fa-check-circle"></i> STABLE ENVIRONMENT</div>
+                <div class="status-item"><i class="fas fa-wifi"></i> CONECTED</div>
             </div>
         </div>
 
@@ -124,20 +128,20 @@
 
         <div class="charts-row">
             <div class="chart-box">
-                <h3 class="a70-font">HISTÓRICO DE TEMPERATURA</h3>
+                <h3 class="a70-font">HISTORICAL TEMPERATURE SERIES</h3>
                 <div class="chart-container">
                     <canvas id="tempChart"></canvas>
                 </div>
             </div>
             <div class="chart-box">
-                <h3 class="a70-font">HISTÓRICO DE UMIDADE</h3>
+                <h3 class="a70-font">HISTORICAL HUMIDITY SERIES</h3>
                 <div class="chart-container">
                     <canvas id="humChart"></canvas>
                 </div>
             </div>
         </div>
 
-        <div id="footerLabel" class="footer-label a70-font">SISTEMA ATIVO</div>
+        <div id="footerLabel" class="footer-label a70-font">ACTIVE SYSTEM</div>
     </div>
 
     <script>
