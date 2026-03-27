@@ -1,0 +1,12 @@
+<script>
+    // 1. Pega o ID da URL (ex: ?id=PG-CEWEJI)
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentPageId = urlParams.get('id');
+
+    // 2. Configura o título da página baseado no ID
+    document.title = `TerraConnect | ${currentPageId}`;
+
+    // 3. Futuramente, você usará o currentPageId para buscar 
+    // a API Key correta do ThingSpeak no seu Excel.
+    console.log("Carregando dados para o ambiente: " + currentPageId);
+</script>
