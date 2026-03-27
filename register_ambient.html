@@ -62,10 +62,15 @@
             <input type="text" id="regNumber" placeholder="IBAMA / MAPA">
         </div>
         <div class="input-group">
-            <label class="a70-font">LOCATION (LAT/LONG)</label>
-            <input type="text" id="location" placeholder="-23.55, -46.63">
-        </div>
+    <label class="a70-font">LOCATION (LAT/LONG)</label>
+    <div style="display: flex; gap: 5px;">
+        <input type="text" id="location" placeholder="-23.55, -46.63">
+        <button type="button" onclick="getLocation()" title="Use my current location" 
+                style="background: var(--accent); border: none; border-radius: 4px; padding: 0 10px; cursor: pointer;">
+            <i class="fas fa-location-crosshairs" style="color: var(--bg-dark);"></i>
+        </button>
     </div>
+</div>
 
     <div class="input-group" style="margin-top: 15px;">
         <label class="a70-font">ANIMAL PHOTO (MAX 1MB)</label>
@@ -83,14 +88,39 @@
 
     
     <script>
-        // Recupera o usuário logado para vincular o registro
-        const user = JSON.parse(localStorage.getItem('currentUser'));
-        if (!user) { window.location.href = 'index.html'; }
+        // 1. CARREGAMENTO INICIAL: Recupera o usuário e exibe o ID
+document.addEventListener('DOMContentLoaded', () => {
+    const userData = localStorage.getItem('currentUser');
+    if (!userData) {
+        window.location.href = 'index.html';
+        return;
+    }
+    const user = JSON.parse(userData);
+    // O console confirmou que a propriedade correta é .id
+    document.getElementById('displayUserId').innerText = user.id;
+    window.currentUser = user; 
+});
 
-        document.getElementById('displayUserId').innerText = user.id;
+// 2. FUNÇÃO DE GPS: Preenche o campo de texto automaticamente
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition((position) => {
+            const lat = position.coords.latitude.toFixed(6);
+            const long = position.coords.longitude.toFixed(6);
+            document.getElementById('location').value = `${lat}, ${long}`;
+        }, (error) => {
+            alert("Erro ao obter localização: " + error.message);
+        });
+    } else {
+        alert("GPS não suportado por este navegador.");
+    }
+}
 
-        
-    async function processRegistration() {
+// 3. FUNÇÃO DE REGISTRO: Envia para o Google Sheets
+async function processRegistration() {
+    const user = window.currentUser;
+    if (!user) return alert("Sessão expirada. Faça login novamente.");
+
     const fields = {
         ambientName: document.getElementById('ambientName').value,
         animalName: document.getElementById('animalName').value,
@@ -100,12 +130,13 @@
         location: document.getElementById('location').value
     };
 
-    if (!fields.ambientName || !fields.animalName) return alert("Please fill Name and Ambient.");
+    if (!fields.ambientName || !fields.animalName) {
+        return alert("Please fill at least Ambient and Animal Name.");
+    }
 
     const pageId = 'PG-' + Math.random().toString(36).substr(2, 6).toUpperCase();
     let photoData = "";
 
-    // Processamento da Imagem
     const fileInput = document.getElementById('animalPhoto');
     if (fileInput.files[0]) {
         photoData = await resizeImage(fileInput.files[0]);
@@ -121,7 +152,6 @@
 
     const scriptURL = 'https://script.google.com/macros/s/AKfycbyz6-BqV6DooYxcfN2JI3zGrpTJXD8pgqtfkStPmX7YfAieJ2FOsVDxWk7u6vTURfk/exec';
 
-    // AVISO: Removi os comentários /* */ para o código funcionar
     try {
         await fetch(scriptURL, {
             method: 'POST',
@@ -130,10 +160,13 @@
         });
         alert(`SUCCESS!\nPageID: ${pageId} registered.`);
         window.location.href = 'maindashboard.html';
-    } catch (e) { alert("Error connecting to database."); }
+    } catch (e) { 
+        alert("Error connecting to database.");
+        console.error(e);
+    }
 }
 
-// Função para comprimir a foto e caber no limite do Excel
+// 4. FUNÇÃO DE COMPRESSÃO DE IMAGEM
 function resizeImage(file) {
     return new Promise((resolve) => {
         const reader = new FileReader();
@@ -143,21 +176,16 @@ function resizeImage(file) {
             img.src = event.target.result;
             img.onload = () => {
                 const canvas = document.getElementById('resizeCanvas');
-                const MAX_WIDTH = 200; // Tamanho pequeno para o dashboard
+                const MAX_WIDTH = 200; 
                 const scaleSize = MAX_WIDTH / img.width;
                 canvas.width = MAX_WIDTH;
                 canvas.height = img.height * scaleSize;
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                resolve(canvas.toDataURL('image/jpeg', 0.7)); // Qualidade 70%
+                resolve(canvas.toDataURL('image/jpeg', 0.7)); 
             };
         };
     });
-}
-        catch (error) {
-        console.error("Error:", error);
-        alert("Connection failed. Check your internet or Script URL.");
-    }
 }
     </script>
 </body>
