@@ -32,63 +32,129 @@
 </head>
 <body>
 
-    <div class="register-container">
-        <h1 class="a70-font">NEW AMBIENT REGISTRATION</h1>
-        
-        <div class="info-box">
-            <span style="display: block;">User ID Detectado:</span>
-            <strong id="displayUserId">---</strong>
-        </div>
-
-        <div class="input-group">
-            <label class="a70-font">AMBIENT NAME</label>
-            <input type="text" id="ambientName" placeholder="Ex: Freia Terrarium">
-        </div>
-
-        <button class="btn-save a70-font" onclick="processRegistration()">COMPLETE REGISTRATION</button>
-        
-        <a href="maindashboard.html" class="btn-back">CANCEL AND BACK</a>
+    <div class="register-container" style="max-width: 500px;">
+    <h1 class="a70-font">NEW REGISTRATION</h1>
+    
+    <div class="info-box">
+        <span style="font-size: 0.6rem;">VINCULADO AO ID:</span>
+        <strong id="displayUserId" style="font-size: 0.6rem;">---</strong>
     </div>
 
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; text-align: left;">
+        <div class="input-group">
+            <label class="a70-font">AMBIENT NAME</label>
+            <input type="text" id="ambientName" placeholder="Ex: Hela Smarthome">
+        </div>
+        <div class="input-group">
+            <label class="a70-font">ANIMAL NAME</label>
+            <input type="text" id="animalName" placeholder="Ex: Hela">
+        </div>
+        <div class="input-group">
+            <label class="a70-font">SCIENTIFIC NAME</label>
+            <input type="text" id="scientificName" placeholder="Ex: Lampropeltis getula">
+        </div>
+        <div class="input-group">
+            <label class="a70-font">BIRTH DATE</label>
+            <input type="date" id="birthDate">
+        </div>
+        <div class="input-group">
+            <label class="a70-font">REGISTRATION Nº</label>
+            <input type="text" id="regNumber" placeholder="IBAMA / MAPA">
+        </div>
+        <div class="input-group">
+            <label class="a70-font">LOCATION (LAT/LONG)</label>
+            <input type="text" id="location" placeholder="-23.55, -46.63">
+        </div>
+    </div>
+
+    <div class="input-group" style="margin-top: 15px;">
+        <label class="a70-font">ANIMAL PHOTO (MAX 1MB)</label>
+        <input type="file" id="animalPhoto" accept="image/*" style="font-size: 0.7rem; border: none; background: none;">
+        <canvas id="resizeCanvas" style="display:none;"></canvas>
+    </div>
+
+    <button class="btn-save a70-font" style="margin-top: 20px;" onclick="processRegistration()">COMPLETE REGISTRATION</button>
+    <a href="maindashboard.html" class="btn-back">CANCEL AND BACK</a>
+</div>
+
+
+
+
+
+    
     <script>
         // Recupera o usuário logado para vincular o registro
         const user = JSON.parse(localStorage.getItem('currentUser'));
         if (!user) { window.location.href = 'index.html'; }
 
         document.getElementById('displayUserId').innerText = user.id;
-async function processRegistration() {
-    const name = document.getElementById('ambientName').value;
-    if (!name) return alert("Please enter a name.");
 
-    // Gerador de PageID único
+        
+    async function processRegistration() {
+    const fields = {
+        ambientName: document.getElementById('ambientName').value,
+        animalName: document.getElementById('animalName').value,
+        scientificName: document.getElementById('scientificName').value,
+        birthDate: document.getElementById('birthDate').value,
+        regNumber: document.getElementById('regNumber').value,
+        location: document.getElementById('location').value
+    };
+
+    if (!fields.ambientName || !fields.animalName) return alert("Please fill Name and Ambient.");
+
     const pageId = 'PG-' + Math.random().toString(36).substr(2, 6).toUpperCase();
-    
+    let photoData = "";
+
+    // Processamento da Imagem
+    const fileInput = document.getElementById('animalPhoto');
+    if (fileInput.files[0]) {
+        photoData = await resizeImage(fileInput.files[0]);
+    }
+
     const payload = {
         userID: user.id,
         pageID: pageId,
-        ambientName: name,
-        timestamp: new Date().toLocaleString('pt-BR') // Data formatada para o Excel
+        ...fields,
+        photoBase64: photoData,
+        timestamp: new Date().toLocaleString('pt-BR')
     };
 
     const scriptURL = 'https://script.google.com/macros/s/AKfycbyz6-BqV6DooYxcfN2JI3zGrpTJXD8pgqtfkStPmX7YfAieJ2FOsVDxWk7u6vTURfk/exec';
 
     // AVISO: Removi os comentários /* */ para o código funcionar
     try {
-        // Usamos um formulário fictício ou string para evitar problemas de pre-flight (CORS) do Google
         await fetch(scriptURL, {
             method: 'POST',
-            mode: 'no-cors', // Necessário para Google Apps Script
-            cache: 'no-cache',
-            headers: { 'Content-Type': 'application/json' },
+            mode: 'no-cors',
             body: JSON.stringify(payload)
         });
-
-        // Como usamos no-cors, o JS não consegue "ler" a resposta do Google, 
-        // mas o dado chega lá. Então mostramos o sucesso e voltamos.
-        alert(`SUCCESS!\nPageID: ${pageId}\nEnvironment ${name} linked to your account.`);
+        alert(`SUCCESS!\nPageID: ${pageId} registered.`);
         window.location.href = 'maindashboard.html';
+    } catch (e) { alert("Error connecting to database."); }
+}
 
-    } catch (error) {
+// Função para comprimir a foto e caber no limite do Excel
+function resizeImage(file) {
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (event) => {
+            const img = new Image();
+            img.src = event.target.result;
+            img.onload = () => {
+                const canvas = document.getElementById('resizeCanvas');
+                const MAX_WIDTH = 200; // Tamanho pequeno para o dashboard
+                const scaleSize = MAX_WIDTH / img.width;
+                canvas.width = MAX_WIDTH;
+                canvas.height = img.height * scaleSize;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                resolve(canvas.toDataURL('image/jpeg', 0.7)); // Qualidade 70%
+            };
+        };
+    });
+}
+        catch (error) {
         console.error("Error:", error);
         alert("Connection failed. Check your internet or Script URL.");
     }
