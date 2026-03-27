@@ -28,6 +28,10 @@
         .ambient-card { background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); padding: 12px 15px; border-radius: 4px; display: flex; align-items: center; gap: 15px; cursor: pointer; transition: 0.3s; text-decoration: none; color: var(--text-light); font-size: 0.85rem; }
         .ambient-card.active { background: var(--accent); color: var(--bg-dark); }
         .ambient-card i { color: inherit; width: 20px; text-align: center; }
+
+        /* Card Especial: ADICIONAR NOVO */
+        .add-card {border: 1px dashed var(--accent); background: transparent; opacity: 0.6; margin-top: 10px;}
+        .add-card:hover {opacity: 1; background: rgba(209, 179, 139, 0.1);= color: var(--accent); border-style: solid;}
         
         .brand-logo { text-align: center; margin: 25px 0; border-top: 1px solid var(--border); padding-top: 20px; }
         .brand-logo h2 { font-size: 1rem; margin: 0; color: var(--accent); }
@@ -86,6 +90,9 @@
             <a href="senua_ambient.html" class="ambient-card active a70-font">
                 <i class="fas fa-turtle"></i> SENUA AMBIENT
             </a>
+            <div class="ambient-card add-card a70-font" onclick="addNewAmbient()">
+                <i class="fas fa-plus-circle"></i> ADD NEW ENVIRONMENT
+            </div>
         </div>
 
         <div class="brand-logo a70-font">
