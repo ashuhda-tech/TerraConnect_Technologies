@@ -14,75 +14,20 @@
             --text-light: #f4e9d8;
         }
 
-        body {
-            background-color: var(--bg-dark);
-            color: var(--text-light);
-            font-family: 'Inter', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
+        body { background-color: var(--bg-dark); color: var(--text-light); font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
 
-        .register-container {
-            background: #0d1117;
-            padding: 40px;
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
-        }
-
+        .register-container { background: #0d1117; padding: 40px; border: 1px solid var(--border); border-radius: 20px; width: 100%; max-width: 400px; text-align: center; }
         .a70-font { font-family: 'Cinzel', serif; letter-spacing: 2px; }
-
         h1 { color: var(--accent); font-size: 1.2rem; margin-bottom: 30px; }
-
         .input-group { text-align: left; margin-bottom: 20px; }
         
         label { font-size: 0.7rem; color: var(--accent); display: block; margin-bottom: 8px; }
+        input { width: 100%; padding: 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); color: white; border-radius: 4px; box-sizing: border-box; }
 
-        input {
-            width: 100%;
-            padding: 12px;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid var(--border);
-            color: white;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        .info-box {
-            background: rgba(209, 179, 139, 0.05);
-            padding: 10px;
-            border-radius: 4px;
-            font-size: 0.7rem;
-            margin-bottom: 25px;
-            border: 1px solid rgba(209, 179, 139, 0.1);
-        }
-
-        .btn-save {
-            background: var(--accent);
-            color: var(--bg-dark);
-            border: none;
-            width: 100%;
-            padding: 15px;
-            font-weight: bold;
-            cursor: pointer;
-            border-radius: 4px;
-            transition: 0.3s;
-        }
-
-        .btn-save:hover { filter: brightness(1.1); }
-
-        .btn-back {
-            display: block;
-            margin-top: 15px;
-            color: #9ca3af;
-            text-decoration: none;
-            font-size: 0.8rem;
-        }
+        .info-box { background: rgba(209, 179, 139, 0.05); padding: 10px; border-radius: 4px; font-size: 0.7rem; margin-bottom: 25px; border: 1px solid rgba(209, 179, 139, 0.1); }
+        .btn-save { background: var(--accent); color: var(--bg-dark); border: none; width: 100%; padding: 15px; font-weight: bold; cursor: pointer; border-radius: 4px; transition: 0.3s; }
+        .btn-save:hover { filter: brightness(1.1); } 
+        .btn-back { display: block; margin-top: 15px; color: #9ca3af; text-decoration: none; font-size: 0.8rem; }
     </style>
 </head>
 <body>
@@ -111,41 +56,43 @@
         if (!user) { window.location.href = 'index.html'; }
 
         document.getElementById('displayUserId').innerText = user.id;
+async function processRegistration() {
+    const name = document.getElementById('ambientName').value;
+    if (!name) return alert("Please enter a name.");
 
-        async function processRegistration() {
-            const name = document.getElementById('ambientName').value;
-            if (!name) return alert("Please enter a name.");
+    // Gerador de PageID único
+    const pageId = 'PG-' + Math.random().toString(36).substr(2, 6).toUpperCase();
+    
+    const payload = {
+        userID: user.id,
+        pageID: pageId,
+        ambientName: name,
+        timestamp: new Date().toLocaleString('pt-BR') // Data formatada para o Excel
+    };
 
-            // Gerador de PageID único
-            const pageId = 'PG-' + Math.random().toString(36).substr(2, 6).toUpperCase();
-            
-            const payload = {
-                userID: user.id,
-                pageID: pageId,
-                ambientName: name,
-                timestamp: new Date().toISOString()
-            };
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbyz6-BqV6DooYxcfN2JI3zGrpTJXD8pgqtfkStPmX7YfAieJ2FOsVDxWk7u6vTURfk/exec';
 
-            try {
-                // Aqui vai a URL do seu Google Apps Script (conforme discutimos antes)
-                const scriptURL = 'https://script.google.com/macros/s/AKfycbyz6-BqV6DooYxcfN2JI3zGrpTJXD8pgqtfkStPmX7YfAieJ2FOsVDxWk7u6vTURfk/exec';
+    // AVISO: Removi os comentários /* */ para o código funcionar
+    try {
+        // Usamos um formulário fictício ou string para evitar problemas de pre-flight (CORS) do Google
+        await fetch(scriptURL, {
+            method: 'POST',
+            mode: 'no-cors', // Necessário para Google Apps Script
+            cache: 'no-cache',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
 
-                /* // Exemplo de envio Real:
-                await fetch(scriptURL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    body: JSON.stringify(payload)
-                });
-                */
+        // Como usamos no-cors, o JS não consegue "ler" a resposta do Google, 
+        // mas o dado chega lá. Então mostramos o sucesso e voltamos.
+        alert(`SUCCESS!\nPageID: ${pageId}\nEnvironment ${name} linked to your account.`);
+        window.location.href = 'maindashboard.html';
 
-                alert(`SUCCESS!\nPageID: ${pageId}\nEnvironment ${name} linked to your account.`);
-                window.location.href = 'maindashboard.html';
-
-            } catch (error) {
-                console.error("Error:", error);
-                alert("Connection failed.");
-            }
-        }
+    } catch (error) {
+        console.error("Error:", error);
+        alert("Connection failed. Check your internet or Script URL.");
+    }
+}
     </script>
 </body>
 </html>
