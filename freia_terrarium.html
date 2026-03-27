@@ -96,7 +96,7 @@
 
     <div class="main-panel">
         <div class="header-monitor">
-            <h1 class="a70-font">HELA SMARTHOME</h1>
+            <h1 id="mainTitle"class="a70-font">CARREGANDO...</h1>
             <div class="status-badges a70-font">
                 <div class="status-item"><i class="fas fa-check-circle"></i> AMBIENTE ESTÁVEL</div>
                 <div class="status-item"><i class="fas fa-wifi"></i> CONECTADO</div>
@@ -137,7 +137,7 @@
             </div>
         </div>
 
-        <div class="footer-label a70-font">HELA'S SMARTHOUSE</div>
+        <div id="footerLabel" class="footer-label a70-font">SISTEMA ATIVO</div>
     </div>
 
     <script>
@@ -194,6 +194,28 @@
 
         setInterval(updateData, 15000);
         updateData();
+
+        function syncActiveName() {
+    // 1. Busca o elemento que tem as duas classes ao mesmo tempo
+    const activeCard = document.querySelector('.ambient-card.active');
+    
+    if (activeCard) {
+        // 2. Pega apenas o texto, ignorando o ícone
+        const activeName = activeCard.innerText.trim();
+
+        // 3. Distribui o nome para os locais desejados
+        document.getElementById('mainTitle').innerText = activeName;
+        document.getElementById('footerLabel').innerText = `${activeName} MONITORING`;
+        document.title = `TerraConnect | ${activeName}`;
+    }
+}
+
+// Executa a função assim que a página carrega
+window.onload = function() {
+    syncActiveName();
+    updateData(); // Mantém sua função de carregar o ThingSpeak
+};
+        
     </script>
 </body>
 </html>
