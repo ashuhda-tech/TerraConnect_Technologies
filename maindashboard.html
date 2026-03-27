@@ -80,11 +80,11 @@
                 <i class="fas fa-turtle"></i> SENUA AMBIENT
             </a>
         </div>
-
-        <div class="nav-section-bottom">
-            <div class="ambient-card add-card a70-font" onclick="addNewAmbient()">
-                <i class="fas fa-plus-circle"></i> ADD NEW
-            </div>
+         
+         <div class="nav-section-bottom">
+            <a href="register_ambient.html" class="ambient-card add-card a70-font">
+            <i class="fas fa-plus-circle"></i> ADD NEW
+            </a>
         </div>
 
         <div class="brand-logo a70-font">
@@ -126,10 +126,6 @@
         function logout() {
             localStorage.removeItem('currentUser');
             window.location.href = 'index.html';
-        }
-
-        function addNewAmbient() {
-            alert("Em breve: Aqui abriremos um formulário para você cadastrar um novo ambiente e vincular ao ThingSpeak!");
         }
     </script>
 </body>
