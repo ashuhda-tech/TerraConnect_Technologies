@@ -71,6 +71,20 @@
         </button>
     </div>
 </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; grid-column: span 2; margin-top: 10px;">
+    <div class="input-group">
+        <label class="a70-font">THINGSPEAK CHANNEL ID</label>
+        <input type="text" id="channelID" placeholder="Ex: 1234567">
+    </div>
+    <div class="input-group">
+        <label class="a70-font">TS READ API KEY</label>
+        <input type="text" id="tsRead" placeholder="Read Key">
+    </div>
+    <div class="input-group">
+        <label class="a70-font">TS WRITE API KEY</label>
+        <input type="text" id="tsWrite" placeholder="Write Key">
+    </div>
+</div>
 
     <div class="input-group" style="margin-top: 15px;">
         <label class="a70-font">ANIMAL PHOTO (MAX 1MB)</label>
@@ -119,8 +133,8 @@ function getLocation() {
 // 3. FUNÇÃO DE REGISTRO: Envia para o Google Sheets
 async function processRegistration() {
     const user = window.currentUser;
-    if (!user) return alert("Sessão expirada. Faça login novamente.");
-
+    if (!user) return alert("Expired session. Please Sign in again.");
+    
     const fields = {
         ambientName: document.getElementById('ambientName').value,
         animalName: document.getElementById('animalName').value,
@@ -144,12 +158,34 @@ async function processRegistration() {
 
     const payload = {
         userID: user.id,
-        pageID: pageId,
-        ...fields,
-        photoBase64: photoData,
+        pageID: 'PG-' + Math.random().toString(36).substr(2, 6).toUpperCase(),
+        ambientName: document.getElementById('ambientName').value,
+        animalName: document.getElementById('animalName').value,
+        scientificName: document.getElementById('scientificName').value,
+        birthDate: document.getElementById('birthDate').value,
+        regNumber: document.getElementById('regNumber').value,
+        latitude: document.getElementById('lat').value,
+        longitude: document.getElementById('lng').value,
+        // Novos campos adicionados aqui:
+        channelID: document.getElementById('channelID').value,
+        tsRead: document.getElementById('tsRead').value,
+        tsWrite: document.getElementById('tsWrite').value,
         timestamp: new Date().toLocaleString('pt-BR')
     };
 
+    // Validação simples
+    if (!payload.ambientName || !payload.animalName || !payload.channelID) {
+        return alert("Please, Fill the Name, Animal and the Channel ID.");
+    }
+
+    // Processamento da foto
+    let photoData = "";
+    const fileInput = document.getElementById('animalPhoto');
+    if (fileInput.files[0]) {
+        photoData = await resizeImage(fileInput.files[0]);
+    }
+    payload.photoBase64 = photoData;
+    
     const scriptURL = 'https://script.google.com/macros/s/AKfycbyz6-BqV6DooYxcfN2JI3zGrpTJXD8pgqtfkStPmX7YfAieJ2FOsVDxWk7u6vTURfk/exec';
 
     try {
