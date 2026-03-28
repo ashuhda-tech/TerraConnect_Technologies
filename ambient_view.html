@@ -85,7 +85,7 @@
 
         <div class="bio-info-list">
             <div class="bio-item"><b>Scientific Name</b> <span id="dynScientific">---</span></div>
-            <div class="bio-item"><b>Sex</b> <span id="dynGender">---</span></div>
+            <div class="bio-item"><b>Sex</b> <span id="dynSex">---</span></div>
             <div class="bio-item"><b>Birth Date</b> <span id="dynBirth">---</span></div>
             <div class="bio-item"><b>Registration</b> <span id="dynReg">---</span></div>
             <div class="bio-item"><b>Coordinates</b> <span id="dynLoc">---</span></div>
@@ -192,24 +192,22 @@
             if (data) {
                 // Sidebar Data
                 document.getElementById('dynName').innerText = data[3] || "---";
-                document.getElementById('dynScientific').innerText = data[4] || "---";
-                document.getElementById('dynBirth').innerText = data[5] || "---";
-                document.getElementById('dynReg').innerText = data[6] || "---";
-                document.getElementById('dynLoc').innerText = `${data[7]}, ${data[8]}` || "---";
-                document.getElementById('dynChannel').innerText = data[9] || "---";
-                
-                // Gender (Assumindo que está na próxima coluna disponível N=13 ou O=14)
-                // Se ainda não tiver no Excel, deixará como "---"
-                document.getElementById('dynGender').innerText = data[14] || "N/A";
+                document.getElementById('dynSex').innerText = data[4] || "---";
+                document.getElementById('dynScientific').innerText = data[5] || "---";
+                document.getElementById('dynBirth').innerText = data[6] || "---";
+                document.getElementById('dynReg').innerText = data[7] || "---";
+                document.getElementById('dynLoc').innerText = `${data[8]}, ${data[9]}` || "---";
+                document.getElementById('dynChannel').innerText = data[10] || "---";
+               
 
                 // Main Content Data
                 document.getElementById('dynAmbient').innerText = (data[2] || "Ambient").toUpperCase();
                 
-                if (data[12]) document.getElementById('dynPhoto').src = data[12];
+                if (data[12]) document.getElementById('dynPhoto').src = data[13];
 
                 // ThingSpeak Configuration
-                const channelID = data[9];
-                const readKey = data[10];
+                const channelID = data[10];
+                const readKey = data[11];
                 tsReadURL = `https://api.thingspeak.com/channels/${channelID}/feeds.json?api_key=${readKey}&results=24`;
 
                 initChart();
