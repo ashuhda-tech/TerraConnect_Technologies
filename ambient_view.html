@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TerraConnect | Monitoramento</title>
+    <title>TerraConnect | Monitoring</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -44,7 +44,7 @@
 <body>
 
 <div class="container">
-    <a href="maindashboard.html" class="btn-back a70-font"><i class="fas fa-arrow-left"></i> BACK TO DASHBOARD</a>
+    <a href="maindashboard.html" class="btn-back a70-font"><i class="fas fa-arrow-left"></i> BACK</a>
 
     <div class="header-grid">
         <div class="bio-card">
@@ -52,7 +52,7 @@
             <h2 id="dynName" class="a70-font" style="margin: 0;">---</h2>
         </div>
         <div class="info-panel">
-            <h1 id="dynAmbient" class="a70-font">AMBIENT NAME</h1>
+            <h1 id="dynAmbient" class="a70-font">CARREGANDO...</h1>
             <div class="info-data">
                 <div><b>SCIENTIFIC NAME</b> <span id="dynScientific">---</span></div>
                 <div><b>BIRTH DATE</b> <span id="dynBirth">---</span></div>
@@ -91,42 +91,45 @@
         if (!currentPageId) return;
 
         try {
-            console.log("Buscando dados para ID:", currentPageId);
             const response = await fetch(CSV_URL);
             const csvData = await response.text();
             
-            // Parsing robusto para CSV
-            const rows = csvData.split('\n').map(row => row.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || []);
+            // LÓGICA DE PARSING CORRIGIDA:
+            // Divide por linha e então usa Regex que separa por vírgula APENAS fora de aspas.
+            const rows = csvData.split('\n').map(row => {
+                const pattern = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/;
+                return row.split(pattern).map(cell => cell.replace(/^"|"$/g, '').trim());
+            });
 
-            // Busca na Coluna B (Index 1)
-            const data = rows.find(r => r[1]?.replace(/"/g, '').trim() === currentPageId);
+            // Busca pelo PageID na Coluna B (Índice 1)
+            const data = rows.find(r => r[1] === currentPageId);
 
             if (data) {
-                console.log("Registro encontrado:", data[3]);
-
-                // CORREÇÃO DOS IDs AQUI:
-                document.getElementById('dynAmbient').innerText = data[2].replace(/"/g, '').toUpperCase();
-                document.getElementById('dynName').innerText = data[3].replace(/"/g, '');
-                document.getElementById('dynScientific').innerText = data[4].replace(/"/g, '');
-                document.getElementById('dynBirth').innerText = data[5].replace(/"/g, '');
-                document.getElementById('dynReg').innerText = data[6].replace(/"/g, '');
-                document.getElementById('dynLoc').innerText = `${data[7]}, ${data[8]}`.replace(/"/g, '');
-                document.getElementById('dynChannel').innerText = data[9].replace(/"/g, '');
-                document.getElementById('dynPhoto').src = data[12].replace(/"/g, '');
+                // Preenchimento dos dados
+                document.getElementById('dynAmbient').innerText = data[2].toUpperCase();
+                document.getElementById('dynName').innerText = data[3];
+                document.getElementById('dynScientific').innerText = data[4];
+                document.getElementById('dynBirth').innerText = data[5];
+                document.getElementById('dynReg').innerText = data[6];
+                document.getElementById('dynLoc').innerText = `${data[7]}, ${data[8]}`;
+                document.getElementById('dynChannel').innerText = data[9];
+                
+                // Foto (Coluna M - Índice 12)
+                if (data[12]) {
+                    document.getElementById('dynPhoto').src = data[12];
+                }
 
                 // Configuração ThingSpeak (J=9, K=10)
-                const channelID = data[9].replace(/"/g, '').trim();
-                const readKey = data[10].replace(/"/g, '').trim();
+                const channelID = data[9];
+                const readKey = data[10];
                 tsReadURL = `https://api.thingspeak.com/channels/${channelID}/feeds.json?api_key=${readKey}&results=20`;
 
                 initChart();
                 updateSensors();
                 setInterval(updateSensors, 20000);
-            } else {
-                console.warn("PageID não encontrado no Excel.");
             }
         } catch (e) { 
-            console.error("Erro Crítico:", e); 
+            console.error("Erro ao processar banco de dados:", e); 
         }
     }
 
@@ -139,8 +142,8 @@
             data: {
                 labels: [],
                 datasets: [
-                    { label: 'Temp °C', data: [], borderColor: '#d1b38b', tension: 0.4, yAxisID: 'y' },
-                    { label: 'Hum %', data: [], borderColor: '#4da3ff', tension: 0.4, yAxisID: 'y1' }
+                    { label: 'Temp °C', data: [], borderColor: '#d1b38b', backgroundColor: 'rgba(209, 179, 139, 0.1)', fill: true, tension: 0.4, yAxisID: 'y' },
+                    { label: 'Hum %', data: [], borderColor: '#4da3ff', backgroundColor: 'rgba(77, 163, 255, 0.1)', fill: true, tension: 0.4, yAxisID: 'y1' }
                 ]
             },
             options: {
@@ -150,7 +153,7 @@
                     y: { type: 'linear', position: 'left', grid: { color: '#2d3139' }, ticks: { color: '#d1b38b' } },
                     y1: { type: 'linear', position: 'right', grid: { drawOnChartArea: false }, ticks: { color: '#4da3ff' } }
                 },
-                plugins: { legend: { labels: { color: '#f4e9d8' } } }
+                plugins: { legend: { labels: { color: '#f4e9d8', font: { family: 'Inter' } } } }
             }
         });
     }
@@ -169,7 +172,7 @@
             mainChart.data.datasets[0].data = json.feeds.map(f => f.field1);
             mainChart.data.datasets[1].data = json.feeds.map(f => f.field2);
             mainChart.update();
-        } catch (e) { console.warn("Erro ao atualizar sensores."); }
+        } catch (e) { console.warn("Aguardando telemetria..."); }
     }
 
     loadData();
