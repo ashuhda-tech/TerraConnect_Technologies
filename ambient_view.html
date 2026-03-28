@@ -64,8 +64,11 @@
         .sensor-val { font-size: 1.4rem; font-weight: 700; color: var(--text-light); line-height: 1.2; }
         .sensor-val span { font-size: 0.75rem; margin-left: 3px; color: var(--text-muted); }
 
-        .chart-container { background: var(--card-bg); border: 1px solid var(--border);  border-radius: 15px;  padding: 25px;  height: 400px; }
-
+        /* GRID DE GRÁFICOS */
+        .charts-section { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));  gap: 20px; margin-top: 20px; }
+        .chart-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 15px; padding: 20px;  height: 320px;  }
+        .chart-card h3 { margin: 0 0 15px 0;  font-size: 0.9rem; color: var(--accent);  text-transform: uppercase; }
+        
         @media (max-width: 900px) {
             body { flex-direction: column; overflow: auto; height: auto; }
             .sidebar { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
@@ -76,7 +79,7 @@
 <body>
 
     <aside class="sidebar">
-        <a href="maindashboard.html" class="btn-back a70-font"><i class="fas fa-arrow-left"></i> DASHBOARD</a>
+        <a href="maindashboard.html" class="btn-back a70-font"><i class="fas fa-arrow-left"></i></a>
         
         <div class="bio-section">
             <img id="dynPhoto" src="" alt="Animal Photo" class="animal-photo">
@@ -162,8 +165,19 @@
 
         
 
-        <div class="chart-container">
-            <canvas id="mainChart"></canvas>
+        <div class="charts-section">
+            <div class="chart-card">
+                <h3 class="a70-font">Feeding History (g)</h3>
+                <canvas id="feedingChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3 class="a70-font">Weight Evolution (g)</h3>
+                <canvas id="weightChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3 class="a70-font">Shedding Intervals (Days)</h3>
+                <canvas id="sheddingChart"></canvas>
+            </div>
         </div>
     </main>
 
@@ -171,7 +185,9 @@
     const urlParams = new URLSearchParams(window.location.search);
     const currentPageId = urlParams.get('id');
     const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTeBz5FwvcmPue3hJ6TKwmrNZeMrz2_Su7co-mPuzKj1ZJv--5BBvPjlszF3yyEHOVuEeGT9mmwZqOp/pub?gid=0&single=true&output=csv';
+    const EVENTS_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS0Ra5VUE1xSCkCJCXaAObs1wBlUlrhH1YnnQ6e91S4fLT4sh_Nt7ECxaW15EMgS4_yjVcEs0OQECta/pub?gid=0&single=true&output=csv';
     
+    let feedingChart, weightChart, sheddingChart;
     let tsReadURL = "";
     let mainChart;
 
@@ -217,31 +233,8 @@
         } catch (e) { console.error("Database error:", e); }
     }
 
-    function initChart() {
-        const ctx = document.getElementById('mainChart').getContext('2d');
-        if (mainChart) mainChart.destroy();
-        
-        mainChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: [],
-                datasets: [
-                    { label: 'Temp °C', data: [], borderColor: '#d1b38b', backgroundColor: 'rgba(209, 179, 139, 0.1)', fill: true, tension: 0.4, yAxisID: 'y' },
-                    { label: 'Hum %', data: [], borderColor: '#4da3ff', backgroundColor: 'rgba(77, 163, 255, 0.1)', fill: true, tension: 0.4, yAxisID: 'y1' }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: { type: 'linear', position: 'left', grid: { color: '#1f2937' }, ticks: { color: '#d1b38b' } },
-                    y1: { type: 'linear', position: 'right', grid: { drawOnChartArea: false }, ticks: { color: '#4da3ff' } },
-                    x: { grid: { color: '#1f2937' }, ticks: { color: '#9ca3af' } }
-                },
-                plugins: { legend: { labels: { color: '#f4e9d8' } } }
-            }
-        });
-    }
+
+    
 
            async function updateSensors() {
             if (!tsReadURL) return;
@@ -266,6 +259,80 @@
         } catch (e) { console.warn("Waiting for telemetry..."); }
     }
 
+
+loadBiologicalHistory();
+
+
+    
+function parseCSV(data) {
+        return data.split('\n').map(row => {
+            const pattern = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/;
+            return row.split(pattern).map(cell => cell.replace(/^"|"$/g, '').trim());
+        });
+    }
+async function loadBiologicalHistory(id) {
+        try {
+            const res = await fetch(EVENTS_CSV);
+            const text = await res.text();
+            const rows = text.split('\n').map(row => row.split(',').map(c => c.trim().replace(/"/g, '')));
+            
+            // Filtra por PageID (Coluna 0)
+            const events = rows.filter(r => r[0] === id);
+            
+            renderFeeding(events);
+            renderWeight(events);
+            renderShedding(events);
+        } catch (e) { console.error("Event Log Error:", e); }
+    }
+
+    function renderFeeding(events) {
+        const data = events.filter(e => e[2] === "Feeding");
+        new Chart(document.getElementById('feedingChart'), {
+            type: 'bar',
+            data: {
+                labels: data.map(e => e[1]),
+                datasets: [{ label: 'Weight (g)', data: data.map(e => e[3]), backgroundColor: '#d1b38b' }]
+            },
+            options: commonOptions()
+        });
+    }
+
+    function renderWeight(events) {
+        const data = events.filter(e => e[2] === "Weight");
+        new Chart(document.getElementById('weightChart'), {
+            type: 'line',
+            data: {
+                labels: data.map(e => e[1]),
+                datasets: [{ label: 'Body (g)', data: data.map(e => e[3]), borderColor: '#4da3ff', tension: 0.3, pointRadius: 5 }]
+            },
+            options: commonOptions()
+        });
+    }
+
+    function renderShedding(events) {
+        const data = events.filter(e => e[2] === "Shedding");
+        new Chart(document.getElementById('sheddingChart'), {
+            type: 'line',
+            data: {
+                labels: data.map(e => e[1]),
+                datasets: [{ label: 'Days', data: data.map(e => e[4]), borderColor: '#a3b18a', fill: true, backgroundColor: 'rgba(163, 177, 138, 0.1)' }]
+            },
+            options: commonOptions()
+        });
+    }
+
+    function commonOptions() {
+        return {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: { grid: { color: '#1f2937' }, ticks: { color: '#9ca3af', font: { size: 10 } } },
+                x: { grid: { display: false }, ticks: { color: '#9ca3af', font: { size: 10 } } }
+            },
+            plugins: { legend: { display: false } }
+        };
+    }
+    
     loadData();
 </script>
 </body>
