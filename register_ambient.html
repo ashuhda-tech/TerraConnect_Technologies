@@ -43,11 +43,15 @@
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; text-align: left;">
         <div class="input-group">
             <label class="a70-font">AMBIENT NAME</label>
-            <input type="text" id="ambientName" placeholder="Ex: Hela Smarthome">
+            <input type="text" id="ambientName" placeholder="Ex: Hela Smarthome, AI Terrarium">
         </div>
         <div class="input-group">
             <label class="a70-font">ANIMAL NAME</label>
-            <input type="text" id="animalName" placeholder="Ex: Hela">
+            <input type="text" id="animalName" placeholder="Ex: Hela, Tommy">
+        </div>
+        <div class="input-group">
+            <label class="a70-font">SEX</label>
+            <input type="text" id="animalSex" placeholder="Ex: Male, Female">
         </div>
         <div class="input-group">
             <label class="a70-font">SCIENTIFIC NAME</label>
@@ -138,6 +142,7 @@ async function processRegistration() {
     const fields = {
         ambientName: document.getElementById('ambientName').value,
         animalName: document.getElementById('animalName').value,
+        animalSex: document.getElementById('animalSex').value,
         scientificName: document.getElementById('scientificName').value,
         birthDate: document.getElementById('birthDate').value,
         regNumber: document.getElementById('regNumber').value,
@@ -161,6 +166,7 @@ async function processRegistration() {
         pageID: 'PG-' + Math.random().toString(36).substr(2, 6).toUpperCase(),
         ambientName: document.getElementById('ambientName').value,
         animalName: document.getElementById('animalName').value,
+        animalSex: document.getElementById('animalSex').value,
         scientificName: document.getElementById('scientificName').value,
         birthDate: document.getElementById('birthDate').value,
         regNumber: document.getElementById('regNumber').value,
@@ -175,7 +181,7 @@ async function processRegistration() {
 
     // Validação simples
     if (!payload.ambientName || !payload.animalName || !payload.channelID) {
-        return alert("Please, Fill the Name, Animal and the Channel ID.");
+        return alert("Please, Fill the Ambient name and Animal name.");
     }
 
     // Processamento da foto
