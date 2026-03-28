@@ -178,6 +178,10 @@
                 <h3 class="a70-font">Shedding Intervals (Days)</h3>
                 <canvas id="sheddingChart"></canvas>
             </div>
+            <div class="chart-card">
+                <h3 class="a70-font">Lengh Measurement (cm)</h3>
+                <canvas id="lengthChart"></canvas>
+            </div>
         </div>
     </main>
 
@@ -282,7 +286,7 @@ async function loadBiologicalHistory(id) {
     function renderFeeding(events) {
         const data = events.filter(e => e[3] === "Feeding");
         new Chart(document.getElementById('feedingChart'), {
-            type: 'bar',
+            type: 'line',
             data: {
                 labels: data.map(e => e[2]),
                 datasets: [{ label: 'Weight (g)', data: data.map(e => e[4]), backgroundColor: '#d1b38b' }]
@@ -292,7 +296,7 @@ async function loadBiologicalHistory(id) {
     }
 
     function renderWeight(events) {
-        const data = events.filter(e => e[3] === "Weight");
+        const data = events.filter(e => e[3] === "Weighting");
         new Chart(document.getElementById('weightChart'), {
             type: 'line',
             data: {
@@ -315,6 +319,19 @@ async function loadBiologicalHistory(id) {
         });
     }
 
+    function renderLength(events) {
+        const data = events.filter(e => e[3] === "Length");
+        new Chart(document.getElementById('lengthChart'), {
+            type: 'line',
+            data: {
+                labels: data.map(e => e[2]),
+                datasets: [{ label: 'Days', data: data.map(e => e[4]), borderColor: '#a3b18a', fill: true, backgroundColor: 'rgba(163, 177, 138, 0.1)' }]
+            },
+            options: commonOptions()
+        });
+    }
+
+    
     function commonOptions() {
         return {
             responsive: true,
