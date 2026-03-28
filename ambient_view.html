@@ -285,7 +285,7 @@ async function loadBiologicalHistory(id) {
             type: 'bar',
             data: {
                 labels: data.map(e => e[2]),
-                datasets: [{ label: 'Weight (g)', data: data.map(e => e[3]), backgroundColor: '#d1b38b' }]
+                datasets: [{ label: 'Weight (g)', data: data.map(e => e[4]), backgroundColor: '#d1b38b' }]
             },
             options: commonOptions()
         });
@@ -297,7 +297,7 @@ async function loadBiologicalHistory(id) {
             type: 'line',
             data: {
                 labels: data.map(e => e[2]),
-                datasets: [{ label: 'Body (g)', data: data.map(e => e[3]), borderColor: '#4da3ff', tension: 0.3, pointRadius: 5 }]
+                datasets: [{ label: 'Body (g)', data: data.map(e => e[4]), borderColor: '#4da3ff', tension: 0.3, pointRadius: 5 }]
             },
             options: commonOptions()
         });
@@ -309,7 +309,7 @@ async function loadBiologicalHistory(id) {
             type: 'line',
             data: {
                 labels: data.map(e => e[2]),
-                datasets: [{ label: 'Days', data: data.map(e => e[3]), borderColor: '#a3b18a', fill: true, backgroundColor: 'rgba(163, 177, 138, 0.1)' }]
+                datasets: [{ label: 'Days', data: data.map(e => e[4]), borderColor: '#a3b18a', fill: true, backgroundColor: 'rgba(163, 177, 138, 0.1)' }]
             },
             options: commonOptions()
         });
