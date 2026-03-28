@@ -270,8 +270,8 @@ async function loadBiologicalHistory(id) {
             const text = await res.text();
             const rows = text.split('\n').map(row => row.split(',').map(c => c.trim().replace(/"/g, '')));
             
-            // Filtra por PageID (Coluna 0)
-            const events = rows.filter(r => r[0] === id);
+            // Filtra por PageID (Coluna 1)
+            const events = rows.filter(r => r[1] === id);
             
             renderFeeding(events);
             renderWeight(events);
@@ -280,11 +280,11 @@ async function loadBiologicalHistory(id) {
     }
 
     function renderFeeding(events) {
-        const data = events.filter(e => e[2] === "Feeding");
+        const data = events.filter(e => e[3] === "Feeding");
         new Chart(document.getElementById('feedingChart'), {
             type: 'bar',
             data: {
-                labels: data.map(e => e[1]),
+                labels: data.map(e => e[2]),
                 datasets: [{ label: 'Weight (g)', data: data.map(e => e[3]), backgroundColor: '#d1b38b' }]
             },
             options: commonOptions()
@@ -292,11 +292,11 @@ async function loadBiologicalHistory(id) {
     }
 
     function renderWeight(events) {
-        const data = events.filter(e => e[2] === "Weight");
+        const data = events.filter(e => e[3] === "Weight");
         new Chart(document.getElementById('weightChart'), {
             type: 'line',
             data: {
-                labels: data.map(e => e[1]),
+                labels: data.map(e => e[2]),
                 datasets: [{ label: 'Body (g)', data: data.map(e => e[3]), borderColor: '#4da3ff', tension: 0.3, pointRadius: 5 }]
             },
             options: commonOptions()
@@ -304,12 +304,12 @@ async function loadBiologicalHistory(id) {
     }
 
     function renderShedding(events) {
-        const data = events.filter(e => e[2] === "Shedding");
+        const data = events.filter(e => e[3] === "Shedding");
         new Chart(document.getElementById('sheddingChart'), {
             type: 'line',
             data: {
-                labels: data.map(e => e[1]),
-                datasets: [{ label: 'Days', data: data.map(e => e[4]), borderColor: '#a3b18a', fill: true, backgroundColor: 'rgba(163, 177, 138, 0.1)' }]
+                labels: data.map(e => e[2]),
+                datasets: [{ label: 'Days', data: data.map(e => e[3]), borderColor: '#a3b18a', fill: true, backgroundColor: 'rgba(163, 177, 138, 0.1)' }]
             },
             options: commonOptions()
         });
