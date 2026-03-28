@@ -189,7 +189,6 @@
     
     let feedingChart, weightChart, sheddingChart;
     let tsReadURL = "";
-    let mainChart;
 
     async function loadData() {
         if (!currentPageId) return;
@@ -226,8 +225,8 @@
                 const readKey = data[11];
                 tsReadURL = `https://api.thingspeak.com/channels/${channelID}/feeds.json?api_key=${readKey}&results=24`;
 
-                initChart();
                 updateSensors();
+                loadBiologicalHistory(currentPageId);
                 setInterval(updateSensors, 20000);
             }
         } catch (e) { console.error("Database error:", e); }
@@ -237,30 +236,25 @@
     
 
            async function updateSensors() {
-            if (!tsReadURL) return;
-            try {
+        if (!tsReadURL) return;
+        try {
             const res = await fetch(tsReadURL);
             const json = await res.json();
             const last = json.feeds[json.feeds.length - 1];
 
-            // Atualiza os 8 campos do thinkspeak dinamicamente
+            // Atualiza os 8 cards de sensores dinamicamente
             for(let i=1; i<=8; i++) {
                 const val = last[`field${i}`];
                 const el = document.getElementById(`valField${i}`);
                 if (val !== null && el) {
-                    const unit = el.querySelector('span').innerText;
+                    const unitSpan = el.querySelector('span');
+                    const unit = unitSpan ? unitSpan.innerText : "";
                     el.innerHTML = `${parseFloat(val).toFixed(1)}<span>${unit}</span>`;
                 }
             }
-            mainChart.data.labels = json.feeds.map(f => new Date(f.created_at).toLocaleTimeString([], {hour: '2d', minute:'2d'}));
-            mainChart.data.datasets[0].data = json.feeds.map(f => f.field1);
-            mainChart.data.datasets[1].data = json.feeds.map(f => f.field2);
-            mainChart.update();
         } catch (e) { console.warn("Waiting for telemetry..."); }
     }
 
-
-loadBiologicalHistory();
 
 
     
