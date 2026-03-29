@@ -283,50 +283,96 @@ async function loadBiologicalHistory(id) {
             renderLength(events);
         } catch (e) { console.error("Event Log Error:", e); }
     }
+// Função auxiliar para criar o gradiente minimalista
+    function getGradient(ctx, color) {
+        const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+        gradient.addColorStop(0, color + '33'); // Cor com 20% de opacidade
+        gradient.addColorStop(1, color + '00'); // Transparente
+        return gradient;
+    }
 
     function renderFeeding(events) {
+        const ctx = document.getElementById('feedingChart').getContext('2d');
         const data = events.filter(e => e[3] === "Feeding");
-        new Chart(document.getElementById('feedingChart'), {
+        new Chart(ctx, {
             type: 'line',
             data: {
                 labels: data.map(e => e[2]),
-                datasets: [{ label: 'Weight (g)', data: data.map(e => e[4]), borderColor: '#4da3ff', fill: true, backgroundColor: '#4da3ff' }]
+                datasets: [{ 
+                    label: 'Feeding (g)', 
+                    data: data.map(e => e[4]), 
+                    borderColor: '#d1b38b', 
+                    borderWidth: 2,
+                    fill: true, 
+                    backgroundColor: getGradient(ctx, '#d1b38b'),
+                    tension: 0.4,
+                    pointRadius: 2,
+                    pointBackgroundColor: '#d1b38b'
+                }]
             },
             options: commonOptions()
         });
     }
 
     function renderWeight(events) {
+        const ctx = document.getElementById('weightChart').getContext('2d');
         const data = events.filter(e => e[3] === "Weighting");
-        new Chart(document.getElementById('weightChart'), {
+        new Chart(ctx, {
             type: 'line',
             data: {
                 labels: data.map(e => e[2]),
-                datasets: [{ label: 'Body (g)', data: data.map(e => e[4]), borderColor: '#4da3ff', fill: true, backgroundColor: '#4da3ff' }]
+                datasets: [{ 
+                    label: 'Body (g)', 
+                    data: data.map(e => e[4]), 
+                    borderColor: '#d1b38b', 
+                    borderWidth: 2,
+                    fill: true, 
+                    backgroundColor: getGradient(ctx, '#d1b38b'),
+                    tension: 0.4,
+                    pointRadius: 2
+                }]
             },
             options: commonOptions()
         });
     }
 
     function renderShedding(events) {
+        const ctx = document.getElementById('sheddingChart').getContext('2d');
         const data = events.filter(e => e[3] === "Shedding");
-        new Chart(document.getElementById('sheddingChart'), {
+        new Chart(ctx, {
             type: 'line',
             data: {
                 labels: data.map(e => e[2]),
-                datasets: [{ label: 'Days', data: data.map(e => e[4]), borderColor: '#4da3ff', fill: true, backgroundColor: '#4da3ff' }]
+                datasets: [{ 
+                    label: 'Days', 
+                    data: data.map(e => e[4]), 
+                    borderColor: '#a3b18a', // Um tom levemente esverdeado para trocas de pele
+                    borderWidth: 2,
+                    fill: true, 
+                    backgroundColor: getGradient(ctx, '#a3b18a'),
+                    tension: 0.4
+                }]
             },
             options: commonOptions()
         });
     }
 
     function renderLength(events) {
+        const ctx = document.getElementById('lengthChart').getContext('2d');
         const data = events.filter(e => e[3] === "Length");
-        new Chart(document.getElementById('lengthChart'), {
+        new Chart(ctx, {
             type: 'line',
             data: {
                 labels: data.map(e => e[2]),
-                datasets: [{ label: 'Length (cm)', data: data.map(e => e[4]), borderColor: '#4da3ff', fill: true, backgroundColor: '#4da3ff' }]
+                datasets: [{ 
+                    label: 'Length (cm)', 
+                    data: data.map(e => e[4]), 
+                    borderColor: '#d1b38b', 
+                    borderWidth: 2,
+                    fill: true, 
+                    backgroundColor: getGradient(ctx, '#d1b38b'),
+                    tension: 0.4
+                }]
             },
             options: commonOptions()
         });
@@ -338,10 +384,30 @@ async function loadBiologicalHistory(id) {
             responsive: true,
             maintainAspectRatio: false,
             scales: {
-                y: { grid: { color: '#1f2937' }, ticks: { color: '#9ca3af', font: { size: 10 } } },
-                x: { grid: { display: false }, ticks: { color: '#9ca3af', font: { size: 10 } } }
+                y: { 
+                    grid: { color: 'rgba(31, 41, 55, 0.5)', drawBorder: false }, 
+                    ticks: { color: '#9ca3af', font: { size: 10 }, padding: 10 } 
+                },
+                x: { 
+                    grid: { display: false }, 
+                    ticks: { color: '#9ca3af', font: { size: 10 } } 
+                }
             },
-            plugins: { legend: { display: false } }
+            plugins: { 
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: '#161b22',
+                    titleColor: '#d1b38b',
+                    bodyColor: '#f4e9d8',
+                    borderColor: '#1f2937',
+                    borderWidth: 1,
+                    displayColors: false
+                }
+            },
+            interaction: {
+                intersect: false,
+                mode: 'index',
+            }
         };
     }
     
