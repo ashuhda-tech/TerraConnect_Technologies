@@ -191,7 +191,7 @@
     const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTeBz5FwvcmPue3hJ6TKwmrNZeMrz2_Su7co-mPuzKj1ZJv--5BBvPjlszF3yyEHOVuEeGT9mmwZqOp/pub?gid=0&single=true&output=csv';
     const EVENTS_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS0Ra5VUE1xSCkCJCXaAObs1wBlUlrhH1YnnQ6e91S4fLT4sh_Nt7ECxaW15EMgS4_yjVcEs0OQECta/pub?gid=0&single=true&output=csv';
     
-    let feedingChart, weightChart, sheddingChart;
+    let feedingChart, weightChart, sheddingChart, lengthChart;
     let tsReadURL = "";
 
     async function loadData() {
@@ -280,6 +280,7 @@ async function loadBiologicalHistory(id) {
             renderFeeding(events);
             renderWeight(events);
             renderShedding(events);
+            renderLength(events);
         } catch (e) { console.error("Event Log Error:", e); }
     }
 
@@ -289,7 +290,7 @@ async function loadBiologicalHistory(id) {
             type: 'line',
             data: {
                 labels: data.map(e => e[2]),
-                datasets: [{ label: 'Weight (g)', data: data.map(e => e[4]), backgroundColor: '#d1b38b' }]
+                datasets: [{ label: 'Weight (g)', data: data.map(e => e[4]), borderColor: '#4da3ff', fill: true, backgroundColor: '#4da3ff' }]
             },
             options: commonOptions()
         });
@@ -301,7 +302,7 @@ async function loadBiologicalHistory(id) {
             type: 'line',
             data: {
                 labels: data.map(e => e[2]),
-                datasets: [{ label: 'Body (g)', data: data.map(e => e[4]), borderColor: '#4da3ff', tension: 0.3, pointRadius: 5 }]
+                datasets: [{ label: 'Body (g)', data: data.map(e => e[4]), borderColor: '#4da3ff', fill: true, backgroundColor: '#4da3ff' }]
             },
             options: commonOptions()
         });
@@ -313,7 +314,7 @@ async function loadBiologicalHistory(id) {
             type: 'line',
             data: {
                 labels: data.map(e => e[2]),
-                datasets: [{ label: 'Days', data: data.map(e => e[4]), borderColor: '#a3b18a', fill: true, backgroundColor: 'rgba(163, 177, 138, 0.1)' }]
+                datasets: [{ label: 'Days', data: data.map(e => e[4]), borderColor: '#4da3ff', fill: true, backgroundColor: '#4da3ff' }]
             },
             options: commonOptions()
         });
@@ -325,7 +326,7 @@ async function loadBiologicalHistory(id) {
             type: 'line',
             data: {
                 labels: data.map(e => e[2]),
-                datasets: [{ label: 'Days', data: data.map(e => e[4]), borderColor: '#a3b18a', fill: true, backgroundColor: 'rgba(163, 177, 138, 0.1)' }]
+                datasets: [{ label: 'Length (cm)', data: data.map(e => e[4]), borderColor: '#4da3ff', fill: true, backgroundColor: '#4da3ff' }]
             },
             options: commonOptions()
         });
