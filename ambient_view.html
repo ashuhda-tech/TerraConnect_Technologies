@@ -54,7 +54,15 @@
 
         /* GRID DE 8 CARDS */
         .sensor-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;  margin-bottom: 25px;  }
+        /* BIO-SUMMARY CARDS */
+        .summary-section { display: grid;  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin-bottom: 30px;  }
+        .summary-card { background: linear-gradient(145deg, #161b22 0%, #0d1117 100%); border: 1px solid var(--border);  border-radius: 15px;  padding: 20px; display: flex; flex-direction: column; justify-content: center; border-bottom: 3px solid var(--accent); }
+        .summary-title { color: var(--accent); font-size: 0.7rem; text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center;  gap: 8px;  }
 
+        .summary-main-val { font-size: 1.6rem; font-weight: 700; color: var(--text-light); margin-bottom: 5px; }
+        .summary-sub-val { font-size: 0.85rem; color: var(--text-muted); }
+        .summary-sub-val b { color: var(--accent); font-weight: 400; }
+        
         .sensor-card { background: var(--card-bg);  border: 1px solid var(--border);  border-radius: 12px;  padding: 15px;  display: flex;  align-items: center;  gap: 12px; transition: 0.2s; }
         .sensor-card:hover { border-color: var(--accent); }
 
@@ -163,6 +171,24 @@
             </div>
         </div>
 
+
+        <div class="summary-section">
+            <div class="summary-card">
+                <div class="summary-title a70-font"><i class="fas fa-utensils"></i> Last Feeding</div>
+                <div class="summary-main-val" id="sumFeedingVal">--<span>g</span></div>
+                <div class="summary-sub-val" id="sumFeedingDate">--- / --- / ----</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-title a70-font"><i class="fas fa-ruler-combined"></i> Body Stats</div>
+                <div class="summary-main-val" id="sumWeightVal">--<span>g</span></div>
+                <div class="summary-sub-val" id="sumLengthVal"><b>Length:</b> --cm | <span id="sumWeightDate">--/--/--</span></div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-title a70-font"><i class="fas fa-snake"></i> Shedding Status</div>
+                <div class="summary-main-val" id="sumSheddingInterval">--<span> Days</span></div>
+                <div class="summary-sub-val" id="sumSheddingDate">Last: --- / --- / ----</div>
+            </div>
+        </div>
         
 
         <div class="charts-section">
@@ -268,20 +294,51 @@ function parseCSV(data) {
             return row.split(pattern).map(cell => cell.replace(/^"|"$/g, '').trim());
         });
     }
-async function loadBiologicalHistory(id) {
+
+// Função para formatar data: 15 / MAR / 2026
+    function formatDateDisplay(dateStr) {
+        if (!dateStr || dateStr === "---") return "--- / --- / ----";
+        const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+        const d = new Date(dateStr);
+        if (isNaN(d)) return dateStr; // Fallback caso não seja data válida
+        return `${String(d.getDate()).padStart(2, '0')} / ${months[d.getMonth()]} / ${d.getFullYear()}`;
+    }
+
+    async function loadBiologicalHistory(id) {
         try {
             const res = await fetch(EVENTS_CSV);
             const text = await res.text();
-            const rows = text.split('\n').map(row => row.split(',').map(c => c.trim().replace(/"/g, '')));
-            
-            // Filtra por PageID (Coluna 1)
+            const rows = parseCSV(text);
             const events = rows.filter(r => r[1] === id);
             
+            // Lógica para os Cards de Resumo (Pega o último registro de cada tipo)
+            const lastFeeding = events.filter(e => e[3] === "Feeding").pop();
+            const lastWeight = events.filter(e => e[3] === "Weighting").pop();
+            const lastLength = events.filter(e => e[3] === "Length").pop();
+            const lastShed = events.filter(e => e[3] === "Shedding").pop();
+
+            if(lastFeeding) {
+                document.getElementById('sumFeedingVal').innerHTML = `${lastFeeding[4]}<span>g</span>`;
+                document.getElementById('sumFeedingDate').innerText = formatDateDisplay(lastFeeding[2]);
+            }
+            if(lastWeight) {
+                document.getElementById('sumWeightVal').innerHTML = `${lastWeight[4]}<span>g</span>`;
+                document.getElementById('sumWeightDate').innerText = formatDateDisplay(lastWeight[2]);
+            }
+            if(lastLength) {
+                document.getElementById('sumLengthVal').innerHTML = `<b>Length:</b> ${lastLength[4]}cm | ${formatDateDisplay(lastLength[2])}`;
+            }
+            if(lastShed) {
+                document.getElementById('sumSheddingInterval').innerHTML = `${lastShed[4] || '--'}<span> Days</span>`; 
+                document.getElementById('sumSheddingDate').innerText = `Last: ${formatDateDisplay(lastShed[2])}`;
+            }
+
+            // Renderiza os gráficos normalmente
             renderFeeding(events);
             renderWeight(events);
             renderShedding(events);
             renderLength(events);
-        } catch (e) { console.error("Event Log Error:", e); }
+        } catch (e) { console.error("Bio-Summary Error:", e); }
     }
 // Função auxiliar para criar o gradiente minimalista
     function getGradient(ctx, color) {
