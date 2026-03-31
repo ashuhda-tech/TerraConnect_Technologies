@@ -572,19 +572,15 @@ async function sendToCloud(type, inputId) {
     
 // 2. Definição da URL do seu Google Apps Script (Obtida no 'Deploy' da planilha)
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxnOcWSHRutBkHc_45tSLOFjowJXMeplk333TmaddrvfWgETljbZZ6shOuwYTIG4AkD/exec"; 
-// 3. Lógica de Data: 
-    // Se for 'Shedding' (Troca de Pele), usamos a data selecionada no input.
-    // Para os demais, usamos a data atual do sistema no padrão brasileiro.
-    const registroData = (type === 'Shedding') ? val : new Date().toLocaleDateString('pt-BR');
 
     // 4. Montagem do Payload (Objeto de dados) sem conflitos
     // Usamos 'date' para o tempo e 'event' para o tipo de registro
     const payload = {
         userId: currentUserId, // ID dinâmico do usuário logado
         pageId: currentPageId, // ID dinâmico da página/terrário
-        date: registroData,    // Coluna C da sua planilha
-        event: type,           // Coluna D (Feeding, weighting, Shedding, Length)
-        value: val             // Coluna E (O valor numérico registrado)
+        date: date,    // Coluna C da sua planilha
+        registerType: registerType,           // Coluna D (Feeding, weighting, Shedding, Length)
+        value: value             // Coluna E (O valor numérico registrado)
     };
 
     try {
@@ -596,7 +592,7 @@ async function sendToCloud(type, inputId) {
         });
 
         // Feedback visual para o usuário
-        alert(`${type} registrado com sucesso na BioData!`);
+        alert(`${registerType} registrado com sucesso na BioData!`);
         
         // Limpa o campo de entrada após o envio bem-sucedido
         document.getElementById(inputId).value = "";
