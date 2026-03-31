@@ -458,36 +458,33 @@
         return;
     }
 
-    // Formatação da data atual (MM/DD/YYYY para o Excel entender como data)
     const today = new Date();
     const dateStr = `${today.getMonth() + 1}/${today.getDate()}/${today.getFullYear()}`;
 
-    // Payload estruturado conforme o script do Google espera
+    // Criamos o objeto de dados explicitamente
     const payload = {
         pageId: currentPageId,
         date: dateStr,
-        registerType: type, // Ex: "Feeding", "Weighting", etc.
+        registerType: type,
         value: inputValue
     };
 
     try {
-        // Usamos text/plain para evitar problemas de CORS com o Apps Script
+        // Enviamos como POST com o JSON no corpo (body)
         await fetch(SCRIPT_URL, {
             method: 'POST',
             mode: 'no-cors',
-            headers: { 'Content-Type': 'text/plain' },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
 
         alert(`Sucesso: ${type} (${inputValue}) registrado para ${currentPageId}`);
-        inputElement.value = ""; // Limpa o campo
+        inputElement.value = ""; 
         
-        // Atualiza os gráficos após um pequeno delay para o Google processar
         setTimeout(() => loadBiologicalHistory(currentPageId), 1500);
-
+        
     } catch (e) {
         console.error("Erro na sincronização:", e);
-        alert("Erro ao salvar dados.");
     }
 }
 
