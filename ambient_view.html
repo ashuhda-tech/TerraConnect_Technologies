@@ -287,12 +287,12 @@
 <script>
     const urlParams = new URLSearchParams(window.location.search);
     const currentPageId = urlParams.get('id');
+    const currentUserId = urlParams.get('userid'); //Adicionado para ler o userID mas pode dar erro
     const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTeBz5FwvcmPue3hJ6TKwmrNZeMrz2_Su7co-mPuzKj1ZJv--5BBvPjlszF3yyEHOVuEeGT9mmwZqOp/pub?gid=0&single=true&output=csv';
     const EVENTS_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS0Ra5VUE1xSCkCJCXaAObs1wBlUlrhH1YnnQ6e91S4fLT4sh_Nt7ECxaW15EMgS4_yjVcEs0OQECta/pub?gid=0&single=true&output=csv';
     
     let feedingChart, weightChart, sheddingChart, lengthChart;
     let tsReadURL = "";
-    let currentUserId = ""; 
 
     async function loadData() {
         if (!currentPageId) return;
@@ -438,14 +438,19 @@
         return { responsive: true, maintainAspectRatio: false, scales: { y: { grid: { color: 'rgba(31, 41, 55, 0.5)' }, ticks: { color: '#9ca3af' } }, x: { ticks: { color: '#9ca3af' } } }, plugins: { legend: { display: false } } };
     }
 
-    async function sendToCloud(type, inputId) {
-        const val = document.getElementById(inputId).value;
-        if (!val) return alert("Insira um valor.");
+    async function sendToCloud(type, value) {
+    if (!currentUserId || !pageId) {
+        console.error("IDs não definidos. Abortando sincronização.");
+        return;
+    }
 
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxnOcWSHRutBkHc_45tSLOFjowJXMeplk333TmaddrvfWgETljbZZ6shOuwYTIG4AkD/exec"; 
-        const dataRegistro = (type === 'Shedding') ? val : new Date().toLocaleDateString('pt-BR');
-        
-        const payload = { userId: currentUserId, pageId: currentPageId, date: dataRegistro, registerType: type, value: val };
+    const payload = {
+        userId: currentUserId,
+        pageId: pageId,
+        date: new Date().toLocaleDateString('en-US'),
+        registerType: type,
+        value: value
+    };
         
         try {
             await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
