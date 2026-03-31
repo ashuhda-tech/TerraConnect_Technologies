@@ -206,34 +206,27 @@
         <div class="management-grid">
             <div class="input-card">
                 <div class="input-header"><i class="fas fa-temperature-high" style="color: #ff5f5f"></i> Max Temp (ºC)</div>
-                
-                                              
-                                              
-                                              
-                                              
-                                              
-                                              
-                                              <div class="input-group">
+                <div class="input-group">
                     <input type="number" id="inMaxTemp" class="input-field" placeholder="00.0">
                     <button class="btn-send" onclick="sendToDevice('maxTemp', 'inMaxTemp')"><i class="fas fa-paper-plane"></i></button>
                 </div>
             </div>
             <div class="input-card">
-                <div class="input-header"><i class="fas fa-temperature-low"></i> Min Temp (ºC)</div>
+                <div class="input-header"><i class="fas fa-temperature-low"  style="color: #00f2ff"></i> Min Temp (ºC)</div>
                 <div class="input-group">
                     <input type="number" id="inMinTemp" class="input-field" placeholder="00.0">
                     <button class="btn-send" onclick="sendToDevice('minTemp', 'inMinTemp')"><i class="fas fa-paper-plane"></i></button>
                 </div>
             </div>
             <div class="input-card">
-                <div class="input-header"><i class="fas fa-tint"></i> Max Humidity (%)</div>
+                <div class="input-header"><i class="fas fa-wind" style="color: #ff5f5f"></i> Max Humidity (%)</div>
                 <div class="input-group">
                     <input type="number" id="inMaxHum" class="input-field" placeholder="00">
                     <button class="btn-send" onclick="sendToDevice('maxHum', 'inMaxHum')"><i class="fas fa-paper-plane"></i></button>
                 </div>
             </div>
             <div class="input-card">
-                <div class="input-header"><i class="fas fa-cloud-sun"></i> Min Humidity (%)</div>
+                <div class="input-header"><i class="fas fa-wind"  style="color: #00f2ff"></i> Min Humidity (%)</div>
                 <div class="input-group">
                     <input type="number" id="inMinHum" class="input-field" placeholder="00">
                     <button class="btn-send" onclick="sendToDevice('minHum', 'inMinHum')"><i class="fas fa-paper-plane"></i></button>
@@ -241,14 +234,14 @@
             </div>
 
             <div class="input-card">
-                <div class="input-header"><i class="fas fa-drumstick-bite"></i> Add Feeding (g)</div>
+                <div class="input-header"><i class="fas fa-utensils"></i> Add Feeding (g)</div>
                 <div class="input-group">
                     <input type="number" id="inFeed" class="input-field" placeholder="00.0">
                     <button class="btn-send" onclick="sendToCloud('Feeding', 'inFeed')"><i class="fas fa-plus"></i></button>
                 </div>
             </div>
             <div class="input-card">
-                <div class="input-header"><i class="fas fa-history"></i> Add Shedd (Date)</div>
+                <div class="input-header"><i class="fas fa-snake"></i> Add Shedd (Date)</div>
                 <div class="input-group">
                     <input type="date" id="inShed" class="input-field">
                     <button class="btn-send" onclick="sendToCloud('Shedding', 'inShed')"><i class="fas fa-plus"></i></button>
