@@ -290,6 +290,8 @@
     //const currentUserId = urlParams.get('userid');
     const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTeBz5FwvcmPue3hJ6TKwmrNZeMrz2_Su7co-mPuzKj1ZJv--5BBvPjlszF3yyEHOVuEeGT9mmwZqOp/pub?gid=0&single=true&output=csv';
     const EVENTS_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS0Ra5VUE1xSCkCJCXaAObs1wBlUlrhH1YnnQ6e91S4fLT4sh_Nt7ECxaW15EMgS4_yjVcEs0OQECta/pub?gid=0&single=true&output=csv';
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxnOcWSHRutBkHc_45tSLOFjowJXMeplk333TmaddrvfWgETljbZZ6shOuwYTIG4AkD/exec'; // <- ADICIONE ESTA LINHA
+
     
     let feedingChart, weightChart, sheddingChart, lengthChart;
     let tsReadURL = "";
@@ -438,9 +440,18 @@
         return { responsive: true, maintainAspectRatio: false, scales: { y: { grid: { color: 'rgba(31, 41, 55, 0.5)' }, ticks: { color: '#9ca3af' } }, x: { ticks: { color: '#9ca3af' } } }, plugins: { legend: { display: false } } };
     }
 
-    async function sendToCloud(type, value) {
-    if (!currentpageId) {
-        console.error("IDs não definidos. Abortando sincronização.");
+    async function sendToCloud(type, elementId) {
+    // 1. Correção: 'P' maiúsculo na variável
+    if (!currentPageId) {
+        console.error("ID da página não definido. Abortando sincronização.");
+        return;
+    }
+
+    // 2. Correção: Captura o valor que foi digitado na interface
+    const inputValue = document.getElementById(elementId).value;
+
+    if (!inputValue) {
+        alert("Por favor, insira um valor antes de enviar.");
         return;
     }
 
@@ -448,16 +459,27 @@
         pageId: currentPageId,
         date: new Date().toLocaleDateString('en-US'),
         registerType: type,
-        value: value
+        value: inputValue // Agora envia o dado correto (ex: 55.5)
     };
         
-        try {
-            await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-            alert(`${type} enviado!`);
-            document.getElementById(inputId).value = "";
-            loadBiologicalHistory(currentPageId);
-        } catch (e) { console.error(e); }
+    try {
+        await fetch(SCRIPT_URL, { 
+            method: 'POST', 
+            mode: 'no-cors', 
+            headers: { 'Content-Type': 'application/json' }, 
+            body: JSON.stringify(payload) 
+        });
+        
+        alert(`${type} enviado com sucesso!`);
+        
+        // 3. Correção: Limpa o campo referenciando o elementId correto
+        document.getElementById(elementId).value = ""; 
+        
+        loadBiologicalHistory(currentPageId);
+    } catch (e) { 
+        console.error("Erro ao enviar dados:", e); 
     }
+}
 
     // Inicialização ao carregar a página
     document.addEventListener('DOMContentLoaded', () => {
