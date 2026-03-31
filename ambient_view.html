@@ -309,7 +309,6 @@
             const data = rows.find(r => r[1] && r[1].toLowerCase() === currentPageId.toLowerCase());
 
             if (data) {
-                currentUserId = data[0];
                 document.getElementById('dynName').innerText = data[3] || "---";
                 document.getElementById('dynSex').innerText = data[4] || "---";
                 document.getElementById('dynScientific').innerText = data[5] || "---";
@@ -373,27 +372,27 @@
             const res = await fetch(EVENTS_CSV);
             const text = await res.text();
             const rows = parseCSV(text);
-            const events = rows.filter(r => r[1] && r[1].toLowerCase() === id.toLowerCase());
+            const events = rows.filter(r => r[0] && r[0].toLowerCase() === id.toLowerCase());
             
-            const lastFeeding = events.filter(e => e[3] === "Feeding").pop();
-            const lastWeight = events.filter(e => e[3] === "Weighting").pop();
-            const lastLength = events.filter(e => e[3] === "Length").pop();
-            const lastShed = events.filter(e => e[3] === "Shedding").pop();
+            const lastFeeding = events.filter(e => e[2] === "Feeding").pop();
+            const lastWeight = events.filter(e => e[2] === "Weighting").pop();
+            const lastLength = events.filter(e => e[2] === "Length").pop();
+            const lastShed = events.filter(e => e[2] === "Shedding").pop();
 
             if(lastFeeding) {
-                document.getElementById('sumFeedingVal').innerHTML = `${lastFeeding[4]}<span>g</span>`;
-                document.getElementById('sumFeedingDate').innerText = formatDateDisplay(lastFeeding[2]);
+                document.getElementById('sumFeedingVal').innerHTML = `${lastFeeding[3]}<span>g</span>`;
+                document.getElementById('sumFeedingDate').innerText = formatDateDisplay(lastFeeding[1]);
             }
             if(lastWeight) {
-                document.getElementById('sumWeightVal').innerHTML = `${lastWeight[4]}<span>g</span>`;
-                document.getElementById('sumWeightDate').innerText = formatDateDisplay(lastWeight[2]);
+                document.getElementById('sumWeightVal').innerHTML = `${lastWeight[3]}<span>g</span>`;
+                document.getElementById('sumWeightDate').innerText = formatDateDisplay(lastWeight[1]);
             }
             if(lastLength) {
-                document.getElementById('sumLengthVal').innerHTML = `<b>Length:</b> ${lastLength[4]}cm | ${formatDateDisplay(lastLength[2])}`;
+                document.getElementById('sumLengthVal').innerHTML = `<b>Length:</b> ${lastLength[3]}cm | ${formatDateDisplay(lastLength[1])}`;
             }
             if(lastShed) {
-                document.getElementById('sumSheddingInterval').innerHTML = `${lastShed[4] || '--'}<span> Days</span>`; 
-                document.getElementById('sumSheddingDate').innerText = `Last: ${formatDateDisplay(lastShed[2])}`;
+                document.getElementById('sumSheddingInterval').innerHTML = `${lastShed[3] || '--'}<span> Days</span>`; 
+                document.getElementById('sumSheddingDate').innerText = `Last: ${formatDateDisplay(lastShed[1])}`;
             }
 
             renderFeeding(events);
@@ -413,27 +412,27 @@
     // Funções de renderização de gráficos simplificadas para o exemplo
     function renderFeeding(events) { 
         const ctx = document.getElementById('feedingChart').getContext('2d');
-        const data = events.filter(e => e[3] === "Feeding");
+        const data = events.filter(e => e[2] === "Feeding");
         if(feedingChart) feedingChart.destroy();
-        feedingChart = new Chart(ctx, { type: 'line', data: { labels: data.map(e => e[2]), datasets: [{ label: 'Feeding (g)', data: data.map(e => e[4]), borderColor: '#d1b38b', fill: true, backgroundColor: getGradient(ctx, '#d1b38b'), tension: 0.4 }] }, options: commonOptions() });
+        feedingChart = new Chart(ctx, { type: 'line', data: { labels: data.map(e => e[1]), datasets: [{ label: 'Feeding (g)', data: data.map(e => e[3]), borderColor: '#d1b38b', fill: true, backgroundColor: getGradient(ctx, '#d1b38b'), tension: 0.4 }] }, options: commonOptions() });
     }
     function renderWeight(events) {
         const ctx = document.getElementById('weightChart').getContext('2d');
-        const data = events.filter(e => e[3] === "Weighting");
+        const data = events.filter(e => e[2] === "Weighting");
         if(weightChart) weightChart.destroy();
-        weightChart = new Chart(ctx, { type: 'line', data: { labels: data.map(e => e[2]), datasets: [{ label: 'Body (g)', data: data.map(e => e[4]), borderColor: '#d1b38b', fill: true, backgroundColor: getGradient(ctx, '#d1b38b'), tension: 0.4 }] }, options: commonOptions() });
+        weightChart = new Chart(ctx, { type: 'line', data: { labels: data.map(e => e[1]), datasets: [{ label: 'Body (g)', data: data.map(e => e[3]), borderColor: '#d1b38b', fill: true, backgroundColor: getGradient(ctx, '#d1b38b'), tension: 0.4 }] }, options: commonOptions() });
     }
     function renderShedding(events) {
         const ctx = document.getElementById('sheddingChart').getContext('2d');
-        const data = events.filter(e => e[3] === "Shedding");
+        const data = events.filter(e => e[2] === "Shedding");
         if(sheddingChart) sheddingChart.destroy();
-        sheddingChart = new Chart(ctx, { type: 'line', data: { labels: data.map(e => e[2]), datasets: [{ label: 'Days', data: data.map(e => e[4]), borderColor: '#a3b18a', fill: true, backgroundColor: getGradient(ctx, '#a3b18a'), tension: 0.4 }] }, options: commonOptions() });
+        sheddingChart = new Chart(ctx, { type: 'line', data: { labels: data.map(e => e[1]), datasets: [{ label: 'Days', data: data.map(e => e[3]), borderColor: '#a3b18a', fill: true, backgroundColor: getGradient(ctx, '#a3b18a'), tension: 0.4 }] }, options: commonOptions() });
     }
     function renderLength(events) {
         const ctx = document.getElementById('lengthChart').getContext('2d');
-        const data = events.filter(e => e[3] === "Length");
+        const data = events.filter(e => e[2] === "Length");
         if(lengthChart) lengthChart.destroy();
-        lengthChart = new Chart(ctx, { type: 'line', data: { labels: data.map(e => e[2]), datasets: [{ label: 'Length (cm)', data: data.map(e => e[4]), borderColor: '#d1b38b', fill: true, backgroundColor: getGradient(ctx, '#d1b38b'), tension: 0.4 }] }, options: commonOptions() });
+        lengthChart = new Chart(ctx, { type: 'line', data: { labels: data.map(e => e[1]), datasets: [{ label: 'Length (cm)', data: data.map(e => e[3]), borderColor: '#d1b38b', fill: true, backgroundColor: getGradient(ctx, '#d1b38b'), tension: 0.4 }] }, options: commonOptions() });
     }
 
     function commonOptions() {
