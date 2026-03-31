@@ -37,7 +37,9 @@
 
         .btn-back { text-decoration: none; color: var(--accent); border: 1px solid var(--accent); padding: 8px 15px; border-radius: 5px;  font-size: 0.8rem; transition: 0.3s; display: inline-block; margin-bottom: 30px; text-align: center; }
         .btn-back:hover { background: var(--accent); color: var(--bg-dark); }
-
+        .btn-send { background: transparent; border: 1px solid var(--accent); color: var(--accent); border-radius: 5px; padding: 8px 12px; cursor: pointer;  transition: 0.3s; }
+        .btn-send:hover { background: var(--accent); color: var(--bg-dark); }
+        
         .bio-section { text-align: center; margin-bottom: 30px; }
         .animal-photo {  width: 180px; height: 180px;  border-radius: 50%;  border: 3px solid var(--accent);  object-fit: cover;  margin: 0 auto 15px; background: #1a1c20; display: block;  }
 
@@ -45,13 +47,22 @@
         .bio-item b { color: var(--accent); display: block; font-size: 0.75rem; text-transform: uppercase; margin-bottom: 4px; }
         .bio-item span { font-size: 0.9rem; color: var(--text-light); }
 
+        .input-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 15px; display: flex;  flex-direction: column; gap: 10px; }
+        .input-header { display: flex; align-items: center; gap: 8px; color: var(--accent); font-size: 0.7rem; text-transform: uppercase; }
+        .input-group { display: flex; gap: 5px; }
+        .input-field { background: #0d1117; border: 1px solid var(--border); border-radius: 5px; color: var(--text-light); padding: 8px; flex: 1; font-size: 0.9rem; outline: none; }
+        .input-field:focus { border-color: var(--accent); }
+
+        
         /* --- MAIN CONTENT LAYOUT --- */
         .main-content { flex: 1;  padding: 40px;  overflow-y: auto;  background: radial-gradient(circle at top right, #0d1117 0%, #070b14 100%);  }
 
         .main-header { margin-bottom: 40px; }
         .main-header h1 { font-size: 2.5rem; margin: 0; color: var(--accent); }
         .main-header p { color: var(--text-muted); margin: 5px 0 0; }
-
+        /* MANAGEMENT CENTER */
+        .management-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));  gap: 12px;  margin-bottom: 30px;  }
+        
         /* GRID DE 8 CARDS */
         .sensor-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;  margin-bottom: 25px;  }
         /* BIO-SUMMARY CARDS */
@@ -189,8 +200,70 @@
                 <div class="summary-sub-val" id="sumSheddingDate">Last: --- / --- / ----</div>
             </div>
         </div>
-        
 
+        
+        <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-bottom: 15px;">Control Center</h3>
+        <div class="management-grid">
+            <div class="input-card">
+                <div class="input-header"><i class="fas fa-temperature-high"></i> Max Temp (ºC)</div>
+                <div class="input-group">
+                    <input type="number" id="inMaxTemp" class="input-field" placeholder="00.0">
+                    <button class="btn-send" onclick="sendToDevice('maxTemp', 'inMaxTemp')"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
+            <div class="input-card">
+                <div class="input-header"><i class="fas fa-temperature-low"></i> Min Temp (ºC)</div>
+                <div class="input-group">
+                    <input type="number" id="inMinTemp" class="input-field" placeholder="00.0">
+                    <button class="btn-send" onclick="sendToDevice('minTemp', 'inMinTemp')"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
+            <div class="input-card">
+                <div class="input-header"><i class="fas fa-tint"></i> Max Humidity (%)</div>
+                <div class="input-group">
+                    <input type="number" id="inMaxHum" class="input-field" placeholder="00">
+                    <button class="btn-send" onclick="sendToDevice('maxHum', 'inMaxHum')"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
+            <div class="input-card">
+                <div class="input-header"><i class="fas fa-cloud-sun"></i> Min Humidity (%)</div>
+                <div class="input-group">
+                    <input type="number" id="inMinHum" class="input-field" placeholder="00">
+                    <button class="btn-send" onclick="sendToDevice('minHum', 'inMinHum')"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
+
+            <div class="input-card">
+                <div class="input-header"><i class="fas fa-drumstick-bite"></i> Add Feeding (g)</div>
+                <div class="input-group">
+                    <input type="number" id="inFeed" class="input-field" placeholder="00.0">
+                    <button class="btn-send" onclick="sendToCloud('Feeding', 'inFeed')"><i class="fas fa-plus"></i></button>
+                </div>
+            </div>
+            <div class="input-card">
+                <div class="input-header"><i class="fas fa-history"></i> Add Shedd (Date)</div>
+                <div class="input-group">
+                    <input type="date" id="inShed" class="input-field">
+                    <button class="btn-send" onclick="sendToCloud('Shedding', 'inShed')"><i class="fas fa-plus"></i></button>
+                </div>
+            </div>
+            <div class="input-card">
+                <div class="input-header"><i class="fas fa-weight"></i> Add Weighting (g)</div>
+                <div class="input-group">
+                    <input type="number" id="inWeight" class="input-field" placeholder="00.0">
+                    <button class="btn-send" onclick="sendToCloud('Weighting', 'inWeight')"><i class="fas fa-plus"></i></button>
+                </div>
+            </div>
+            <div class="input-card">
+                <div class="input-header"><i class="fas fa-ruler-horizontal"></i> Add Length (cm)</div>
+                <div class="input-group">
+                    <input type="number" id="inLength" class="input-field" placeholder="00">
+                    <button class="btn-send" onclick="sendToCloud('Length', 'inLength')"><i class="fas fa-plus"></i></button>
+                </div>
+            </div>
+        </div>
+
+        
         <div class="charts-section">
             <div class="chart-card">
                 <h3 class="a70-font">Feeding History (g)</h3>
@@ -467,6 +540,66 @@ function parseCSV(data) {
             }
         };
     }
+
+    // 1. Envio para o Hardware (Arduino/ESP32)
+    async function sendToDevice(param, inputId) {
+        const val = document.getElementById(inputId).value;
+        if (!val) return alert("Please enter a value");
+
+        // Substitua pelo IP real do seu ESP32 ou variável de configuração
+        const DEVICE_IP = "192.168.1.100"; 
+        const url = `http://${DEVICE_IP}/config?param=${param}&value=${val}`;
+
+        try {
+            // Usamos mode: 'no-cors' se o Arduino não tiver headers de segurança
+            await fetch(url, { mode: 'no-cors' });
+            alert(`Sent to Device: ${param} = ${val}`);
+        } catch (e) {
+            console.error("Device error:", e);
+            alert("Connection to Device failed. Check IP.");
+        }
+    }
+
+    // 2. Envio para a Planilha (Google Sheets / Eventos)
+async function sendToCloud(type, inputId) {
+        const val = document.getElementById(inputId).value;
+        if (!val) return alert("Por favor, insira um valor.");
+
+        // COLE AQUI O URL QUE VOCÊ COPIOU DO GOOGLE
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxnOcWSHRutBkHc_45tSLOFjowJXMeplk333TmaddrvfWgETljbZZ6shOuwYTIG4AkD/exec"; 
+
+        const payload = {
+            id: currentPageId,
+            date: type === 'Shedding' ? val : new Date().toISOString().split('T')[0],
+            type: type,
+            value: val
+        };
+
+        try {
+            const response = await fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify(payload)
+            });
+            
+            if (response.ok) {
+                alert(`${type} registrado com sucesso na BioData!`);
+                document.getElementById(inputId).value = ""; // Limpa o campo
+                loadBiologicalHistory(currentPageId); // Atualiza os gráficos e cards
+            }
+        } catch (e) {
+            console.error("Erro na sincronização:", e);
+            alert("Erro ao sincronizar com a BioData.");
+        }
+    }
+
+    // Permite disparar o envio ao apertar Enter
+    document.querySelectorAll('.input-field').forEach(input => {
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                input.nextElementSibling.click();
+            }
+        });
+    });
     
     loadData();
 </script>
