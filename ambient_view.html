@@ -287,7 +287,7 @@
 <script>
     const urlParams = new URLSearchParams(window.location.search);
     const currentPageId = urlParams.get('id');
-    const currentUserId = urlParams.get('userid'); //Adicionado para ler o userID mas pode dar erro
+    //const currentUserId = urlParams.get('userid');
     const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTeBz5FwvcmPue3hJ6TKwmrNZeMrz2_Su7co-mPuzKj1ZJv--5BBvPjlszF3yyEHOVuEeGT9mmwZqOp/pub?gid=0&single=true&output=csv';
     const EVENTS_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS0Ra5VUE1xSCkCJCXaAObs1wBlUlrhH1YnnQ6e91S4fLT4sh_Nt7ECxaW15EMgS4_yjVcEs0OQECta/pub?gid=0&single=true&output=csv';
     
@@ -439,14 +439,13 @@
     }
 
     async function sendToCloud(type, value) {
-    if (!currentUserId || !pageId) {
+    if (!currentpageId) {
         console.error("IDs não definidos. Abortando sincronização.");
         return;
     }
 
     const payload = {
-        userId: currentUserId,
-        pageId: pageId,
+        pageId: currentPageId,
         date: new Date().toLocaleDateString('en-US'),
         registerType: type,
         value: value
