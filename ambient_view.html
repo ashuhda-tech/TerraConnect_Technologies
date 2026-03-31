@@ -207,28 +207,28 @@
             <div class="input-card">
                 <div class="input-header"><i class="fas fa-temperature-high" style="color: #ff5f5f"></i> Max Temp (ºC)</div>
                 <div class="input-group">
-                    <input type="number" id="inMaxTemp" class="input-field" placeholder="00.0">
+                    <input type="number" id="inMaxTemp" class="input-field" placeholder="0">
                     <button class="btn-send" onclick="sendToDevice('maxTemp', 'inMaxTemp')"><i class="fas fa-paper-plane"></i></button>
                 </div>
             </div>
             <div class="input-card">
                 <div class="input-header"><i class="fas fa-temperature-low"  style="color: #00f2ff"></i> Min Temp (ºC)</div>
                 <div class="input-group">
-                    <input type="number" id="inMinTemp" class="input-field" placeholder="00.0">
+                    <input type="number" id="inMinTemp" class="input-field" placeholder="0">
                     <button class="btn-send" onclick="sendToDevice('minTemp', 'inMinTemp')"><i class="fas fa-paper-plane"></i></button>
                 </div>
             </div>
             <div class="input-card">
                 <div class="input-header"><i class="fas fa-wind" style="color: #ff5f5f"></i> Max Humidity (%)</div>
                 <div class="input-group">
-                    <input type="number" id="inMaxHum" class="input-field" placeholder="00">
+                    <input type="number" id="inMaxHum" class="input-field" placeholder="0">
                     <button class="btn-send" onclick="sendToDevice('maxHum', 'inMaxHum')"><i class="fas fa-paper-plane"></i></button>
                 </div>
             </div>
             <div class="input-card">
                 <div class="input-header"><i class="fas fa-wind"  style="color: #00f2ff"></i> Min Humidity (%)</div>
                 <div class="input-group">
-                    <input type="number" id="inMinHum" class="input-field" placeholder="00">
+                    <input type="number" id="inMinHum" class="input-field" placeholder="0">
                     <button class="btn-send" onclick="sendToDevice('minHum', 'inMinHum')"><i class="fas fa-paper-plane"></i></button>
                 </div>
             </div>
@@ -236,7 +236,7 @@
             <div class="input-card">
                 <div class="input-header"><i class="fas fa-utensils"></i> Add Feeding (g)</div>
                 <div class="input-group">
-                    <input type="number" id="inFeed" class="input-field" placeholder="00.0">
+                    <input type="number" id="inFeed" class="input-field" placeholder="0">
                     <button class="btn-send" onclick="sendToCloud('Feeding', 'inFeed')"><i class="fas fa-plus"></i></button>
                 </div>
             </div>
@@ -250,14 +250,14 @@
             <div class="input-card">
                 <div class="input-header"><i class="fas fa-weight"></i> Add Weighting (g)</div>
                 <div class="input-group">
-                    <input type="number" id="inWeight" class="input-field" placeholder="00.0">
+                    <input type="number" id="inWeight" class="input-field" placeholder="0">
                     <button class="btn-send" onclick="sendToCloud('Weighting', 'inWeight')"><i class="fas fa-plus"></i></button>
                 </div>
             </div>
             <div class="input-card">
                 <div class="input-header"><i class="fas fa-ruler-horizontal"></i> Add Length (cm)</div>
                 <div class="input-group">
-                    <input type="number" id="inLength" class="input-field" placeholder="00">
+                    <input type="number" id="inLength" class="input-field" placeholder="0">
                     <button class="btn-send" onclick="sendToCloud('Length', 'inLength')"><i class="fas fa-plus"></i></button>
                 </div>
             </div>
@@ -439,48 +439,63 @@
         return { responsive: true, maintainAspectRatio: false, scales: { y: { grid: { color: 'rgba(31, 41, 55, 0.5)' }, ticks: { color: '#9ca3af' } }, x: { ticks: { color: '#9ca3af' } } }, plugins: { legend: { display: false } } };
     }
 
+
+
+
+
+
     async function sendToCloud(type, elementId) {
     if (!currentPageId) {
-        console.error("Erro: PageID não encontrado na URL.");
+        console.error("Erro: PageID não encontrado.");
         return;
     }
 
-    const inputValue = document.getElementById(elementId).value;
+    const inputElement = document.getElementById(elementId);
+    const inputValue = inputElement.value;
+
     if (!inputValue) {
         alert("Por favor, insira um valor.");
         return;
     }
 
-    // Formatação da data atual
+    // Formatação da data atual (MM/DD/YYYY para o Excel entender como data)
     const today = new Date();
     const dateStr = `${today.getMonth() + 1}/${today.getDate()}/${today.getFullYear()}`;
 
-    // Monta os parâmetros na URL para garantir a recepção no Apps Script
-    const params = new URLSearchParams({
+    // Payload estruturado conforme o script do Google espera
+    const payload = {
         pageId: currentPageId,
         date: dateStr,
-        registerType: type,
+        registerType: type, // Ex: "Feeding", "Weighting", etc.
         value: inputValue
-    });
-
-    const finalUrl = `${SCRIPT_URL}?${params.toString()}`;
+    };
 
     try {
-        await fetch(finalUrl, { 
-            method: 'POST', 
-            mode: 'no-cors' 
+        // Usamos text/plain para evitar problemas de CORS com o Apps Script
+        await fetch(SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain' },
+            body: JSON.stringify(payload)
         });
+
+        alert(`Sucesso: ${type} (${inputValue}) registrado para ${currentPageId}`);
+        inputElement.value = ""; // Limpa o campo
         
-        alert(`${type} registrado: ${inputValue}`);
-        document.getElementById(elementId).value = ""; 
-        
-        // Atualiza os gráficos e cards após 1 segundo (tempo do Google atualizar o CSV)
+        // Atualiza os gráficos após um pequeno delay para o Google processar
         setTimeout(() => loadBiologicalHistory(currentPageId), 1500);
-        
-    } catch (e) { 
-        console.error("Erro na sincronização:", e); 
+
+    } catch (e) {
+        console.error("Erro na sincronização:", e);
+        alert("Erro ao salvar dados.");
     }
 }
+
+
+
+
+
+    
 
     // Inicialização ao carregar a página
     document.addEventListener('DOMContentLoaded', () => {
