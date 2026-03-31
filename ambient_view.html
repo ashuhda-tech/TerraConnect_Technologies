@@ -562,35 +562,55 @@ function parseCSV(data) {
 
     // 2. Envio para a Planilha (Google Sheets / Eventos)
 async function sendToCloud(type, inputId) {
-        const val = document.getElementById(inputId).value;
-        if (!val) return alert("Por favor, insira um valor.");
-
-        // COLE AQUI O URL QUE VOCÊ COPIOU DO GOOGLE
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxnOcWSHRutBkHc_45tSLOFjowJXMeplk333TmaddrvfWgETljbZZ6shOuwYTIG4AkD/exec"; 
-
-        const payload = {
-            id: currentPageId,
-            date: type === 'Shedding' ? val : new Date().toISOString().split('T')[0],
-            type: type,
-            value: val
-        };
-
-        try {
-            const response = await fetch(SCRIPT_URL, {
-                method: 'POST',
-                body: JSON.stringify(payload)
-            });
-            
-            if (response.ok) {
-                alert(`${type} registrado com sucesso na BioData!`);
-                document.getElementById(inputId).value = ""; // Limpa o campo
-                loadBiologicalHistory(currentPageId); // Atualiza os gráficos e cards
-            }
-        } catch (e) {
-            console.error("Erro na sincronização:", e);
-            alert("Erro ao sincronizar com a BioData.");
-        }
+    // 1. Captura o valor inserido no campo de input (Peso, Medida, etc)
+    const val = document.getElementById(inputId).value;
+    
+    // Validação básica para evitar envios vazios
+    if (!val) {
+        return alert("Por favor, insira um valor antes de adicionar.");
     }
+    
+// 2. Definição da URL do seu Google Apps Script (Obtida no 'Deploy' da planilha)
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxnOcWSHRutBkHc_45tSLOFjowJXMeplk333TmaddrvfWgETljbZZ6shOuwYTIG4AkD/exec"; 
+// 3. Lógica de Data: 
+    // Se for 'Shedding' (Troca de Pele), usamos a data selecionada no input.
+    // Para os demais, usamos a data atual do sistema no padrão brasileiro.
+    const registroData = (type === 'Shedding') ? val : new Date().toLocaleDateString('pt-BR');
+
+    // 4. Montagem do Payload (Objeto de dados) sem conflitos
+    // Usamos 'date' para o tempo e 'event' para o tipo de registro
+    const payload = {
+        userId: currentUserId, // ID dinâmico do usuário logado
+        pageId: currentPageId, // ID dinâmico da página/terrário
+        date: registroData,    // Coluna C da sua planilha
+        event: type,           // Coluna D (Feeding, weighting, Shedding, Length)
+        value: val             // Coluna E (O valor numérico registrado)
+    };
+
+    try {
+        // Envio dos dados para o Google Apps Script
+        const response = await fetch(SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors', // Utilizado para evitar bloqueios de política de segurança (CORS)
+            body: JSON.stringify(payload)
+        });
+
+        // Feedback visual para o usuário
+        alert(`${type} registrado com sucesso na BioData!`);
+        
+        // Limpa o campo de entrada após o envio bem-sucedido
+        document.getElementById(inputId).value = "";
+        
+        // Opcional: Recarrega o histórico biológico para atualizar os gráficos no dashboard
+        if (typeof loadBiologicalHistory === "function") {
+            loadBiologicalHistory(currentPageId);
+        }
+
+    } catch (e) {
+        console.error("Erro na sincronização com a BioData:", e);
+        alert("Erro técnico ao conectar com a planilha. Verifique o console (F12).");
+    }
+}
 
     // Permite disparar o envio ao apertar Enter
     document.querySelectorAll('.input-field').forEach(input => {
