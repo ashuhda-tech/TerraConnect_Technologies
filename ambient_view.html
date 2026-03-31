@@ -453,7 +453,7 @@
 
     async function sendToCloud(type, elementId) {
     if (!currentPageId) {
-        console.error("Erro: PageID não encontrado na URL.");
+        console.error("Erro: PageID não encontrado.");
         return;
     }
 
@@ -466,28 +466,29 @@
     }
 
     const today = new Date();
-    // Formato MM/DD/YYYY para compatibilidade com o Google Sheets
     const dateStr = `${today.getMonth() + 1}/${today.getDate()}/${today.getFullYear()}`;
 
-    const payload = {
-        pageId: currentUUID || currentPageId, // Usando a variável que existe
+    // --- A MUDANÇA ESTÁ AQUI ---
+    // Criamos as "etiquetas" que vão direto na URL
+    const params = new URLSearchParams({
+        pageId: currentPageId,
         date: dateStr,
         registerType: type,
         value: inputValue
-    };
+    });
+
+    // O link final fica: SCRIPT_URL?pageId=...&date=...
+    const finalUrl = `${SCRIPT_URL}?${params.toString()}`;
 
     try {
-        await fetch(SCRIPT_URL, {
+        await fetch(finalUrl, {
             method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
+            mode: 'no-cors'
         });
 
         alert(`Sucesso: ${type} (${inputValue}) registrado para ${currentPageId}`);
         inputElement.value = ""; 
         
-        // Recarrega os gráficos após o envio
         setTimeout(() => loadBiologicalHistory(currentPageId), 1500);
         
     } catch (e) {
