@@ -452,8 +452,13 @@
 
 
     async function sendToCloud(type, elementId) {
+    // 1. Captura o ID da página diretamente da URL do navegador (?id=...)
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentPageId = urlParams.get('id');
+
     if (!currentPageId) {
-        console.error("Erro: PageID não encontrado.");
+        console.error("Erro: ID da página (PG-...) não encontrado na URL.");
+        alert("Erro: ID do terrário não identificado.");
         return;
     }
 
@@ -468,8 +473,7 @@
     const today = new Date();
     const dateStr = `${today.getMonth() + 1}/${today.getDate()}/${today.getFullYear()}`;
 
-    // --- A MUDANÇA ESTÁ AQUI ---
-    // Criamos as "etiquetas" que vão direto na URL
+    // 2. Monta os parâmetros que serão anexados à URL
     const params = new URLSearchParams({
         pageId: currentPageId,
         date: dateStr,
@@ -477,19 +481,23 @@
         value: inputValue
     });
 
-    // O link final fica: SCRIPT_URL?pageId=...&date=...
+    // 3. O link final fica: SCRIPT_URL?pageId=...&registerType=...
     const finalUrl = `${SCRIPT_URL}?${params.toString()}`;
 
     try {
+        // Usamos GET para evitar que o Google bloqueie os dados internos
         await fetch(finalUrl, {
-            method: 'POST',
+            method: 'GET',
             mode: 'no-cors'
         });
 
         alert(`Sucesso: ${type} (${inputValue}) registrado para ${currentPageId}`);
         inputElement.value = ""; 
         
-        setTimeout(() => loadBiologicalHistory(currentPageId), 1500);
+        // Recarrega o histórico se a função existir
+        if (typeof loadBiologicalHistory === "function") {
+            setTimeout(() => loadBiologicalHistory(currentPageId), 1000);
+        }
         
     } catch (e) {
         console.error("Erro na sincronização:", e);
