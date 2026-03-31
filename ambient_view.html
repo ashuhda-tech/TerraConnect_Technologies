@@ -452,55 +452,38 @@
 
 
     async function sendToCloud(type, elementId) {
-    // 1. Captura o ID da página diretamente da URL do navegador (?id=...)
     const urlParams = new URLSearchParams(window.location.search);
     const currentPageId = urlParams.get('id');
 
     if (!currentPageId) {
-        console.error("Erro: ID da página (PG-...) não encontrado na URL.");
-        alert("Erro: ID do terrário não identificado.");
+        alert("Erro: ID (PG-...) não encontrado na URL do site.");
         return;
     }
 
     const inputElement = document.getElementById(elementId);
     const inputValue = inputElement.value;
 
-    if (!inputValue) {
-        alert("Por favor, insira um valor.");
-        return;
-    }
+    if (!inputValue) return;
 
     const today = new Date();
-    const dateStr = `${today.getMonth() + 1}/${today.getDate()}/${today.getFullYear()}`;
+    const dateStr = (today.getMonth() + 1) + "/" + today.getDate() + "/" + today.getFullYear();
 
-    // 2. Monta os parâmetros que serão anexados à URL
-    const params = new URLSearchParams({
-        pageId: currentPageId,
-        date: dateStr,
-        registerType: type,
-        value: inputValue
-    });
-
-    // 3. O link final fica: SCRIPT_URL?pageId=...&registerType=...
-    const finalUrl = `${SCRIPT_URL}?${params.toString()}`;
+    // Montagem da URL com os dados
+    const finalUrl = `${SCRIPT_URL}?pageId=${encodeURIComponent(currentPageId)}&date=${encodeURIComponent(dateStr)}&registerType=${encodeURIComponent(type)}&value=${encodeURIComponent(inputValue)}`;
 
     try {
-        // Usamos GET para evitar que o Google bloqueie os dados internos
-        await fetch(finalUrl, {
-            method: 'GET',
-            mode: 'no-cors'
-        });
+        // Tentativa de envio
+        await fetch(finalUrl, { method: 'GET', mode: 'no-cors' });
 
-        alert(`Sucesso: ${type} (${inputValue}) registrado para ${currentPageId}`);
-        inputElement.value = ""; 
+        alert(`Sucesso: ${type} registrado!`);
+        inputElement.value = "";
         
-        // Recarrega o histórico se a função existir
         if (typeof loadBiologicalHistory === "function") {
             setTimeout(() => loadBiologicalHistory(currentPageId), 1000);
         }
-        
     } catch (e) {
-        console.error("Erro na sincronização:", e);
+        console.error("Falha no envio:", e);
+        alert("Erro técnico ao enviar para o Excel.");
     }
 }
 
