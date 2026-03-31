@@ -440,43 +440,45 @@
     }
 
     async function sendToCloud(type, elementId) {
-    // 1. Correção: 'P' maiúsculo na variável
     if (!currentPageId) {
-        console.error("ID da página não definido. Abortando sincronização.");
+        console.error("Erro: PageID não encontrado na URL.");
         return;
     }
 
-    // 2. Correção: Captura o valor que foi digitado na interface
     const inputValue = document.getElementById(elementId).value;
-
     if (!inputValue) {
-        alert("Por favor, insira um valor antes de enviar.");
+        alert("Por favor, insira um valor.");
         return;
     }
 
-    const payload = {
+    // Formatação da data atual
+    const today = new Date();
+    const dateStr = `${today.getMonth() + 1}/${today.getDate()}/${today.getFullYear()}`;
+
+    // Monta os parâmetros na URL para garantir a recepção no Apps Script
+    const params = new URLSearchParams({
         pageId: currentPageId,
-        date: new Date().toLocaleDateString('en-US'),
+        date: dateStr,
         registerType: type,
-        value: inputValue // Agora envia o dado correto (ex: 55.5)
-    };
-        
+        value: inputValue
+    });
+
+    const finalUrl = `${SCRIPT_URL}?${params.toString()}`;
+
     try {
-        await fetch(SCRIPT_URL, { 
+        await fetch(finalUrl, { 
             method: 'POST', 
-            mode: 'no-cors', 
-            headers: { 'Content-Type': 'application/json' }, 
-            body: JSON.stringify(payload) 
+            mode: 'no-cors' 
         });
         
-        alert(`${type} enviado com sucesso!`);
-        
-        // 3. Correção: Limpa o campo referenciando o elementId correto
+        alert(`${type} registrado: ${inputValue}`);
         document.getElementById(elementId).value = ""; 
         
-        loadBiologicalHistory(currentPageId);
+        // Atualiza os gráficos e cards após 1 segundo (tempo do Google atualizar o CSV)
+        setTimeout(() => loadBiologicalHistory(currentPageId), 1500);
+        
     } catch (e) { 
-        console.error("Erro ao enviar dados:", e); 
+        console.error("Erro na sincronização:", e); 
     }
 }
 
