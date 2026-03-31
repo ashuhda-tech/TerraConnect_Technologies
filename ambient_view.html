@@ -292,7 +292,7 @@
     
     let feedingChart, weightChart, sheddingChart, lengthChart;
     let tsReadURL = "";
-    let currentUserId = ""; // <-- ADICIONE ESTA LINHA
+    let currentUserId = ""; 
 
     async function loadData() {
         if (!currentPageId) return;
@@ -301,12 +301,10 @@
             const response = await fetch(CSV_URL);
             const csvData = await response.text();
             
-            const rows = csvData.split('\n').map(row => {
-                const pattern = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/;
-                return row.split(pattern).map(cell => cell.replace(/^"|"$/g, '').trim());
-            });
+            const rows = parseCSV(csvData);
 
-            const data = rows.find(r => r[1] === currentPageId);
+            // Ajuste aqui: .toLowerCase() para evitar erros de digitação (Hela vs hela)
+            const data = rows.find(r => r[1] && r[1].toLowerCase() === currentPageId.toLowerCase());
 
             if (data) {
                 currentUserId = data[0];
@@ -317,14 +315,10 @@
                 document.getElementById('dynReg').innerText = data[7] || "---";
                 document.getElementById('dynLoc').innerText = `${data[8]}, ${data[9]}` || "---";
                 document.getElementById('dynChannel').innerText = data[10] || "---";
-               
-
-                // Main Content Data
                 document.getElementById('dynAmbient').innerText = (data[2] || "Ambient").toUpperCase();
                 
-                if (data[12]) document.getElementById('dynPhoto').src = data[13];
+                if (data[13]) document.getElementById('dynPhoto').src = data[13];
 
-                // ThingSpeak Configuration
                 const channelID = data[10];
                 const readKey = data[11];
                 tsReadURL = `https://api.thingspeak.com/channels/${channelID}/feeds.json?api_key=${readKey}&results=24`;
@@ -332,25 +326,23 @@
                 updateSensors();
                 loadBiologicalHistory(currentPageId);
                 setInterval(updateSensors, 20000);
+            } else {
+                document.getElementById('dynAmbient').innerText = "ID NÃO ENCONTRADO";
             }
         } catch (e) { console.error("Database error:", e); }
     }
 
-
-    
-
-           async function updateSensors() {
+    async function updateSensors() {
         if (!tsReadURL) return;
         try {
             const res = await fetch(tsReadURL);
             const json = await res.json();
             const last = json.feeds[json.feeds.length - 1];
 
-            // Atualiza os 8 cards de sensores dinamicamente
             for(let i=1; i<=8; i++) {
                 const val = last[`field${i}`];
                 const el = document.getElementById(`valField${i}`);
-                if (val !== null && el) {
+                if (val !== undefined && val !== null && el) {
                     const unitSpan = el.querySelector('span');
                     const unit = unitSpan ? unitSpan.innerText : "";
                     el.innerHTML = `${parseFloat(val).toFixed(1)}<span>${unit}</span>`;
@@ -359,22 +351,18 @@
         } catch (e) { console.warn("Waiting for telemetry..."); }
     }
 
-
-
-    
-function parseCSV(data) {
+    function parseCSV(data) {
         return data.split('\n').map(row => {
             const pattern = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/;
             return row.split(pattern).map(cell => cell.replace(/^"|"$/g, '').trim());
         });
     }
 
-// Função para formatar data: 15 / MAR / 2026
     function formatDateDisplay(dateStr) {
         if (!dateStr || dateStr === "---") return "--- / --- / ----";
         const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
         const d = new Date(dateStr);
-        if (isNaN(d)) return dateStr; // Fallback caso não seja data válida
+        if (isNaN(d)) return dateStr;
         return `${String(d.getDate()).padStart(2, '0')} / ${months[d.getMonth()]} / ${d.getFullYear()}`;
     }
 
@@ -383,9 +371,8 @@ function parseCSV(data) {
             const res = await fetch(EVENTS_CSV);
             const text = await res.text();
             const rows = parseCSV(text);
-            const events = rows.filter(r => r[1] === id);
+            const events = rows.filter(r => r[1] && r[1].toLowerCase() === id.toLowerCase());
             
-            // Lógica para os Cards de Resumo (Pega o último registro de cada tipo)
             const lastFeeding = events.filter(e => e[3] === "Feeding").pop();
             const lastWeight = events.filter(e => e[3] === "Weighting").pop();
             const lastLength = events.filter(e => e[3] === "Length").pop();
@@ -407,194 +394,78 @@ function parseCSV(data) {
                 document.getElementById('sumSheddingDate').innerText = `Last: ${formatDateDisplay(lastShed[2])}`;
             }
 
-            // Renderiza os gráficos normalmente
             renderFeeding(events);
             renderWeight(events);
             renderShedding(events);
             renderLength(events);
         } catch (e) { console.error("Bio-Summary Error:", e); }
     }
-// Função auxiliar para criar o gradiente minimalista
+
     function getGradient(ctx, color) {
         const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-        gradient.addColorStop(0, color + '33'); // Cor com 20% de opacidade
-        gradient.addColorStop(1, color + '00'); // Transparente
+        gradient.addColorStop(0, color + '33'); 
+        gradient.addColorStop(1, color + '00'); 
         return gradient;
     }
 
-    function renderFeeding(events) {
+    // Funções de renderização de gráficos simplificadas para o exemplo
+    function renderFeeding(events) { 
         const ctx = document.getElementById('feedingChart').getContext('2d');
         const data = events.filter(e => e[3] === "Feeding");
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: data.map(e => e[2]),
-                datasets: [{ 
-                    label: 'Feeding (g)', 
-                    data: data.map(e => e[4]), 
-                    borderColor: '#d1b38b', 
-                    borderWidth: 2,
-                    fill: true, 
-                    backgroundColor: getGradient(ctx, '#d1b38b'),
-                    tension: 0.4,
-                    pointRadius: 2,
-                    pointBackgroundColor: '#d1b38b'
-                }]
-            },
-            options: commonOptions()
-        });
+        if(feedingChart) feedingChart.destroy();
+        feedingChart = new Chart(ctx, { type: 'line', data: { labels: data.map(e => e[2]), datasets: [{ label: 'Feeding (g)', data: data.map(e => e[4]), borderColor: '#d1b38b', fill: true, backgroundColor: getGradient(ctx, '#d1b38b'), tension: 0.4 }] }, options: commonOptions() });
     }
-
     function renderWeight(events) {
         const ctx = document.getElementById('weightChart').getContext('2d');
         const data = events.filter(e => e[3] === "Weighting");
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: data.map(e => e[2]),
-                datasets: [{ 
-                    label: 'Body (g)', 
-                    data: data.map(e => e[4]), 
-                    borderColor: '#d1b38b', 
-                    borderWidth: 2,
-                    fill: true, 
-                    backgroundColor: getGradient(ctx, '#d1b38b'),
-                    tension: 0.4,
-                    pointRadius: 2
-                }]
-            },
-            options: commonOptions()
-        });
+        if(weightChart) weightChart.destroy();
+        weightChart = new Chart(ctx, { type: 'line', data: { labels: data.map(e => e[2]), datasets: [{ label: 'Body (g)', data: data.map(e => e[4]), borderColor: '#d1b38b', fill: true, backgroundColor: getGradient(ctx, '#d1b38b'), tension: 0.4 }] }, options: commonOptions() });
     }
-
     function renderShedding(events) {
         const ctx = document.getElementById('sheddingChart').getContext('2d');
         const data = events.filter(e => e[3] === "Shedding");
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: data.map(e => e[2]),
-                datasets: [{ 
-                    label: 'Days', 
-                    data: data.map(e => e[4]), 
-                    borderColor: '#a3b18a', // Um tom levemente esverdeado para trocas de pele
-                    borderWidth: 2,
-                    fill: true, 
-                    backgroundColor: getGradient(ctx, '#a3b18a'),
-                    tension: 0.4
-                }]
-            },
-            options: commonOptions()
-        });
+        if(sheddingChart) sheddingChart.destroy();
+        sheddingChart = new Chart(ctx, { type: 'line', data: { labels: data.map(e => e[2]), datasets: [{ label: 'Days', data: data.map(e => e[4]), borderColor: '#a3b18a', fill: true, backgroundColor: getGradient(ctx, '#a3b18a'), tension: 0.4 }] }, options: commonOptions() });
     }
-
     function renderLength(events) {
         const ctx = document.getElementById('lengthChart').getContext('2d');
         const data = events.filter(e => e[3] === "Length");
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: data.map(e => e[2]),
-                datasets: [{ 
-                    label: 'Length (cm)', 
-                    data: data.map(e => e[4]), 
-                    borderColor: '#d1b38b', 
-                    borderWidth: 2,
-                    fill: true, 
-                    backgroundColor: getGradient(ctx, '#d1b38b'),
-                    tension: 0.4
-                }]
-            },
-            options: commonOptions()
-        });
+        if(lengthChart) lengthChart.destroy();
+        lengthChart = new Chart(ctx, { type: 'line', data: { labels: data.map(e => e[2]), datasets: [{ label: 'Length (cm)', data: data.map(e => e[4]), borderColor: '#d1b38b', fill: true, backgroundColor: getGradient(ctx, '#d1b38b'), tension: 0.4 }] }, options: commonOptions() });
     }
 
-    
     function commonOptions() {
-        return {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: { 
-                    grid: { color: 'rgba(31, 41, 55, 0.5)', drawBorder: false }, 
-                    ticks: { color: '#9ca3af', font: { size: 10 }, padding: 10 } 
-                },
-                x: { 
-                    grid: { display: false }, 
-                    ticks: { color: '#9ca3af', font: { size: 10 } } 
+        return { responsive: true, maintainAspectRatio: false, scales: { y: { grid: { color: 'rgba(31, 41, 55, 0.5)' }, ticks: { color: '#9ca3af' } }, x: { ticks: { color: '#9ca3af' } } }, plugins: { legend: { display: false } } };
+    }
+
+    async function sendToCloud(type, inputId) {
+        const val = document.getElementById(inputId).value;
+        if (!val) return alert("Insira um valor.");
+
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxnOcWSHRutBkHc_45tSLOFjowJXMeplk333TmaddrvfWgETljbZZ6shOuwYTIG4AkD/exec"; 
+        const dataRegistro = (type === 'Shedding') ? val : new Date().toLocaleDateString('pt-BR');
+        
+        const payload = { userId: currentUserId, pageId: currentPageId, date: dataRegistro, registerType: type, value: val };
+        
+        try {
+            await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+            alert(`${type} enviado!`);
+            document.getElementById(inputId).value = "";
+            loadBiologicalHistory(currentPageId);
+        } catch (e) { console.error(e); }
+    }
+
+    // Inicialização ao carregar a página
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.input-field').forEach(input => {
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    input.nextElementSibling.click();
                 }
-            },
-            plugins: { 
-                legend: { display: false },
-                tooltip: {
-                    backgroundColor: '#161b22',
-                    titleColor: '#d1b38b',
-                    bodyColor: '#f4e9d8',
-                    borderColor: '#1f2937',
-                    borderWidth: 1,
-                    displayColors: false
-                }
-            },
-            interaction: {
-                intersect: false,
-                mode: 'index',
-            }
-        };
-    }
-
-async function sendToCloud(type, inputId) {
-    // 1. Captura o valor do input (ex: peso ou data)
-    const val = document.getElementById(inputId).value;
-    
-    if (!val) {
-        return alert("Por favor, insira um valor antes de adicionar.");
-    }
-
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxnOcWSHRutBkHc_45tSLOFjowJXMeplk333TmaddrvfWgETljbZZ6shOuwYTIG4AkD/exec"; 
-
-    // 2. Define a data do registro (Hoje ou a data da troca de pele)
-    const dataRegistro = (type === 'Shedding') ? val : new Date().toLocaleDateString('pt-BR');
-    
-    // 3. Montagem do Payload com variáveis definidas
-    const payload = {
-        userId: currentUserId,    // Capturado globalmente no loadData()
-        pageId: currentPageId,    // Capturado pela URL
-        date: dataRegistro,       // Variável criada acima
-        registerType: type,       // O parâmetro 'type' passado no clique do botão
-        value: val                // O valor numérico ou data do input
-    };
-    
-// Substitua o bloco do fetch por este:
-try {
-    await fetch(SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors', 
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payload)
-    });
-
-    alert(`${type} enviado com sucesso!`);
-    document.getElementById(inputId).value = "";
-    
-    if (typeof loadBiologicalHistory === "function") {
-        loadBiologicalHistory(currentPageId);
-    }
-} catch (e) {
-    console.error("Erro na sincronização:", e);
-    alert("Erro ao conectar com a planilha.");
-}
-    // Permite disparar o envio ao apertar Enter
-    document.querySelectorAll('.input-field').forEach(input => {
-        input.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                input.nextElementSibling.click();
-            }
+            });
         });
+        loadData();
     });
-    
-    loadData();
 </script>
 </body>
 </html>
