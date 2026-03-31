@@ -563,28 +563,28 @@ async function sendToCloud(type, inputId) {
         registerType: type,       // O parâmetro 'type' passado no clique do botão
         value: val                // O valor numérico ou data do input
     };
+    
+// Substitua o bloco do fetch por este:
+try {
+    await fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors', 
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+    });
 
-    try {
-        await fetch(SCRIPT_URL, {
-            method: 'POST',
-            mode: 'no-cors', // Necessário para Google Scripts
-            body: JSON.stringify(payload)
-        });
-
-        alert(`${type} enviado com sucesso!`);
-        document.getElementById(inputId).value = "";
-        
-        // Recarrega o histórico para atualizar gráficos
-        if (typeof loadBiologicalHistory === "function") {
-            loadBiologicalHistory(currentPageId);
-        }
-
-    } catch (e) {
-        console.error("Erro na sincronização:", e);
-        alert("Erro ao conectar com a planilha BioData.");
+    alert(`${type} enviado com sucesso!`);
+    document.getElementById(inputId).value = "";
+    
+    if (typeof loadBiologicalHistory === "function") {
+        loadBiologicalHistory(currentPageId);
     }
+} catch (e) {
+    console.error("Erro na sincronização:", e);
+    alert("Erro ao conectar com a planilha.");
 }
-
     // Permite disparar o envio ao apertar Enter
     document.querySelectorAll('.input-field').forEach(input => {
         input.addEventListener('keypress', (e) => {
