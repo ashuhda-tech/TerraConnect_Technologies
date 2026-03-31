@@ -541,70 +541,46 @@ function parseCSV(data) {
         };
     }
 
-    // 1. Envio para o Hardware (Arduino/ESP32)
-    async function sendToDevice(param, inputId) {
-        const val = document.getElementById(inputId).value;
-        if (!val) return alert("Please enter a value");
-
-        // Substitua pelo IP real do seu ESP32 ou variável de configuração
-        const DEVICE_IP = "192.168.1.100"; 
-        const url = `http://${DEVICE_IP}/config?param=${param}&value=${val}`;
-
-        try {
-            // Usamos mode: 'no-cors' se o Arduino não tiver headers de segurança
-            await fetch(url, { mode: 'no-cors' });
-            alert(`Sent to Device: ${param} = ${val}`);
-        } catch (e) {
-            console.error("Device error:", e);
-            alert("Connection to Device failed. Check IP.");
-        }
-    }
-
-    // 2. Envio para a Planilha (Google Sheets / Eventos)
 async function sendToCloud(type, inputId) {
-    // 1. Captura o valor inserido no campo de input (Peso, Medida, etc)
+    // 1. Captura o valor do input (ex: peso ou data)
     const val = document.getElementById(inputId).value;
     
-    // Validação básica para evitar envios vazios
     if (!val) {
         return alert("Por favor, insira um valor antes de adicionar.");
     }
-    
-// 2. Definição da URL do seu Google Apps Script (Obtida no 'Deploy' da planilha)
+
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxnOcWSHRutBkHc_45tSLOFjowJXMeplk333TmaddrvfWgETljbZZ6shOuwYTIG4AkD/exec"; 
 
-    // 4. Montagem do Payload (Objeto de dados) sem conflitos
-    // Usamos 'date' para o tempo e 'event' para o tipo de registro
+    // 2. Define a data do registro (Hoje ou a data da troca de pele)
+    const dataRegistro = (type === 'Shedding') ? val : new Date().toLocaleDateString('pt-BR');
+
+    // 3. Montagem do Payload com variáveis definidas
     const payload = {
-        userId: currentUserId, // ID dinâmico do usuário logado
-        pageId: currentPageId, // ID dinâmico da página/terrário
-        date: date,    // Coluna C da sua planilha
-        registerType: registerType,           // Coluna D (Feeding, weighting, Shedding, Length)
-        value: value             // Coluna E (O valor numérico registrado)
+        userId: currentUserId,    // Capturado globalmente no loadData()
+        pageId: currentPageId,    // Capturado pela URL
+        date: dataRegistro,       // Variável criada acima
+        registerType: type,       // O parâmetro 'type' passado no clique do botão
+        value: val                // O valor numérico ou data do input
     };
 
     try {
-        // Envio dos dados para o Google Apps Script
-        const response = await fetch(SCRIPT_URL, {
+        await fetch(SCRIPT_URL, {
             method: 'POST',
-            mode: 'no-cors', // Utilizado para evitar bloqueios de política de segurança (CORS)
+            mode: 'no-cors', // Necessário para Google Scripts
             body: JSON.stringify(payload)
         });
 
-        // Feedback visual para o usuário
-        alert(`${registerType} registrado com sucesso na BioData!`);
-        
-        // Limpa o campo de entrada após o envio bem-sucedido
+        alert(`${type} enviado com sucesso!`);
         document.getElementById(inputId).value = "";
         
-        // Opcional: Recarrega o histórico biológico para atualizar os gráficos no dashboard
+        // Recarrega o histórico para atualizar gráficos
         if (typeof loadBiologicalHistory === "function") {
             loadBiologicalHistory(currentPageId);
         }
 
     } catch (e) {
-        console.error("Erro na sincronização com a BioData:", e);
-        alert("Erro técnico ao conectar com a planilha. Verifique o console (F12).");
+        console.error("Erro na sincronização:", e);
+        alert("Erro ao conectar com a planilha BioData.");
     }
 }
 
