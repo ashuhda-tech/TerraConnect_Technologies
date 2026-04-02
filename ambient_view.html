@@ -554,10 +554,10 @@ function hideCamOverlay() {
 }
 
     // Supondo que o IP da câmera esteja na 15ª coluna do seu CSV (índice 14)
-const cameraIP = 192.168.1.110:81; 
+const cameraIP = data[14]; 
 if (cameraIP) {
     // Tenta carregar o stream do IP. Geralmente /stream ou /video para ESP32-CAM
-    document.getElementById('cameraStream').src = `http://${cameraIP}/stream`;
+    document.getElementById('cameraStream').src = `http://192.168.1.110:81/stream`;
 } else {
     showCamOverlay(); // Garante animação se não houver IP definido
 }
