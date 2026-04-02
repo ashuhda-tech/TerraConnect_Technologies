@@ -362,6 +362,17 @@
                 
                 if (data[13]) document.getElementById('dynPhoto').src = data[13];
 
+                // --- INÍCIO DO CÓDIGO DA CÂMERA ---
+                // Tenta pegar o IP da Coluna O (data[14]). Se estiver vazio, usa o IP padrão.
+                const camSource = data[14] || "192.168.1.110:81";
+                
+                // Formata a URL (Garante que tenha http:// e /stream)
+                const finalStreamUrl = camSource.startsWith('http') ? camSource : `http://${camSource}/stream`;
+                
+                console.log("Attempting to connect to camera:", finalStreamUrl);
+                document.getElementById('cameraStream').src = finalStreamUrl;
+                // --- FIM DO CÓDIGO DA CÂMERA ---
+
                 const channelID = data[10];
                 const readKey = data[11];
                 tsReadURL = `https://api.thingspeak.com/channels/${channelID}/feeds.json?api_key=${readKey}&results=24`;
@@ -553,14 +564,7 @@ function hideCamOverlay() {
     document.getElementById('camStatusText').style.color = "#a3b18a";
 }
 
-    // Supondo que o IP da câmera esteja na 15ª coluna do seu CSV (índice 14)
-const cameraIP = data[14]; 
-if (cameraIP) {
-    // Tenta carregar o stream do IP. Geralmente /stream ou /video para ESP32-CAM
-    document.getElementById('cameraStream').src = `http://192.168.1.110:81/stream`;
-} else {
-    showCamOverlay(); // Garante animação se não houver IP definido
-}
+
     
 </script>
 </body>
