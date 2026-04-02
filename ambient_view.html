@@ -31,6 +31,7 @@
         }
 
         .a70-font { font-family: 'Cinzel', serif; letter-spacing: 2px; }
+        .animal-photo {  width: 180px; height: 180px;  border-radius: 50%;  border: 3px solid var(--accent);  object-fit: cover;  margin: 0 auto 15px; background: #1a1c20; display: block;  }
 
         /* --- SIDEBAR LAYOUT --- */
         .sidebar {  width: 320px; background-color: var(--sidebar-bg); border-right: 1px solid var(--border);  padding: 25px; display: flex; flex-direction: column;  overflow-y: auto; flex-shrink: 0; }
@@ -41,12 +42,21 @@
         .btn-send:hover { background: var(--accent); color: var(--bg-dark); }
         
         .bio-section { text-align: center; margin-bottom: 30px; }
-        .animal-photo {  width: 180px; height: 180px;  border-radius: 50%;  border: 3px solid var(--accent);  object-fit: cover;  margin: 0 auto 15px; background: #1a1c20; display: block;  }
-
+        
         .bio-info-list { display: flex; flex-direction: column; gap: 20px; text-align: left; }
         .bio-item b { color: var(--accent); display: block; font-size: 0.75rem; text-transform: uppercase; margin-bottom: 4px; }
         .bio-item span { font-size: 0.9rem; color: var(--text-light); }
 
+        /* CAMERA MONITORING CARD */
+        .camera-card { background: #000; border: 1px solid var(--border); border-radius: 15px; margin-top: 20px; position: relative; overflow: hidden; aspect-ratio: 16 / 9; display: flex; align-items: center; justify-content: center; }
+        .camera-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(7, 11, 20, 0.9); z-index: 2; transition: opacity 0.5s; }
+        .camera-stream { width: 100%; height: 100%; object-fit: cover; z-index: 1; }
+        .cam-status-bar { position: absolute; bottom: 0; width: 100%; padding: 10px 20px; background: rgba(0,0,0,0.6); display: flex; justify-content: space-between; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;z-index: 3;}
+
+
+
+
+        
         .input-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 15px; display: flex;  flex-direction: column; gap: 10px; }
         .input-header { display: flex; align-items: center; gap: 8px; color: var(--accent); font-size: 0.7rem; text-transform: uppercase; }
         .input-group { display: flex; gap: 5px; }
@@ -83,16 +93,24 @@
         .sensor-val { font-size: 1.4rem; font-weight: 700; color: var(--text-light); line-height: 1.2; }
         .sensor-val span { font-size: 0.75rem; margin-left: 3px; color: var(--text-muted); }
 
+        /* NO SIGNAL ANIMATION */
+        .signal-lost-icon { font-size: 4rem; color: var(--accent); opacity: 0.6; animation: pulse-glitch 2s infinite; }
+
         /* GRID DE GRÁFICOS */
         .charts-section { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));  gap: 20px; margin-top: 20px; }
         .chart-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 15px; padding: 20px;  height: 320px;  }
         .chart-card h3 { margin: 0 0 15px 0;  font-size: 0.9rem; color: var(--accent);  text-transform: uppercase; }
+
+
+        @keyframes pulse-glitch {
+            0% { transform: scale(1); opacity: 0.6; filter: blur(0px); }
+            50% { transform: scale(1.05); opacity: 0.3; filter: blur(2px); }
+            100% { transform: scale(1); opacity: 0.6; filter: blur(0px); }}
         
         @media (max-width: 900px) {
             body { flex-direction: column; overflow: auto; height: auto; }
             .sidebar { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
-            .main-content { padding: 20px; }
-        }
+            .main-content { padding: 20px; }}
     </style>
 </head>
 <body>
@@ -282,6 +300,23 @@
                 <canvas id="lengthChart"></canvas>
             </div>
         </div>
+
+
+        <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin: 30px 0 15px 0;">Live Monitoring | Camera</h3>
+            <div class="camera-card">
+                <div id="cameraOverlay" class="camera-overlay">
+        <i class="fas fa-snake signal-lost-icon"></i>
+        <p class="a70-font" style="font-size: 0.8rem; margin-top: 15px; color: var(--accent);">SIGNAL LOST - RECONNECTING...</p>
+                </div>
+    
+        <img id="cameraStream" class="camera-stream" src="" onload="hideCamOverlay()" onerror="showCamOverlay()">
+
+            <div class="cam-status-bar">
+            <span id="camStatusText" style="color: #ff5f5f;">Status: Offline</span>
+            <span style="color: var(--text-muted);">Enc: Internal_Main_01</span>
+        </div>
+    </div>
+        
     </main>
 
 <script>
@@ -504,6 +539,29 @@
         });
         loadData();
     });
+
+
+    function showCamOverlay() {
+    document.getElementById('cameraOverlay').style.opacity = "1";
+    document.getElementById('camStatusText').innerText = "Status: Signal Lost";
+    document.getElementById('camStatusText').style.color = "#ff5f5f";
+}
+
+function hideCamOverlay() {
+    document.getElementById('cameraOverlay').style.opacity = "0";
+    document.getElementById('camStatusText').innerText = "Status: Online | Secure Link";
+    document.getElementById('camStatusText').style.color = "#a3b18a";
+}
+
+    // Supondo que o IP da câmera esteja na 15ª coluna do seu CSV (índice 14)
+const cameraIP = data[14]; 
+if (cameraIP) {
+    // Tenta carregar o stream do IP. Geralmente /stream ou /video para ESP32-CAM
+    document.getElementById('cameraStream').src = `http://${cameraIP}/stream`;
+} else {
+    showCamOverlay(); // Garante animação se não houver IP definido
+}
+    
 </script>
 </body>
 </html>
