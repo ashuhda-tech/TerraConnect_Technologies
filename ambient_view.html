@@ -364,7 +364,7 @@
 
                 // --- INÍCIO DO CÓDIGO DA CÂMERA ---
                 // Tenta pegar o IP da Coluna O (data[14]). Se estiver vazio, usa o IP padrão.
-                const camSource = data[14] || "192.168.1.110:81" || "192.168.1.111:81";
+                const camSource = data[14] || "192.168.1.111:81";
                 
                 // Formata a URL (Garante que tenha http:// e /stream)
                 const finalStreamUrl = camSource.startsWith('http') ? camSource : `http://${camSource}/stream`;
