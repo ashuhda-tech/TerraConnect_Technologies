@@ -8,7 +8,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
+        /* TEMAS DEFINIDOS COM BASE NAS IMAGENS */
         :root {
+            /* Padrão (TerraConnect Classic) */
             --bg-dark: #070b14;
             --sidebar-bg: #0d1117;
             --accent: #d1b38b; 
@@ -17,29 +19,71 @@
             --border: #2d3139;
         }
 
-        body {background-color: var(--bg-dark); color: var(--text-light); font-family: 'Inter', sans-serif;margin: 0; display: flex; height: 100vh; overflow: hidden;}
+        [data-theme="tech"] {
+            --bg-dark: #000033;
+            --sidebar-bg: #000055;
+            --accent: #00f2ff;
+            --text-light: #e0f7fa;
+            --gray-panel: #0a192f;
+            --border: #112240;
+        }
+
+        [data-theme="playful"] {
+            --bg-dark: #2d5a88;
+            --sidebar-bg: #3b71a5;
+            --accent: #ff7e67;
+            --text-light: #ffffff;
+            --gray-panel: #fdf6e3;
+            --border: #ffb347;
+        }
+
+        [data-theme="minimalist"] {
+            --bg-dark: #1a1a1a;
+            --sidebar-bg: #262626;
+            --accent: #d4af37;
+            --text-light: #e5e5e5;
+            --gray-panel: #333333;
+            --border: #404040;
+        }
+
+        [data-theme="nature"] {
+            --bg-dark: #2b2d24;
+            --sidebar-bg: #344e41;
+            --accent: #a3b18a;
+            --text-light: #dad7cd;
+            --gray-panel: #3a5a40;
+            --border: #588157;
+        }
+
+        body {background-color: var(--bg-dark); color: var(--text-light); font-family: 'Inter', sans-serif; margin: 0; display: flex; height: 100vh; overflow: hidden; transition: 0.5s;}
 
         .a70-font {font-family: 'Cinzel', serif; letter-spacing: 1px;}
 
         /* BARRA LATERAL */
-        .sidebar {width: 300px; background-color: var(--sidebar-bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 20px; box-sizing: border-box;}
+        .sidebar {width: 300px; background-color: var(--sidebar-bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 20px; box-sizing: border-box; transition: 0.3s;}
         .nav-section {flex-grow: 1; display: flex; flex-direction: column; gap: 10px; overflow-y: auto;}
 
-        /* Estilo dos Cards de Ambiente */
+        /* Cards de Ambiente */
         .ambient-card {background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); padding: 12px 15px; border-radius: 4px; display: flex; align-items: center; gap: 15px; cursor: pointer; transition: all 0.3s; text-decoration: none; color: var(--text-light); font-size: 0.85rem;}
         .ambient-card i {font-size: 1.1rem; color: var(--accent); width: 20px; text-align: center;}
         .ambient-card:hover {background: var(--accent); color: var(--bg-dark); transform: translateX(5px);}
         .ambient-card:hover i { color: var(--bg-dark); }
 
-/* Card Especial: ADICIONAR NOVO */
         .add-card {border: 1px dashed var(--accent); background: transparent; opacity: 0.6; margin-top: 10px;}
-        .add-card:hover {opacity: 1; background: rgba(209, 179, 139, 0.1);= color: var(--accent); border-style: solid;}
+        .add-card:hover {opacity: 1; background: rgba(209, 179, 139, 0.1); color: var(--accent); border-style: solid;}
         
         /* BRANDING */
         .brand-logo { text-align: center; margin: 25px 0; border-top: 1px solid var(--border); padding-top: 20px; }
-
         .brand-logo h2 { font-size: 1rem; margin: 0; color: var(--accent); }
         .brand-logo span { font-size: 0.6rem; letter-spacing: 3px; }
+
+        /* THEME SELECTOR CARD */
+        .theme-card { background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 10px; }
+        .theme-card label { font-size: 0.65rem; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; display: block; }
+        .theme-options { display: flex; justify-content: space-between; gap: 5px; }
+        .theme-dot { width: 25px; height: 25px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; transition: 0.3s; }
+        .theme-dot:hover { transform: scale(1.2); }
+        .theme-dot.active { border-color: var(--text-light); }
 
         /* USER CARD */
         .user-card { background: rgba(209, 179, 139, 0.05); border: 1px solid rgba(209, 179, 139, 0.2); padding: 15px; border-radius: 8px; margin-bottom: 20px; }
@@ -47,7 +91,6 @@
         .user-card .name { font-weight: bold; font-size: 0.9rem; margin-top: 5px; display: block; }
         .user-card .id { font-family: monospace; font-size: 0.6rem; color: var(--accent); word-break: break-all; margin-top: 5px; display: block; }
 
-        /* FOOTER SIDEBAR */
         .social-links { display: flex; justify-content: center; gap: 30px; margin-bottom: 20px; }
         .social-links a { color: var(--text-light); font-size: 1.1rem; text-decoration: none; display: flex; flex-direction: column; align-items: center; gap: 5px; }
         .social-links span { font-size: 0.45rem; letter-spacing: 1px; }
@@ -55,9 +98,8 @@
         .btn-exit { background: transparent; border: 1px solid #ef4e4e; color: #ef4e4e; padding: 8px; border-radius: 4px; cursor: pointer; width: 100%; font-size: 0.8rem; transition: 0.3s; }
         .btn-exit:hover { background: #ef4e4e; color: white; }
 
-        /* PAINEL PRINCIPAL (CINZA) */
-        .main-panel { flex-grow: 1; background-color: var(--gray-panel); margin: 20px; border-radius: 40px; display: flex; justify-content: center; align-items: center; border: 1px solid var(--border); }
-
+        /* PAINEL PRINCIPAL */
+        .main-panel { flex-grow: 1; background-color: var(--gray-panel); margin: 20px; border-radius: 40px; display: flex; justify-content: center; align-items: center; border: 1px solid var(--border); transition: 0.5s;}
         .placeholder-content { text-align: center; opacity: 0.25; }
         .placeholder-content i { font-size: 8rem; margin-bottom: 20px; display: block; }
         .placeholder-content p { font-size: 1.2rem; letter-spacing: 2px; margin: 0; }
@@ -65,19 +107,29 @@
 </head>
 <body>
 
-     <div class="sidebar">
-         <div class="nav-section">
-        </div>
+    <div class="sidebar">
+        <div class="nav-section"></div>
          
-         <div class="nav-section-bottom">
+        <div class="nav-section-bottom">
             <a href="register_ambient.html" class="ambient-card add-card a70-font">
-            <i class="fas fa-plus-circle"></i> ADD NEW
+                <i class="fas fa-plus-circle"></i> ADD NEW
             </a>
         </div>
 
         <div class="brand-logo a70-font">
             <h2>TERRACONNECT</h2>
             <span>TECHNOLOGIES</span>
+        </div>
+
+        <div class="theme-card">
+            <label class="a70-font">Setup Appearance</label>
+            <div class="theme-options">
+                <div class="theme-dot" style="background: #d1b38b;" onclick="setTheme('default')" title="Standard"></div>
+                <div class="theme-dot" style="background: #00f2ff;" onclick="setTheme('tech')" title="Tech-savvy"></div>
+                <div class="theme-dot" style="background: #ff7e67;" onclick="setTheme('playful')" title="Playful"></div>
+                <div class="theme-dot" style="background: #a3b18a;" onclick="setTheme('nature')" title="Nature-inspired"></div>
+                <div class="theme-dot" style="background: #404040;" onclick="setTheme('minimalist')" title="Minimalist"></div>
+            </div>
         </div>
 
         <div class="user-card">
@@ -111,44 +163,67 @@
         document.getElementById('userName').innerText = user.name || "User";
         document.getElementById('userId').innerText = `ID: ${user.id}`;
 
-        // URL do seu segundo Excel (o de registros) em formato CSV
-const REGISTRY_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTeBz5FwvcmPue3hJ6TKwmrNZeMrz2_Su7co-mPuzKj1ZJv--5BBvPjlszF3yyEHOVuEeGT9mmwZqOp/pub?gid=0&single=true&output=csv';
+        const REGISTRY_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTeBz5FwvcmPue3hJ6TKwmrNZeMrz2_Su7co-mPuzKj1ZJv--5BBvPjlszF3yyEHOVuEeGT9mmwZqOp/pub?gid=0&single=true&output=csv';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxnOcWSHRutBkHc_45tSLOFjowJXMeplk333TmaddrvfWgETljbZZ6shOuwYTIG4AkD/exec';
+
+        // APLICA O TEMA AO CARREGAR
+        function applyInitialTheme() {
+            const savedTheme = localStorage.getItem(`theme_${user.id}`) || 'default';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        }
+
+        async function setTheme(themeName) {
+            // 1. Aplica visualmente na hora
+            document.documentElement.setAttribute('data-theme', themeName);
+            localStorage.setItem(`theme_${user.id}`, themeName);
+
+            // 2. Salva no Google Sheets (CSV) via seu Script URL existente
+            const finalUrl = `${SCRIPT_URL}?pageId=${encodeURIComponent(user.id)}&registerType=ThemePreference&value=${encodeURIComponent(themeName)}`;
+            
+            try {
+                // Usando mode: no-cors conforme seu código de feeding
+                await fetch(finalUrl, { method: 'GET', mode: 'no-cors' });
+                console.log("Tema salvo no banco de dados:", themeName);
+            } catch (e) {
+                console.warn("Erro ao salvar tema na nuvem, mantendo local.");
+            }
+        }
 
         async function loadUserAmbients() {
-    try {
-        const response = await fetch(REGISTRY_SHEET_URL);
-        const data = await response.text();
-        
-        const rows = data.split('\n').slice(1);
-        const navSection = document.querySelector('.nav-section');
-        
-        // APENAS limpa a seção, sem capturar o outerHTML do botão
-        navSection.innerHTML = ''; 
+            try {
+                const response = await fetch(REGISTRY_SHEET_URL);
+                const data = await response.text();
+                const rows = data.split('\n').slice(1);
+                const navSection = document.querySelector('.nav-section');
+                navSection.innerHTML = ''; 
 
-        rows.forEach(row => {
-            const columns = row.split(',');
-            const dbUserId = columns[0]?.trim();
-            const dbPageId = columns[1]?.trim();
-            const dbName = columns[2]?.trim();
+                rows.forEach(row => {
+                    const columns = row.split(',');
+                    const dbUserId = columns[0]?.trim();
+                    const dbPageId = columns[1]?.trim();
+                    const dbName = columns[2]?.trim();
+                    const dbTheme = columns[15]?.trim(); // Supondo que a coluna do tema seja a 16ª
 
-            if (dbUserId === user.id) {
-                const card = document.createElement('a');
-                card.href = `ambient_view.html?id=${dbPageId}`;
-                card.className = 'ambient-card a70-font';
-                card.innerHTML = `<i class="fas fa-microchip"></i> ${dbName.toUpperCase()}`;
-                navSection.appendChild(card);
+                    if (dbUserId === user.id) {
+                        const card = document.createElement('a');
+                        card.href = `ambient_view.html?id=${dbPageId}`;
+                        card.className = 'ambient-card a70-font';
+                        card.innerHTML = `<i class="fas fa-microchip"></i> ${dbName.toUpperCase()}`;
+                        navSection.appendChild(card);
+                        
+                        // Sincroniza o tema da nuvem com o local se disponível
+                        if(dbTheme && !localStorage.getItem(`theme_${user.id}`)) {
+                            setTheme(dbTheme);
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error("Erro ao carregar ambientes:", error);
             }
-        });
+        }
 
-        // REMOVIDO: navSection.insertAdjacentHTML('beforeend', addCard);
-
-    } catch (error) {
-        console.error("Erro ao carregar ambientes:", error);
-    }
-}
-
-// Chama a função ao carregar a página
-loadUserAmbients();
+        applyInitialTheme();
+        loadUserAmbients();
         
         function logout() {
             localStorage.removeItem('currentUser');
