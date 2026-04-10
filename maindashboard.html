@@ -8,55 +8,26 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* TEMAS DEFINIDOS COM BASE NAS IMAGENS */
-        :root {
-            /* Padrão (TerraConnect Classic) */
-            --bg-dark: #070b14;
-            --sidebar-bg: #0d1117;
-            --accent: #d1b38b; 
-            --text-light: #f4e9d8;
-            --gray-panel: #1e1e1e;
-            --border: #2d3139;
-        }
-
-        [data-theme="tech"] {
-            --bg-dark: #000033;
-            --sidebar-bg: #000055;
-            --accent: #00f2ff;
-            --text-light: #e0f7fa;
-            --gray-panel: #0a192f;
-            --border: #112240;
-        }
-
-        [data-theme="playful"] {
-            --bg-dark: #2d5a88;
-            --sidebar-bg: #3b71a5;
-            --accent: #ff7e67;
-            --text-light: #ffffff;
-            --gray-panel: #fdf6e3;
-            --border: #ffb347;
-        }
-
-        [data-theme="minimalist"] {
-            --bg-dark: #1a1a1a;
-            --sidebar-bg: #262626;
-            --accent: #d4af37;
-            --text-light: #e5e5e5;
-            --gray-panel: #333333;
-            --border: #404040;
-        }
-
-        [data-theme="nature"] {
-            --bg-dark: #2b2d24;
-            --sidebar-bg: #344e41;
-            --accent: #a3b18a;
-            --text-light: #dad7cd;
-            --gray-panel: #3a5a40;
-            --border: #588157;
-        }
+        /* DEFINIÇÃO DE TODOS OS TEMAS COM BASE NAS PALETAS DAS IMAGENS */
+        :root {--bg-dark: #070b14; --sidebar-bg: #0d1117; --accent: #d1b38b; --text-light: #f4e9d8; --gray-panel: #1e1e1e; --border: #2d3139;}
+        /* TECH SAVVY & FUTURISTIC */
+        [data-theme="tech1"] {--bg-dark: #000033; --sidebar-bg: #000055; --accent: #00f2ff; --text-light: #e0f7fa; --gray-panel: #0a192f; --border: #112240;}
+        [data-theme="tech2"] {--bg-dark: #1a1a1d; --sidebar-bg: #4e4e50; --accent: #ffff00; --text-light: #f5f5f5; --gray-panel: #2e2e2e; --border: #95a5a6;}
+        [data-theme="tech3"] {--bg-dark: #190061; --sidebar-bg: #3500D3; --accent: #ff6bff; --text-light: #d1d8e0; --gray-panel: #240090; --border: #b330be;}
+        /* PLAYFUL & VIBRANT */
+        [data-theme="playful1"] {--bg-dark: #2d5a88; --sidebar-bg: #4a90e2; --accent: #ffa500; --text-light: #ffffff; --gray-panel: #ff6b6b; --border: #ffd93d;}
+        [data-theme="playful2"] {--bg-dark: #4834d4; --sidebar-bg: #686de0; --accent: #7ed6df; --text-light: #ffffff; --gray-panel: #a29bfe; --border: #95afe2;}
+        [data-theme="playful3"] {--bg-dark: #6c5ce7; --sidebar-bg: #a29bfe; --accent: #ff8ed4; --text-light: #f9ebea; --gray-panel: #ff7675; --border: #fdcb6e;}
+        /* MINIMALISTIC & ELEGANT */
+        [data-theme="minimalist1"] {--bg-dark: #000000; --sidebar-bg: #1a1a1a; --accent: #d7ccc8; --text-light: #f5f5f5; --gray-panel: #6d4c41; --border: #e1e8ed;}
+        [data-theme="minimalist2"] {--bg-dark: #333333; --sidebar-bg: #4f4f4f; --accent: #bdb76b; --text-light: #dcdcdc; --gray-panel: #262626; --border: #e6e6fa;}
+        [data-theme="minimalist3"] {--bg-dark: #212121; --sidebar-bg: #404040; --accent: #bdc3c7; --text-light: #ffffff; --gray-panel: #616161; --border: #ff5252;}
+        /* NATURE-INSPIRED */
+        [data-theme="nature1"] {--bg-dark: #2b2d24; --sidebar-bg: #3e3e3e; --accent: #cd853f; --text-light: #dad7cd; --gray-panel: #344e41; --border: #588157;}
+        [data-theme="nature2"] {--bg-dark: #2e8b57; --sidebar-bg: #3a5a40; --accent: #daa520; --text-light: #f5f5dc; --gray-panel: #2b2d24; --border: #ff6347;}
+        [data-theme="nature3"] {--bg-dark: #3b4d7b; --sidebar-bg: #1a2a4d; --accent: #c0c0e0; --text-light: #fef9e7; --gray-panel: #804040; --border: #e6b0aa;}
 
         body {background-color: var(--bg-dark); color: var(--text-light); font-family: 'Inter', sans-serif; margin: 0; display: flex; height: 100vh; overflow: hidden; transition: 0.5s;}
-
         .a70-font {font-family: 'Cinzel', serif; letter-spacing: 1px;}
 
         /* BARRA LATERAL */
@@ -77,12 +48,17 @@
         .brand-logo h2 { font-size: 1rem; margin: 0; color: var(--accent); }
         .brand-logo span { font-size: 0.6rem; letter-spacing: 3px; }
 
-        /* THEME SELECTOR CARD */
+        /* THEME SELECTOR CARD EXPANDIDO */
         .theme-card { background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 10px; }
         .theme-card label { font-size: 0.65rem; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; display: block; }
-        .theme-options { display: flex; justify-content: space-between; gap: 5px; }
-        .theme-dot { width: 25px; height: 25px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; transition: 0.3s; }
-        .theme-dot:hover { transform: scale(1.2); }
+        
+        .theme-group { display: flex; flex-direction: column; gap: 8px; }
+        .theme-row { display: flex; justify-content: space-between; align-items: center; }
+        .theme-row span { font-size: 0.55rem; opacity: 0.7; width: 60px; }
+        .theme-options { display: flex; gap: 8px; flex-grow: 1; justify-content: flex-end; }
+        
+        .theme-dot { width: 18px; height: 18px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; transition: 0.3s; }
+        .theme-dot:hover { transform: scale(1.3); }
         .theme-dot.active { border-color: var(--text-light); }
 
         /* USER CARD */
@@ -123,12 +99,45 @@
 
         <div class="theme-card">
             <label class="a70-font">Setup Appearance</label>
-            <div class="theme-options">
-                <div class="theme-dot" style="background: #d1b38b;" onclick="setTheme('default')" title="Standard"></div>
-                <div class="theme-dot" style="background: #00f2ff;" onclick="setTheme('tech')" title="Tech-savvy"></div>
-                <div class="theme-dot" style="background: #ff7e67;" onclick="setTheme('playful')" title="Playful"></div>
-                <div class="theme-dot" style="background: #a3b18a;" onclick="setTheme('nature')" title="Nature-inspired"></div>
-                <div class="theme-dot" style="background: #404040;" onclick="setTheme('minimalist')" title="Minimalist"></div>
+            <div class="theme-group">
+                <div class="theme-row">
+                    <span>STANDARD</span>
+                    <div class="theme-options">
+                        <div class="theme-dot" style="background: #d1b38b;" onclick="setTheme('default')" title="Classic"></div>
+                    </div>
+                </div>
+                <div class="theme-row">
+                    <span>TECH</span>
+                    <div class="theme-options">
+                        <div class="theme-dot" style="background: #00f2ff;" onclick="setTheme('tech1')" title="Tech 1"></div>
+                        <div class="theme-dot" style="background: #ffff00;" onclick="setTheme('tech2')" title="Tech 2"></div>
+                        <div class="theme-dot" style="background: #ff6bff;" onclick="setTheme('tech3')" title="Tech 3"></div>
+                    </div>
+                </div>
+                <div class="theme-row">
+                    <span>PLAYFUL</span>
+                    <div class="theme-options">
+                        <div class="theme-dot" style="background: #ffa500;" onclick="setTheme('playful1')" title="Playful 1"></div>
+                        <div class="theme-dot" style="background: #7ed6df;" onclick="setTheme('playful2')" title="Playful 2"></div>
+                        <div class="theme-dot" style="background: #ff8ed4;" onclick="setTheme('playful3')" title="Playful 3"></div>
+                    </div>
+                </div>
+                <div class="theme-row">
+                    <span>MINIMAL</span>
+                    <div class="theme-options">
+                        <div class="theme-dot" style="background: #d7ccc8;" onclick="setTheme('minimalist1')" title="Minimalist 1"></div>
+                        <div class="theme-dot" style="background: #bdb76b;" onclick="setTheme('minimalist2')" title="Minimalist 2"></div>
+                        <div class="theme-dot" style="background: #bdc3c7;" onclick="setTheme('minimalist3')" title="Minimalist 3"></div>
+                    </div>
+                </div>
+                <div class="theme-row">
+                    <span>NATURE</span>
+                    <div class="theme-options">
+                        <div class="theme-dot" style="background: #cd853f;" onclick="setTheme('nature1')" title="Nature 1"></div>
+                        <div class="theme-dot" style="background: #2e8b57;" onclick="setTheme('nature2')" title="Nature 2"></div>
+                        <div class="theme-dot" style="background: #804040;" onclick="setTheme('nature3')" title="Nature 3"></div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -166,26 +175,22 @@
         const REGISTRY_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTeBz5FwvcmPue3hJ6TKwmrNZeMrz2_Su7co-mPuzKj1ZJv--5BBvPjlszF3yyEHOVuEeGT9mmwZqOp/pub?gid=0&single=true&output=csv';
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxnOcWSHRutBkHc_45tSLOFjowJXMeplk333TmaddrvfWgETljbZZ6shOuwYTIG4AkD/exec';
 
-        // APLICA O TEMA AO CARREGAR
         function applyInitialTheme() {
             const savedTheme = localStorage.getItem(`theme_${user.id}`) || 'default';
             document.documentElement.setAttribute('data-theme', savedTheme);
         }
 
         async function setTheme(themeName) {
-            // 1. Aplica visualmente na hora
             document.documentElement.setAttribute('data-theme', themeName);
             localStorage.setItem(`theme_${user.id}`, themeName);
 
-            // 2. Salva no Google Sheets (CSV) via seu Script URL existente
             const finalUrl = `${SCRIPT_URL}?pageId=${encodeURIComponent(user.id)}&registerType=ThemePreference&value=${encodeURIComponent(themeName)}`;
             
             try {
-                // Usando mode: no-cors conforme seu código de feeding
                 await fetch(finalUrl, { method: 'GET', mode: 'no-cors' });
-                console.log("Tema salvo no banco de dados:", themeName);
+                console.log("Tema salvo na nuvem:", themeName);
             } catch (e) {
-                console.warn("Erro ao salvar tema na nuvem, mantendo local.");
+                console.warn("Erro ao sincronizar com a nuvem.");
             }
         }
 
@@ -202,7 +207,7 @@
                     const dbUserId = columns[0]?.trim();
                     const dbPageId = columns[1]?.trim();
                     const dbName = columns[2]?.trim();
-                    const dbTheme = columns[15]?.trim(); // Supondo que a coluna do tema seja a 16ª
+                    const dbTheme = columns[15]?.trim(); 
 
                     if (dbUserId === user.id) {
                         const card = document.createElement('a');
@@ -211,7 +216,6 @@
                         card.innerHTML = `<i class="fas fa-microchip"></i> ${dbName.toUpperCase()}`;
                         navSection.appendChild(card);
                         
-                        // Sincroniza o tema da nuvem com o local se disponível
                         if(dbTheme && !localStorage.getItem(`theme_${user.id}`)) {
                             setTheme(dbTheme);
                         }
