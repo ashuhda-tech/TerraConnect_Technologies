@@ -56,7 +56,16 @@
         }
 
         .a70-font { font-family: 'Cinzel', serif; letter-spacing: 2px; }
-        .animal-photo { width: 180px; height: 180px; border-radius: 50%; border: 3px solid var(--accent); object-fit: cover; margin: 0 auto 15px; background: #1a1c20; display: block; }
+        .animal-photo { flex-shrink: 0;
+            width: 200px;
+            height: 200px;
+            border-radius: 10px;
+            overflow: hidden;
+            background: var(--bg-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--border);}
 
         /* --- SIDEBAR LAYOUT --- */
         .sidebar { width: 320px; background-color: var(--sidebar-bg); border-right: 1px solid var(--border); padding: 25px; display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0; transition: 0.5s; }
