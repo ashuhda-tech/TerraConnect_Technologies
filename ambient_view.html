@@ -404,7 +404,11 @@
                 document.getElementById('dynChannel').innerText = data[10] || "---";
                 document.getElementById('dynAmbient').innerText = (data[2] || "Ambient").toUpperCase();
                 
-                if (data[13]) document.getElementById('dynPhoto').src = data[13];
+                // Prioriza a coluna Q (16) sobre a N (13)
+                const photoURL = data[16] ? data[16].trim() : "";
+                const photoBase = data[13] ? data[13].trim() : "";
+                if (photoURL && photoURL !== "" && photoURL !== "undefined") {document.getElementById('dynPhoto').src = photoURL;} 
+                else if (photoBase && photoBase !== "" && photoBase !== "undefined") {document.getElementById('dynPhoto').src = photoBase;}
 
                 let camSource = data[14]; 
                 if (camSource) {
