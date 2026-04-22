@@ -103,6 +103,10 @@
                 <label class="a70-font">TS READ API KEY</label>
                 <input type="text" id="tsRead" placeholder="Read Key">
             </div>
+            <div class="input-group grid-full">
+                <label class="a70-font">IMAGE URL</label>
+                <input type="text" id="photoURL" placeholder="Photo URL">
+            </div>
 
             <div class="input-group grid-full">
                 <label class="a70-font">ANIMAL PHOTO (MAX 1MB)</label>
@@ -188,10 +192,11 @@
                 tsRead: document.getElementById('tsRead').value,
                 tsWrite: document.getElementById('tsWrite').value,
                 photoBase64: photoData,
+                photoURL: document.getElementById('photoURL').value,
                 timestamp: new Date().toLocaleString('pt-BR')
             };
 
-            const scriptURL = 'https://script.google.com/macros/s/AKfycbyz6-BqV6DooYxcfN2JI3zGrpTJXD8pgqtfkStPmX7YfAieJ2FOsVDxWk7u6vTURfk/exec';
+            const scriptURL = 'https://script.google.com/macros/s/AKfycbyoQIMLJ_B1U0JVFv0yMkh81brlvA04H3Gb__emYZPBnQYqzu2hLPr8n_KqtJ3kbLc/exec';
 
             try {
                 // Adicionamos um log para você ver o que está sendo enviado no console (F12)
