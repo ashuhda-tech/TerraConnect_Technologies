@@ -12,7 +12,6 @@
     <meta property="og:title" content="TerraConnect Technologies">
     <meta property="og:description" content="Environmental Animal IOT Monitoring Center">
     <meta property="og:url" content="https://ashuhda-tech.github.io/TerraConnect_Technologies/">
-
     <meta property="og:image" content="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/TERRACONNECT_LOGOBRAND.png">
 
     <meta name="twitter:card" content="summary_large_image">
@@ -20,8 +19,8 @@
     <meta name="twitter:image" content="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/TERRACONNECT_LOGOBRAND.png">
 
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
         :root {
             --bg-dark: #070b14;
@@ -30,221 +29,208 @@
             --text-light: #f4e9d8;
         }
 
-        body { background-color: var(--bg-dark); color: var(--text-light); font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-
-        .register-container { background: #0d1117; padding: 40px; border: 1px solid var(--border); border-radius: 20px; width: 100%; max-width: 400px; text-align: center; }
+        body { background-color: var(--bg-dark); color: var(--text-light); font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
+        .register-container { background: #0d1117; padding: 40px; border: 1px solid var(--border); border-radius: 20px; width: 100%; max-width: 500px; text-align: center; }
         .a70-font { font-family: 'Cinzel', serif; letter-spacing: 2px; }
         h1 { color: var(--accent); font-size: 1.2rem; margin-bottom: 30px; }
         .input-group { text-align: left; margin-bottom: 20px; }
-        
         label { font-size: 0.7rem; color: var(--accent); display: block; margin-bottom: 8px; }
-        input { width: 100%; padding: 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); color: white; border-radius: 4px; box-sizing: border-box; }
-
+        input { width: 100%; padding: 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); color: white; border-radius: 4px; box-sizing: border-box; font-size: 0.85rem; }
         .info-box { background: rgba(209, 179, 139, 0.05); padding: 10px; border-radius: 4px; font-size: 0.7rem; margin-bottom: 25px; border: 1px solid rgba(209, 179, 139, 0.1); }
-        .btn-save { background: var(--accent); color: var(--bg-dark); border: none; width: 100%; padding: 15px; font-weight: bold; cursor: pointer; border-radius: 4px; transition: 0.3s; }
+        .btn-save { background: var(--accent); color: var(--bg-dark); border: none; width: 100%; padding: 15px; font-weight: bold; cursor: pointer; border-radius: 4px; transition: 0.3s; margin-top: 20px; }
         .btn-save:hover { filter: brightness(1.1); } 
         .btn-back { display: block; margin-top: 15px; color: #9ca3af; text-decoration: none; font-size: 0.8rem; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .grid-full { grid-column: span 2; }
     </style>
 </head>
 <body>
 
-    <div class="register-container" style="max-width: 500px;">
-    <h1 class="a70-font">NEW REGISTRATION</h1>
-    
-    <div class="info-box">
-        <span style="font-size: 0.6rem;">VINCULADO AO ID:</span>
-        <strong id="displayUserId" style="font-size: 0.6rem;">---</strong>
+    <div class="register-container">
+        <h1 class="a70-font">NEW REGISTRATION</h1>
+        
+        <div class="info-box">
+            <span style="font-size: 0.6rem;">VINCULADO AO ID:</span>
+            <strong id="displayUserId" style="font-size: 0.6rem;">---</strong>
+        </div>
+
+        <div class="grid-2">
+            <div class="input-group">
+                <label class="a70-font">AMBIENT NAME</label>
+                <input type="text" id="ambientName" placeholder="Ex: Hela Smarthome">
+            </div>
+            <div class="input-group">
+                <label class="a70-font">ANIMAL NAME</label>
+                <input type="text" id="animalName" placeholder="Ex: Hela">
+            </div>
+            <div class="input-group">
+                <label class="a70-font">SEX</label>
+                <input type="text" id="animalSex" placeholder="Ex: Female">
+            </div>
+            <div class="input-group">
+                <label class="a70-font">SCIENTIFIC NAME</label>
+                <input type="text" id="scientificName" placeholder="Ex: Lampropeltis">
+            </div>
+            <div class="input-group">
+                <label class="a70-font">BIRTH DATE</label>
+                <input type="date" id="birthDate">
+            </div>
+            <div class="input-group">
+                <label class="a70-font">REGISTRATION Nº</label>
+                <input type="text" id="regNumber" placeholder="IBAMA">
+            </div>
+            
+            <div class="input-group grid-full">
+                <label class="a70-font">LOCATION (LAT, LONG)</label>
+                <div style="display: flex; gap: 5px;">
+                    <input type="text" id="location" placeholder="-23.55, -46.63">
+                    <button type="button" onclick="getLocation()" title="Use my current location" 
+                            style="background: var(--accent); border: none; border-radius: 4px; padding: 0 15px; cursor: pointer;">
+                        <i class="fas fa-location-crosshairs" style="color: var(--bg-dark);"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label class="a70-font">THINGSPEAK CHANNEL ID</label>
+                <input type="text" id="channelID" placeholder="Ex: 1234567">
+            </div>
+            <div class="input-group">
+                <label class="a70-font">TS WRITE API KEY</label>
+                <input type="text" id="tsWrite" placeholder="Write Key">
+            </div>
+            <div class="input-group grid-full">
+                <label class="a70-font">TS READ API KEY</label>
+                <input type="text" id="tsRead" placeholder="Read Key">
+            </div>
+
+            <div class="input-group grid-full">
+                <label class="a70-font">ANIMAL PHOTO (MAX 1MB)</label>
+                <input type="file" id="animalPhoto" accept="image/*" style="font-size: 0.7rem; border: none; background: none;">
+                <canvas id="resizeCanvas" style="display:none;"></canvas>
+            </div>
+        </div>
+
+        <button class="btn-save a70-font" onclick="processRegistration()">COMPLETE REGISTRATION</button>
+        <a href="maindashboard.html" class="btn-back">CANCEL AND BACK</a>
     </div>
 
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; text-align: left;">
-        <div class="input-group">
-            <label class="a70-font">AMBIENT NAME</label>
-            <input type="text" id="ambientName" placeholder="Ex: Hela Smarthome, AI Terrarium">
-        </div>
-        <div class="input-group">
-            <label class="a70-font">ANIMAL NAME</label>
-            <input type="text" id="animalName" placeholder="Ex: Hela, Tommy">
-        </div>
-        <div class="input-group">
-            <label class="a70-font">SEX</label>
-            <input type="text" id="animalSex" placeholder="Ex: Male, Female">
-        </div>
-        <div class="input-group">
-            <label class="a70-font">SCIENTIFIC NAME</label>
-            <input type="text" id="scientificName" placeholder="Ex: Lampropeltis getula">
-        </div>
-        <div class="input-group">
-            <label class="a70-font">BIRTH DATE</label>
-            <input type="date" id="birthDate">
-        </div>
-        <div class="input-group">
-            <label class="a70-font">REGISTRATION Nº</label>
-            <input type="text" id="regNumber" placeholder="IBAMA / MAPA">
-        </div>
-        <div class="input-group">
-    <label class="a70-font">LOCATION (LAT/LONG)</label>
-    <div style="display: flex; gap: 5px;">
-        <input type="text" id="location" placeholder="-23.55, -46.63">
-        <button type="button" onclick="getLocation()" title="Use my current location" 
-                style="background: var(--accent); border: none; border-radius: 4px; padding: 0 10px; cursor: pointer;">
-            <i class="fas fa-location-crosshairs" style="color: var(--bg-dark);"></i>
-        </button>
-    </div>
-</div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; grid-column: span 2; margin-top: 10px;">
-    <div class="input-group">
-        <label class="a70-font">THINGSPEAK CHANNEL ID</label>
-        <input type="text" id="channelID" placeholder="Ex: 1234567">
-    </div>
-    <div class="input-group">
-        <label class="a70-font">TS READ API KEY</label>
-        <input type="text" id="tsRead" placeholder="Read Key">
-    </div>
-    <div class="input-group">
-        <label class="a70-font">TS WRITE API KEY</label>
-        <input type="text" id="tsWrite" placeholder="Write Key">
-    </div>
-</div>
-
-    <div class="input-group" style="margin-top: 15px;">
-        <label class="a70-font">ANIMAL PHOTO (MAX 1MB)</label>
-        <input type="file" id="animalPhoto" accept="image/*" style="font-size: 0.7rem; border: none; background: none;">
-        <canvas id="resizeCanvas" style="display:none;"></canvas>
-    </div>
-
-    <button class="btn-save a70-font" style="margin-top: 20px;" onclick="processRegistration()">COMPLETE REGISTRATION</button>
-    <a href="maindashboard.html" class="btn-back">CANCEL AND BACK</a>
-</div>
-
-
-
-
-
-    
     <script>
-        // 1. CARREGAMENTO INICIAL: Recupera o usuário e exibe o ID
-document.addEventListener('DOMContentLoaded', () => {
-    const userData = localStorage.getItem('currentUser');
-    if (!userData) {
-        window.location.href = 'index.html';
-        return;
-    }
-    const user = JSON.parse(userData);
-    // O console confirmou que a propriedade correta é .id
-    document.getElementById('displayUserId').innerText = user.id;
-    window.currentUser = user; 
-});
-
-// 2. FUNÇÃO DE GPS: Preenche o campo de texto automaticamente
-function getLocation() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition((position) => {
-            const lat = position.coords.latitude.toFixed(6);
-            const long = position.coords.longitude.toFixed(6);
-            document.getElementById('location').value = `${lat}, ${long}`;
-        }, (error) => {
-            alert("Erro ao obter localização: " + error.message);
+        document.addEventListener('DOMContentLoaded', () => {
+            const userData = localStorage.getItem('currentUser');
+            if (!userData) {
+                window.location.href = 'index.html';
+                return;
+            }
+            const user = JSON.parse(userData);
+            document.getElementById('displayUserId').innerText = user.id;
+            window.currentUser = user; 
         });
-    } else {
-        alert("GPS não suportado por este navegador.");
-    }
-}
 
-// 3. FUNÇÃO DE REGISTRO: Envia para o Google Sheets
-async function processRegistration() {
-    const user = window.currentUser;
-    if (!user) return alert("Expired session. Please Sign in again.");
-    
-    const fields = {
-        ambientName: document.getElementById('ambientName').value,
-        animalName: document.getElementById('animalName').value,
-        animalSex: document.getElementById('animalSex').value,
-        scientificName: document.getElementById('scientificName').value,
-        birthDate: document.getElementById('birthDate').value,
-        regNumber: document.getElementById('regNumber').value,
-        location: document.getElementById('location').value
-    };
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition((position) => {
+                    const lat = position.coords.latitude.toFixed(6);
+                    const long = position.coords.longitude.toFixed(6);
+                    document.getElementById('location').value = `${lat}, ${long}`;
+                }, (error) => {
+                    alert("Erro ao obter localização: " + error.message);
+                });
+            } else {
+                alert("GPS não suportado.");
+            }
+        }
 
-    if (!fields.ambientName || !fields.animalName) {
-        return alert("Please fill at least Ambient and Animal Name.");
-    }
+        async function processRegistration() {
+            const user = window.currentUser;
+            if (!user) return alert("Sessão expirada.");
 
-    const pageId = 'PG-' + Math.random().toString(36).substr(2, 6).toUpperCase();
-    let photoData = "";
+            // Pegando valores básicos
+            const ambientName = document.getElementById('ambientName').value;
+            const animalName = document.getElementById('animalName').value;
+            const channelID = document.getElementById('channelID').value;
+            const locationRaw = document.getElementById('location').value;
 
-    const fileInput = document.getElementById('animalPhoto');
-    if (fileInput.files[0]) {
-        photoData = await resizeImage(fileInput.files[0]);
-    }
+            // Validação de segurança
+            if (!ambientName || !animalName || !channelID) {
+                return alert("Por favor, preencha Ambient Name, Animal Name e Channel ID.");
+            }
 
-    const payload = {
-        userID: user.id,
-        pageID: 'PG-' + Math.random().toString(36).substr(2, 6).toUpperCase(),
-        ambientName: document.getElementById('ambientName').value,
-        animalName: document.getElementById('animalName').value,
-        animalSex: document.getElementById('animalSex').value,
-        scientificName: document.getElementById('scientificName').value,
-        birthDate: document.getElementById('birthDate').value,
-        regNumber: document.getElementById('regNumber').value,
-        latitude: document.getElementById('lat').value,
-        longitude: document.getElementById('lng').value,
-        // Novos campos adicionados aqui:
-        channelID: document.getElementById('channelID').value,
-        tsRead: document.getElementById('tsRead').value,
-        tsWrite: document.getElementById('tsWrite').value,
-        timestamp: new Date().toLocaleString('pt-BR')
-    };
+            // Tratamento da localização (evita o crash do lat/lng)
+            let lat = "", lng = "";
+            if (locationRaw.includes(',')) {
+                const parts = locationRaw.split(',');
+                lat = parts[0].trim();
+                lng = parts[1].trim();
+            }
 
-    // Validação simples
-    if (!payload.ambientName || !payload.animalName || !payload.channelID) {
-        return alert("Please, Fill the Ambient name and Animal name.");
-    }
+            const pageId = 'PG-' + Math.random().toString(36).substr(2, 6).toUpperCase();
+            
+            // Processamento da foto
+            let photoData = "";
+            const fileInput = document.getElementById('animalPhoto');
+            if (fileInput.files[0]) {
+                photoData = await resizeImage(fileInput.files[0]);
+            }
 
-    // Processamento da foto
-    let photoData = "";
-    const fileInput = document.getElementById('animalPhoto');
-    if (fileInput.files[0]) {
-        photoData = await resizeImage(fileInput.files[0]);
-    }
-    payload.photoBase64 = photoData;
-    
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbyz6-BqV6DooYxcfN2JI3zGrpTJXD8pgqtfkStPmX7YfAieJ2FOsVDxWk7u6vTURfk/exec';
-
-    try {
-        await fetch(scriptURL, {
-            method: 'POST',
-            mode: 'no-cors',
-            body: JSON.stringify(payload)
-        });
-        alert(`SUCCESS!\nPageID: ${pageId} registered.`);
-        window.location.href = 'maindashboard.html';
-    } catch (e) { 
-        alert("Error connecting to database.");
-        console.error(e);
-    }
-}
-
-// 4. FUNÇÃO DE COMPRESSÃO DE IMAGEM
-function resizeImage(file) {
-    return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = (event) => {
-            const img = new Image();
-            img.src = event.target.result;
-            img.onload = () => {
-                const canvas = document.getElementById('resizeCanvas');
-                const MAX_WIDTH = 200; 
-                const scaleSize = MAX_WIDTH / img.width;
-                canvas.width = MAX_WIDTH;
-                canvas.height = img.height * scaleSize;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                resolve(canvas.toDataURL('image/jpeg', 0.7)); 
+            const payload = {
+                userID: user.id,
+                pageID: pageId,
+                ambientName: ambientName,
+                animalName: animalName,
+                animalSex: document.getElementById('animalSex').value,
+                scientificName: document.getElementById('scientificName').value,
+                birthDate: document.getElementById('birthDate').value,
+                regNumber: document.getElementById('regNumber').value,
+                latitude: lat,
+                longitude: lng,
+                channelID: channelID,
+                tsRead: document.getElementById('tsRead').value,
+                tsWrite: document.getElementById('tsWrite').value,
+                photoBase64: photoData,
+                timestamp: new Date().toLocaleString('pt-BR')
             };
-        };
-    });
-}
+
+            const scriptURL = 'https://script.google.com/macros/s/AKfycbyz6-BqV6DooYxcfN2JI3zGrpTJXD8pgqtfkStPmX7YfAieJ2FOsVDxWk7u6vTURfk/exec';
+
+            try {
+                // Adicionamos um log para você ver o que está sendo enviado no console (F12)
+                console.log("Enviando payload:", payload);
+
+                await fetch(scriptURL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: JSON.stringify(payload)
+                });
+
+                alert(`SUCESSO!\nAmbiente ${ambientName} registrado com ID: ${pageId}`);
+                window.location.href = 'maindashboard.html';
+            } catch (e) { 
+                alert("Erro ao conectar com o banco de dados.");
+                console.error("Erro no Fetch:", e);
+            }
+        }
+
+        function resizeImage(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        const canvas = document.getElementById('resizeCanvas');
+                        const MAX_WIDTH = 300; 
+                        const scaleSize = MAX_WIDTH / img.width;
+                        canvas.width = MAX_WIDTH;
+                        canvas.height = img.height * scaleSize;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        resolve(canvas.toDataURL('image/jpeg', 0.7)); 
+                    };
+                };
+            });
+        }
     </script>
 </body>
 </html>
