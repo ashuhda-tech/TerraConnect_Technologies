@@ -99,7 +99,7 @@
                 <label class="a70-font">TS WRITE API KEY</label>
                 <input type="text" id="tsWrite" placeholder="Write Key">
             </div>
-            <div class="input-group grid-full">
+            <div class="input-group">
                 <label class="a70-font">TS READ API KEY</label>
                 <input type="text" id="tsRead" placeholder="Read Key">
             </div>
@@ -113,6 +113,19 @@
                 <input type="file" id="animalPhoto" accept="image/*" style="font-size: 0.7rem; border: none; background: none;">
                 <canvas id="resizeCanvas" style="display:none;"></canvas>
             </div>
+            
+            <div class="info-box">
+            <span style="font-size: 0.6rem;">WIFI CONFIGURATIONS:</span>
+            </div>
+    
+            <div class="input-group">
+                <input type="text" id="wifiSsid" placeholder="Write Wifi Network Name">
+            </div>
+            <div class="input-group grid-full">
+                <label class="a70-font">WIFI PASSWORD</label>
+                <input type="text" id="wifiPassword" placeholder="Wifi Password">
+            </div>
+            
         </div>
 
         <button class="btn-save a70-font" onclick="processRegistration()">COMPLETE REGISTRATION</button>
@@ -191,12 +204,14 @@
                 channelID: channelID,
                 tsRead: document.getElementById('tsRead').value,
                 tsWrite: document.getElementById('tsWrite').value,
+                wifiSsid: document.getElementById('wifiSsid').value,
+                wifiPassword: document.getElementById('wifiPassword').value,
                 photoBase64: photoData,
                 photoURL: document.getElementById('photoURL').value,
                 timestamp: new Date().toLocaleString('pt-BR')
             };
 
-            const scriptURL = 'https://script.google.com/macros/s/AKfycbyoQIMLJ_B1U0JVFv0yMkh81brlvA04H3Gb__emYZPBnQYqzu2hLPr8n_KqtJ3kbLc/exec';
+            const scriptURL = 'https://script.google.com/macros/s/AKfycbw3LbOYDqljAxQ8joYW8yDhwe6lsi7AdFCAoi4HG1iRdglS0k9-fI1Oj2eA12ePc6g/exec';
 
             try {
                 // Adicionamos um log para você ver o que está sendo enviado no console (F12)
