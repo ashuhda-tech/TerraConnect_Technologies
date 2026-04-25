@@ -22,6 +22,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     
     <style>
         /* DEFINIÇÃO DE TODOS OS TEMAS COM BASE NAS PALETAS DAS IMAGENS */
@@ -177,6 +178,14 @@
             <div class="bio-item"><b>Registration</b> <span id="dynReg">---</span></div>
             <div class="bio-item"><b>Coordinates</b> <span id="dynLoc">---</span></div>
             <div class="bio-item"><b>Channel ID</b> <span id="dynChannel">---</span></div>
+        </div>
+
+
+        <hr style="border: 0.5px solid #eee; margin: 20px 0;">
+        <div id="qr-section" style="text-align: center; padding-bottom: 20px;">
+            <h4 style="font-size: 0.9em; color: #555; margin-bottom: 10px;">Configuração do Dispositivo</h4>
+            <div id="qrcode" style="display: flex; justify-content: center;"></div>
+            <p style="font-size: 0.7em; color: #888; margin-top: 10px;">Escaneie para configurar o hardware</p>
         </div>
     </aside>
 
@@ -421,7 +430,9 @@
                 const channelID = data[10];
                 const readKey = data[11];
                 tsReadURL = `https://api.thingspeak.com/channels/${channelID}/feeds.json?api_key=${readKey}&results=24`;
-
+                
+                generateConfigQR(data);  // CHAMADA DO QR CODE AQUI:
+                
                 updateSensors();
                 loadBiologicalHistory(currentPageId);
                 setInterval(updateSensors, 20000);
@@ -449,6 +460,32 @@
             }
         } catch (e) { console.warn("Waiting for telemetry..."); }
     }
+
+    function generateConfigQR(data) {
+    const qrContainer = document.getElementById("qrcode");
+    if (!qrContainer) return; // Garante que o container existe
+    
+    qrContainer.innerHTML = ""; // Limpa o QR anterior
+
+    // Payload baseado nas colunas da imagem:
+    // K(10)=ID, L(11)=Write, M(12)=Read, R(17)=SSID, S(18)=Pass
+    const configPayload = {
+        chid: data[10] || "",
+        tswk: data[11] || "",
+        tsrk: data[12] || "",
+        ssid: data[17] || "",
+        pass: data[18] || ""
+    };
+
+    new QRCode(qrContainer, {
+        text: JSON.stringify(configPayload),
+        width: 150,
+        height: 150,
+        colorDark : "#2c3e50",
+        colorLight : "#ffffff",
+        correctLevel : QRCode.CorrectLevel.M
+    });
+}
 
     function parseCSV(data) {
         return data.split('\n').map(row => {
