@@ -189,6 +189,13 @@
         </div>
     </aside>
 
+
+
+
+
+
+
+    
     <main class="main-content">
         <header class="main-header">
             <h1 id="dynAmbient" class="a70-font">LOADING...</h1>
@@ -254,6 +261,34 @@
             </div>
         </div>
 
+
+        <div id="config-section" style="padding-bottom: 20px;">
+            <h4 style="font-size: 0.9em; color: #555; margin-bottom: 15px; text-align: center;">Environment Active Configuration Input</h4>
+    
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+                <div>
+                    <label style="font-size: 0.7em; color: #888;">MAX Temperature (°C)</label>
+                    <input type="number" id="cfgTempMax" placeholder="Ex: 32.5" style="width: 100%; padding: 5px; border: 1px solid #ccc; border-radius: 4px;">
+                </div>
+                <div>
+                    <label style="font-size: 0.7em; color: #888;">MIN Temperature (°C)</label>
+                    <input type="number" id="cfgTempMin" placeholder="Ex: 24.0" style="width: 100%; padding: 5px; border: 1px solid #ccc; border-radius: 4px;">
+                </div>
+                <div>
+                    <label style="font-size: 0.7em; color: #888;">MAX Humidity (%)</label>
+                    <input type="number" id="cfgHumMax" placeholder="Ex: 80" style="width: 100%; padding: 5px; border: 1px solid #ccc; border-radius: 4px;">
+                </div>
+                <div>
+                    <label style="font-size: 0.7em; color: #888;">MIN Humidity (%)</label>
+                    <input type="number" id="cfgHumMin" placeholder="Ex: 50" style="width: 100%; padding: 5px; border: 1px solid #ccc; border-radius: 4px;">
+                </div>
+            </div>
+
+            <button onclick="sendDeviceConfig()" style="width: 100%; padding: 8px; background-color: var(--accent); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;"> Save and Send Configuration</button>
+        </div>
+        <hr style="border: 0.5px solid #eee; margin: 20px 0;">
+
+        
         <div class="summary-section">
             <div class="summary-card">
                 <div class="summary-title a70-font"><i class="fas fa-utensils"></i> Last Feeding</div>
@@ -377,7 +412,8 @@
     const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTeBz5FwvcmPue3hJ6TKwmrNZeMrz2_Su7co-mPuzKj1ZJv--5BBvPjlszF3yyEHOVuEeGT9mmwZqOp/pub?gid=0&single=true&output=csv';
     const EVENTS_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS0Ra5VUE1xSCkCJCXaAObs1wBlUlrhH1YnnQ6e91S4fLT4sh_Nt7ECxaW15EMgS4_yjVcEs0OQECta/pub?gid=0&single=true&output=csv';
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxnOcWSHRutBkHc_45tSLOFjowJXMeplk333TmaddrvfWgETljbZZ6shOuwYTIG4AkD/exec';
-
+    const CONFIG_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzG2YVem9qG7sEK20lVuRm2Bhjo10dfXRF98mibREbUZnM5obTrb0QrQDJIGi0wFoE/exec";
+    
     let feedingChart, weightChart, sheddingChart, lengthChart;
     let tsReadURL = "";
     let currentUUID = ""; 
@@ -461,6 +497,65 @@
         } catch (e) { console.warn("Waiting for telemetry..."); }
     }
 
+
+    async function sendDeviceConfig() {
+    // 1. Captura os valores digitados
+    const tMax = document.getElementById('cfgTempMax').value;
+    const tMin = document.getElementById('cfgTempMin').value;
+    const hMax = document.getElementById('cfgHumMax').value;
+    const hMin = document.getElementById('cfgHumMin').value;
+
+    // 2. Validação básica
+    if (!tMax || !tMin || !hMax || !hMin) {
+        alert("Please, fill all 4 properties before saving.");
+        return;
+    }
+
+    // 3. Monta o Timestamp no formato local
+    const timestamp = new Date().toLocaleString('pt-BR');
+
+    // 4. Cria o objeto JSON que será enviado ao Google Apps Script
+    // Nota: 'currentPageId' é a variável global que já existe no seu script
+    const payload = {
+        pageId: currentPageId, 
+        maxTemp: tMax,
+        minTemp: tMin,
+        maxHum: hMax,
+        minHum: hMin,
+        timestamp: timestamp
+    };
+
+    // Feedback visual no botão
+    const btn = document.querySelector('#config-section button');
+    const txtOriginal = btn.innerText;
+    btn.innerText = "Registering configuration...";
+
+    try {
+        // 5. Envia os dados para a planilha usando POST
+        await fetch(CONFIG_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors', // Evita bloqueios de CORS do navegador
+            body: JSON.stringify(payload)
+        });
+        
+        alert("Environmental configuration saved with success! \nDevice will download the set new metrics at the next sync.");
+        btn.innerText = txtOriginal;
+        
+        // Opcional: Limpar os campos após o envio
+        document.getElementById('cfgTempMax').value = "";
+        document.getElementById('cfgTempMin').value = "";
+        document.getElementById('cfgHumMax').value = "";
+        document.getElementById('cfgHumMin').value = "";
+
+    } catch (e) {
+        console.error("Error. Was not possible to send the configurations:", e);
+        alert("Technical error to register the configuration.");
+        btn.innerText = txtOriginal;
+    }
+}
+
+
+    
     function generateConfigQR(data) {
     const qrContainer = document.getElementById("qrcode");
     if (!qrContainer) return; // Garante que o container existe
