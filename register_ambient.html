@@ -76,7 +76,7 @@
                 <input type="date" id="birthDate">
             </div>
             <div class="input-group">
-                <label class="a70-font">REGISTRATION Nº</label>
+                <label class="a70-font">REGULATORY REGISTRATION Nº</label>
                 <input type="text" id="regNumber" placeholder="IBAMA">
             </div>
             
@@ -90,19 +90,7 @@
                     </button>
                 </div>
             </div>
-
-            <div class="input-group">
-                <label class="a70-font">THINGSPEAK CHANNEL ID</label>
-                <input type="text" id="channelID" placeholder="Ex: 1234567">
-            </div>
-            <div class="input-group">
-                <label class="a70-font">TS WRITE API KEY</label>
-                <input type="text" id="tsWrite" placeholder="Write Key">
-            </div>
-            <div class="input-group">
-                <label class="a70-font">TS READ API KEY</label>
-                <input type="text" id="tsRead" placeholder="Read Key">
-            </div>
+            
             <div class="input-group grid-full">
                 <label class="a70-font">IMAGE URL</label>
                 <input type="text" id="photoURL" placeholder="https://exemplo.com/foto.jpg">
@@ -113,6 +101,25 @@
                 <input type="file" id="animalPhoto" accept="image/*" style="font-size: 0.7rem; border: none; background: none;">
                 <canvas id="resizeCanvas" style="display:none;"></canvas>
             </div>
+
+
+            <div class="info-box grid-full">
+            <span style="font-size: 0.6rem;">THINGSPEAK CONFIGURATOR FOR SENSOR REGISTRATION</span>
+            </div>
+            
+            <div class="input-group">
+                <label class="a70-font">THINGSPEAK CHANNEL ID</label>
+                <input type="text" id="channelID" placeholder="Ex: 1234567">
+            </div>
+            <div class="input-group grid-full">
+                <label class="a70-font">THINGSPEAK WRITE API KEY</label>
+                <input type="text" id="tsWrite" placeholder="Write Key">
+            </div>
+            <div class="input-group grid-full">
+                <label class="a70-font">THINGSPEAK READ API KEY</label>
+                <input type="text" id="tsRead" placeholder="Read Key">
+            </div>
+
             
             <div class="info-box grid-full">
             <span style="font-size: 0.6rem;">WIFI CONFIGURATOR FOR SENSOR REGISTRATION</span>
