@@ -1,0 +1,20 @@
+{
+  "user_hela_01": {
+    "maxTemp": 32.5,
+    "minTemp": 24.0,
+    "maxHumidity": 80,
+    "minHumidity": 50
+  },
+  "user_test_02": {
+    "maxTemp": 30.0,
+    "minTemp": 22.0,
+    "maxHumidity": 70,
+    "minHumidity": 40
+  },
+  "default": {
+    "maxTemp": 28.0,
+    "minTemp": 20.0,
+    "maxHumidity": 60,
+    "minHumidity": 40
+  }
+}
