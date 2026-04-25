@@ -184,7 +184,7 @@
         <hr style="border: 0.5px solid #eee; margin: 20px 0;">
         <div id="qr-section" style="text-align: center; padding-bottom: 20px;">
             <h4 style="font-size: 0.9em; color: #555; margin-bottom: 10px;">Configuração do Dispositivo</h4>
-            <div id="qrcode" style="display: flex; justify-content: center;"></div>
+           <div id="qrcode" style="display: flex; justify-content: center; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 8px;"></div>
             <p style="font-size: 0.7em; color: #888; margin-top: 10px;">Escaneie para configurar o hardware</p>
         </div>
     </aside>
@@ -467,6 +467,10 @@
     
     qrContainer.innerHTML = ""; // Limpa o QR anterior
 
+        // Captura a cor da variável --accent do CSS em tempo de execução
+    const accentColor = getComputedStyle(document.documentElement)
+                        .getPropertyValue('--accent').trim() || "#2c3e50"; // Fallback para cor escura se falhar
+
     // Payload baseado nas colunas da imagem:
     // K(10)=ID, L(11)=Write, M(12)=Read, R(17)=SSID, S(18)=Pass
     const configPayload = {
@@ -481,8 +485,9 @@
         text: JSON.stringify(configPayload),
         width: 150,
         height: 150,
-        colorDark : "#2c3e50",
-        colorLight : "#ffffff",
+        // Aplicando a cor do tema aqui:
+        colorDark : accentColor,
+        colorLight : "transparent", // Deixa o fundo transparente para combinar com a sidebar
         correctLevel : QRCode.CorrectLevel.M
     });
 }
