@@ -551,13 +551,13 @@
                         .getPropertyValue('--accent').trim() || "#2c3e50"; // Fallback para cor escura se falhar
 
     // Payload baseado nas colunas da imagem:
-    // K(10)=ID, L(11)=Write, M(12)=Read, R(17)=SSID, S(18)=Pass
+    // B(1)=PageID, K(10)=ID, L(11)=Write, M(12)=Read, R(17)=SSID, S(18)=Pass
     const configPayload = {
-        chid: data[10] || "",
-        tswk: data[11] || "",
-        tsrk: data[12] || "",
+        pgid: data[1] || "",
         ssid: data[17] || "",
-        pass: data[18] || ""
+        pass: data[18] || "",
+        chid: data[10] || "",
+        tswk: data[11] || ""
     };
 
     new QRCode(qrContainer, {
