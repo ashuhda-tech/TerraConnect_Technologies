@@ -657,7 +657,7 @@
     }
 
     function commonOptions() {
-        return { responsive: true, maintainAspectRatio: false, scales: { y: { grid: { color: 'rgba(31, 41, 55, 0.5)' }, ticks: { color: '#9ca3af' } }, x: { ticks: { color: '#9ca3af' } } }, plugins: { legend: { display: false } } };
+        return { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, grid: { color: 'rgba(31, 41, 55, 0.5)' }, ticks: { color: '#9ca3af' } }, x: { ticks: { color: '#9ca3af' } } }, plugins: { legend: { display: false } } };
     }
 
     async function sendToCloud(type, elementId) {
