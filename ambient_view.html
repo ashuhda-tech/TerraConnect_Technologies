@@ -553,11 +553,12 @@
     // Payload baseado nas colunas da imagem:
     // B(1)=PageID, K(10)=ID, L(11)=Write, M(12)=Read, R(17)=SSID, S(18)=Pass
     const configPayload = {
-        pgid: data[1] || "",
-        ssid: data[17] || "",
-        pass: data[18] || "",
-        chid: data[10] || "",
-        tswk: data[11] || ""
+        "https://ashuhda-tech.github.io/TerraConnect_Technologies/ambient_view.html?id="data[1]
+        //pgid: data[1] || "",
+        //ssid: data[17] || "",
+        //pass: data[18] || "",
+        //chid: data[10] || "",
+        //tswk: data[11] || ""
     };
 
     new QRCode(qrContainer, {
