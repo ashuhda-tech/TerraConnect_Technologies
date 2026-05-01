@@ -8,22 +8,17 @@
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/TERRACONNECT_LOGO.png">
     <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/TERRACONNECT_LOGO.png">
 
+    <!-- Meta Tags -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="TerraConnect Technologies">
     <meta property="og:description" content="Environmental Animal IOT Monitoring Center">
     <meta property="og:url" content="https://ashuhda-tech.github.io/TerraConnect_Technologies/">
-
     <meta property="og:image" content="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/TERRACONNECT_LOGOBRAND.png">
-
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="TerraConnect Technologies">
-    <meta name="twitter:image" content="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/TERRACONNECT_LOGOBRAND.png">
 
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* --- Custom Font Import --- */
         @font-face {
             font-family: 'A760-Roman-Smc';
             src: url('A760-Roman-Smc Regular.ttf') format('truetype'); 
@@ -32,18 +27,18 @@
         }
 
         :root {
-            --bg-color: #1a1c20;          
-            --card-bg: #070b14;            
-            --card-hover: #111827;        
-            --card-border: #1f2937;       
-            --accent-dark: #d1b38b;       
+            --bg-color: #0a0c10;          
+            --card-bg: rgba(7, 11, 20, 0.85); /* Leve transparência para efeito Glass */
+            --card-hover: rgba(17, 24, 39, 0.9);        
+            --card-border: rgba(31, 41, 55, 0.5);       
+            --accent-dark: #d1b38b;        
             --accent-light: #f4e9d8;      
             --text-main: #f4e9d8;         
             --text-muted: #d1b38b;
             --border-radius: 10px;
             --status-ok: #48bb3a;      
             --status-error: #ef4e4e;   
-            --font-standard: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            --font-standard: 'Inter', sans-serif;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -56,7 +51,41 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            overflow-x: hidden;
+            overflow: hidden; /* Impede scroll causado pelo vídeo */
+        }
+
+        /* --- Video Background Styles --- */
+        .video-bg-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            overflow: hidden;
+        }
+
+        .video-bg-container video {
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+        }
+
+        /* Camada escura para dar contraste ao texto */
+        .video-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6); /* Ajuste a opacidade aqui */
+            z-index: -1;
         }
 
         .container {
@@ -64,6 +93,7 @@
             display: flex;
             justify-content: center;
             padding: 20px;
+            z-index: 1;
         }
 
         .auth-card {
@@ -71,13 +101,14 @@
             border: 1px solid var(--card-border);
             border-radius: var(--border-radius);
             padding: 40px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-            transition: background-color 0.3s ease;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7);
+            transition: all 0.3s ease;
             width: fit-content;
             min-width: 400px;
+            backdrop-filter: blur(10px); /* Efeito de vidro */
         }
 
-        .auth-card:hover { background-color: var(--card-hover); }
+        .auth-card:hover { background-color: var(--card-hover); border-color: var(--accent-dark); }
 
         h1 {
             font-family: 'A760-Roman-Smc', sans-serif;
@@ -102,7 +133,7 @@
         label { font-size: 0.85rem; color: var(--text-muted); }
 
         input {
-            background-color: #111827;
+            background-color: rgba(17, 24, 39, 0.8);
             border: 1px solid var(--card-border);
             border-radius: 6px;
             padding: 12px;
@@ -164,8 +195,18 @@
 </head>
 <body>
 
+<!-- Video Background Structure -->
+<div class="video-bg-container">
+    <video autoplay loop muted playsinline 
+           poster="https://drive.google.com/uc?export=view&id=15LMc8mdm7OXeZQS_lZP6OZizokZ6G63t">
+        <source src="https://drive.google.com/uc?export=download&id=1xkOI2rxn3MFJmziDdNv1QTIZqXFx6F32" type="video/mp4">
+    </video>
+</div>
+<div class="video-overlay"></div>
+
 <div class="container">
     <div class="auth-card">
+        <!-- Seção de Login -->
         <div id="login-section">
             <h1>TerraConnect Technologies</h1>
             <p class="subtitle">Access your sensor hub</p>
@@ -192,6 +233,7 @@
             <p class="footer-link">Don't have an account? <a href="#" onclick="toggleAuth()">Sign up</a></p>
         </div>
 
+        <!-- Seção de Cadastro -->
         <div id="signup-section" class="hidden">
             <h1>Create Account</h1>
             <p class="subtitle">Register for the client portal</p>
@@ -220,34 +262,30 @@
 
 <script>
     const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTLog7uhFw___9q5ossjzRuKZq6VkC3HqgsD52RAd1y5FigIwCqmEyFeLc-_qgS1RAwtlcIhr_zK-nn/pub?gid=0&single=true&output=csv';
-    
-    // ATENÇÃO: Verifique se esta URL termina em /exec
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzFT1YQSMLpJ2zLJQ-bD1JOUzaUJJsRcmCBkpseXd87iGvJXm5Ig7p1gYJf-PmHVwQ/exec';
 
-async function fetchUsers() {
-    try {
-        const response = await fetch(`${CSV_URL}&t=${new Date().getTime()}`);
-        const data = await response.text();
-        const rows = data.split(/\r?\n/).filter(row => row.trim() !== "").slice(1);
-        
-        return rows.map(row => {
-            const col = row.split(',');
-            return { 
-                name: col[0]?.trim(), 
-                email: col[1]?.trim().toLowerCase(), 
-                pass: col[2]?.trim(),
-                id: col[3]?.trim(),
-                // Limpeza: remove qualquer caractere que não seja número do ID do canal
-                channelId: col[4]?.trim().replace(/[^0-9]/g, ''), 
-                // Limpeza: remove espaços extras da chave
-                apiKey: col[5]?.trim().replace(/\s/g, '') 
-            };
-        });
-    } catch (error) {
-        console.error("Erro ao processar usuários:", error);
-        return [];
+    async function fetchUsers() {
+        try {
+            const response = await fetch(`${CSV_URL}&t=${new Date().getTime()}`);
+            const data = await response.text();
+            const rows = data.split(/\r?\n/).filter(row => row.trim() !== "").slice(1);
+            
+            return rows.map(row => {
+                const col = row.split(',');
+                return { 
+                    name: col[0]?.trim(), 
+                    email: col[1]?.trim().toLowerCase(), 
+                    pass: col[2]?.trim(),
+                    id: col[3]?.trim(),
+                    channelId: col[4]?.trim().replace(/[^0-9]/g, ''), 
+                    apiKey: col[5]?.trim().replace(/\s/g, '') 
+                };
+            });
+        } catch (error) {
+            console.error("Erro ao processar usuários:", error);
+            return [];
+        }
     }
-}
 
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -260,15 +298,9 @@ async function fetchUsers() {
         const user = users.find(u => u.email === email && u.pass === pass);
 
         if (user) {
-            // Verifica se o usuário já tem as chaves do ThingSpeak vinculadas
-            if (!user.channelId || !user.apiKey) {
-                console.warn("Atenção: Este usuário ainda não possui um canal ThingSpeak vinculado no Excel.");
-            }
-
             localStorage.setItem('currentUser', JSON.stringify(user));
             msg.innerText = "Sucesso! Entrando...";
             msg.className = "message success";
-            
             setTimeout(() => { window.location.href = 'home.html'; }, 1000);
         } else {
             msg.innerText = "E-mail ou senha inválidos.";
@@ -276,7 +308,6 @@ async function fetchUsers() {
         }
     });
 
-    // Signup Logic (Mantido o padrão anterior)
     document.getElementById('signupForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const msg = document.getElementById('signupMsg');
