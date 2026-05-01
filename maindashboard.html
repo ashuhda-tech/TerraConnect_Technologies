@@ -99,10 +99,11 @@
 }
 
 /* O Fundo (GIF ou Vídeo) */
-        .panel-background { position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    object-fit: cover; /* Preenche sem distorcer */
-    z-index: 1; opacity: 0.6; /* Ajuste a opacidade para não brigar com o texto */
-}
+        .panel-background { position: relative; z-index: 2; text-align: center;  padding: 60px;
+    background: rgba(255, 255, 255, 0.05); /* Branco bem transparente */
+    backdrop-filter: blur(15px);           /* O efeito de desfoque/vidro */
+    -webkit-backdrop-filter: blur(15px);   /* Suporte para Safari */
+    border: 1px solid rgba(255, 255, 255, 0.1);  border-radius: 30px; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8); max-width: 80%;}
 
 /* O Card com Efeito Glassmorphism (Referência: image_577e00.png) */
         .glass-card {  position: relative; z-index: 2; text-align: center;  padding: 60px;
@@ -121,6 +122,19 @@
 </head>
 <body>
 
+
+<!-- Video Background Structure -->
+<div class="video-bg-container">
+    <video autoplay loop muted playsinline 
+           poster="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/b1c4c1f080d96ec1c35ff823176f214b761eb6a6/assets/WALLPAPER_MAINDASHBOARD.png">
+        <source src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/b1c4c1f080d96ec1c35ff823176f214b761eb6a6/assets/VIDEO/RIVER_MAINDASHBOARD.mp4" type="video/mp4">
+        <!-- Fallback Image -->
+        <img src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/b1c4c1f080d96ec1c35ff823176f214b761eb6a6/assets/WALLPAPER_MAINDASHBOARD.png" title="Seu navegador não suporta vídeos.">
+    </video>
+</div>
+<div class="video-overlay"></div>
+    
+    
     <div class="sidebar">
         <div class="nav-section"></div>
          
