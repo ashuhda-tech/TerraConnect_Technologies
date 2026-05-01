@@ -498,7 +498,7 @@
             
             // --- INÍCIO DA LÓGICA DE VÍDEO POR TIPO ---
             
-            // Normaliza para MAIÚSCULO e remove espaços: "snake" vira "SNAKE.MP4"
+            // Normaliza para MAIÚSCULO e remove espaços: "snake" vira "SNAKE.mp4"
             const videoFileName = animalTypeRaw.toUpperCase().trim() + ".mp4";
             const videoBaseURL = "https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/VIDEO/";
             
@@ -506,10 +506,6 @@
             if (videoElement) {
                 const videoSource = videoElement.querySelector('source');
                 videoSource.src = `${videoBaseURL}${videoFileName}`;
-
-                //LOG para verificação de qual link esta sendo gerado para criação do video
-                console.log("Tentando carregar vídeo:", finalVideoPath); // Verifique isso no F12
-                videoSource.src = finalVideoPath;
                 
                 // Recarrega o elemento de vídeo com o novo path
                 videoElement.load(); 
@@ -519,7 +515,6 @@
                     // Fallback: Caso não exista o vídeo do animal, usa o vídeo padrão do Rio
                     videoSource.src = `${videoBaseURL}RIVER_MAINDASHBOARD.mp4`;
                     videoElement.load();
-                    //videoElement.play();
                 });
             }
             // --- FIM DA LÓGICA DE VÍDEO ---
