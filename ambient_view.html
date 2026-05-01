@@ -208,9 +208,8 @@
 <body>
 
     <!-- Vídeo de Fundo Dinâmico -->
-<video autoplay muted loop id="bgVideo" class="background-video">
+<video autoplay muted loop playsinline id="bgVideo" class="background-video">
     <source src="" type="video/mp4">
-    Your browser does not support HTML5 video.
 </video>
 
 
@@ -520,7 +519,7 @@
                     // Fallback: Caso não exista o vídeo do animal, usa o vídeo padrão do Rio
                     videoSource.src = `${videoBaseURL}RIVER_MAINDASHBOARD.mp4`;
                     videoElement.load();
-                    videoElement.play();
+                    //videoElement.play();
                 });
             }
             // --- FIM DA LÓGICA DE VÍDEO ---
