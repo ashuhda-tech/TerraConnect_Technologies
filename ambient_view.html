@@ -558,41 +558,47 @@
         } catch (e) { console.error("Error loading setup CSV:", e); }
     }
 
-    async function sendDeviceConfig() {
-        if (!currentPageId) return alert("Error: Page ID not found.");
+async function sendDeviceConfig() {
+    if (!currentPageId) return alert("Error: Page ID not found.");
 
-        const payload = {
-            pageId: currentPageId, 
-            maxTemp: document.getElementById('cfgTempMax').value,
-            minTemp: document.getElementById('cfgTempMin').value,
-            maxHum: document.getElementById('cfgHumMax').value,
-            minHum: document.getElementById('cfgHumMin').value,
-            timestamp: new Date().toLocaleString('pt-BR')
-        };
+    // 1. Coleta dos valores dos inputs
+    const maxTemp = document.getElementById('cfgTempMax').value;
+    const minTemp = document.getElementById('cfgTempMin').value;
+    const maxHum = document.getElementById('cfgHumMax').value;
+    const minHum = document.getElementById('cfgHumMin').value;
+    const timestamp = new Date().toLocaleString('pt-BR');
 
-        if (!payload.maxTemp || !payload.minTemp || !payload.maxHum || !payload.minHum) {
-            return alert("Please, fill all 4 properties.");
-        }
-
-        const btn = document.querySelector('.btn-send'); // Corrigido seletor
-        const txtOriginal = btn.innerHTML;
-        btn.innerText = "Registering...";
-
-        try {
-            await fetch(CONFIG_SCRIPT_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                cache: 'no-cache',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-            alert("Environmental configuration synced!");
-        } catch (e) {
-            alert("Technical error during sync.");
-        } finally {
-            btn.innerHTML = txtOriginal;
-        }
+    if (!maxTemp || !minTemp || !maxHum || !minHum) {
+        return alert("Please, fill all 4 properties.");
     }
+
+    // 2. Construção da URL com parâmetros (Lógica idêntica ao biodata)
+    const url = `${CONFIG_SCRIPT_URL}?pageId=${encodeURIComponent(currentPageId)}` +
+                `&maxTemp=${encodeURIComponent(maxTemp)}` +
+                `&minTemp=${encodeURIComponent(minTemp)}` +
+                `&maxHum=${encodeURIComponent(maxHum)}` +
+                `&minHum=${encodeURIComponent(minHum)}` +
+                `&timestamp=${encodeURIComponent(timestamp)}`;
+
+    const btn = document.querySelector('.btn-send');
+    const txtOriginal = btn.innerHTML;
+    btn.innerText = "Registering...";
+
+    try {
+        // 3. Chamada via GET
+        await fetch(url, { 
+            method: 'GET', 
+            mode: 'no-cors' 
+        });
+        
+        alert("Environmental configuration synced!");
+    } catch (e) {
+        console.error("Sync error:", e);
+        alert("Technical error during sync.");
+    } finally {
+        btn.innerHTML = txtOriginal;
+    }
+}
 
     
     // --- UTILITÁRIOS E QR CODE ---
