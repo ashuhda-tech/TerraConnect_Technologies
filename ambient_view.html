@@ -559,31 +559,22 @@
     }
 
     async function sendDeviceConfig() {
-        if (!currentPageId) {
-            alert("Error: Page ID not found.");
-            return;
-        }
-
-        const tMax = document.getElementById('cfgTempMax').value;
-        const tMin = document.getElementById('cfgTempMin').value;
-        const hMax = document.getElementById('cfgHumMax').value;
-        const hMin = document.getElementById('cfgHumMin').value;
-
-        if (!tMax || !tMin || !hMax || !hMin) {
-            alert("Please, fill all 4 properties before saving.");
-            return;
-        }
+        if (!currentPageId) return alert("Error: Page ID not found.");
 
         const payload = {
             pageId: currentPageId, 
-            maxTemp: tMax,
-            minTemp: tMin,
-            maxHum: hMax,
-            minHum: hMin,
+            maxTemp: document.getElementById('cfgTempMax').value,
+            minTemp: document.getElementById('cfgTempMin').value,
+            maxHum: document.getElementById('cfgHumMax').value,
+            minHum: document.getElementById('cfgHumMin').value,
             timestamp: new Date().toLocaleString('pt-BR')
         };
 
-        const btn = document.querySelector('.btn-send');
+        if (!payload.maxTemp || !payload.minTemp || !payload.maxHum || !payload.minHum) {
+            return alert("Please, fill all 4 properties.");
+        }
+
+        const btn = document.querySelector('.btn-send'); // Corrigido seletor
         const txtOriginal = btn.innerHTML;
         btn.innerText = "Registering...";
 
@@ -595,17 +586,13 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
-            
-            console.log("Payload sent to Google:", payload);
-            alert("Environmental configuration saved with success!");
-            btn.innerHTML = txtOriginal;
-
+            alert("Environmental configuration synced!");
         } catch (e) {
-            console.error("Transmission error:", e);
-            alert("Technical error to register the configuration.");
+            alert("Technical error during sync.");
+        } finally {
             btn.innerHTML = txtOriginal;
         }
-    }    
+    }
 
     
     // --- UTILITÁRIOS E QR CODE ---
