@@ -47,7 +47,7 @@
 <body>
 
     <div class="register-container">
-        <h1 class="a70-font">REGISTRATION</h1>
+        <h1 class="a70-font" id="mainTitle">REGISTRATION</h1>
         
         <div class="info-box">
             <span style="font-size: 0.6rem;">LINKED TO ID:</span>
@@ -106,7 +106,6 @@
                 <canvas id="resizeCanvas" style="display:none;"></canvas>
             </div>
 
-
             <div class="info-box grid-full">
             <span style="font-size: 0.6rem;">THINGSPEAK CONFIGURATOR FOR SENSOR REGISTRATION</span>
             </div>
@@ -123,7 +122,6 @@
                 <label class="a70-font">THINGSPEAK READ API KEY</label>
                 <input type="text" id="tsRead" placeholder="Read Key">
             </div>
-
             
             <div class="info-box grid-full">
             <span style="font-size: 0.6rem;">WIFI CONFIGURATOR FOR SENSOR REGISTRATION</span>
@@ -140,10 +138,9 @@
             
         </div>
 
-        <button class="btn-save a70-font" onclick="processRegistration()">COMPLETE REGISTRATION</button>
+        <button class="btn-save a70-font" id="btnAction" onclick="processRegistration()">COMPLETE REGISTRATION</button>
         <a href="maindashboard.html" class="btn-back">CANCEL AND BACK</a>
     </div>
-
 
     
     <script>
@@ -177,13 +174,13 @@
             document.getElementById('btnAction').innerText = "UPDATE REGISTRATION";
             document.getElementById('displayUserId').innerText = `EDITING: ${editingPageID}`;
 
-            console.log("Buscando dados para edição...");
+            console.log("Retrieving data for editing...");
 
             try {
-                // Buscamos os dados direto do Google Script via GET
+                // Busca os dados direto do Google Script via GET
                 const response = await fetch(`${scriptURL}?pageID=${editingPageID}`);
                 const data = await response.json();
-
+                
                 if (data) {
                     document.getElementById('ambientName').value = data.ambientName || "";
                     document.getElementById('animalName').value = data.animalName || "";
@@ -199,9 +196,11 @@
                     document.getElementById('tsRead').value = data.tsRead || "";
                     document.getElementById('wifiSsid').value = data.wifiSsid || "";
                     document.getElementById('wifiPassword').value = data.wifiPassword || "";
+                    
+                    console.log("Dados carregados para edição:", editingPageID);
                 }
             } catch (e) {
-                console.error("Error loading existing data:", e);
+                console.error("Erro ao carregar dados para edição:", e);
                 alert("The data could not be loaded for editing. Please check your connection.");
             }
         }
@@ -242,7 +241,8 @@
                 lng = parts[1].trim();
             }
 
-            const pageId = 'PG-' + Math.random().toString(36).substr(2, 6).toUpperCase();
+            // FIX: Mantém o ID original se estiver no modo de edição
+            const pageId = isEditMode ? editingPageID : 'PG-' + Math.random().toString(36).substr(2, 6).toUpperCase();
             
             // Processamento da foto
             let photoData = "";
@@ -284,7 +284,7 @@
                     body: JSON.stringify(payload)
                 });
 
-                alert(`SUCCESS!\nAmbiente ${ambientName} registered with ID: ${pageId}`);
+                alert(`SUCCESS!\nAmbiente ${ambientName} registered/updated with ID: ${pageId}`);
                 window.location.href = 'maindashboard.html';
             } catch (e) { 
                 alert("Error connecting to the database.");
