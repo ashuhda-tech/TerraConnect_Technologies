@@ -21,6 +21,8 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="[https://cdn.jsdelivr.net/npm/chart.js](https://cdn.jsdelivr.net/npm/chart.js)"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     
@@ -46,57 +48,17 @@
 
     * { box-sizing: border-box; }
 
-    body {  
-        background-color: var(--bg-dark);  
-        color: var(--text-light);  
-        font-family: 'Inter', sans-serif;  
-        margin: 0;  
-        display: flex;
-        height: 100vh;
-        overflow: hidden;
-        transition: background 0.5s, color 0.5s;
-    }
+    body {   background-color: var(--bg-dark); color: var(--text-light); font-family: 'Inter', sans-serif;   margin: 0;   display: flex; height: 100vh; overflow: hidden; transition: background 0.5s, color 0.5s;}
 
     /* Estilo para o Vídeo de Fundo */
-    .background-video {
-        position: fixed;
-        right: 0;
-        bottom: 0;
-        min-width: 100%;
-        min-height: 100%;
-        z-index: -1; 
-        object-fit: cover;
-        filter: brightness(0.4); 
-    }
+    .background-video { position: fixed; right: 0; bottom: 0; min-width: 100%; min-height: 100%; z-index: -1; object-fit: cover; filter: brightness(0.4); }
 
     .a70-font { font-family: 'Cinzel', serif; letter-spacing: 2px; }
 
-    .animal-photo { 
-        flex-shrink: 0;
-        width: 200px;
-        height: 200px;
-        border-radius: 10px;
-        overflow: hidden;
-        background: rgba(0,0,0,0.3);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 2px solid var(--border);
-    }
+    .animal-photo {  flex-shrink: 0; width: 200px; height: 200px; border-radius: 10px; overflow: hidden; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; border: 2px solid var(--border);}
 
     /* --- SIDEBAR LAYOUT --- */
-    .sidebar { 
-        width: 320px; 
-        background-color: rgba(13, 17, 23, 0.8) !important; 
-        backdrop-filter: blur(5px);
-        border-right: 1px solid var(--border); 
-        padding: 25px; 
-        display: flex; 
-        flex-direction: column; 
-        overflow-y: auto; 
-        flex-shrink: 0; 
-        transition: 0.5s; 
-    }
+    .sidebar { width: 320px;  background-color: rgba(13, 17, 23, 0.8) !important;  backdrop-filter: blur(5px); border-right: 1px solid var(--border);  padding: 25px; display: flex;  flex-direction: column;  overflow-y: auto; flex-shrink: 0;  transition: 0.5s;  }
 
     .btn-back { text-decoration: none; color: var(--accent); border: 1px solid var(--accent); padding: 8px 15px; border-radius: 5px; font-size: 0.8rem; transition: 0.3s; display: inline-block; margin-bottom: 30px; text-align: center; }
     .btn-back:hover { background: var(--accent); color: var(--bg-dark); }
@@ -420,9 +382,9 @@
         <h2 id="modalChartTitle" class="a70-font">SENSOR CHART</h2>
         <button class="btn-close-modal" onclick="closeChart()">CLOSE [X]</button>
     </div>
-    <div class="chart-iframe-container">
-        <iframe id="tsChartIframe" src=""></iframe>
-    </div>
+        <div class="chart-container" style="position: relative; height:60vh; width:100%">
+            <canvas id="customChart"></canvas>
+        </div>
 </div>
 
 <script>
@@ -438,6 +400,7 @@
     let tsReadURL = "";
     let currentUUID = ""; 
     let channelID = ""; // Declare no topo como global
+    let myChart; // Variável global para destruir o gráfico anterior ao abrir um novo
 
     
     // FUNÇÃO PARA SINCRONIZAR O TEMA DO USUÁRIO
@@ -779,44 +742,58 @@
         document.getElementById('camStatusText').style.color = "#a3b18a";
     }
 
-// Dentro da sua função loadData(), quando você pega o ID do canal:
-// channelID = data[10]; (Certifique-se de salvar o valor aqui)
-function getThemeColor(variableName) {
-    // Pega o valor da variável CSS (ex: "#070b14")
-    const color = getComputedStyle(document.documentElement).getPropertyValue(variableName).trim();
-    // Remove o '#' para o ThingSpeak aceitar (ex: "070b14")
-    return color.replace('#', '');
-}
     
-function openChart(fieldId, label) {
-    if (!channelID) {
-        alert("Channel ID not loaded yet.");
-        return;
-    }
+
+async function openChart(fieldId, label) {
+    if (!channelID) return;
 
     const modal = document.getElementById('chartModal');
-    const iframe = document.getElementById('tsChartIframe');
     const title = document.getElementById('modalChartTitle');
-
-    // Capturamos as cores atuais do tema dinamicamente
-    const bgColor = getThemeColor('--bg-dark');
-    const accentColor = getThemeColor('--accent');
-
-    // Monta a URL do gráfico do ThingSpeak
-    // Ajustamos as cores para combinar com seu tema Dark/Gold
-    const chartUrl = `https://thingspeak.com/channels/${channelID}/charts/${fieldId}?bgcolor=%23${bgColor}&color=%23${accentColor}&dynamic=true&results=8000&type=line&update=15&title=${encodeURIComponent(label)}`;
-
     title.innerText = label.toUpperCase();
-    iframe.src = chartUrl;
     modal.style.display = 'flex';
-}
 
-function closeChart() {
-    const modal = document.getElementById('chartModal');
-    const iframe = document.getElementById('tsChartIframe');
-    
-    modal.style.display = 'none';
-    iframe.src = ""; // Limpa o iframe para economizar banda/processamento
+    // 1. Buscar os dados puros do ThingSpeak (últimos 100 pontos, por exemplo)
+    const response = await fetch(`https://api.thingspeak.com/channels/${channelID}/fields/${fieldId}.json?results=100`);
+    const data = await response.json();
+
+    // 2. Processar os dados para o formato que o Chart.js entende
+    const labels = data.feeds.map(feed => new Date(feed.created_at).toLocaleTimeString());
+    const values = data.feeds.map(feed => feed[`field${fieldId}`]);
+
+    // 3. Pegar as cores do seu CSS (mantendo sua estética)
+    const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+
+    // 4. Se já existir um gráfico, destrua-o para criar o novo
+    if (myChart) myChart.destroy();
+
+    const ctx = document.getElementById('customChart').getContext('2d');
+    myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: label,
+                data: values,
+                borderColor: accentColor,
+                backgroundColor: accentColor + '33', // Cor com transparência
+                borderWidth: 2,
+                pointRadius: 2,
+                tension: 0.3, // Deixa a linha suave/curvada
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: { grid: { color: '#333' }, ticks: { color: '#fff' } },
+                x: { grid: { display: false }, ticks: { color: '#fff' } }
+            }
+        }
+    });
 }
 </script>
 </body>
