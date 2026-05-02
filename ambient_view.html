@@ -437,6 +437,7 @@
     let feedingChart, weightChart, sheddingChart, lengthChart;
     let tsReadURL = "";
     let currentUUID = ""; 
+    let channelID = ""; // Declare no topo como global
 
     
     // FUNÇÃO PARA SINCRONIZAR O TEMA DO USUÁRIO
@@ -520,7 +521,7 @@
                 showCamOverlay();
             }
 
-            const channelID = data[10];
+            channelID = data[10];
             const readKey = data[11];
             tsReadURL = `https://api.thingspeak.com/channels/${channelID}/feeds.json?api_key=${readKey}&results=24`;
             
@@ -779,8 +780,14 @@
     }
 
 // Dentro da sua função loadData(), quando você pega o ID do canal:
-// currentChannelID = data[10]; (Certifique-se de salvar o valor aqui)
-
+// channelID = data[10]; (Certifique-se de salvar o valor aqui)
+function getThemeColor(variableName) {
+    // Pega o valor da variável CSS (ex: "#070b14")
+    const color = getComputedStyle(document.documentElement).getPropertyValue(variableName).trim();
+    // Remove o '#' para o ThingSpeak aceitar (ex: "070b14")
+    return color.replace('#', '');
+}
+    
 function openChart(fieldId, label) {
     if (!channelID) {
         alert("Channel ID not loaded yet.");
@@ -791,9 +798,13 @@ function openChart(fieldId, label) {
     const iframe = document.getElementById('tsChartIframe');
     const title = document.getElementById('modalChartTitle');
 
+    // Capturamos as cores atuais do tema dinamicamente
+    const bgColor = getThemeColor('--bg-dark');
+    const accentColor = getThemeColor('--accent');
+
     // Monta a URL do gráfico do ThingSpeak
     // Ajustamos as cores para combinar com seu tema Dark/Gold
-    const chartUrl = `https://thingspeak.com/channels/${channelID}/charts/${fieldId}?bgcolor=%23${--bg-dark}&color=%23${--accent}&dynamic=true&results=8000&type=line&update=15&title=${encodeURIComponent(label)}`;
+    const chartUrl = `https://thingspeak.com/channels/${channelID}/charts/${fieldId}?bgcolor=%23${bgColor}&color=%23${accentColor}&dynamic=true&results=8000&type=line&update=15&title=${encodeURIComponent(label)}`;
 
     title.innerText = label.toUpperCase();
     iframe.src = chartUrl;
