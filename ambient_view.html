@@ -429,8 +429,11 @@
     }
 
     async function loadData() {
-    if (!currentPageId) return;
-
+    if (!currentPageId){
+            console.error("Page ID not found at URL.");
+            return;
+        }
+        
     try {
         const response = await fetch(CSV_URL);
         const csvData = await response.text();
@@ -530,68 +533,82 @@
                     el.innerHTML = `${parseFloat(val).toFixed(1)}<span>${unit}</span>`;
                 }
             }
-        } catch (e) { console.warn("Waiting for telemetry..."); }
+        } catch (e) { console.warn("Waiting sensor data pack to be recieved..."); }
     }
 
+    // --- CONFIGURADOR DE AMBIENTE (REGISTRO NO GOOGLE) ---
+
+    async function loadExistingConfig() {
+        if (!currentPageId) return;
+        try {
+            console.log("Fetching current limits for ID:", currentPageId);
+            const response = await fetch(`${EnviromentalSetup_CSV_URL}&t=${new Date().getTime()}`);
+            const csvText = await response.text();
+            const rows = parseCSV(csvText);
+            
+            // Procura o ID na primeira coluna (index 0)
+            const config = rows.find(r => r[0] && r[0].trim() === currentPageId);
+            if (config) {
+                document.getElementById('cfgTempMax').value = config[1];
+                document.getElementById('cfgTempMin').value = config[2];
+                document.getElementById('cfgHumMax').value = config[3];
+                document.getElementById('cfgHumMin').value = config[4];
+                console.log("Config limits loaded successfully.");
+            }
+        } catch (e) { console.error("Error loading setup CSV:", e); }
+    }
 
     async function sendDeviceConfig() {
-    // 1. Captura os valores digitados
-    const tMax = document.getElementById('cfgTempMax').value;
-    const tMin = document.getElementById('cfgTempMin').value;
-    const hMax = document.getElementById('cfgHumMax').value;
-    const hMin = document.getElementById('cfgHumMin').value;
+        if (!currentPageId) {
+            alert("Error: Page ID not found.");
+            return;
+        }
 
-    // 2. Validação básica
-    if (!tMax || !tMin || !hMax || !hMin) {
-        alert("Please, fill all 4 properties before saving.");
-        return;
-    }
+        const tMax = document.getElementById('cfgTempMax').value;
+        const tMin = document.getElementById('cfgTempMin').value;
+        const hMax = document.getElementById('cfgHumMax').value;
+        const hMin = document.getElementById('cfgHumMin').value;
 
-    // 3. Monta o Timestamp no formato local
-    const timestamp = new Date().toLocaleString('pt-BR');
+        if (!tMax || !tMin || !hMax || !hMin) {
+            alert("Please, fill all 4 properties before saving.");
+            return;
+        }
 
-    // 4. Cria o objeto JSON que será enviado ao Google Apps Script
-    // Nota: 'currentPageId' é a variável global que já existe no seu script
-    const payload = {
-        pageId: currentPageId, 
-        maxTemp: tMax,
-        minTemp: tMin,
-        maxHum: hMax,
-        minHum: hMin,
-        timestamp: timestamp
-    };
+        const payload = {
+            pageId: currentPageId, 
+            maxTemp: tMax,
+            minTemp: tMin,
+            maxHum: hMax,
+            minHum: hMin,
+            timestamp: new Date().toLocaleString('pt-BR')
+        };
 
-    // Feedback visual no botão
-    const btn = document.querySelector('#config-section button');
-    const txtOriginal = btn.innerText;
-    btn.innerText = "Registering configuration...";
+        const btn = document.querySelector('#config-section button');
+        const txtOriginal = btn.innerHTML;
+        btn.innerText = "Registering...";
 
-    try {
-        // 5. Envia os dados para a planilha usando POST
-        await fetch(CONFIG_SCRIPT_URL, {
-            method: 'POST',
-            mode: 'no-cors', // Evita bloqueios de CORS do navegador
-            body: JSON.stringify(payload)
-        });
-        
-        alert("Environmental configuration saved with success! \nDevice will download the set new metrics at the next sync.");
-        btn.innerText = txtOriginal;
-        
-        // Opcional: Limpar os campos após o envio
-        document.getElementById('cfgTempMax').value = "";
-        document.getElementById('cfgTempMin').value = "";
-        document.getElementById('cfgHumMax').value = "";
-        document.getElementById('cfgHumMin').value = "";
+        try {
+            await fetch(CONFIG_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                cache: 'no-cache',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            
+            console.log("Payload sent to Google:", payload);
+            alert("Environmental configuration saved with success!");
+            btn.innerHTML = txtOriginal;
 
-    } catch (e) {
-        console.error("Error. Was not possible to send the configurations:", e);
-        alert("Technical error to register the configuration.");
-        btn.innerText = txtOriginal;
-    }
-}
-
+        } catch (e) {
+            console.error("Transmission error:", e);
+            alert("Technical error to register the configuration.");
+            btn.innerHTML = txtOriginal;
+        }
+    }    
 
     
+    // --- UTILITÁRIOS E QR CODE ---
     function generateConfigQR(data) {
     const qrContainer = document.getElementById("qrcode");
     if (!qrContainer) return; // Garante que o container existe
@@ -638,6 +655,8 @@
         return `${String(d.getDate()).padStart(2, '0')} / ${months[d.getMonth()]} / ${d.getFullYear()}`;
     }
 
+
+    // --- HISTÓRICO BIOLÓGICO E GRÁFICOS ---
     async function loadBiologicalHistory(id) {
         try {
             const res = await fetch(EVENTS_CSV);
@@ -733,95 +752,6 @@
         }
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-            const user = JSON.parse(localStorage.getItem('currentUser'));
-            if (!user) { window.location.href = 'index.html'; return; }
-
-            // Aplicar tema
-            const savedTheme = localStorage.getItem(`theme_${user.id}`) || 'default';
-            document.documentElement.setAttribute('data-theme', savedTheme);
-
-            // Pegar ID da página pela URL
-            const urlParams = new URLSearchParams(window.location.search);
-            currentPageID = urlParams.get('id');
-
-            if (currentPageID) {
-                loadExistingConfig();
-            }
-        });
-    
-    // Função para carregar dados atuais do configurador de ambiente CSV
-        async function loadExistingConfig() {
-            try {
-                console.log("Buscando configurações para ID:", currentPageID);
-                const response = await fetch(`${setupCsvURL}&t=${new Date().getTime()}`);
-                const csvText = await response.text();
-                const rows = csvText.split('\n');
-                
-                // Pula o cabeçalho e procura o ID
-                for (let i = 1; i < rows.length; i++) {
-                    const cols = rows[i].split(',');
-                    if (cols[0]?.trim() === currentPageID) {
-                        document.getElementById('maxTemp').value = cols[1];
-                        document.getElementById('minTemp').value = cols[2];
-                        document.getElementById('maxHum').value = cols[3];
-                        document.getElementById('minHum').value = cols[4];
-                        console.log("Configuration Successfully Loaded.");
-                        break;
-                    }
-                }
-            } catch (e) {
-                console.error("CSV Loading Error: ", e);
-            }
-        }
-
-        // Função para salvar no Google Sheets via POST
-        async function saveConfiguration() {
-            const statusMsg = document.getElementById('statusMsg');
-            
-            if (!currentPageID) {
-                alert("Error: Page ID not found.");
-                return;
-            }
-
-            const payload = {
-                pageId: currentPageID,
-                maxTemp: document.getElementById('maxTemp').value,
-                minTemp: document.getElementById('minTemp').value,
-                maxHum: document.getElementById('maxHum').value,
-                minHum: document.getElementById('minHum').value,
-                timestamp: new Date().toLocaleString('pt-BR')
-            };
-
-            console.log("Starting to Transfer Data...", payload);
-            statusMsg.innerText = "Saving Configuration...";
-            statusMsg.style.color = "var(--accent)";
-
-            try {
-                // Importante: Usamos 'no-cors' para evitar erros de pré-vôo do navegador com o Google
-                // Porém, o 'no-cors' não permite ler o retorno JSON. 
-                // Para ler o retorno, o Script do Google precisaria tratar OPTIONS (mais complexo).
-                await fetch(setupScriptURL, {
-                    method: 'POST',
-                    mode: 'no-cors', 
-                    cache: 'no-cache',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                console.log("Request successfully sent to Google Script.");
-                statusMsg.innerText = "SUCCESS! Configuration stored.";
-                statusMsg.style.color = "#48bb3a";
-                
-                setTimeout(() => { statusMsg.innerText = ""; }, 4000);
-
-            } catch (error) {
-                console.error("Fetch Error: ", error);
-                statusMsg.innerText = "Error saving. Check console.";
-                statusMsg.style.color = "#ef4e4e";
-            }
-        }
-
     loadData();
 
     // Usamos a variável global 'currentPageId' que já capturou o "?id=" no topo do script
@@ -851,7 +781,8 @@
 
     
 
-async function openChart(fieldId, label) {
+    // --- MODAL DE GRÁFICOS DETALHADOS ---
+    async function openChart(fieldId, label) {
     if (!channelID) return;
 
     const modal = document.getElementById('chartModal');
@@ -917,6 +848,18 @@ async function openChart(fieldId, label) {
     
     console.log("Sistema de telemetria em standby.");
 }
+    
+    // --- INICIALIZAÇÃO FINAL ---
+    document.addEventListener('DOMContentLoaded', () => {
+        applyUserTheme();
+        loadData();
+
+        const editButton = document.getElementById('editLink');
+        if (currentPageId && editButton) {
+            editButton.href = `register_ambient.html?pageID=${currentPageId}`;
+            editButton.style.display = 'inline-flex';
+        }
+    });
 </script>
 </body>
 </html>
