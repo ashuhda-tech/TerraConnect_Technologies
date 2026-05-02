@@ -417,7 +417,6 @@
     let currentUUID = ""; 
     let channelID = ""; // Declare no topo como global
     let myChart; // Variável global para destruir o gráfico anterior ao abrir um novo
-    let currentPageID = null;
     
     // FUNÇÃO PARA SINCRONIZAR O TEMA DO USUÁRIO
     function applyUserTheme() {
@@ -767,12 +766,12 @@
                         document.getElementById('minTemp').value = cols[2];
                         document.getElementById('maxHum').value = cols[3];
                         document.getElementById('minHum').value = cols[4];
-                        console.log("Configurações carregadas com sucesso.");
+                        console.log("Configuration Successfully Loaded.");
                         break;
                     }
                 }
             } catch (e) {
-                console.error("Erro ao carregar CSV:", e);
+                console.error("CSV Loading Error: ", e);
             }
         }
 
@@ -794,8 +793,8 @@
                 timestamp: new Date().toLocaleString('pt-BR')
             };
 
-            console.log("Iniciando envio de dados...", payload);
-            statusMsg.innerText = "Saving configuration...";
+            console.log("Starting to Transfer Data...", payload);
+            statusMsg.innerText = "Saving Configuration...";
             statusMsg.style.color = "var(--accent)";
 
             try {
@@ -810,14 +809,14 @@
                     body: JSON.stringify(payload)
                 });
 
-                console.log("Requisição enviada com sucesso ao Google Script.");
+                console.log("Request successfully sent to Google Script.");
                 statusMsg.innerText = "SUCCESS! Configuration stored.";
                 statusMsg.style.color = "#48bb3a";
                 
                 setTimeout(() => { statusMsg.innerText = ""; }, 4000);
 
             } catch (error) {
-                console.error("Erro no Fetch:", error);
+                console.error("Fetch Error: ", error);
                 statusMsg.innerText = "Error saving. Check console.";
                 statusMsg.style.color = "#ef4e4e";
             }
