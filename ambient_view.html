@@ -64,6 +64,8 @@
     .btn-back:hover { background: var(--accent); color: var(--bg-dark); }
     .btn-send { background: transparent; border: 1px solid var(--accent); color: var(--accent); border-radius: 5px; padding: 8px 12px; cursor: pointer; transition: 0.3s; }
     .btn-send:hover { background: var(--accent); color: var(--bg-dark); }
+    .btn-edit {display: none;align-items: center;justify-content: center;gap: 8px;margin-top: 15px;padding: 10px;width: 100%;background: transparent;border: 1px solid var(--accent);color: var(--accent);text-decoration: none;border-radius: 5px;font-size: 0.8rem;font-family: 'Cinzel', serif;transition: 0.3s;cursor: pointer;}
+    .btn-edit:hover {background: var(--accent);color: var(--bg-dark);}
     
     .bio-section { text-align: center; margin-bottom: 30px; }
     .bio-info-list { display: flex; flex-direction: column; gap: 20px; text-align: left; }
@@ -727,31 +729,30 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        applyUserTheme(); // Aplica o tema antes de carregar os dados
-        document.querySelectorAll('.input-field').forEach(input => {
-            input.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    input.nextElementSibling.click();
-                }
-            });
+    applyUserTheme(); 
+    
+    document.querySelectorAll('.input-field').forEach(input => {
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                input.nextElementSibling.click();
+            }
         });
-        loadData();
-        // 1. Pega o ID que já está na URL da ambient_view (ex: ?pageID=PG-HELA01)
-    const urlParams = new URLSearchParams(window.location.search);
-    const currentPageId = urlParams.get('pageID');
-
-
-        if (currentPageId) {
-    const editButton = document.getElementById('editLink');
-    if (editButton) {
-        editButton.href = `register_ambient.html?pageID=${currentPageId}`;
-        editButton.style.display = 'inline-block'; // Mostra se tiver ID
-    }
-} else {
-    const editButton = document.getElementById('editLink');
-    if (editButton) editButton.style.display = 'none'; // Esconde se não tiver ID
-}
     });
+
+    loadData();
+
+    // Usamos a variável global 'currentPageId' que já capturou o "?id=" no topo do script
+    const editButton = document.getElementById('editLink');
+    
+    if (currentPageId && editButton) {
+        // Configuramos o link para a página de registro usando o ID capturado
+        editButton.href = `register_ambient.html?pageID=${currentPageId}`;
+        editButton.style.display = 'inline-flex'; // Garante que ele apareça
+        console.log("Botão de edição ativado para o ID:", currentPageId);
+    } else if (editButton) {
+        editButton.style.display = 'none'; 
+    }
+});
 
     function showCamOverlay() {
         document.getElementById('cameraOverlay').style.opacity = "1";
