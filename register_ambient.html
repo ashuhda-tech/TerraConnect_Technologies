@@ -22,29 +22,126 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        :root {
-            --bg-dark: #070b14;
-            --accent: #d1b38b;
-            --border: #2d3139;
-            --text-light: #f4e9d8;
+        /* DEFINIÇÃO DE TODOS OS TEMAS */
+        :root {--bg-dark: #070b14; --sidebar-bg: #0d1117; --accent: #d1b38b; --text-light: #f4e9d8; --gray-panel: #1e1e1e; --border: #2d3139;}
+        /* TECH SAVVY & FUTURISTIC */
+        [data-theme="tech1"] {--bg-dark: #0B1021; --sidebar-bg: #334155; --accent: #87CEFA; --text-light: #CFFAFE; --gray-panel: #E2E8F0; --border: #334155;}
+        [data-theme="tech2"] {--bg-dark: #1a1a1d; --sidebar-bg: #4e4e50; --accent: #ffff00; --text-light: #f5f5f5; --gray-panel: #2e2e2e; --border: #95a5a6;}
+        [data-theme="tech3"] {--bg-dark: #56886C; --sidebar-bg: #56887D; --accent: #FFE0FF; --text-light: #FFE9FF; --gray-panel: #56887D; --border: #56886C;}
+        /* PLAYFUL & VIBRANT */
+        [data-theme="playful1"] {--bg-dark: #040B11; --sidebar-bg: #2D322C; --accent: #CEE056; --text-light: #F3F3F2; --gray-panel: #2D322C; --border: #EBC61D;}
+        [data-theme="playful2"] {--bg-dark: #846B5A; --sidebar-bg: #CAB8A9; --accent: #D4CAC1; --text-light: #FEFCFB; --gray-panel: #FBF8F5; --border: #CAB8A9;}
+        [data-theme="playful3"] {--bg-dark: #136a7a; --sidebar-bg: #408d99; --accent: #8dc6bf; --text-light: #d1e8e4; --gray-panel: #f1f7f6; --border: #408d99;}
+        /* MINIMALISTIC & ELEGANT */
+        [data-theme="minimalist1"] {--bg-dark: #000000; --sidebar-bg: #1a1a1a; --accent: #d7ccc8; --text-light: #f5f5f5; --gray-panel: #6d4c41; --border: #e1e8ed;}
+        [data-theme="minimalist2"] {--bg-dark: #333333; --sidebar-bg: #4f4f4f; --accent: #bdb76b; --text-light: #dcdcdc; --gray-panel: #262626; --border: #e6e6fa;}
+        [data-theme="minimalist3"] {--bg-dark: #212121; --sidebar-bg: #404040; --accent: #bdc3c7; --text-light: #ffffff; --gray-panel: #616161; --border: #ff5252;}
+        /* NATURE-INSPIRED */
+        [data-theme="nature1"] {--bg-dark: #2b2d24; --sidebar-bg: #3e3e3e; --accent: #cd853f; --text-light: #dad7cd; --gray-panel: #344e41; --border: #588157;}
+        [data-theme="nature2"] {--bg-dark: #322D29; --sidebar-bg: #72383D; --accent: #AC9C8D; --text-light: #EFE9E1; --gray-panel: #D1C7BD; --border: #D9D9D9;}
+        [data-theme="nature3"] {--bg-dark: #3b4d7b; --sidebar-bg: #1a2a4d; --accent: #c0c0e0; --text-light: #fef9e7; --gray-panel: #804040; --border: #e6b0aa;}
+
+        body { 
+            background-color: var(--bg-dark); 
+            color: var(--text-light); 
+            font-family: 'Inter', sans-serif; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            margin: 0; 
+            padding: 20px; 
+            box-sizing: border-box; 
+            overflow-x: hidden;
         }
 
-        body { background-color: var(--bg-dark); color: var(--text-light); font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
-        .register-container { background: #0d1117; padding: 40px; border: 1px solid var(--border); border-radius: 20px; width: 100%; max-width: 500px; text-align: center; }
+        /* --- Video Background Styles --- */
+        .video-bg-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            overflow: hidden;
+        }
+
+        .video-bg-container video {
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+        }
+
+        .video-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6); 
+            z-index: -1;
+        }
+
+        /* --- Painel de Registro Sólido --- */
+        .register-container { 
+            background-color: var(--sidebar-bg); /* Utiliza a cor do tema, mantendo sólido */
+            padding: 40px; 
+            border: 1px solid var(--border); 
+            border-radius: 20px; 
+            width: 100%; 
+            max-width: 500px; 
+            text-align: center; 
+            z-index: 1; /* Garante que fique acima do vídeo */
+            position: relative;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5); /* Sombra para destacar do fundo */
+        }
+
         .a70-font { font-family: 'Cinzel', serif; letter-spacing: 2px; }
         h1 { color: var(--accent); font-size: 1.2rem; margin-bottom: 30px; }
         .input-group { text-align: left; margin-bottom: 20px; }
         label { font-size: 0.7rem; color: var(--accent); display: block; margin-bottom: 8px; }
-        input { width: 100%; padding: 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); color: white; border-radius: 4px; box-sizing: border-box; font-size: 0.85rem; }
-        .info-box { background: rgba(209, 179, 139, 0.05); padding: 10px; border-radius: 4px; font-size: 0.7rem; margin-bottom: 25px; border: 1px solid rgba(209, 179, 139, 0.1); }
+        
+        input { 
+            width: 100%; 
+            padding: 12px; 
+            background: var(--bg-dark); /* Campo de texto escurecido de acordo com o tema */
+            border: 1px solid var(--border); 
+            color: var(--text-light); 
+            border-radius: 4px; 
+            box-sizing: border-box; 
+            font-size: 0.85rem; 
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .info-box { background: rgba(0, 0, 0, 0.2); padding: 10px; border-radius: 4px; font-size: 0.7rem; margin-bottom: 25px; border: 1px dashed var(--border); color: var(--text-light); }
         .btn-save { background: var(--accent); color: var(--bg-dark); border: none; width: 100%; padding: 15px; font-weight: bold; cursor: pointer; border-radius: 4px; transition: 0.3s; margin-top: 20px; }
-        .btn-save:hover { filter: brightness(1.1); } 
-        .btn-back { display: block; margin-top: 15px; color: #9ca3af; text-decoration: none; font-size: 0.8rem; }
+        .btn-save:hover { filter: brightness(1.2); transform: translateY(-2px); } 
+        .btn-back { display: block; margin-top: 15px; color: var(--text-light); text-decoration: none; font-size: 0.8rem; opacity: 0.7; transition: 0.3s; }
+        .btn-back:hover { opacity: 1; color: var(--accent); }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .grid-full { grid-column: span 2; }
     </style>
 </head>
 <body>
+
+    <!-- Fundo de Vídeo -->
+    <div class="video-bg-container">
+        <video autoplay loop muted playsinline poster="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/b1c4c1f080d96ec1c35ff823176f214b761eb6a6/assets/WALLPAPER_MAINDASHBOARD.png">
+            <source src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/b1c4c1f080d96ec1c35ff823176f214b761eb6a6/assets/VIDEO/RIVER_MAINDASHBOARD.mp4" type="video/mp4">
+            <img src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/b1c4c1f080d96ec1c35ff823176f214b761eb6a6/assets/WALLPAPER_MAINDASHBOARD.png" alt="Fallback Background">
+        </video>
+    </div>
+    <div class="video-overlay"></div>
 
     <div class="register-container">
         <h1 class="a70-font" id="mainTitle">REGISTRATION</h1>
@@ -142,12 +239,11 @@
         <a href="maindashboard.html" class="btn-back">CANCEL AND BACK</a>
     </div>
 
-    
     <script>
         // URL PARA GRAVAR/REGISTRAR OS DADOS NO GOOGLE SHEETS
         const scriptURL = 'https://script.google.com/macros/s/AKfycbw3LbOYDqljAxQ8joYW8yDhwe6lsi7AdFCAoi4HG1iRdglS0k9-fI1Oj2eA12ePc6g/exec';
         
-        // URL PARA LER OS DADOS EM FORMATO CSV (Convertido de pubhtml para pub?output=csv)
+        // URL PARA LER OS DADOS EM FORMATO CSV
         const csvReadURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTeBz5FwvcmPue3hJ6TKwmrNZeMrz2_Su7co-mPuzKj1ZJv--5BBvPjlszF3yyEHOVuEeGT9mmwZqOp/pub?gid=0&single=true&output=csv';
 
         let isEditMode = false;
@@ -162,6 +258,11 @@
             const user = JSON.parse(userData);
             document.getElementById('displayUserId').innerText = user.id;
             window.currentUser = user; 
+            
+            // --- APLICAÇÃO DO TEMA ---
+            // Puxa o tema exato que o usuário selecionou no dashboard e aplica ao formulário atual
+            const savedTheme = localStorage.getItem(`theme_${user.id}`) || 'default';
+            document.documentElement.setAttribute('data-theme', savedTheme);
             
             const urlParams = new URLSearchParams(window.location.search);
             editingPageID = urlParams.get('pageID');
@@ -193,26 +294,20 @@
             document.getElementById('btnAction').innerText = "UPDATE REGISTRATION";
             document.getElementById('displayUserId').innerText = `EDITING: ${editingPageID}`;
 
-            console.log("Lendo dados do arquivo CSV publicado...");
-
             try {
-                // Realiza o Fetch do CSV (Somente para Leitura)
                 const response = await fetch(csvReadURL);
                 const csvText = await response.text();
                 
                 const rows = csvText.split('\n');
-                if (rows.length < 2) return; // Retorna se não houver dados além do cabeçalho
+                if (rows.length < 2) return; 
 
-                // Captura a primeira linha para usar como referência das colunas
                 const headers = parseCSVRow(rows[0]);
                 let targetRow = null;
 
-                // Percorre o CSV para achar a linha do PageID
                 for (let i = 1; i < rows.length; i++) {
                     if (!rows[i].trim()) continue;
                     
                     const columns = parseCSVRow(rows[i]);
-                    // Procura o pageID na linha atual (independente da coluna exata)
                     const foundId = columns.find(c => c === editingPageID);
                     
                     if (foundId) {
@@ -222,9 +317,6 @@
                 }
 
                 if (targetRow) {
-                    console.log("Dados encontrados para o ID: ", editingPageID);
-                    
-                    // Helper para buscar o valor baseado no nome aproximado da coluna no cabeçalho
                     const getValue = (colName) => {
                         const idx = headers.findIndex(h => h.toLowerCase().includes(colName.toLowerCase()));
                         return idx !== -1 ? targetRow[idx] : "";
@@ -259,13 +351,10 @@
                     document.getElementById('wifiSsid').value = getValue('wifissid') || getValue('ssid') || "";
                     document.getElementById('wifiPassword').value = getValue('wifipassword') || getValue('password') || "";
                     
-                } else {
-                    console.warn("ID não encontrado no CSV da Planilha.");
                 }
-
             } catch (e) {
                 console.error("Erro ao fazer o fetch e leitura do CSV:", e);
-                alert("Não foi possível carregar os dados antigos. Verifique sua conexão ou se a planilha está publicada corretamente.");
+                alert("Não foi possível carregar os dados antigos. Verifique sua conexão.");
             }
         }
 
@@ -335,9 +424,6 @@
             };
             
             try {
-                console.log("Enviando dados via POST para registrar: ", payload);
-
-                // O FETCH envia os dados para gravar usando apenas o scriptURL
                 await fetch(scriptURL, {
                     method: 'POST',
                     mode: 'no-cors',
