@@ -583,7 +583,7 @@
             timestamp: new Date().toLocaleString('pt-BR')
         };
 
-        const btn = document.querySelector('#config-section button');
+        const btn = document.querySelector('.btn-send');
         const txtOriginal = btn.innerHTML;
         btn.innerText = "Registering...";
 
@@ -765,7 +765,7 @@
     } else if (editButton) {
         editButton.style.display = 'none'; 
     }
-});
+
 
     function showCamOverlay() {
         document.getElementById('cameraOverlay').style.opacity = "1";
