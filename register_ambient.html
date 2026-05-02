@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TerraConnect | New Registration</title>
+    <title>TerraConnect | Registration</title>
     
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/TERRACONNECT_LOGO.png">
     <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/TERRACONNECT_LOGO.png">
@@ -47,10 +47,10 @@
 <body>
 
     <div class="register-container">
-        <h1 class="a70-font">NEW REGISTRATION</h1>
+        <h1 class="a70-font">REGISTRATION</h1>
         
         <div class="info-box">
-            <span style="font-size: 0.6rem;">VINCULADO AO ID:</span>
+            <span style="font-size: 0.6rem;">LINKED TO ID:</span>
             <strong id="displayUserId" style="font-size: 0.6rem;">---</strong>
         </div>
 
@@ -144,7 +144,14 @@
         <a href="maindashboard.html" class="btn-back">CANCEL AND BACK</a>
     </div>
 
+
+    
     <script>
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbw3LbOYDqljAxQ8joYW8yDhwe6lsi7AdFCAoi4HG1iRdglS0k9-fI1Oj2eA12ePc6g/exec';
+        // Variáveis Globais para controle
+        let isEditMode = false;
+        let editingPageID = null;
+        
         document.addEventListener('DOMContentLoaded', () => {
             const userData = localStorage.getItem('currentUser');
             if (!userData) {
@@ -154,7 +161,50 @@
             const user = JSON.parse(userData);
             document.getElementById('displayUserId').innerText = user.id;
             window.currentUser = user; 
+            
+            // 1. Verificar se existe um PageID na URL
+            const urlParams = new URLSearchParams(window.location.search);
+            editingPageID = urlParams.get('pageID');
+
+            if (editingPageID) {
+                isEditMode = true;
+                setupEditMode();
+            }     
         });
+        
+        async function setupEditMode() {
+            document.getElementById('mainTitle').innerText = "EDIT REGISTRATION";
+            document.getElementById('btnAction').innerText = "UPDATE REGISTRATION";
+            document.getElementById('displayUserId').innerText = `EDITING: ${editingPageID}`;
+
+            console.log("Buscando dados para edição...");
+
+            try {
+                // Buscamos os dados direto do Google Script via GET
+                const response = await fetch(`${scriptURL}?pageID=${editingPageID}`);
+                const data = await response.json();
+
+                if (data) {
+                    document.getElementById('ambientName').value = data.ambientName || "";
+                    document.getElementById('animalName').value = data.animalName || "";
+                    document.getElementById('animalSex').value = data.animalSex || "";
+                    document.getElementById('animalType').value = data.animalType || "";
+                    document.getElementById('scientificName').value = data.scientificName || "";
+                    document.getElementById('birthDate').value = data.birthDate ? data.birthDate.split('T')[0] : "";
+                    document.getElementById('regNumber').value = data.regNumber || "";
+                    document.getElementById('location').value = (data.latitude && data.longitude) ? `${data.latitude}, ${data.longitude}` : "";
+                    document.getElementById('photoURL').value = data.photoURL || "";
+                    document.getElementById('channelID').value = data.channelID || "";
+                    document.getElementById('tsWrite').value = data.tsWrite || "";
+                    document.getElementById('tsRead').value = data.tsRead || "";
+                    document.getElementById('wifiSsid').value = data.wifiSsid || "";
+                    document.getElementById('wifiPassword').value = data.wifiPassword || "";
+                }
+            } catch (e) {
+                console.error("Error loading existing data:", e);
+                alert("The data could not be loaded for editing. Please check your connection.");
+            }
+        }
 
         function getLocation() {
             if (navigator.geolocation) {
@@ -163,18 +213,17 @@
                     const long = position.coords.longitude.toFixed(6);
                     document.getElementById('location').value = `${lat}, ${long}`;
                 }, (error) => {
-                    alert("Erro ao obter localização: " + error.message);
+                    alert("Error retrieving location: " + error.message);
                 });
             } else {
-                alert("GPS não suportado.");
+                alert("GPS not supported.");
             }
         }
 
         async function processRegistration() {
             const user = window.currentUser;
-            if (!user) return alert("Sessão expirada.");
+            if (!user) return alert("Session expired.");
 
-            // Pegando valores básicos
             const ambientName = document.getElementById('ambientName').value;
             const animalName = document.getElementById('animalName').value;
             const channelID = document.getElementById('channelID').value;
@@ -182,7 +231,7 @@
 
             // Validação de segurança
             if (!ambientName || !animalName || !channelID) {
-                return alert("Por favor, preencha Ambient Name, Animal Name e Channel ID.");
+                return alert("Please fill in the Ambient Name, Animal Name, and Channel ID.");
             }
 
             // Tratamento da localização (evita o crash do lat/lng)
@@ -203,6 +252,7 @@
             }
 
             const payload = {
+                action: isEditMode ? "update" : "create",
                 userID: user.id,
                 pageID: pageId,
                 ambientName: ambientName,
@@ -223,12 +273,10 @@
                 photoURL: document.getElementById('photoURL').value,
                 timestamp: new Date().toLocaleString('pt-BR')
             };
-
-            const scriptURL = 'https://script.google.com/macros/s/AKfycbw3LbOYDqljAxQ8joYW8yDhwe6lsi7AdFCAoi4HG1iRdglS0k9-fI1Oj2eA12ePc6g/exec';
-
+            
             try {
                 // Adicionamos um log para você ver o que está sendo enviado no console (F12)
-                console.log("Enviando payload:", payload);
+                console.log("Sending payload: ", payload);
 
                 await fetch(scriptURL, {
                     method: 'POST',
@@ -236,11 +284,11 @@
                     body: JSON.stringify(payload)
                 });
 
-                alert(`SUCESSO!\nAmbiente ${ambientName} registrado com ID: ${pageId}`);
+                alert(`SUCCESS!\nAmbiente ${ambientName} registered with ID: ${pageId}`);
                 window.location.href = 'maindashboard.html';
             } catch (e) { 
-                alert("Erro ao conectar com o banco de dados.");
-                console.error("Erro no Fetch:", e);
+                alert("Error connecting to the database.");
+                console.error("Fetch Error:", e);
             }
         }
 
