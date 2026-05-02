@@ -166,6 +166,11 @@
             <div class="bio-item"><b>Coordinates</b> <span id="dynLoc">---</span></div>
             <div class="bio-item"><b>Channel ID</b> <span id="dynChannel">---</span></div>
         </div>
+        
+
+        <a href="#" id="editLink" class="btn-edit">
+    <i class="fa fa-edit"></i> Edit Registry Data
+</a>
 
 
         <hr style="border: 0.5px solid #eee; margin: 20px 0;">
@@ -462,7 +467,7 @@
                 videoElement.load(); 
                 
                 videoElement.play().catch(e => {
-                    console.warn(`Vídeo ${videoFileName} não encontrado. Usando fallback.`);
+                    console.warn(`Video ${videoFileName} not found. Using fallback.`);
                     // Fallback: Caso não exista o vídeo do animal, usa o vídeo padrão do Rio
                     videoSource.src = `${videoBaseURL}RIVER_MAINDASHBOARD.mp4`;
                     videoElement.load();
@@ -497,7 +502,7 @@
             loadBiologicalHistory(currentPageId);
             setInterval(updateSensors, 20000);
         } else {
-            document.getElementById('dynAmbient').innerText = "ID NÃO ENCONTRADO";
+            document.getElementById('dynAmbient').innerText = "ID NOT FOUND";
         }
     } catch (e) { console.error("Database error:", e); }
 }
@@ -711,13 +716,13 @@
 
         try {
             await fetch(finalUrl, { method: 'GET', mode: 'no-cors' });
-            alert(`Sucesso: ${type} registrado!`);
+            alert(`Success: ${type} registered!`);
             inputElement.value = "";
             if (typeof loadBiologicalHistory === "function") {
                 setTimeout(() => loadBiologicalHistory(currentPageId), 1000);
             }
         } catch (e) {
-            alert("Erro técnico ao enviar para o Excel.");
+            alert("Technical error sending to Excel.");
         }
     }
 
@@ -731,6 +736,21 @@
             });
         });
         loadData();
+        // 1. Pega o ID que já está na URL da ambient_view (ex: ?pageID=PG-HELA01)
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentPageId = urlParams.get('pageID');
+
+
+        if (currentPageId) {
+    const editButton = document.getElementById('editLink');
+    if (editButton) {
+        editButton.href = `register_ambient.html?pageID=${currentPageId}`;
+        editButton.style.display = 'inline-block'; // Mostra se tiver ID
+    }
+} else {
+    const editButton = document.getElementById('editLink');
+    if (editButton) editButton.style.display = 'none'; // Esconde se não tiver ID
+}
     });
 
     function showCamOverlay() {
