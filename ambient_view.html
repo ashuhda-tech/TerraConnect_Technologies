@@ -111,47 +111,15 @@
     /* CAMERA MONITORING CARD */
     .camera-card { background: #000; border: 1px solid var(--border); border-radius: 15px; margin-top: 20px; position: relative; overflow: hidden; aspect-ratio: 16 / 9; display: flex; align-items: center; justify-content: center; }
     
-    .camera-overlay { 
-        position: absolute; 
-        top: 0; 
-        left: 0; 
-        width: 100%; 
-        height: 100%; 
-        display: flex; 
-        flex-direction: column; 
-        align-items: center; 
-        justify-content: center; 
-        background: rgba(7, 11, 20, 0.85); 
-        z-index: 2; 
-        transition: opacity 0.5s; 
-        overflow: hidden;
-    }
+    .camera-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(7, 11, 20, 0.85); z-index: 2; transition: opacity 0.5s; overflow: hidden;}
 
     .signal-lost-gif { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.3; z-index: -1; }
     .camera-stream { width: 100%; height: 100%; object-fit: cover; z-index: 1; }
     
-    .cam-status-bar { 
-        position: absolute; 
-        bottom: 0; 
-        width: 100%; 
-        padding: 10px 20px; 
-        background: rgba(0,0,0,0.6); 
-        display: flex; 
-        justify-content: space-between; 
-        font-size: 0.7rem; 
-        text-transform: uppercase; 
-        letter-spacing: 1px;
-        z-index: 3;
-    }
+    .cam-status-bar { position: absolute; bottom: 0; width: 100%; padding: 10px 20px; background: rgba(0,0,0,0.6); display: flex; justify-content: space-between; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;z-index: 3;}
 
     /* --- MAIN CONTENT LAYOUT --- */
-    .main-content { 
-        flex: 1; 
-        padding: 40px; 
-        overflow-y: auto; 
-        background: transparent !important; 
-        transition: 0.5s; 
-    }
+    .main-content { flex: 1; padding: 40px; overflow-y: auto; background: transparent !important; transition: 0.5s; }
 
     .main-header { margin-bottom: 40px; }
     .main-header h1 { font-size: 2.5rem; margin: 0; color: var(--accent); }
@@ -168,14 +136,7 @@
     .summary-sub-val b { color: var(--accent); font-weight: 400; }
     
     /* CARDS TRANSPARENTES COM BLUR */
-    .sensor-card, .summary-card, .chart-card, .input-card {
-        background: rgba(30, 30, 30, 0.7) !important; 
-        backdrop-filter: blur(10px);
-        border: 1px solid var(--border);
-        border-radius: 15px;
-        padding: 20px;
-        transition: 0.3s;
-    }
+    .sensor-card, .summary-card, .chart-card, .input-card {background: rgba(30, 30, 30, 0.7) !important; backdrop-filter: blur(10px);border: 1px solid var(--border);border-radius: 15px;padding: 20px;transition: 0.3s;}
 
     .sensor-card { display: flex; align-items: center; gap: 12px; }
     .sensor-card:hover { border-color: var(--accent); }
@@ -198,6 +159,17 @@
     .chart-card { height: 320px; }
     .chart-card h3 { margin: 0 0 15px 0; font-size: 0.9rem; color: var(--accent); text-transform: uppercase; }
 
+
+        /* Estilo do Modal de Gráfico Fullscreen */
+    .chart-modal {display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(7, 11, 20, 0.95); backdrop-filter: blur(15px); z-index: 9999; flex-direction: column; align-items: center; justify-content: center;}
+    .chart-modal-header { width: 90%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .chart-modal-header h2 { color: var(--accent); margin: 0; }
+    .btn-close-modal { background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 10px 20px; border-radius: 5px; cursor: pointer; font-family: 'Cinzel', serif; }
+    .chart-iframe-container { width: 90%; height: 80%; border: 1px solid var(--border); border-radius: 15px; overflow: hidden; background: #000; }
+    .chart-iframe-container iframe { width: 100%; height: 100%; border: none;}
+
+
+        
     @media (max-width: 900px) {
         body { flex-direction: column; overflow: auto; height: auto; }
         .sidebar { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
@@ -255,56 +227,56 @@
         </header>
 
        <div class="sensor-grid">
-            <div class="sensor-card">
+            <div class="sensor-card" onclick="openChart(5, 'CO2 Concentration')" style="cursor: pointer;">
                 <i class="fas fa-cloud sensor-icon" style="color: #a3b18a;"></i>
                 <div class="sensor-data">
                     <span class="sensor-label">CO2 Concentration</span>
                     <div class="sensor-val" id="valField5">--<span>ppm</span></div>
                 </div>
             </div>
-            <div class="sensor-card">
+            <div class="sensor-card" onclick="openChart(1, 'Air Temperature')" style="cursor: pointer;">
                 <i class="fas fa-thermometer-half sensor-icon" style="color: #ff5f5f;"></i>
                 <div class="sensor-data">
                     <span class="sensor-label">Air Temperature</span>
                     <div class="sensor-val" id="valField1">--<span>°C</span></div>
                 </div>
             </div>
-            <div class="sensor-card">
+            <div class="sensor-card" onclick="openChart(2, 'Air Humidity')" style="cursor: pointer;">
                 <i class="fas fa-wind sensor-icon" style="color: #74b9ff;"></i>
                 <div class="sensor-data">
                     <span class="sensor-label">Air Humidity</span>
                     <div class="sensor-val" id="valField2">--<span>%</span></div>
                 </div>
             </div>
-            <div class="sensor-card">
+            <div class="sensor-card" onclick="openChart(3, 'Ground Humidity')" style="cursor: pointer;">
                 <i class="fas fa-mountain sensor-icon" style="color: #d4a373;"></i>
                 <div class="sensor-data">
                     <span class="sensor-label">Ground Humidity</span>
                     <div class="sensor-val" id="valField3">--<span>%</span></div>
                 </div>
             </div>
-            <div class="sensor-card">
+            <div class="sensor-card" onclick="openChart(4, 'Water Level')" style="cursor: pointer;">
                 <i class="fas fa-water sensor-icon" style="color: #00f2ff;"></i>
                 <div class="sensor-data">
                     <span class="sensor-label">Water Level</span>
                     <div class="sensor-val" id="valField4">--<span>%</span></div>
                 </div>
             </div>
-            <div class="sensor-card">
+            <div class="sensor-card" onclick="openChart(6, ' Remote Sensor | Air Temperature')" style="cursor: pointer;">
                 <i class="fas fa-thermometer-half sensor-icon" style="color: #00f2ff;"></i>
                 <div class="sensor-data">
                     <span class="sensor-label">RS | Air Temperature</span>
                     <div class="sensor-val" id="valField6">--<span>°C</span></div>
                 </div>
             </div>
-            <div class="sensor-card">
+            <div class="sensor-card" onclick="openChart(7, 'Remote Sensor | Air Humidity')" style="cursor: pointer;">
                 <i class="fas fa-wind sensor-icon" style="color: #74b9ff;"></i>
                 <div class="sensor-data">
                     <span class="sensor-label">RS | Air Humidity</span>
                     <div class="sensor-val" id="valField7">--<span>%</span></div>
                 </div>
             </div>
-            <div class="sensor-card">
+            <div class="sensor-card" onclick="openChart(8, 'Remote Sensor | Ground Humidity')" style="cursor: pointer;">
                 <i class="fas fa-mountain sensor-icon" style="color: #d4a373;"></i>
                 <div class="sensor-data">
                     <span class="sensor-label">RS | Ground Humidity</span>
@@ -442,6 +414,17 @@
         
     </main>
 
+    <!-- Modal para Gráficos do ThingSpeak -->
+<div id="chartModal" class="chart-modal">
+    <div class="chart-modal-header">
+        <h2 id="modalChartTitle" class="a70-font">SENSOR CHART</h2>
+        <button class="btn-close-modal" onclick="closeChart()">CLOSE [X]</button>
+    </div>
+    <div class="chart-iframe-container">
+        <iframe id="tsChartIframe" src=""></iframe>
+    </div>
+</div>
+
 <script>
     const urlParams = new URLSearchParams(window.location.search);
     const currentPageId = urlParams.get('id');
@@ -455,6 +438,7 @@
     let tsReadURL = "";
     let currentUUID = ""; 
 
+    
     // FUNÇÃO PARA SINCRONIZAR O TEMA DO USUÁRIO
     function applyUserTheme() {
         const user = JSON.parse(localStorage.getItem('currentUser'));
@@ -793,6 +777,36 @@
         document.getElementById('camStatusText').innerText = "Status: Online | Secure Link";
         document.getElementById('camStatusText').style.color = "#a3b18a";
     }
+
+// Dentro da sua função loadData(), quando você pega o ID do canal:
+// currentChannelID = data[10]; (Certifique-se de salvar o valor aqui)
+
+function openChart(fieldId, label) {
+    if (!channelID) {
+        alert("Channel ID not loaded yet.");
+        return;
+    }
+
+    const modal = document.getElementById('chartModal');
+    const iframe = document.getElementById('tsChartIframe');
+    const title = document.getElementById('modalChartTitle');
+
+    // Monta a URL do gráfico do ThingSpeak
+    // Ajustamos as cores para combinar com seu tema Dark/Gold
+    const chartUrl = `https://thingspeak.com/channels/${channelID}/charts/${fieldId}?bgcolor=%23${--bg-dark}&color=%23${--accent}&dynamic=true&results=8000&type=line&update=15&title=${encodeURIComponent(label)}`;
+
+    title.innerText = label.toUpperCase();
+    iframe.src = chartUrl;
+    modal.style.display = 'flex';
+}
+
+function closeChart() {
+    const modal = document.getElementById('chartModal');
+    const iframe = document.getElementById('tsChartIframe');
+    
+    modal.style.display = 'none';
+    iframe.src = ""; // Limpa o iframe para economizar banda/processamento
+}
 </script>
 </body>
 </html>
