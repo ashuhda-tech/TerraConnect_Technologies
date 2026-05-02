@@ -126,7 +126,8 @@
     .chart-modal {display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(7, 11, 20, 0.95); backdrop-filter: blur(15px); z-index: 9999; flex-direction: column; align-items: center; justify-content: center;}
     .chart-modal-header { width: 90%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
     .chart-modal-header h2 { color: var(--accent); margin: 0; }
-    .btn-close-modal { background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 10px 20px; border-radius: 5px; cursor: pointer; font-family: 'Cinzel', serif; }
+    .btn-close-modal { background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 1.2rem; transition: 0.3s; display: flex; align-items: center; justify-content: center; font-family: 'Cinzel', serif; }
+    .btn-close-modal:hover {background: var(--accent);color: var(--bg-dark);}
     .chart-iframe-container { width: 90%; height: 80%; border: 1px solid var(--border); border-radius: 15px; overflow: hidden; background: #000; }
     .chart-iframe-container iframe { width: 100%; height: 100%; border: none;}
 
@@ -380,7 +381,9 @@
 <div id="chartModal" class="chart-modal">
     <div class="chart-modal-header">
         <h2 id="modalChartTitle" class="a70-font">SENSOR CHART</h2>
-        <button class="btn-close-modal" onclick="closeChart()">CLOSE [X]</button>
+        <button class="btn-close-modal" onclick="closeChart()>
+        <i class="fa fa-window-close" aria-hidden="true"></i>
+        </button>
     </div>
         <div class="chart-container" style="position: relative; height:60vh; width:100%">
             <canvas id="customChart"></canvas>
@@ -794,6 +797,21 @@ async function openChart(fieldId, label) {
             }
         }
     });
+}
+    
+    function closeChart() {
+    const modal = document.getElementById('chartModal');
+    
+    // 1. Esconde o modal
+    modal.style.display = 'none';
+
+    // 2. Limpa o objeto do gráfico da memória
+    if (myChart) {
+        myChart.destroy();
+        myChart = null; // Garante que a variável esteja pronta para um novo gráfico
+    }
+    
+    console.log("Sistema de telemetria em standby.");
 }
 </script>
 </body>
