@@ -727,6 +727,12 @@ async function sendDeviceConfig() {
     return {
         responsive: true,
         maintainAspectRatio: false,
+        // 1. Adiciona um espaçamento extra na base do gráfico para as legendas
+        layout: {
+            padding: {
+                bottom: 15 
+            }
+        },
         plugins: {
             legend: { display: false }
         },
@@ -739,19 +745,21 @@ async function sendDeviceConfig() {
             x: { 
                 ticks: { 
                     color: '#9ca3af',
-                    maxRotation: 0, // Mantém horizontal para limpeza visual
+                    // 2. Reduz o tamanho da fonte para 10px para ganhar espaço
+                    font: {
+                        size: 10
+                    },
+                    maxRotation: 0,
                     minRotation: 0,
-                    autoSkip: true, // Pula labels se houver muita densidade
-                    maxTicksLimit: 6, // Limita a quantidade de datas visíveis no eixo
+                    autoSkip: true,
+                    maxTicksLimit: 4, 
                     callback: function(val, index) {
-                        // Recupera a data original (mm/dd/yyyy) enviada para o gráfico
                         const rawDate = this.getLabelForValue(val);
                         const d = new Date(rawDate);
                         
                         if (isNaN(d)) return rawDate;
 
                         const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-                        // Task 2: Retorna no formato MMM/YYYY
                         return `${months[d.getMonth()]}/${d.getFullYear()}`;
                     }
                 },
