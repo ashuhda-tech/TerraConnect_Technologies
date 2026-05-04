@@ -402,15 +402,20 @@
     const currentPageId = urlParams.get('id');
     
     //TerraConnectPageID
-    const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTeBz5FwvcmPue3hJ6TKwmrNZeMrz2_Su7co-mPuzKj1ZJv--5BBvPjlszF3yyEHOVuEeGT9mmwZqOp/pub?gid=0&single=true&output=csv';
+    const PAGEID_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTeBz5FwvcmPue3hJ6TKwmrNZeMrz2_Su7co-mPuzKj1ZJv--5BBvPjlszF3yyEHOVuEeGT9mmwZqOp/pub?gid=0&single=true&output=csv';
+    const PAGEID_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw3LbOYDqljAxQ8joYW8yDhwe6lsi7AdFCAoi4HG1iRdglS0k9-fI1Oj2eA12ePc6g/exec";
+
+    //TerraConnectTheme
+    const THEME_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQxrbVDyA-y5qOfbXcmpyCppyTDtGxOAYzGj_QR6uA27gVY3KWeT3Ka6IYvKDUM3QiU6iK0aNq3O6wr/pub?gid=0&single=true&output=csv';
+    const THEME_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzPCMbwa8NXy253hSbR4ewodPAiN_20qUlwvcFl8Uexo9SOZRUp5vxDPFlksh8NyNnD/exec";
     
     //TerraConnectBiodata.xlsx
-    const EVENTS_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS0Ra5VUE1xSCkCJCXaAObs1wBlUlrhH1YnnQ6e91S4fLT4sh_Nt7ECxaW15EMgS4_yjVcEs0OQECta/pub?gid=0&single=true&output=csv';
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw3LbOYDqljAxQ8joYW8yDhwe6lsi7AdFCAoi4HG1iRdglS0k9-fI1Oj2eA12ePc6g/exec";
+    const BIODATA_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS0Ra5VUE1xSCkCJCXaAObs1wBlUlrhH1YnnQ6e91S4fLT4sh_Nt7ECxaW15EMgS4_yjVcEs0OQECta/pub?gid=0&single=true&output=csv';
+    const BIODATA_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxnOcWSHRutBkHc_45tSLOFjowJXMeplk333TmaddrvfWgETljbZZ6shOuwYTIG4AkD/exec";
     
     //TerraConnectEnviromentalSetup.xlsx
-    const EnviromentalSetup_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRbjH7deMzP_-oUSROzLYUxU3o2UvBar6ODVwLKpLQ6xaacQKON5xlzV3KA2Tswsc0WfSGQu7LVKBvs/pub?gid=0&single=true&output=csv';
-    const CONFIG_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzG2YVem9qG7sEK20lVuRm2Bhjo10dfXRF98mibREbUZnM5obTrb0QrQDJIGi0wFoE/exec";
+    const ENVIRONMENT_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRbjH7deMzP_-oUSROzLYUxU3o2UvBar6ODVwLKpLQ6xaacQKON5xlzV3KA2Tswsc0WfSGQu7LVKBvs/pub?gid=0&single=true&output=csv';
+    const ENVIRONMENT_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzG2YVem9qG7sEK20lVuRm2Bhjo10dfXRF98mibREbUZnM5obTrb0QrQDJIGi0wFoE/exec";
     
     let feedingChart, weightChart, sheddingChart, lengthChart;
     let tsReadURL = "";
@@ -435,7 +440,7 @@
         }
         
     try {
-        const response = await fetch(CSV_URL);
+        const response = await fetch(PAGEID_CSV_URL);
         const csvData = await response.text();
         const rows = parseCSV(csvData);
 
@@ -542,7 +547,7 @@
         if (!currentPageId) return;
         try {
             console.log("Fetching current limits for ID:", currentPageId);
-            const response = await fetch(`${EnviromentalSetup_CSV_URL}&t=${new Date().getTime()}`);
+            const response = await fetch(`${ENVIRONMENT_CSV_URL}&t=${new Date().getTime()}`);
             const csvText = await response.text();
             const rows = parseCSV(csvText);
             
@@ -573,7 +578,7 @@ async function sendDeviceConfig() {
     }
 
     // 2. Construção da URL com parâmetros (Lógica idêntica ao biodata)
-    const url = `${CONFIG_SCRIPT_URL}?pageId=${encodeURIComponent(currentPageId)}` +
+    const url = `${ENVIRONMENT_SCRIPT_URL}?pageId=${encodeURIComponent(currentPageId)}` +
                 `&maxTemp=${encodeURIComponent(maxTemp)}` +
                 `&minTemp=${encodeURIComponent(minTemp)}` +
                 `&maxHum=${encodeURIComponent(maxHum)}` +
@@ -652,7 +657,7 @@ async function sendDeviceConfig() {
     // --- HISTÓRICO BIOLÓGICO E GRÁFICOS ---
     async function loadBiologicalHistory(id) {
         try {
-            const res = await fetch(EVENTS_CSV);
+            const res = await fetch(BIODATA_CSV_URL);
             const text = await res.text();
             const rows = parseCSV(text);
             const events = rows.filter(r => r[0] && r[0].toLowerCase() === id.toLowerCase());
@@ -731,7 +736,7 @@ async function sendDeviceConfig() {
 
         const today = new Date();
         const dateStr = (today.getMonth() + 1) + "/" + today.getDate() + "/" + today.getFullYear();
-        const finalUrl = `${SCRIPT_URL}?pageId=${encodeURIComponent(currentPageId)}&date=${encodeURIComponent(dateStr)}&registerType=${encodeURIComponent(type)}&value=${encodeURIComponent(inputValue)}`;
+        const finalUrl = `${PAGEID_SCRIPT_URL}?pageId=${encodeURIComponent(currentPageId)}&date=${encodeURIComponent(dateStr)}&registerType=${encodeURIComponent(type)}&value=${encodeURIComponent(inputValue)}`;
 
         try {
             await fetch(finalUrl, { method: 'GET', mode: 'no-cors' });
