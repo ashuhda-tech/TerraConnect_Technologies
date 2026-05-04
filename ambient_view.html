@@ -724,8 +724,42 @@ async function sendDeviceConfig() {
     }
 
     function commonOptions() {
-        return { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, grid: { color: 'rgba(31, 41, 55, 0.5)' }, ticks: { color: '#9ca3af' } }, x: { ticks: { color: '#9ca3af' } } }, plugins: { legend: { display: false } } };
-    }
+    return {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { display: false }
+        },
+        scales: {
+            y: { 
+                beginAtZero: true, 
+                grid: { color: 'rgba(31, 41, 55, 0.5)' }, 
+                ticks: { color: '#9ca3af' } 
+            },
+            x: { 
+                ticks: { 
+                    color: '#9ca3af',
+                    maxRotation: 0, // Mantém horizontal para limpeza visual
+                    minRotation: 0,
+                    autoSkip: true, // Pula labels se houver muita densidade
+                    maxTicksLimit: 6, // Limita a quantidade de datas visíveis no eixo
+                    callback: function(val, index) {
+                        // Recupera a data original (mm/dd/yyyy) enviada para o gráfico
+                        const rawDate = this.getLabelForValue(val);
+                        const d = new Date(rawDate);
+                        
+                        if (isNaN(d)) return rawDate;
+
+                        const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+                        // Task 2: Retorna no formato MMM/YYYY
+                        return `${months[d.getMonth()]}/${d.getFullYear()}`;
+                    }
+                },
+                grid: { display: false }
+            }
+        }
+    };
+}
 
     async function sendToCloud(type, elementId) {
         const inputElement = document.getElementById(elementId);
