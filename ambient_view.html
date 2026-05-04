@@ -399,7 +399,10 @@
 
 <script>
     const urlParams = new URLSearchParams(window.location.search);
-    const currentPageId = urlParams.get('id');
+    const currentPageId = sessionStorage.getItem('activePageId');
+    if (!currentPageId) {
+        window.location.href = 'maindashboard.html'; // Se tentar entrar direto sem ID, volta pro painel
+    }
     
     //TerraConnectPageID
     const PAGEID_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTeBz5FwvcmPue3hJ6TKwmrNZeMrz2_Su7co-mPuzKj1ZJv--5BBvPjlszF3yyEHOVuEeGT9mmwZqOp/pub?gid=0&single=true&output=csv';
