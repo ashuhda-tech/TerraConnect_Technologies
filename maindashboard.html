@@ -214,8 +214,16 @@
 </div>
 
     <script>
-        const user = JSON.parse(localStorage.getItem('currentUser'));
-        if (!user) { window.location.href = 'index.html'; }
+        
+        // --- FIREWALL DE ACESSO ---
+(function() {
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    if (!user) {
+        window.location.href = 'index.html'; // Chuta para o login se não houver sessão
+        return;
+    }
+    window.currentUser = user; // Define globalmente para as outras funções
+})();
 
         document.getElementById('userName').innerText = user.name || "User";
         document.getElementById('userId').innerText = `ID: ${user.id}`;
@@ -276,6 +284,11 @@
                         card.href = `ambient_view.html?id=${dbPageId}`;
                         card.className = 'ambient-card a70-font';
                         card.innerHTML = `<i class="fas fa-microchip"></i> ${dbName.toUpperCase()}`;
+                        // Ao clicar, salvamos o ID e navegamos "limpo"
+                        card.onclick = () => {
+                            sessionStorage.setItem('activePageId', dbPageId); 
+                            window.location.href = 'ambient_view.html'; // URL fica limpa!
+                        };
                         navSection.appendChild(card);
                         
                         if(dbTheme && !localStorage.getItem(`theme_${user.id}`)) {
