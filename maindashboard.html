@@ -220,8 +220,22 @@
         document.getElementById('userName').innerText = user.name || "User";
         document.getElementById('userId').innerText = `ID: ${user.id}`;
 
-        const REGISTRY_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTeBz5FwvcmPue3hJ6TKwmrNZeMrz2_Su7co-mPuzKj1ZJv--5BBvPjlszF3yyEHOVuEeGT9mmwZqOp/pub?gid=0&single=true&output=csv';
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxnOcWSHRutBkHc_45tSLOFjowJXMeplk333TmaddrvfWgETljbZZ6shOuwYTIG4AkD/exec';
+    //TerraConnectPageID
+    const PAGEID_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTeBz5FwvcmPue3hJ6TKwmrNZeMrz2_Su7co-mPuzKj1ZJv--5BBvPjlszF3yyEHOVuEeGT9mmwZqOp/pub?gid=0&single=true&output=csv';
+    const PAGEID_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw3LbOYDqljAxQ8joYW8yDhwe6lsi7AdFCAoi4HG1iRdglS0k9-fI1Oj2eA12ePc6g/exec";
+
+    //TerraConnectTheme
+    const THEME_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQxrbVDyA-y5qOfbXcmpyCppyTDtGxOAYzGj_QR6uA27gVY3KWeT3Ka6IYvKDUM3QiU6iK0aNq3O6wr/pub?gid=0&single=true&output=csv';
+    const THEME_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzPCMbwa8NXy253hSbR4ewodPAiN_20qUlwvcFl8Uexo9SOZRUp5vxDPFlksh8NyNnD/exec";
+    
+    //TerraConnectBiodata.xlsx
+    const BIODATA_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS0Ra5VUE1xSCkCJCXaAObs1wBlUlrhH1YnnQ6e91S4fLT4sh_Nt7ECxaW15EMgS4_yjVcEs0OQECta/pub?gid=0&single=true&output=csv';
+    const BIODATA_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxnOcWSHRutBkHc_45tSLOFjowJXMeplk333TmaddrvfWgETljbZZ6shOuwYTIG4AkD/exec";
+        
+    //TerraConnectEnviromentalSetup.xlsx
+    const ENVIRONMENT_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRbjH7deMzP_-oUSROzLYUxU3o2UvBar6ODVwLKpLQ6xaacQKON5xlzV3KA2Tswsc0WfSGQu7LVKBvs/pub?gid=0&single=true&output=csv';
+    const ENVIRONMENT_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzG2YVem9qG7sEK20lVuRm2Bhjo10dfXRF98mibREbUZnM5obTrb0QrQDJIGi0wFoE/exec";
+    
 
         function applyInitialTheme() {
             const savedTheme = localStorage.getItem(`theme_${user.id}`) || 'default';
@@ -232,19 +246,19 @@
             document.documentElement.setAttribute('data-theme', themeName);
             localStorage.setItem(`theme_${user.id}`, themeName);
 
-            const finalUrl = `${SCRIPT_URL}?pageId=${encodeURIComponent(user.id)}&registerType=ThemePreference&value=${encodeURIComponent(themeName)}`;
+            const finalUrl = `${THEME_SCRIPT_URL}?pageId=${encodeURIComponent(user.id)}&registerType=ThemePreference&value=${encodeURIComponent(themeName)}`;
             
             try {
                 await fetch(finalUrl, { method: 'GET', mode: 'no-cors' });
-                console.log("Tema salvo na nuvem:", themeName);
+                console.log("Cloud Saved Theme: ", themeName);
             } catch (e) {
-                console.warn("Erro ao sincronizar com a nuvem.");
+                console.warn("Cloud Sync Error.");
             }
         }
 
         async function loadUserAmbients() {
             try {
-                const response = await fetch(REGISTRY_SHEET_URL);
+                const response = await fetch(PAGEID_CSV_URL);
                 const data = await response.text();
                 const rows = data.split('\n').slice(1);
                 const navSection = document.querySelector('.nav-section');
@@ -270,7 +284,7 @@
                     }
                 });
             } catch (error) {
-                console.error("Erro ao carregar ambientes:", error);
+                console.error("Ambient Loading Error: ", error);
             }
         }
 
