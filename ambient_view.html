@@ -881,11 +881,37 @@ async function sendDeviceConfig() {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: { display: false }
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        // Task 4: Mantém o formato HORÁRIO na legenda de cada ponto (tooltip)
+                        title: function(context) {
+                            const d = new Date(context[0].label);
+                            return d.toLocaleTimeString();
+                        }
+                    }
+                }
             },
             scales: {
                 y: { grid: { color: '#333' }, ticks: { color: '#fff' } },
-                x: { grid: { display: false }, ticks: { color: '#fff' } }
+                x: { grid: { display: false }, 
+                    ticks: { 
+                        color: '#fff',
+                        maxTicksLimit: 6,
+                        // Task 4: Muda o Eixo X para o formato diário padrão DD/MMM/YYYY
+                        callback: function(val, index) {
+                            const rawDate = this.getLabelForValue(val);
+                            const d = new Date(rawDate);
+                            const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+                            
+                            const day = String(d.getDate()).padStart(2, '0');
+                            const month = months[d.getMonth()];
+                            const year = d.getFullYear();
+                            
+                            return `${day}/${month}/${year}`;
+                        }
+                    } 
+                }
             }
         }
     });
