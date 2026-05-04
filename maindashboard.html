@@ -215,15 +215,13 @@
 
     <script>
         
-        // --- FIREWALL DE ACESSO ---
-(function() {
-    const user = JSON.parse(localStorage.getItem('currentUser'));
-    if (!user) {
-        window.location.href = 'index.html'; // Chuta para o login se não houver sessão
-        return;
-    }
-    window.currentUser = user; // Define globalmente para as outras funções
-})();
+        // --- 1. FIREWALL DE ACESSO E TEMA ---
+        const user = JSON.parse(localStorage.getItem('currentUser'));
+        if (!user) {
+        window.location.href = 'index.html'; // Redireciona se não houver sessão
+        } else {
+        window.currentUser = user; 
+        // Preenche a UI imediatamente
 
         document.getElementById('userName').innerText = user.name || "User";
         document.getElementById('userId').innerText = `ID: ${user.id}`;
