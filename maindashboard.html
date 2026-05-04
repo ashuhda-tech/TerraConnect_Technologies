@@ -214,14 +214,8 @@
 </div>
 
     <script>
-        
-        // --- 1. FIREWALL DE ACESSO E TEMA ---
         const user = JSON.parse(localStorage.getItem('currentUser'));
-        if (!user) {
-        window.location.href = 'index.html'; // Redireciona se não houver sessão
-        } else {
-        window.currentUser = user; 
-        // Preenche a UI imediatamente
+        if (!user) { window.location.href = 'index.html'; }
 
         document.getElementById('userName').innerText = user.name || "User";
         document.getElementById('userId').innerText = `ID: ${user.id}`;
@@ -282,11 +276,6 @@
                         card.href = `ambient_view.html?id=${dbPageId}`;
                         card.className = 'ambient-card a70-font';
                         card.innerHTML = `<i class="fas fa-microchip"></i> ${dbName.toUpperCase()}`;
-                        // Ao clicar, salvamos o ID e navegamos "limpo"
-                        card.onclick = () => {
-                            sessionStorage.setItem('activePageId', dbPageId); 
-                            window.location.href = 'ambient_view.html'; // URL fica limpa!
-                        };
                         navSection.appendChild(card);
                         
                         if(dbTheme && !localStorage.getItem(`theme_${user.id}`)) {
