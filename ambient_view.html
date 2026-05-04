@@ -426,7 +426,7 @@
     const ENVIRONMENT_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRbjH7deMzP_-oUSROzLYUxU3o2UvBar6ODVwLKpLQ6xaacQKON5xlzV3KA2Tswsc0WfSGQu7LVKBvs/pub?gid=0&single=true&output=csv';
     const ENVIRONMENT_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzG2YVem9qG7sEK20lVuRm2Bhjo10dfXRF98mibREbUZnM5obTrb0QrQDJIGi0wFoE/exec";
     
-    let feedingChart, weightChart, sheddingChart, lengthChart;
+    let feedingChart, weightChart, sheddingChart, lengthChart, heightChart;
     let tsReadURL = "";
     let currentUUID = ""; 
     let channelID = ""; // Declare no topo como global
@@ -781,8 +781,8 @@ async function sendDeviceConfig() {
     if(!canvas) return;
         const ctx = document.getElementById('heigthChart').getContext('2d');
         const data = events.filter(e => e[2] === "Length");
-        if(lengthChart) lengthChart.destroy();
-        lengthChart = new Chart(ctx, { type: 'line', data: { labels: data.map(e => e[1]), datasets: [{ label: 'Heigth (cm)', data: data.map(e => e[3]), borderColor: color, fill: true, backgroundColor: getGradient(ctx, color), tension: 0.4 }] }, options: commonOptions() });
+        if(heigthChart) heigthChart.destroy();
+        heigthChart = new Chart(ctx, { type: 'line', data: { labels: data.map(e => e[1]), datasets: [{ label: 'Heigth (cm)', data: data.map(e => e[3]), borderColor: color, fill: true, backgroundColor: getGradient(ctx, color), tension: 0.4 }] }, options: commonOptions() });
     }
 
     function commonOptions() {
