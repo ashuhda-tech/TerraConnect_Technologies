@@ -849,9 +849,21 @@ async function sendDeviceConfig() {
     
     // --- INICIALIZAÇÃO FINAL ---
     document.addEventListener('DOMContentLoaded', () => {
-        applyUserTheme();
-        loadData();
+        // 1. Verifica se existe algum usuário logado no navegador
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    
+    if (!user) { 
+        // Se não houver ninguém logado, apaga o corpo da página e redireciona
+        document.body.innerHTML = "<h1 style='color:white; text-align:center; margin-top:20%;'>ACCESS DENIED: Please login.</h1>";
+        setTimeout(() => { window.location.href = 'index.html'; }, 2000);
+        return; 
+    }
 
+        window.currentUser = user; // Torna o usuário acessível globalmente
+        applyUserTheme();
+        loadData(); // Só chama o carregamento após validar o login básico
+
+    // Configura o link de edição
         const editButton = document.getElementById('editLink');
         if (currentPageId && editButton) {
             editButton.href = `register_ambient.html?pageID=${currentPageId}`;
