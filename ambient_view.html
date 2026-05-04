@@ -777,12 +777,12 @@ async function sendDeviceConfig() {
         lengthChart = new Chart(ctx, { type: 'line', data: { labels: data.map(e => e[1]), datasets: [{ label: 'Length (cm)', data: data.map(e => e[3]), borderColor: color, fill: true, backgroundColor: getGradient(ctx, color), tension: 0.4 }] }, options: commonOptions() });
     }
     function renderHeigth(events, color) {
-    const canvas = document.getElementById('heigthChart');
+    const canvas = document.getElementById('heightChart');
     if(!canvas) return;
-        const ctx = document.getElementById('heigthChart').getContext('2d');
-        const data = events.filter(e => e[2] === "Length");
-        if(heigthChart) heigthChart.destroy();
-        heigthChart = new Chart(ctx, { type: 'line', data: { labels: data.map(e => e[1]), datasets: [{ label: 'Heigth (cm)', data: data.map(e => e[3]), borderColor: color, fill: true, backgroundColor: getGradient(ctx, color), tension: 0.4 }] }, options: commonOptions() });
+        const ctx = document.getElementById('heightChart').getContext('2d');
+        const data = events.filter(e => e[2] === "Height");
+        if(heightChart) heightChart.destroy();
+        heightChart = new Chart(ctx, { type: 'line', data: { labels: data.map(e => e[1]), datasets: [{ label: 'Heigth (cm)', data: data.map(e => e[3]), borderColor: color, fill: true, backgroundColor: getGradient(ctx, color), tension: 0.4 }] }, options: commonOptions() });
     }
 
     function commonOptions() {
