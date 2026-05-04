@@ -52,9 +52,7 @@
 
     /* Estilo para o Vídeo de Fundo */
     .background-video { position: fixed; right: 0; bottom: 0; min-width: 100%; min-height: 100%; z-index: -1; object-fit: cover; filter: brightness(0.4); }
-
     .a70-font { font-family: 'Cinzel', serif; letter-spacing: 2px; }
-
     .animal-photo {  flex-shrink: 0; width: 200px; height: 200px; border-radius: 10px; overflow: hidden; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; border: 2px solid var(--border);}
 
     /* --- SIDEBAR LAYOUT --- */
@@ -62,7 +60,7 @@
 
     .btn-back { text-decoration: none; color: var(--accent); border: 1px solid var(--accent); padding: 8px 15px; border-radius: 5px; font-size: 0.8rem; transition: 0.3s; display: inline-block; margin-bottom: 30px; text-align: center; }
     .btn-back:hover { background: var(--accent); color: var(--bg-dark); }
-    .btn-send { background: transparent; border: 1px solid var(--accent); color: var(--accent); border-radius: 5px; padding: 8px 12px; cursor: pointer; transition: 0.3s; }
+    .btn-send { background: transparent; border: 1px solid var(--accent); color: var(--accent); border-radius: 5px; padding: 8px 15px; cursor: pointer; transition: 0.3s; flex-shrink: 0; white-space: nowrap; height: 38px;}
     .btn-send:hover { background: var(--accent); color: var(--bg-dark); }
     .btn-edit {display: none;align-items: center;justify-content: center;gap: 8px;margin-top: 15px;padding: 10px;width: 100%;background: transparent;border: 1px solid var(--accent);color: var(--accent);text-decoration: none;border-radius: 5px;font-size: 0.8rem;font-family: 'Cinzel', serif;transition: 0.3s;cursor: pointer;}
     .btn-edit:hover {background: var(--accent);color: var(--bg-dark);}
@@ -107,9 +105,9 @@
 
     .summary-card { display: flex; flex-direction: column; justify-content: center; border-bottom: 3px solid var(--accent); }
 
-    .input-card { border-radius: 12px; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
+    .input-card { border-radius: 12px; padding: 15px; display: flex; flex-direction: column; gap: 10px; min-width: 0; overflow: hidden; }
     .input-header { display: flex; align-items: center; gap: 8px; color: var(--accent); font-size: 0.7rem; text-transform: uppercase; }
-    .input-group { display: flex; gap: 5px; }
+    .input-group { display: flex; gap: 8px; width: 100%; align-items: center; flex-shrink: 0; white-space: nowrap; padding: 8px 15px; height: 38px;}
     .input-field { background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 5px; color: var(--text-light); padding: 8px; flex: 1; font-size: 0.9rem; outline: none; }
     .input-field:focus { border-color: var(--accent); }
 
