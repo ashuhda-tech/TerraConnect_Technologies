@@ -734,7 +734,26 @@ async function sendDeviceConfig() {
             }
         },
         plugins: {
-            legend: { display: false }
+            legend: { display: false },
+            // Configuração do Tooltip (Legenda do ponto)
+            tooltip: {
+                callbacks: {
+                    title: function(context) {
+                        // Task 3: Formata a data no topo do tooltip como DD/MMM/YYYY
+                        const rawDate = context[0].label;
+                        const d = new Date(rawDate);
+                        
+                        if (isNaN(d)) return rawDate;
+
+                        const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+                        const day = String(d.getDate()).padStart(2, '0');
+                        const month = months[d.getMonth()];
+                        const year = d.getFullYear();
+                        
+                        return `${day}/${month}/${year}`;
+                    }
+                }
+            }
         },
         scales: {
             y: { 
