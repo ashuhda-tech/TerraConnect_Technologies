@@ -736,7 +736,7 @@ async function sendDeviceConfig() {
 
         const today = new Date();
         const dateStr = (today.getMonth() + 1) + "/" + today.getDate() + "/" + today.getFullYear();
-        const finalUrl = `${PAGEID_SCRIPT_URL}?pageId=${encodeURIComponent(currentPageId)}&date=${encodeURIComponent(dateStr)}&registerType=${encodeURIComponent(type)}&value=${encodeURIComponent(inputValue)}`;
+        const finalUrl = `${BIODATA_SCRIPT_URL}?pageId=${encodeURIComponent(currentPageId)}&date=${encodeURIComponent(dateStr)}&registerType=${encodeURIComponent(type)}&value=${encodeURIComponent(inputValue)}`;
 
         try {
             await fetch(finalUrl, { method: 'GET', mode: 'no-cors' });
