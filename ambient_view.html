@@ -321,18 +321,25 @@
                     <button class="btn-send" onclick="sendToCloud('Feeding', 'inFeed')"><i class="fas fa-plus"></i></button>
                 </div>
             </div>
-            <div class="input-card">
+            <div class="input-card" data-show-for="SNAKE,LIZARD">
                 <div class="input-header"><i class="fas fa-snake"></i> Add Shedd (Date)</div>
                 <div class="input-group">
                     <input type="date" id="inShed" class="input-field">
                     <button class="btn-send" onclick="sendToCloud('Shedding', 'inShed')"><i class="fas fa-plus"></i></button>
                 </div>
             </div>
-            <div class="input-card">
+            <div class="input-card" data-hide-for="FISH">
                 <div class="input-header"><i class="fas fa-weight"></i> Add Weighting (g)</div>
                 <div class="input-group">
                     <input type="number" id="inWeight" class="input-field" placeholder="0">
                     <button class="btn-send" onclick="sendToCloud('Weighting', 'inWeight')"><i class="fas fa-plus"></i></button>
+                </div>
+            </div>
+            <div class="input-card" data-hide-for="FISH,SNAKE">
+                <div class="input-header"><i class="fas fa-ruler-vertical"></i> Add Height (cm)</div>
+                <div class="input-group">
+                    <input type="number" id="inHeight" class="input-field" placeholder="0">
+                    <button class="btn-send" onclick="sendToCloud('Height', 'inHeight')"><i class="fas fa-plus"></i></button>
                 </div>
             </div>
             <div class="input-card">
@@ -349,17 +356,21 @@
                 <h3 class="a70-font">Feeding History (g)</h3>
                 <canvas id="feedingChart"></canvas>
             </div>
-            <div class="chart-card">
+            <div class="chart-card" data-hide-for="FISH">
                 <h3 class="a70-font">Weight Evolution (g)</h3>
                 <canvas id="weightChart"></canvas>
             </div>
-            <div class="chart-card">
+            <div class="chart-card" data-show-for="SNAKE, LIZARD">
                 <h3 class="a70-font">Shedding Intervals (Days)</h3>
                 <canvas id="sheddingChart"></canvas>
             </div>
-            <div class="chart-card">
+            <div class="chart-card" data-hide-for="FISH">
                 <h3 class="a70-font">Lengh Measurement (cm)</h3>
                 <canvas id="lengthChart"></canvas>
+            </div>
+            <div class="chart-card" data-hide-for="FISH,SNAKE">
+                <h3 class="a70-font">Height Measurement (cm)</h3>
+                <canvas id="heightChart"></canvas>
             </div>
         </div>
 
@@ -457,6 +468,7 @@
             const animalTypeRaw = data[19] || "DEFAULT";
             if(document.getElementById('dynAnimal')) {
                 document.getElementById('dynAnimal').innerText = animalTypeRaw.toUpperCase();
+            filterLayoutByAnimal(animalTypeRaw);  // Executa a filtragem inteligente de layout antes de renderizar os gráficos
             }
             
             document.getElementById('dynBirth').innerText = data[6] || "---";
@@ -520,6 +532,22 @@
     } catch (e) { console.error("Database error:", e); }
 }
 
+    function filterLayoutByAnimal(animalType) {
+    const type = animalType.toUpperCase().trim();
+    document.querySelectorAll('[data-hide-for]').forEach(el => {
+        const excludedTypes = el.getAttribute('data-hide-for').toUpperCase().split(',');
+        if (excludedTypes.includes(type)) {
+            el.remove();
+        }
+    });
+    document.querySelectorAll('[data-show-for]').forEach(el => {
+        const allowedTypes = el.getAttribute('data-show-for').toUpperCase().split(',');
+        if (!allowedTypes.includes(type)) {
+            el.remove();
+        }
+    });
+}
+    
     async function updateSensors() {
         if (!tsReadURL) return;
         try {
@@ -717,28 +745,44 @@ async function sendDeviceConfig() {
     }
 
     function renderFeeding(events, color) { 
+        const canvas = document.getElementById('feedingChart');
+    if(!canvas) return
         const ctx = document.getElementById('feedingChart').getContext('2d');
         const data = events.filter(e => e[2] === "Feeding");
         if(feedingChart) feedingChart.destroy();
         feedingChart = new Chart(ctx, { type: 'line', data: { labels: data.map(e => e[1]), datasets: [{ label: 'Feeding (g)', data: data.map(e => e[3]), borderColor: color, fill: true, backgroundColor: getGradient(ctx, color), tension: 0.4 }] }, options: commonOptions() });
     }
     function renderWeight(events, color) {
+        const canvas = document.getElementById('weightChart');
+    if(!canvas) return
         const ctx = document.getElementById('weightChart').getContext('2d');
         const data = events.filter(e => e[2] === "Weighting");
         if(weightChart) weightChart.destroy();
         weightChart = new Chart(ctx, { type: 'line', data: { labels: data.map(e => e[1]), datasets: [{ label: 'Body (g)', data: data.map(e => e[3]), borderColor: color, fill: true, backgroundColor: getGradient(ctx, color), tension: 0.4 }] }, options: commonOptions() });
     }
     function renderShedding(processedData, color) {
+    const canvas = document.getElementById('sheddingChart');
+    if(!canvas) return;
     const ctx = document.getElementById('sheddingChart').getContext('2d');
     if(sheddingChart) sheddingChart.destroy();
     const displayData = processedData.filter(d => d.interval > 0);
     sheddingChart = new Chart(ctx, { type: 'line', data: { labels: displayData.map(d => d.date), datasets: [{ label: 'Days between Sheds', data: displayData.map(d => d.interval), borderColor: color, fill: true,  backgroundColor: getGradient(ctx, color), tension: 0.4 }] }, options: commonOptions() });
     }
     function renderLength(events, color) {
+    const canvas = document.getElementById('lengthChart');
+    if(!canvas) return;
         const ctx = document.getElementById('lengthChart').getContext('2d');
         const data = events.filter(e => e[2] === "Length");
         if(lengthChart) lengthChart.destroy();
         lengthChart = new Chart(ctx, { type: 'line', data: { labels: data.map(e => e[1]), datasets: [{ label: 'Length (cm)', data: data.map(e => e[3]), borderColor: color, fill: true, backgroundColor: getGradient(ctx, color), tension: 0.4 }] }, options: commonOptions() });
+    }
+    function renderHeigth(events, color) {
+    const canvas = document.getElementById('heigthChart');
+    if(!canvas) return;
+        const ctx = document.getElementById('heigthChart').getContext('2d');
+        const data = events.filter(e => e[2] === "Length");
+        if(lengthChart) lengthChart.destroy();
+        lengthChart = new Chart(ctx, { type: 'line', data: { labels: data.map(e => e[1]), datasets: [{ label: 'Heigth (cm)', data: data.map(e => e[3]), borderColor: color, fill: true, backgroundColor: getGradient(ctx, color), tension: 0.4 }] }, options: commonOptions() });
     }
 
     function commonOptions() {
