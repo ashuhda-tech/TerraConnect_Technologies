@@ -447,6 +447,24 @@
         const data = rows.find(r => r[1] && r[1].toLowerCase() === currentPageId.toLowerCase());
 
         if (data) {
+            // --- VALIDAÇÃO DE PROPRIEDADE ---
+            // data[0] é o UserID gravado na planilha
+            // window.currentUser.id é o ID do usuário que fez login
+            if (data[0] !== window.currentUser.id) {
+                console.error("Security Breach: User ID mismatch.");
+                document.body.innerHTML = `
+                    <div style="background:#070b14; color:#f4e9d8; height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:Cinzel, serif;">
+                        <i class="fas fa-user-shield" style="font-size:4rem; color:#ff5f5f; margin-bottom:20px;"></i>
+                        <h1>UNAUTHORIZED ACCESS</h1>
+                        <p>This environment does not belong to your account.</p>
+                        <a href="maindashboard.html" style="color:#d1b38b; text-decoration:none; margin-top:20px; border:1px solid #d1b38b; padding:10px 20px;">Return to Dashboard</a>
+                    </div>
+                `;
+                return; // Interrompe a execução aqui. Nada de sensores ou fotos são carregados.
+            }
+            // --- FIM DA VALIDAÇÃO ---
+
+            // Se chegou aqui, o usuário é o dono. Continua o preenchimento normal...
             currentUUID = data[0];
             document.getElementById('dynName').innerText = data[3] || "---";
             document.getElementById('dynSex').innerText = data[4] || "---";
