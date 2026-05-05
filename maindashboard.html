@@ -47,7 +47,16 @@
         .a70-font {font-family: 'Cinzel', serif; letter-spacing: 1px;}
 
         /* BARRA LATERAL */
-        .sidebar {width: 300px; background-color: var(--sidebar-bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 20px; box-sizing: border-box; transition: 0.3s;}
+        .sidebar {width: 320px; background-color: var(--sidebar-bg); border-right: 1px solid var(--border); padding: 25px; display: flex; flex-direction: column; justify-content: space-between; z-index: 10; transition: background-color 0.5s, border-color 0.5s;
+    /* --- CONFIGURAÇÃO PARA OCULTAR BARRAS DE ROLAGEM (VERTICAL E HORIZONTAL) --- */
+    overflow: auto;            /* Captura o transbordo horizontal e esconde a barra */
+    scrollbar-width: none;     /* Oculta no Firefox */
+    -ms-overflow-style: none;  /* Oculta no IE e Edge */
+}
+/* Oculta as barras de rolagem no Chrome, Safari e Opera */
+        .sidebar::-webkit-scrollbar { display: none; }
+
+        
         .nav-section {flex-grow: 1; display: flex; flex-direction: column; gap: 10px; overflow-y: auto;}
 
         /* Cards de Ambiente */
