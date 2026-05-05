@@ -56,7 +56,15 @@
     .animal-photo {  flex-shrink: 0; width: 200px; height: 200px; border-radius: 10px; overflow: hidden; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; border: 2px solid var(--border);}
 
     /* --- SIDEBAR LAYOUT --- */
-    .sidebar { width: 320px;  background-color: rgba(13, 17, 23, 0.8) !important;  backdrop-filter: blur(5px); border-right: 1px solid var(--border);  padding: 25px; display: flex;  flex-direction: column;  overflow-y: auto; flex-shrink: 0;  transition: 0.5s;  }
+    .sidebar { width: 320px; background-color: var(--sidebar-bg); border-right: 1px solid var(--border); padding: 25px; display: flex; flex-direction: column; justify-content: space-between; z-index: 10; transition: background-color 0.5s, border-color 0.5s;
+    /* --- NOVA CONFIGURAÇÃO PARA OCULTAR A BARRA DE ROLAGEM --- */
+    overflow-y: auto;          /* Permite a rolagem interna se os elementos passarem da tela */
+    scrollbar-width: none;     /* Oculta a barra no Firefox */
+    -ms-overflow-style: none;  /* Oculta a barra no IE e Edge */
+}
+
+/* Oculta a barra de rolagem no Chrome, Safari e Opera */
+    .sidebar::-webkit-scrollbar { display: none; }
 
     .btn-back { text-decoration: none; color: var(--accent); border: 1px solid var(--accent); padding: 8px 15px; border-radius: 5px; font-size: 0.8rem; transition: 0.3s; display: inline-block; margin-bottom: 30px; text-align: center; }
     .btn-back:hover { background: var(--accent); color: var(--bg-dark); }
