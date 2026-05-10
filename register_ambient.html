@@ -8,137 +8,39 @@
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/TERRACONNECT_LOGO.png">
     <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/TERRACONNECT_LOGO.png">
 
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="TerraConnect Technologies">
-    <meta property="og:description" content="Environmental Animal IOT Monitoring Center">
-    <meta property="og:url" content="https://ashuhda-tech.github.io/TerraConnect_Technologies/">
-    <meta property="og:image" content="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/TERRACONNECT_LOGOBRAND.png">
-
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="TerraConnect Technologies">
-    <meta name="twitter:image" content="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/TERRACONNECT_LOGOBRAND.png">
-
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* DEFINIÇÃO DE TODOS OS TEMAS */
         :root {--bg-dark: #070b14; --sidebar-bg: #0d1117; --accent: #d1b38b; --text-light: #f4e9d8; --gray-panel: #1e1e1e; --border: #2d3139;}
-        /* TECH SAVVY & FUTURISTIC */
         [data-theme="tech1"] {--bg-dark: #0B1021; --sidebar-bg: #334155; --accent: #87CEFA; --text-light: #CFFAFE; --gray-panel: #E2E8F0; --border: #334155;}
         [data-theme="tech2"] {--bg-dark: #1a1a1d; --sidebar-bg: #4e4e50; --accent: #ffff00; --text-light: #f5f5f5; --gray-panel: #2e2e2e; --border: #95a5a6;}
-        [data-theme="tech3"] {--bg-dark: #56886C; --sidebar-bg: #56887D; --accent: #FFE0FF; --text-light: #FFE9FF; --gray-panel: #56887D; --border: #56886C;}
-        /* PLAYFUL & VIBRANT */
-        [data-theme="playful1"] {--bg-dark: #040B11; --sidebar-bg: #2D322C; --accent: #CEE056; --text-light: #F3F3F2; --gray-panel: #2D322C; --border: #EBC61D;}
-        [data-theme="playful2"] {--bg-dark: #846B5A; --sidebar-bg: #CAB8A9; --accent: #D4CAC1; --text-light: #FEFCFB; --gray-panel: #FBF8F5; --border: #CAB8A9;}
-        [data-theme="playful3"] {--bg-dark: #136a7a; --sidebar-bg: #408d99; --accent: #8dc6bf; --text-light: #d1e8e4; --gray-panel: #f1f7f6; --border: #408d99;}
-        /* MINIMALISTIC & ELEGANT */
-        [data-theme="minimalist1"] {--bg-dark: #000000; --sidebar-bg: #1a1a1a; --accent: #d7ccc8; --text-light: #f5f5f5; --gray-panel: #6d4c41; --border: #e1e8ed;}
-        [data-theme="minimalist2"] {--bg-dark: #333333; --sidebar-bg: #4f4f4f; --accent: #bdb76b; --text-light: #dcdcdc; --gray-panel: #262626; --border: #e6e6fa;}
-        [data-theme="minimalist3"] {--bg-dark: #212121; --sidebar-bg: #404040; --accent: #bdc3c7; --text-light: #ffffff; --gray-panel: #616161; --border: #ff5252;}
-        /* NATURE-INSPIRED */
         [data-theme="nature1"] {--bg-dark: #2b2d24; --sidebar-bg: #3e3e3e; --accent: #cd853f; --text-light: #dad7cd; --gray-panel: #344e41; --border: #588157;}
-        [data-theme="nature2"] {--bg-dark: #322D29; --sidebar-bg: #72383D; --accent: #AC9C8D; --text-light: #EFE9E1; --gray-panel: #D1C7BD; --border: #D9D9D9;}
-        [data-theme="nature3"] {--bg-dark: #3b4d7b; --sidebar-bg: #1a2a4d; --accent: #c0c0e0; --text-light: #fef9e7; --gray-panel: #804040; --border: #e6b0aa;}
 
-        body { 
-            background-color: var(--bg-dark); 
-            color: var(--text-light); 
-            font-family: 'Inter', sans-serif; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100vh; 
-            margin: 0; 
-            padding: 20px; 
-            box-sizing: border-box; 
-            overflow-x: hidden;
-        }
-
-        /* --- Video Background Styles --- */
-        .video-bg-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -2;
-            overflow: hidden;
-        }
-
-        .video-bg-container video {
-            min-width: 100%;
-            min-height: 100%;
-            width: auto;
-            height: auto;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            object-fit: cover;
-        }
-
-        .video-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6); 
-            z-index: -1;
-        }
-
-        /* --- Painel de Registro Sólido --- */
-        .register-container { 
-            background-color: var(--sidebar-bg); /* Utiliza a cor do tema, mantendo sólido */
-            padding: 40px; 
-            border: 1px solid var(--border); 
-            border-radius: 20px; 
-            width: 100%; 
-            max-width: 500px; 
-            text-align: center; 
-            z-index: 1; /* Garante que fique acima do vídeo */
-            position: relative;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.5); /* Sombra para destacar do fundo */
-        }
-
+        body { background-color: var(--bg-dark); color: var(--text-light); font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
+        .video-bg-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; overflow: hidden; }
+        .video-bg-container video { min-width: 100%; min-height: 100%; width: auto; height: auto; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); object-fit: cover; }
+        .video-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: -1; }
+        .register-container { background-color: var(--sidebar-bg); padding: 40px; border: 1px solid var(--border); border-radius: 20px; width: 100%; max-width: 600px; text-align: center; z-index: 1; position: relative; box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
         .a70-font { font-family: 'Cinzel', serif; letter-spacing: 2px; }
         h1 { color: var(--accent); font-size: 1.2rem; margin-bottom: 30px; }
         .input-group { text-align: left; margin-bottom: 20px; }
         label { font-size: 0.7rem; color: var(--accent); display: block; margin-bottom: 8px; }
-        
-        input { 
-            width: 100%; 
-            padding: 12px; 
-            background: var(--bg-dark); /* Campo de texto escurecido de acordo com o tema */
-            border: 1px solid var(--border); 
-            color: var(--text-light); 
-            border-radius: 4px; 
-            box-sizing: border-box; 
-            font-size: 0.85rem; 
-        }
-        
-        input:focus {
-            outline: none;
-            border-color: var(--accent);
-        }
-
+        input { width: 100%; padding: 12px; background: var(--bg-dark); border: 1px solid var(--border); color: var(--text-light); border-radius: 4px; box-sizing: border-box; font-size: 0.85rem; }
+        input:focus { outline: none; border-color: var(--accent); }
         .info-box { background: rgba(0, 0, 0, 0.2); padding: 10px; border-radius: 4px; font-size: 0.7rem; margin-bottom: 25px; border: 1px dashed var(--border); color: var(--text-light); }
         .btn-save { background: var(--accent); color: var(--bg-dark); border: none; width: 100%; padding: 15px; font-weight: bold; cursor: pointer; border-radius: 4px; transition: 0.3s; margin-top: 20px; }
         .btn-save:hover { filter: brightness(1.2); transform: translateY(-2px); } 
-        .btn-back { display: block; margin-top: 15px; color: var(--text-light); text-decoration: none; font-size: 0.8rem; opacity: 0.7; transition: 0.3s; }
-        .btn-back:hover { opacity: 1; color: var(--accent); }
+        .btn-back { display: block; margin-top: 15px; color: var(--text-light); text-decoration: none; font-size: 0.8rem; opacity: 0.7; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .grid-full { grid-column: span 2; }
     </style>
 </head>
 <body>
 
-    <!-- Fundo de Vídeo -->
     <div class="video-bg-container">
         <video autoplay loop muted playsinline poster="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/b1c4c1f080d96ec1c35ff823176f214b761eb6a6/assets/WALLPAPER_MAINDASHBOARD.png">
             <source src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/b1c4c1f080d96ec1c35ff823176f214b761eb6a6/assets/VIDEO/RIVER_MAINDASHBOARD.mp4" type="video/mp4">
-            <img src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/b1c4c1f080d96ec1c35ff823176f214b761eb6a6/assets/WALLPAPER_MAINDASHBOARD.png" alt="Fallback Background">
         </video>
     </div>
     <div class="video-overlay"></div>
@@ -166,7 +68,7 @@
             </div>
             <div class="input-group">
                 <label class="a70-font">ANIMAL TYPE</label>
-                <input type="text" id="animalType" placeholder="Ex: Dog, Cat, Turtle, Snake, Eagle, Jaguar...">
+                <input type="text" id="animalType" placeholder="Snake, Lizard, Dog...">
             </div>
             <div class="input-group">
                 <label class="a70-font">SCIENTIFIC NAME</label>
@@ -176,63 +78,74 @@
                 <label class="a70-font">BIRTH DATE</label>
                 <input type="date" id="birthDate">
             </div>
-            <div class="input-group">
+            <div class="input-group grid-full">
                 <label class="a70-font">REGULATORY REGISTRATION Nº</label>
-                <input type="text" id="regNumber" placeholder="IBAMA">
+                <input type="text" id="regNumber" placeholder="IBAMA / CITES">
             </div>
             
             <div class="input-group grid-full">
                 <label class="a70-font">LOCATION (LAT, LONG)</label>
                 <div style="display: flex; gap: 5px;">
                     <input type="text" id="location" placeholder="-23.55, -46.63">
-                    <button type="button" onclick="getLocation()" title="Use my current location" 
-                            style="background: var(--accent); border: none; border-radius: 4px; padding: 0 15px; cursor: pointer;">
-                        <i class="fas fa-location-crosshairs" style="color: var(--bg-dark);"></i>
+                    <button type="button" onclick="getLocation()" style="background: var(--accent); border: none; border-radius: 4px; padding: 0 15px; cursor: pointer;">
+                        <i class="fas fa-location-crosshairs"></i>
                     </button>
                 </div>
             </div>
+
+            <div class="input-group grid-full">
+                <label class="a70-font">CAMERA IP / STREAM URL</label>
+                <input type="text" id="cameraIp" placeholder="Ex: 192.168.1.50">
+            </div>
             
             <div class="input-group grid-full">
-                <label class="a70-font">IMAGE URL</label>
+                <label class="a70-font">PHOTO URL</label>
                 <input type="text" id="photoURL" placeholder="https://exemplo.com/foto.jpg">
             </div>
 
             <div class="input-group grid-full">
-                <label class="a70-font">ANIMAL PHOTO (MAX 1MB)</label>
-                <input type="file" id="animalPhoto" accept="image/*" style="font-size: 0.7rem; border: none; background: none;">
+                <label class="a70-font">ANIMAL PHOTO (UPLOAD)</label>
+                <input type="file" id="animalPhoto" accept="image/*">
                 <canvas id="resizeCanvas" style="display:none;"></canvas>
             </div>
 
-            <div class="info-box grid-full">
-            <span style="font-size: 0.6rem;">THINGSPEAK CONFIGURATOR FOR SENSOR REGISTRATION</span>
+            <div class="info-box grid-full">MAIN SENSOR | THINGSPEAK</div>
+            <div class="input-group">
+                <label class="a70-font">MAIN CHANNEL ID</label>
+                <input type="text" id="mainChannelId">
+            </div>
+            <div class="input-group">
+                <label class="a70-font">MAIN WRITE API KEY</label>
+                <input type="text" id="mainTsWrite">
+            </div>
+            <div class="input-group grid-full">
+                <label class="a70-font">MAIN READ API KEY</label>
+                <input type="text" id="mainTsRead">
+            </div>
+
+            <div class="info-box grid-full">REMOTE SENSOR | THINGSPEAK</div>
+            <div class="input-group">
+                <label class="a70-font">REMOTE CHANNEL ID</label>
+                <input type="text" id="r1ChannelId">
+            </div>
+            <div class="input-group">
+                <label class="a70-font">REMOTE WRITE API KEY</label>
+                <input type="text" id="r1TsWrite">
+            </div>
+            <div class="input-group grid-full">
+                <label class="a70-font">REMOTE READ API KEY</label>
+                <input type="text" id="r1TsRead">
             </div>
             
+            <div class="info-box grid-full">WIFI CONFIGURATOR</div>
             <div class="input-group">
-                <label class="a70-font">THINGSPEAK CHANNEL ID</label>
-                <input type="text" id="channelID" placeholder="Ex: 1234567">
+                <label class="a70-font">WIFI SSID</label>
+                <input type="text" id="wifiSsid">
             </div>
-            <div class="input-group grid-full">
-                <label class="a70-font">THINGSPEAK WRITE API KEY</label>
-                <input type="text" id="tsWrite" placeholder="Write Key">
-            </div>
-            <div class="input-group grid-full">
-                <label class="a70-font">THINGSPEAK READ API KEY</label>
-                <input type="text" id="tsRead" placeholder="Read Key">
-            </div>
-            
-            <div class="info-box grid-full">
-            <span style="font-size: 0.6rem;">WIFI CONFIGURATOR FOR SENSOR REGISTRATION</span>
-            </div>
-    
             <div class="input-group">
-                <label class="a70-font">WIFI NETWORK</label>
-                <input type="text" id="wifiSsid" placeholder="Write Wifi Network Name">
-            </div>
-            <div class="input-group grid-full">
                 <label class="a70-font">WIFI PASSWORD</label>
-                <input type="text" id="wifiPassword" placeholder="Wifi Password">
+                <input type="text" id="wifiPassword">
             </div>
-            
         </div>
 
         <button class="btn-save a70-font" id="btnAction" onclick="processRegistration()">COMPLETE REGISTRATION</button>
@@ -240,10 +153,7 @@
     </div>
 
     <script>
-        // URL PARA GRAVAR/REGISTRAR OS DADOS NO GOOGLE SHEETS
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbw3LbOYDqljAxQ8joYW8yDhwe6lsi7AdFCAoi4HG1iRdglS0k9-fI1Oj2eA12ePc6g/exec';
-        
-        // URL PARA LER OS DADOS EM FORMATO CSV
+        const scriptURL = 'https://script.google.com/macros/s/AKfycb3LbOYDqljAxQ8joYW8yDhwe6lsi7AdFCAoi4HG1iRdglS0k9-fI1Oj2eA12ePc6g/exec';
         const csvReadURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTeBz5FwvcmPue3hJ6TKwmrNZeMrz2_Su7co-mPuzKj1ZJv--5BBvPjlszF3yyEHOVuEeGT9mmwZqOp/pub?gid=0&single=true&output=csv';
 
         let isEditMode = false;
@@ -251,16 +161,12 @@
         
         document.addEventListener('DOMContentLoaded', () => {
             const userData = localStorage.getItem('currentUser');
-            if (!userData) {
-                window.location.href = 'index.html';
-                return;
-            }
+            if (!userData) { window.location.href = 'index.html'; return; }
+            
             const user = JSON.parse(userData);
             document.getElementById('displayUserId').innerText = user.id;
             window.currentUser = user; 
-            
-            // --- APLICAÇÃO DO TEMA ---
-            // Puxa o tema exato que o usuário selecionou no dashboard e aplica ao formulário atual
+
             const savedTheme = localStorage.getItem(`theme_${user.id}`) || 'default';
             document.documentElement.setAttribute('data-theme', savedTheme);
             
@@ -272,8 +178,7 @@
                 setupEditMode();
             }     
         });
-        
-        // Função auxiliar para interpretar as linhas do CSV ignorando vírgulas internas entre aspas
+
         function parseCSVRow(str) {
             let arr = [];
             let quote = false;
@@ -297,109 +202,67 @@
             try {
                 const response = await fetch(csvReadURL);
                 const csvText = await response.text();
-                
                 const rows = csvText.split('\n');
-                if (rows.length < 2) return; 
-
-                const headers = parseCSVRow(rows[0]);
+                
                 let targetRow = null;
-
                 for (let i = 1; i < rows.length; i++) {
-                    if (!rows[i].trim()) continue;
-                    
                     const columns = parseCSVRow(rows[i]);
-                    const foundId = columns.find(c => c === editingPageID);
-                    
-                    if (foundId) {
+                    if (columns[1] === editingPageID) { // Coluna 1 é PageID
                         targetRow = columns;
                         break;
                     }
                 }
 
                 if (targetRow) {
-                    const getValue = (colName) => {
-                        const idx = headers.findIndex(h => h.toLowerCase().includes(colName.toLowerCase()));
-                        return idx !== -1 ? targetRow[idx] : "";
-                    };
+                    // Mapeamento baseado na ordem do seu appendRow
+                    document.getElementById('ambientName').value = targetRow[2] || "";
+                    document.getElementById('animalName').value = targetRow[3] || "";
+                    document.getElementById('animalSex').value = targetRow[4] || "";
+                    document.getElementById('scientificName').value = targetRow[5] || "";
+                    document.getElementById('birthDate').value = targetRow[6] ? targetRow[6].split('T')[0] : "";
+                    document.getElementById('regNumber').value = targetRow[7] || "";
+                    document.getElementById('location').value = `${targetRow[8]}, ${targetRow[9]}`;
+                    
+                    document.getElementById('mainChannelId').value = targetRow[10] || "";
+                    document.getElementById('mainTsWrite').value = targetRow[11] || "";
+                    document.getElementById('mainTsRead').value = targetRow[12] || "";
+                    
+                    document.getElementById('r1ChannelId').value = targetRow[13] || "";
+                    document.getElementById('r1TsWrite').value = targetRow[14] || "";
+                    document.getElementById('r1TsRead').value = targetRow[15] || "";
 
-                    document.getElementById('ambientName').value = getValue('ambient') || getValue('name') || "";
-                    document.getElementById('animalName').value = getValue('animalname') || getValue('animal') || "";
-                    document.getElementById('animalSex').value = getValue('animalsex') || getValue('sex') || "";
-                    document.getElementById('animalType').value = getValue('animaltype') || getValue('type') || "";
-                    document.getElementById('scientificName').value = getValue('scientific') || "";
-                    
-                    let bDate = getValue('birthdate') || getValue('birth');
-                    if(bDate && bDate.includes('T')) bDate = bDate.split('T')[0];
-                    document.getElementById('birthDate').value = bDate || "";
-                    
-                    document.getElementById('regNumber').value = getValue('regnumber') || getValue('registration') || "";
-                    
-                    const lat = getValue('latitude') || getValue('lat') || "";
-                    const lng = getValue('longitude') || getValue('long') || "";
-                    const fullLoc = getValue('location');
-                    
-                    if (lat && lng) {
-                        document.getElementById('location').value = `${lat}, ${lng}`;
-                    } else if (fullLoc) {
-                        document.getElementById('location').value = fullLoc;
-                    }
-
-                    document.getElementById('photoURL').value = getValue('photourl') || getValue('photo') || "";
-                    document.getElementById('channelID').value = getValue('channelid') || getValue('channel') || "";
-                    document.getElementById('tsWrite').value = getValue('tswrite') || getValue('write') || "";
-                    document.getElementById('tsRead').value = getValue('tsread') || getValue('read') || "";
-                    document.getElementById('wifiSsid').value = getValue('wifissid') || getValue('ssid') || "";
-                    document.getElementById('wifiPassword').value = getValue('wifipassword') || getValue('password') || "";
-                    
+                    document.getElementById('cameraIp').value = targetRow[17] || "";
+                    document.getElementById('photoURL').value = targetRow[19] || "";
+                    document.getElementById('wifiSsid').value = targetRow[20] || "";
+                    document.getElementById('wifiPassword').value = targetRow[21] || "";
+                    document.getElementById('animalType').value = targetRow[22] || "";
                 }
-            } catch (e) {
-                console.error("Erro ao fazer o fetch e leitura do CSV:", e);
-                alert("Não foi possível carregar os dados antigos. Verifique sua conexão.");
-            }
+            } catch (e) { console.error("Error loading CSV:", e); }
         }
 
         function getLocation() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition((position) => {
-                    const lat = position.coords.latitude.toFixed(6);
-                    const long = position.coords.longitude.toFixed(6);
-                    document.getElementById('location').value = `${lat}, ${long}`;
-                }, (error) => {
-                    alert("Error retrieving location: " + error.message);
+                    document.getElementById('location').value = `${position.coords.latitude.toFixed(6)}, ${position.coords.longitude.toFixed(6)}`;
                 });
-            } else {
-                alert("GPS not supported.");
             }
         }
 
         async function processRegistration() {
             const user = window.currentUser;
-            if (!user) return alert("Session expired.");
-
             const ambientName = document.getElementById('ambientName').value;
             const animalName = document.getElementById('animalName').value;
-            const channelID = document.getElementById('channelID').value;
-            const locationRaw = document.getElementById('location').value;
+            const loc = document.getElementById('location').value.split(',');
 
-            if (!ambientName || !animalName || !channelID) {
-                return alert("Please fill in the Ambient Name, Animal Name, and Channel ID.");
-            }
-
-            let lat = "", lng = "";
-            if (locationRaw.includes(',')) {
-                const parts = locationRaw.split(',');
-                lat = parts[0].trim();
-                lng = parts[1].trim();
-            }
+            if (!ambientName || !animalName) return alert("Fill essential names.");
 
             const pageId = isEditMode ? editingPageID : 'PG-' + Math.random().toString(36).substr(2, 6).toUpperCase();
             
             let photoData = "";
             const fileInput = document.getElementById('animalPhoto');
-            if (fileInput.files[0]) {
-                photoData = await resizeImage(fileInput.files[0]);
-            }
+            if (fileInput.files[0]) photoData = await resizeImage(fileInput.files[0]);
 
+            // OBJETO PAYLOAD: Deve conter exatamente as chaves que o AppScript vai ler
             const payload = {
                 action: isEditMode ? "update" : "create",
                 userID: user.id,
@@ -407,19 +270,24 @@
                 ambientName: ambientName,
                 animalName: animalName,
                 animalSex: document.getElementById('animalSex').value,
-                animalType: document.getElementById('animalType').value,
                 scientificName: document.getElementById('scientificName').value,
                 birthDate: document.getElementById('birthDate').value,
                 regNumber: document.getElementById('regNumber').value,
-                latitude: lat,
-                longitude: lng,
-                channelID: channelID,
-                tsRead: document.getElementById('tsRead').value,
-                tsWrite: document.getElementById('tsWrite').value,
+                latitude: loc[0] ? loc[0].trim() : "",
+                longitude: loc[1] ? loc[1].trim() : "",
+                mainChannelId: document.getElementById('mainChannelId').value,
+                mainTsWrite: document.getElementById('mainTsWrite').value,
+                mainTsRead: document.getElementById('mainTsRead').value,
+                r1ChannelId: document.getElementById('r1ChannelId').value,
+                r1TsWrite: document.getElementById('r1TsWrite').value,
+                r1TsRead: document.getElementById('r1TsRead').value,
+                photoBase64: photoData,
+                cameraIp: document.getElementById('cameraIp').value,
+                theme: localStorage.getItem(`theme_${user.id}`) || "default",
+                photoURL: document.getElementById('photoURL').value,
                 wifiSsid: document.getElementById('wifiSsid').value,
                 wifiPassword: document.getElementById('wifiPassword').value,
-                photoBase64: photoData,
-                photoURL: document.getElementById('photoURL').value,
+                animalType: document.getElementById('animalType').value,
                 timestamp: new Date().toLocaleString('pt-BR')
             };
             
@@ -429,31 +297,26 @@
                     mode: 'no-cors',
                     body: JSON.stringify(payload)
                 });
-
-                alert(`SUCCESS!\nAmbiente ${ambientName} registered/updated with ID: ${pageId}`);
+                alert("Success! Data sent.");
                 window.location.href = 'maindashboard.html';
-            } catch (e) { 
-                alert("Error connecting to the database.");
-                console.error("Fetch Error:", e);
-            }
+            } catch (e) { alert("Error connecting to DB."); }
         }
 
         function resizeImage(file) {
             return new Promise((resolve) => {
                 const reader = new FileReader();
                 reader.readAsDataURL(file);
-                reader.onload = (event) => {
+                reader.onload = (e) => {
                     const img = new Image();
-                    img.src = event.target.result;
+                    img.src = e.target.result;
                     img.onload = () => {
                         const canvas = document.getElementById('resizeCanvas');
-                        const MAX_WIDTH = 300; 
-                        const scaleSize = MAX_WIDTH / img.width;
+                        const MAX_WIDTH = 300;
                         canvas.width = MAX_WIDTH;
-                        canvas.height = img.height * scaleSize;
+                        canvas.height = img.height * (MAX_WIDTH / img.width);
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                        resolve(canvas.toDataURL('image/jpeg', 0.7)); 
+                        resolve(canvas.toDataURL('image/jpeg', 0.7));
                     };
                 };
             });
