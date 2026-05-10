@@ -437,7 +437,8 @@
     let feedingChart, weightChart, sheddingChart, lengthChart, heightChart;
     let tsReadURL = "";
     let currentUUID = ""; 
-    let channelID = ""; // Declare no topo como global
+    let mainChannelId = "", mainReadKey = "";
+    let r1ChannelId = "", r1ReadKey = "";
     let myChart; // Variável global para destruir o gráfico anterior ao abrir um novo
     
     // FUNÇÃO PARA SINCRONIZAR O TEMA DO USUÁRIO
@@ -450,90 +451,64 @@
         }
     }
 
-    async function loadData() {
-    if (!currentPageId){
-            console.error("Page ID not found at URL.");
-            return;
-        }
+async function loadData() {
+    if (!currentPageId) return;
         
     try {
         const response = await fetch(PAGEID_CSV_URL);
         const csvData = await response.text();
         const rows = parseCSV(csvData);
 
+        // Procura os dados pelo PageID (Coluna index 1)
         const data = rows.find(r => r[1] && r[1].toLowerCase() === currentPageId.toLowerCase());
 
         if (data) {
-            currentUUID = data[0];
+            // Bio Info Básica
             document.getElementById('dynName').innerText = data[3] || "---";
             document.getElementById('dynSex').innerText = data[4] || "---";
-            
-            // 1. Armazena o Nome Científico (Coluna index 5)
-            const scientificName = data[5] || "default";
-            document.getElementById('dynScientific').innerText = scientificName;
-            
-            // 2. Captura e exibe o Tipo de Animal (Coluna 19)
-            const animalTypeRaw = data[19] || "DEFAULT";
-            if(document.getElementById('dynAnimal')) {
-                document.getElementById('dynAnimal').innerText = animalTypeRaw.toUpperCase();
-            filterLayoutByAnimal(animalTypeRaw);  // Executa a filtragem inteligente de layout antes de renderizar os gráficos
-            }
-            
+            document.getElementById('dynScientific').innerText = data[5] || "---";
             document.getElementById('dynBirth').innerText = data[6] || "---";
             document.getElementById('dynReg').innerText = data[7] || "---";
             document.getElementById('dynLoc').innerText = `${data[8]}, ${data[9]}` || "---";
-            document.getElementById('dynChannel').innerText = data[10] || "---";
             document.getElementById('dynAmbient').innerText = (data[2] || "Ambient").toUpperCase();
             
-            // --- INÍCIO DA LÓGICA DE VÍDEO POR TIPO ---
-            
-            // Normaliza para MAIÚSCULO e remove espaços: "snake" vira "SNAKE.mp4"
-            const videoFileName = animalTypeRaw.toUpperCase().trim() + ".mp4";
-            const videoBaseURL = "https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/VIDEO/";
-            
-            const videoElement = document.getElementById('bgVideo');
-            if (videoElement) {
-                const videoSource = videoElement.querySelector('source');
-                videoSource.src = `${videoBaseURL}${videoFileName}`;
-                
-                // Recarrega o elemento de vídeo com o novo path
-                videoElement.load(); 
-                
-                videoElement.play().catch(e => {
-                    console.warn(`Video ${videoFileName} not found. Using fallback.`);
-                    // Fallback: Caso não exista o vídeo do animal, usa o vídeo padrão do Rio
-                    videoSource.src = `${videoBaseURL}RIVER_MAINDASHBOARD.mp4`;
-                    videoElement.load();
-                });
-            }
-            // --- FIM DA LÓGICA DE VÍDEO ---
+            // Tipo de Animal (Coluna index 22) e Filtragem
+            const animalTypeRaw = data[22] || "DEFAULT";
+            document.getElementById('dynAnimal').innerText = animalTypeRaw.toUpperCase();
+            filterLayoutByAnimal(animalTypeRaw);
 
-            // Prioriza a imagem de foto do animal
-            const photoURL = data[16] ? data[16].trim() : "";
-            const photoBase = data[13] ? data[13].trim() : "";
-            if (photoURL && photoURL !== "" && photoURL !== "undefined") {
-                document.getElementById('dynPhoto').src = photoURL;
-            } else if (photoBase && photoBase !== "" && photoBase !== "undefined") {
-                document.getElementById('dynPhoto').src = photoBase;
-            }
+            // IDs e Chaves do ThingSpeak
+            mainChannelId = data[10];
+            mainReadKey = data[12];
+            r1ChannelId = data[13];
+            r1ReadKey = data[15];
+            document.getElementById('dynChannel').innerText = mainChannelId || "---";
 
-            let camSource = data[14]; 
+            // Fotos (URL na 19, Base64 na 16)
+            const photoURL = data[19];
+            const photoBase = data[16];
+            const imgEl = document.getElementById('dynPhoto');
+            if (photoURL && photoURL.startsWith('http')) imgEl.src = photoURL;
+            else if (photoBase && photoBase.length > 100) imgEl.src = photoBase;
+
+            // Câmera (Coluna index 17)
+            let camSource = data[17];
             if (camSource) {
-                let finalStreamUrl = camSource.includes('://') ? camSource : `http://${camSource}/stream`;
-                document.getElementById('cameraStream').src = finalStreamUrl;
+                let finalUrl = camSource.includes('://') ? camSource : `http://${camSource}/stream`;
+                document.getElementById('cameraStream').src = finalUrl;
             } else {
                 showCamOverlay();
             }
 
-            channelID = data[10];
-            const readKey = data[11];
-            tsReadURL = `https://api.thingspeak.com/channels/${channelID}/feeds.json?api_key=${readKey}&results=24`;
-            
-            generateConfigQR(data);  
-            
+            // Inicialização
+            generateConfigQR(data);
             updateSensors();
             loadBiologicalHistory(currentPageId);
             setInterval(updateSensors, 20000);
+            
+            // Carregar limites ambientais (se a função existir)
+            if (typeof loadExistingConfig === "function") loadExistingConfig();
+            
         } else {
             document.getElementById('dynAmbient').innerText = "ID NOT FOUND";
         }
@@ -556,24 +531,48 @@
     });
 }
     
-    async function updateSensors() {
-        if (!tsReadURL) return;
+async function updateSensors() {
+    // 1. Atualiza Sensores Principais (Fields 1-5)
+    if (mainChannelId && mainReadKey) {
         try {
-            const res = await fetch(tsReadURL);
+            const url = `https://api.thingspeak.com/channels/${mainChannelId}/feeds.json?api_key=${mainReadKey}&results=1`;
+            const res = await fetch(url);
             const json = await res.json();
-            const last = json.feeds[json.feeds.length - 1];
-
-            for(let i=1; i<=8; i++) {
-                const val = last[`field${i}`];
-                const el = document.getElementById(`valField${i}`);
-                if (val !== undefined && val !== null && el) {
-                    const unitSpan = el.querySelector('span');
-                    const unit = unitSpan ? unitSpan.innerText : "";
-                    el.innerHTML = `${parseFloat(val).toFixed(1)}<span>${unit}</span>`;
+            const last = json.feeds[0];
+            if (last) {
+                for (let i = 1; i <= 5; i++) {
+                    updateFieldUI(i, last[`field${i}`]);
                 }
             }
-        } catch (e) { console.warn("Waiting sensor data pack to be recieved..."); }
+        } catch (e) { console.warn("Main sensor update failed."); }
     }
+
+    // 2. Atualiza Sensores Remotos (Fields 6-8)
+    if (r1ChannelId && r1ReadKey) {
+        try {
+            const url = `https://api.thingspeak.com/channels/${r1ChannelId}/feeds.json?api_key=${r1ReadKey}&results=1`;
+            const res = await fetch(url);
+            const json = await res.json();
+            const last = json.feeds[0];
+            if (last) {
+                // No ThingSpeak remoto, os dados podem estar nos campos 1, 2, 3...
+                // Mas na sua UI eles são representados como valField6, 7, 8.
+                updateFieldUI(6, last.field1); // Ex: Temp Remota no Field 1 do canal remoto
+                updateFieldUI(7, last.field2); // Ex: Hum Remota no Field 2 do canal remoto
+                updateFieldUI(8, last.field3); // Ex: Solo Remoto no Field 3 do canal remoto
+            }
+        } catch (e) { console.warn("Remote sensor update failed."); }
+    }
+}
+
+// Função auxiliar para evitar repetição de código
+function updateFieldUI(id, val) {
+    const el = document.getElementById(`valField${id}`);
+    if (val !== undefined && val !== null && el) {
+        const unit = el.querySelector('span')?.innerText || "";
+        el.innerHTML = `${parseFloat(val).toFixed(1)}<span>${unit}</span>`;
+    }
+}
 
     // --- CONFIGURADOR DE AMBIENTE (REGISTRO NO GOOGLE) ---
 
@@ -913,26 +912,29 @@ async function sendDeviceConfig() {
     
 
     // --- MODAL DE GRÁFICOS DETALHADOS ---
-   async function openChart(fieldId, label) {
-    if (!channelID) return;
+async function openChart(fieldId, label) {
+    // Determina qual canal usar
+    let targetID = (fieldId >= 6) ? r1ChannelId : mainChannelId;
+    let targetKey = (fieldId >= 6) ? r1ReadKey : mainReadKey;
+    
+    // Se o sensor for remoto, o fieldId real no ThingSpeak costuma ser 1, 2 ou 3
+    let actualField = (fieldId >= 6) ? (fieldId - 5) : fieldId;
+
+    if (!targetID) return alert("Sensor channel not configured.");
 
     const modal = document.getElementById('chartModal');
-    const title = document.getElementById('modalChartTitle');
-    title.innerText = label.toUpperCase();
+    document.getElementById('modalChartTitle').innerText = label.toUpperCase();
     modal.style.display = 'flex';
 
     try {
-        // 1. Busca os dados (aumentado para 3000 como você ajustou)
-        const response = await fetch(`https://api.thingspeak.com/channels/${channelID}/fields/${fieldId}.json?results=3000`);
+        const url = `https://api.thingspeak.com/channels/${targetID}/fields/${actualField}.json?api_key=${targetKey}&results=800`;
+        const response = await fetch(url);
         const data = await response.json();
 
-        // 2. IMPORTANTE: Mantemos o formato original (ISO string) para as labels.
-        // Se formatar aqui, o eixo X lá embaixo não conseguirá extrair o Dia/Mês/Ano.
-        const labels = data.feeds.map(feed => feed.created_at); 
-        const values = data.feeds.map(feed => feed[`field${fieldId}`]);
+        const labels = data.feeds.map(feed => feed.created_at);
+        const values = data.feeds.map(feed => feed[`field${actualField}`]);
 
         const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
-
         if (myChart) myChart.destroy();
 
         const ctx = document.getElementById('customChart').getContext('2d');
@@ -958,8 +960,7 @@ async function sendDeviceConfig() {
                     legend: { display: false },
                     tooltip: {
                         callbacks: {
-                            // No tooltip (balão), mostramos o horário detalhado
-                            title: function(context) {
+                            title: (context) => {
                                 const d = new Date(context[0].label);
                                 return isNaN(d.getTime()) ? context[0].label : d.toLocaleTimeString();
                             }
@@ -971,30 +972,20 @@ async function sendDeviceConfig() {
                     x: { 
                         grid: { display: false }, 
                         ticks: { 
-                            color: '#fff',
+                            color: '#fff', 
                             maxTicksLimit: 6,
-                            autoSkip: true,
-                            callback: function(val, index) {
-                                const rawDate = this.getLabelForValue(val);
-                                const d = new Date(rawDate);
-                                
-                                if (isNaN(d.getTime())) return ""; 
-
+                            callback: function(val) {
+                                const d = new Date(this.getLabelForValue(val));
+                                if (isNaN(d.getTime())) return "";
                                 const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-                                const day = String(d.getDate()).padStart(2, '0');
-                                const month = months[d.getMonth()];
-                                const year = d.getFullYear();
-                                
-                                return `${day}/${month}/${year}`;
+                                return `${d.getDate()}/${months[d.getMonth()]}/${d.getFullYear()}`;
                             }
                         } 
                     }
                 }
             }
         });
-    } catch (e) {
-        console.error("Erro no ThingSpeak:", e);
-    }
+    } catch (e) { console.error("Chart error:", e); }
 }
     
     function closeChart() {
