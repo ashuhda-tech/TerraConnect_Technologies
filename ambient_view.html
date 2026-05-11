@@ -261,7 +261,7 @@
                 <i class="fas fa-signal sensor-icon" style="color: #d4a373;"></i>
                 <div class="sensor-data">
                     <span class="sensor-label">RSSI</span>
-                    <div class="sensor-val" id="valField25">--<span>DEFINIR UNIDADE</span></div>
+                    <div class="sensor-val" id="valField25">--<span>dBm</span></div>
                 </div>
             </div>
 
@@ -298,7 +298,7 @@
                 <i class="fas fa-signal sensor-icon" style="color: #d4a373;"></i>
                 <div class="sensor-data">
                     <span class="sensor-label">RS | RSSI</span>
-                    <div class="sensor-val" id="valField25">--<span>DEFINIR UNIDADE</span></div>
+                    <div class="sensor-val" id="valField25">--<span>dBm</span></div>
                 </div>
             </div>
         </div>
@@ -518,6 +518,30 @@ async function loadData() {
             const animalTypeRaw = data[22] || "DEFAULT";
             document.getElementById('dynAnimal').innerText = animalTypeRaw.toUpperCase();
             filterLayoutByAnimal(animalTypeRaw);
+
+            // --- INÍCIO DA REINSTALAÇÃO DA LÓGICA DE VÍDEO ---
+            const videoElement = document.getElementById('bgVideo');
+            if (videoElement) {
+                const videoSource = videoElement.querySelector('source');
+                const videoFileName = animalTypeRaw.toUpperCase().trim() + ".mp4";
+                const videoBaseURL = "https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/VIDEO/";
+
+                // Tenta carregar o vídeo específico do animal
+                videoSource.src = `${videoBaseURL}${videoFileName}`;
+                videoElement.load();
+                
+                videoElement.play().catch(e => {
+                    console.warn(`Video ${videoFileName} not found. Using fallback.`);
+                    // Fallback: Se o vídeo do animal não existir, usa o padrão do Rio
+                    videoSource.src = `${videoBaseURL}RIVER_MAINDASHBOARD.mp4`;
+                    videoElement.load();
+                    videoElement.play();
+                });
+            }
+            // --- FIM DA LÓGICA DE VÍDEO ---
+
+
+            
 
             // IDs e Chaves do ThingSpeak
             mainChannelId = data[10];
