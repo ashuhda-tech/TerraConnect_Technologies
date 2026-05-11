@@ -111,6 +111,11 @@
     .sensor-card { display: flex; align-items: center; gap: 12px; }
     .sensor-card:hover { border-color: var(--accent); }
 
+    .sensor-card-rs {background: rgba(70, 70, 70, 0.7) !important; backdrop-filter: blur(10px);border: 1px solid var(--border);border-radius: 15px;padding: 20px;transition: 0.3s;}
+    .sensor-card-rs { display: flex; align-items: center; gap: 12px; }
+    .sensor-card-rs:hover { border-color: var(--accent); }
+
+        
     .summary-card { display: flex; flex-direction: column; justify-content: center; border-bottom: 3px solid var(--accent); }
 
     .input-card { border-radius: 12px; padding: 15px; display: flex; flex-direction: column; gap: 10px; min-width: 0; overflow: hidden; }
@@ -254,7 +259,7 @@
                 <i class="fas fa-sun-o sensor-icon" style="color: #d4a373;"></i>
                 <div class="sensor-data">
                     <span class="sensor-label">Light Intensity</span>
-                    <div class="sensor-val" id="valField7">--<span>DEFINIR UNIDADE</span></div>
+                    <div class="sensor-val" id="valField7">--<span>lx</span></div>
                 </div>
             </div>
            <div class="sensor-card" onclick="openChart(8, 'Comunication Signal')" style="cursor: pointer;">
@@ -264,37 +269,38 @@
                     <div class="sensor-val" id="valField25">--<span>dBm</span></div>
                 </div>
             </div>
-
            
-            <div class="sensor-card" onclick="openChart(21, ' Remote Sensor | Air Temperature')" style="cursor: pointer;">
+        <hr style="border: 0.5px solid #eee; margin: 20px 0;">
+           
+            <div class="sensor-card-rs" onclick="openChart(21, ' Remote Sensor | Air Temperature')" style="cursor: pointer;">
                 <i class="fas fa-thermometer-half sensor-icon" style="color: #00f2ff;"></i>
                 <div class="sensor-data">
                     <span class="sensor-label">RS | Air Temperature</span>
                     <div class="sensor-val" id="valField21">--<span>°C</span></div>
                 </div>
             </div>
-            <div class="sensor-card" onclick="openChart(22, 'Remote Sensor | Air Humidity')" style="cursor: pointer;">
+            <div class="sensor-card-rs" onclick="openChart(22, 'Remote Sensor | Air Humidity')" style="cursor: pointer;">
                 <i class="fas fa-wind sensor-icon" style="color: #74b9ff;"></i>
                 <div class="sensor-data">
                     <span class="sensor-label">RS | Air Humidity</span>
                     <div class="sensor-val" id="valField22">--<span>%</span></div>
                 </div>
             </div>
-            <div class="sensor-card" onclick="openChart(23, 'Remote Sensor | Ground Humidity')" style="cursor: pointer;">
+            <div class="sensor-card-rs" onclick="openChart(23, 'Remote Sensor | Ground Humidity')" style="cursor: pointer;">
                 <i class="fas fa-mountain sensor-icon" style="color: #d4a373;"></i>
                 <div class="sensor-data">
                     <span class="sensor-label">RS | Ground Humidity</span>
                     <div class="sensor-val" id="valField23">--<span>%</span></div>
                 </div>
             </div>
-           <div class="sensor-card" onclick="openChart(24, 'Remote Sensor | Battery State of Charge')" style="cursor: pointer;">
+           <div class="sensor-card-rs" onclick="openChart(24, 'Remote Sensor | Battery State of Charge')" style="cursor: pointer;">
                 <i class="fas fa-battery-full sensor-icon" style="color: #d4a373;"></i>
                 <div class="sensor-data">
                     <span class="sensor-label">RS | Battery SOC</span>
                     <div class="sensor-val" id="valField24">--<span>%</span></div>
                 </div>
             </div>
-           <div class="sensor-card" onclick="openChart(25, 'Remote Sensor | Comunication Signal')" style="cursor: pointer;">
+           <div class="sensor-card-rs" onclick="openChart(25, 'Remote Sensor | Comunication Signal')" style="cursor: pointer;">
                 <i class="fas fa-signal sensor-icon" style="color: #d4a373;"></i>
                 <div class="sensor-data">
                     <span class="sensor-label">RS | RSSI</span>
