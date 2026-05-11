@@ -147,6 +147,11 @@
         .main-content { padding: 20px; }
     }
 </style>
+
+
+
+
+    
 </head>
 <body>
 
@@ -203,11 +208,11 @@
         </header>
 
        <div class="sensor-grid">
-            <div class="sensor-card" onclick="openChart(5, 'CO2 Concentration')" style="cursor: pointer;">
+            <div class="sensor-card" onclick="openChart(3, 'CO2 Concentration')" style="cursor: pointer;">
                 <i class="fas fa-cloud sensor-icon" style="color: #a3b18a;"></i>
                 <div class="sensor-data">
                     <span class="sensor-label">CO2 Concentration</span>
-                    <div class="sensor-val" id="valField5">--<span>ppm</span></div>
+                    <div class="sensor-val" id="valField3">--<span>ppm</span></div>
                 </div>
             </div>
             <div class="sensor-card" onclick="openChart(1, 'Air Temperature')" style="cursor: pointer;">
@@ -224,39 +229,76 @@
                     <div class="sensor-val" id="valField2">--<span>%</span></div>
                 </div>
             </div>
-            <div class="sensor-card" onclick="openChart(3, 'Ground Humidity')" style="cursor: pointer;">
+            <div class="sensor-card" onclick="openChart(4, 'Ground Humidity')" style="cursor: pointer;">
                 <i class="fas fa-mountain sensor-icon" style="color: #d4a373;"></i>
                 <div class="sensor-data">
                     <span class="sensor-label">Ground Humidity</span>
-                    <div class="sensor-val" id="valField3">--<span>%</span></div>
-                </div>
-            </div>
-            <div class="sensor-card" onclick="openChart(4, 'Water Level')" style="cursor: pointer;">
-                <i class="fas fa-water sensor-icon" style="color: #00f2ff;"></i>
-                <div class="sensor-data">
-                    <span class="sensor-label">Water Level</span>
                     <div class="sensor-val" id="valField4">--<span>%</span></div>
                 </div>
             </div>
-            <div class="sensor-card" onclick="openChart(6, ' Remote Sensor | Air Temperature')" style="cursor: pointer;">
+            <div class="sensor-card" onclick="openChart(5, 'Water Level')" style="cursor: pointer;">
+                <i class="fas fa-water sensor-icon" style="color: #00f2ff;"></i>
+                <div class="sensor-data">
+                    <span class="sensor-label">Water Level</span>
+                    <div class="sensor-val" id="valField5">--<span>%</span></div>
+                </div>
+            </div>
+            <div class="sensor-card" onclick="openChart(6, 'Battery State of Charge')" style="cursor: pointer;">
+                <i class="fas fa-battery-full sensor-icon" style="color: #d4a373;"></i>
+                <div class="sensor-data">
+                    <span class="sensor-label">Battery SOC</span>
+                    <div class="sensor-val" id="valField6">--<span>%</span></div>
+                </div>
+            </div>
+            <div class="sensor-card" onclick="openChart(7, 'Light Intensity')" style="cursor: pointer;">
+                <i class="fas fa-sun-o sensor-icon" style="color: #d4a373;"></i>
+                <div class="sensor-data">
+                    <span class="sensor-label">Light Intensity</span>
+                    <div class="sensor-val" id="valField7">--<span>DEFINIR UNIDADE</span></div>
+                </div>
+            </div>
+           <div class="sensor-card" onclick="openChart(8, 'Comunication Signal')" style="cursor: pointer;">
+                <i class="fas fa-signal sensor-icon" style="color: #d4a373;"></i>
+                <div class="sensor-data">
+                    <span class="sensor-label">RSSI</span>
+                    <div class="sensor-val" id="valField25">--<span>DEFINIR UNIDADE</span></div>
+                </div>
+            </div>
+
+           
+            <div class="sensor-card" onclick="openChart(21, ' Remote Sensor | Air Temperature')" style="cursor: pointer;">
                 <i class="fas fa-thermometer-half sensor-icon" style="color: #00f2ff;"></i>
                 <div class="sensor-data">
                     <span class="sensor-label">RS | Air Temperature</span>
-                    <div class="sensor-val" id="valField6">--<span>°C</span></div>
+                    <div class="sensor-val" id="valField21">--<span>°C</span></div>
                 </div>
             </div>
-            <div class="sensor-card" onclick="openChart(7, 'Remote Sensor | Air Humidity')" style="cursor: pointer;">
+            <div class="sensor-card" onclick="openChart(22, 'Remote Sensor | Air Humidity')" style="cursor: pointer;">
                 <i class="fas fa-wind sensor-icon" style="color: #74b9ff;"></i>
                 <div class="sensor-data">
                     <span class="sensor-label">RS | Air Humidity</span>
-                    <div class="sensor-val" id="valField7">--<span>%</span></div>
+                    <div class="sensor-val" id="valField22">--<span>%</span></div>
                 </div>
             </div>
-            <div class="sensor-card" onclick="openChart(8, 'Remote Sensor | Ground Humidity')" style="cursor: pointer;">
+            <div class="sensor-card" onclick="openChart(23, 'Remote Sensor | Ground Humidity')" style="cursor: pointer;">
                 <i class="fas fa-mountain sensor-icon" style="color: #d4a373;"></i>
                 <div class="sensor-data">
                     <span class="sensor-label">RS | Ground Humidity</span>
-                    <div class="sensor-val" id="valField8">--<span>%</span></div>
+                    <div class="sensor-val" id="valField23">--<span>%</span></div>
+                </div>
+            </div>
+           <div class="sensor-card" onclick="openChart(24, 'Remote Sensor | Battery State of Charge')" style="cursor: pointer;">
+                <i class="fas fa-battery-full sensor-icon" style="color: #d4a373;"></i>
+                <div class="sensor-data">
+                    <span class="sensor-label">RS | Battery SOC</span>
+                    <div class="sensor-val" id="valField24">--<span>%</span></div>
+                </div>
+            </div>
+           <div class="sensor-card" onclick="openChart(25, 'Remote Sensor | Comunication Signal')" style="cursor: pointer;">
+                <i class="fas fa-signal sensor-icon" style="color: #d4a373;"></i>
+                <div class="sensor-data">
+                    <span class="sensor-label">RS | RSSI</span>
+                    <div class="sensor-val" id="valField25">--<span>DEFINIR UNIDADE</span></div>
                 </div>
             </div>
         </div>
@@ -540,7 +582,7 @@ async function updateSensors() {
             const json = await res.json();
             const last = json.feeds[0];
             if (last) {
-                for (let i = 1; i <= 5; i++) {
+                for (let i = 1; i <= 8; i++) {
                     updateFieldUI(i, last[`field${i}`]);
                 }
             }
@@ -557,9 +599,11 @@ async function updateSensors() {
             if (last) {
                 // No ThingSpeak remoto, os dados podem estar nos campos 1, 2, 3...
                 // Mas na sua UI eles são representados como valField6, 7, 8.
-                updateFieldUI(6, last.field1); // Ex: Temp Remota no Field 1 do canal remoto
-                updateFieldUI(7, last.field2); // Ex: Hum Remota no Field 2 do canal remoto
-                updateFieldUI(8, last.field3); // Ex: Solo Remoto no Field 3 do canal remoto
+                updateFieldUI(21, last.field1); // Ex: Temp Remota no Field 1 do canal remoto
+                updateFieldUI(22, last.field2); // Ex: Hum Remota no Field 2 do canal remoto
+                updateFieldUI(23, last.field3); // Ex: Solo Remoto no Field 3 do canal remoto
+                updateFieldUI(24, last.field4); // Ex: SOC Bateria no Field 4 do canal remoto
+                updateFieldUI(25, last.field5); // Ex: Sinal RSSI no Field 5 do canal remoto
             }
         } catch (e) { console.warn("Remote sensor update failed."); }
     }
