@@ -111,9 +111,11 @@
     .sensor-card { display: flex; align-items: center; gap: 12px; }
     .sensor-card:hover { border-color: var(--accent); }
 
-    .sensor-card-rs {background: rgba(70, 70, 70, 0.7) !important; backdrop-filter: blur(10px);border: 1px solid var(--border);border-radius: 15px;padding: 20px;transition: 0.3s;}
+    .sensor-card-rs {background: color-mix(in srgb, var(--text-muted), transparent 30%) !important; backdrop-filter: blur(10px);border: 1px solid var(--border);border-left: 3px solid var(--text-muted) !important;border-radius: 15px;padding: 20px;transition: 0.3s;}
     .sensor-card-rs { display: flex; align-items: center; gap: 12px; }
-    .sensor-card-rs:hover { border-color: var(--accent); }
+    .sensor-card-rs:hover { border-color: var(--accent); background: color-mix(in srgb, var(--text-muted), transparent 10%) !important;}
+    .grid-divider {grid-column: 1 / -1;display: flex;align-items: center;gap: 15px;margin: 20px 0 10px 5px;color: var(--accent);font-size: 0.75rem;text-transform: uppercase;letter-spacing: 2px;opacity: 0.8;}
+    .grid-divider::after {content: "";height: 1px;flex: 1;background: linear-gradient(90deg, var(--border), transparent);}
 
         
     .summary-card { display: flex; flex-direction: column; justify-content: center; border-bottom: 3px solid var(--accent); }
@@ -269,9 +271,9 @@
                     <div class="sensor-val" id="valField25">--<span>dBm</span></div>
                 </div>
             </div>
-           
-        <hr style="border: 0.5px solid #eee; margin: 20px 0;">
-           
+           <div class="grid-divider a70-font" style="color: #00f2ff;">
+                <i class="fas fa-broadcast-tower"></i> Remote Satellite Unit
+            </div>
             <div class="sensor-card-rs" onclick="openChart(21, ' Remote Sensor | Air Temperature')" style="cursor: pointer;">
                 <i class="fas fa-thermometer-half sensor-icon" style="color: #00f2ff;"></i>
                 <div class="sensor-data">
