@@ -8,7 +8,6 @@
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/TERRACONNECT_LOGO.png">
     <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/TERRACONNECT_LOGO.png">
 
-    <!-- Meta Tags -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="TerraConnect Technologies">
     <meta property="og:description" content="Environmental Animal IOT Monitoring Center">
@@ -28,12 +27,12 @@
 
         :root {
             --bg-color: #0a0c10;          
-            --card-bg: rgba(7, 11, 20, 0.85); /* Leve transparência para efeito Glass */
+            --card-bg: rgba(7, 11, 20, 0.85); 
             --card-hover: rgba(17, 24, 39, 0.9);        
             --card-border: rgba(31, 41, 55, 0.5);       
             --accent-dark: #d1b38b;        
             --accent-light: #f4e9d8;      
-            --text-main: #f4e9d8;         
+            --text-main: #f4e9d8;          
             --text-muted: #d1b38b;
             --border-radius: 10px;
             --status-ok: #48bb3a;      
@@ -51,7 +50,53 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            overflow: hidden; /* Impede scroll causado pelo vídeo */
+            overflow: hidden; 
+        }
+
+        /* --- INTRO VIDEO OVERYLAY STYLES --- */
+        #intro-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 1s ease-out; /* Fade out suave de 1 segundo */
+        }
+
+        #intro-overlay video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .skip-btn {
+            position: absolute;
+            bottom: 40px;
+            right: 40px;
+            background: rgba(0, 0, 0, 0.4);
+            color: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            z-index: 10000;
+            font-family: var(--font-standard);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.3s;
+            backdrop-filter: blur(5px);
+        }
+
+        .skip-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border-color: #fff;
         }
 
         /* --- Video Background Styles --- */
@@ -77,14 +122,13 @@
             object-fit: cover;
         }
 
-        /* Camada escura para dar contraste ao texto */
         .video-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.6); /* Ajuste a opacidade aqui */
+            background: rgba(0, 0, 0, 0.6); 
             z-index: -1;
         }
 
@@ -105,7 +149,7 @@
             transition: all 0.3s ease;
             width: fit-content;
             min-width: 400px;
-            backdrop-filter: blur(10px); /* Efeito de vidro */
+            backdrop-filter: blur(10px); 
         }
 
         .auth-card:hover { background-color: var(--card-hover); border-color: var(--accent-dark); }
@@ -195,12 +239,17 @@
 </head>
 <body>
 
-<!-- Video Background Structure -->
+<div id="intro-overlay">
+    <video id="introVideo" autoplay muted playsinline>
+        <source src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/f70df67cca55c92bceca21a167087da798258b65/assets/VIDEO/INTRO.mp4" type="video/mp4">
+    </video>
+    <button class="skip-btn" onclick="finishIntro()">Skip Intro</button>
+</div>
+
 <div class="video-bg-container">
     <video autoplay loop muted playsinline 
            poster="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/b1c4c1f080d96ec1c35ff823176f214b761eb6a6/assets/WALLPAPER_MAINDASHBOARD.png">
         <source src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/b1c4c1f080d96ec1c35ff823176f214b761eb6a6/assets/VIDEO/RIVER_MAINDASHBOARD.mp4" type="video/mp4">
-        <!-- Fallback Image -->
         <img src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/b1c4c1f080d96ec1c35ff823176f214b761eb6a6/assets/WALLPAPER_MAINDASHBOARD.png" title="Seu navegador não suporta vídeos.">
     </video>
 </div>
@@ -208,7 +257,6 @@
 
 <div class="container">
     <div class="auth-card">
-        <!-- Seção de Login -->
         <div id="login-section">
             <h1>TerraConnect Technologies</h1>
             <p class="subtitle">Access your sensor hub</p>
@@ -235,7 +283,6 @@
             <p class="footer-link">Don't have an account? <a href="#" onclick="toggleAuth()">Sign up</a></p>
         </div>
 
-        <!-- Seção de Cadastro -->
         <div id="signup-section" class="hidden">
             <h1>Create Account</h1>
             <p class="subtitle">Register for the client portal</p>
@@ -263,6 +310,32 @@
 </div>
 
 <script>
+    // --- LÓGICA DA INTRODUÇÃO ---
+    const introOverlay = document.getElementById('intro-overlay');
+    const introVideo = document.getElementById('introVideo');
+
+    function finishIntro() {
+        // Reduz a opacidade para 0 para ativar a transição CSS
+        introOverlay.style.opacity = '0';
+        
+        // Remove completamente o elemento do DOM após a transição terminar (1 segundo)
+        setTimeout(() => {
+            introOverlay.style.display = 'none';
+        }, 1000);
+    }
+
+    if (introVideo) {
+        // Assim que o vídeo acabar, dispara a função de finalizar
+        introVideo.addEventListener('ended', finishIntro);
+        
+        // Failsafe: Se o vídeo der erro ao carregar, pula a intro automaticamente
+        introVideo.addEventListener('error', finishIntro);
+    } else {
+        finishIntro();
+    }
+    // -----------------------------
+
+
     const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTLog7uhFw___9q5ossjzRuKZq6VkC3HqgsD52RAd1y5FigIwCqmEyFeLc-_qgS1RAwtlcIhr_zK-nn/pub?gid=0&single=true&output=csv';
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzFT1YQSMLpJ2zLJQ-bD1JOUzaUJJsRcmCBkpseXd87iGvJXm5Ig7p1gYJf-PmHVwQ/exec';
 
