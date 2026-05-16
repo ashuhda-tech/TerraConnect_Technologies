@@ -170,34 +170,42 @@
 
     
     <aside class="sidebar">
-        <a href="maindashboard.html" class="btn-back a70-font"><i class="fas fa-arrow-left"></i></a>
-        
-        <div class="bio-section">
-            <img id="dynPhoto" src="" alt="Animal Photo" class="animal-photo">
-            <h2 id="dynName" class="a70-font" style="margin: 0; color: var(--accent);">---</h2>
+        <div class="sidebar-top">
+            <div class="bio-section">
+                <img id="dynPhoto" src="" alt="Animal Photo" class="animal-photo">
+                <h2 id="dynName" class="a70-font" style="margin: 15px 0 0 0; color: var(--accent);">---</h2>
+            </div>
+
+            <div class="bio-info-list">
+                <div class="bio-item"><b>Animal Type</b> <span id="dynAnimal">---</span></div>
+                <div class="bio-item"><b>Scientific Name</b> <span id="dynScientific">---</span></div>
+                <div class="bio-item"><b>Sex</b> <span id="dynSex">---</span></div>
+                <div class="bio-item"><b>Birth Date</b> <span id="dynBirth">---</span></div>
+                <div class="bio-item"><b>Registration</b> <span id="dynReg">---</span></div>
+                <div class="bio-item"><b>Coordinates</b> <span id="dynLoc">---</span></div>
+                <div class="bio-item"><b>Channel ID</b> <span id="dynChannel">---</span></div>
+            </div>
         </div>
 
-        <div class="bio-info-list">
-            <div class="bio-item"><b>Animal Type</b> <span id="dynAnimal">---</span></div>
-            <div class="bio-item"><b>Scientific Name</b> <span id="dynScientific">---</span></div>
-            <div class="bio-item"><b>Sex</b> <span id="dynSex">---</span></div>
-            <div class="bio-item"><b>Birth Date</b> <span id="dynBirth">---</span></div>
-            <div class="bio-item"><b>Registration</b> <span id="dynReg">---</span></div>
-            <div class="bio-item"><b>Coordinates</b> <span id="dynLoc">---</span></div>
-            <div class="bio-item"><b>Channel ID</b> <span id="dynChannel">---</span></div>
-        </div>
-        
+        <div class="sidebar-bottom">
+            
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 30px;">
+                <a href="#" id="editLink" class="btn-edit" style="margin-top: 0;">
+                    <i class="fa fa-edit"></i> Edit Registry Data
+                </a>
+                
+                <a href="maindashboard.html" class="btn-back a70-font" style="margin-bottom: 0; width: 100%; box-sizing: border-box; display: flex; justify-content: center; align-items: center; gap: 8px;">
+                    <i class="fas fa-arrow-left"></i> BACK TO DASHBOARD
+                </a>
+            </div>
 
-        <a href="#" id="editLink" class="btn-edit">
-    <i class="fa fa-edit"></i> Edit Registry Data
-</a>
-
-
-        <hr style="border: 0.5px solid #eee; margin: 20px 0;">
-        <div id="qr-section" style="text-align: center; padding-bottom: 20px;">
-            <h4 style="font-size: 0.9em; color: #555; margin-bottom: 10px;">Ambient Configuration Sync</h4>
-            <div id="qrcode" style="display: flex; justify-content: center;"></div>
-            <p style="font-size: 0.7em; color: #888; margin-top: 10px;">Scan the QR code for device configuration with this environment</p>
+            <hr style="border: 0.5px solid var(--border); margin: 20px 0;">
+            
+            <div id="qr-section" style="text-align: center; padding-bottom: 20px;">
+                <h4 style="font-size: 0.9em; color: var(--text-light); margin-bottom: 10px;">Ambient Configuration Sync</h4>
+                <div id="qrcode" style="display: flex; justify-content: center;"></div>
+                <p style="font-size: 0.7em; color: var(--text-muted); margin-top: 10px;">Scan the QR code for device configuration with this environment</p>
+            </div>
         </div>
     </aside>
 
