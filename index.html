@@ -236,8 +236,15 @@
         .success { color: var(--status-ok); }
         .hidden { display: none; }
     </style>
+
+<script src="https://www.google.com/recaptcha/api.js?render=6LcR7gQtAAAAACIEVWPRYCkIf1DRhBQW_OgfipT8">
+</script>
+
 </head>
-<body>
+
+    
+    
+    <body>
 
 <div id="intro-overlay">
     <video id="introVideo" autoplay muted playsinline>
@@ -386,6 +393,11 @@
     document.getElementById('signupForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const msg = document.getElementById('signupMsg');
+
+    // Executa o reCAPTCHA v3 antes de enviar
+    grecaptcha.ready(function() {
+    grecaptcha.execute('SUA_SITE_KEY_AQUI', {action: 'signup'}).then(async function(token) {
+            
         const payload = {
             name: document.getElementById('regName').value,
             email: document.getElementById('regEmail').value.toLowerCase().trim(),
@@ -400,8 +412,10 @@
         } catch (e) {
             msg.className = "message error";
             msg.innerText = "Erro ao conectar.";
-        }
+           }
+        });
     });
+});
 
     function toggleAuth() {
         document.getElementById('login-section').classList.toggle('hidden');
