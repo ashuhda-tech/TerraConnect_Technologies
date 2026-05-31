@@ -53,7 +53,6 @@
             overflow: hidden; 
         }
 
-        /* --- INTRO VIDEO OVERYLAY STYLES --- */
         #intro-overlay {
             position: fixed;
             top: 0;
@@ -65,7 +64,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: opacity 1s ease-out; /* Fade out suave de 1 segundo */
+            transition: opacity 1s ease-out; 
         }
 
         #intro-overlay video {
@@ -99,7 +98,6 @@
             border-color: #fff;
         }
 
-        /* --- Video Background Styles --- */
         .video-bg-container {
             position: fixed;
             top: 0;
@@ -188,6 +186,8 @@
         }
 
         input:focus { border-color: var(--accent-dark); }
+        
+        input:disabled { opacity: 0.5; cursor: not-allowed; }
 
         .btn-primary {
             background-color: var(--accent-dark);
@@ -201,8 +201,9 @@
             margin-top: 10px;
         }
 
-        .btn-primary:hover { background-color: var(--accent-light); }
-        .btn-primary:active { transform: scale(0.98); }
+        .btn-primary:hover:not(:disabled) { background-color: var(--accent-light); }
+        .btn-primary:active:not(:disabled) { transform: scale(0.98); }
+        .btn-primary:disabled { background-color: #555; color: #888; cursor: not-allowed; }
 
         .divider {
             display: flex; align-items: center; text-align: center;
@@ -236,6 +237,8 @@
         .success { color: var(--status-ok); }
         .hidden { display: none; }
     </style>
+
+    <script src="https://www.google.com/recaptcha/api.js?render=6LcR7gQtAAAAACIEVWPRYCkIf1DRhBQW_OgfipT8"></script>
 </head>
 <body>
 
@@ -264,21 +267,21 @@
             <form class="auth-form" id="loginForm">
                 <div class="input-group">
                     <label>Email or Username</label>
-                    <input type="email" id="loginEmail" placeholder="example@server.com" required>
+                    <input type="email" id="loginEmail" placeholder="example@server.com" required disabled>
                 </div>
                 <div class="input-group">
                     <label>Password</label>
-                    <input type="password" id="loginPass" placeholder="••••••••" required>
+                    <input type="password" id="loginPass" placeholder="••••••••" required disabled>
                 </div>
-                <button type="submit" class="btn-primary">SIGN IN</button>
-                <div id="loginMsg" class="message"></div>
+                <button type="submit" class="btn-primary" disabled>SIGN IN</button>
+                <div id="loginMsg" class="message">Verificando segurança do acesso...</div>
             </form>
 
             <div class="divider"><span>Or sign in with</span></div>
             <div class="social-grid">
-                <button class="btn-social" title="Google"><i class="fab fa-google"></i></button>
-                <button class="btn-social" title="LinkedIn"><i class="fab fa-linkedin-in"></i></button>
-                <button class="btn-social" title="Facebook"><i class="fab fa-facebook-f"></i></button>
+                <button class="btn-social" title="Google" disabled><i class="fab fa-google"></i></button>
+                <button class="btn-social" title="LinkedIn" disabled><i class="fab fa-linkedin-in"></i></button>
+                <button class="btn-social" title="Facebook" disabled><i class="fab fa-facebook-f"></i></button>
             </div>
             <p class="footer-link">Don't have an account? <a href="#" onclick="toggleAuth()">Sign up</a></p>
         </div>
@@ -290,17 +293,17 @@
             <form class="auth-form" id="signupForm">
                 <div class="input-group">
                     <label>Full Name</label>
-                    <input type="text" id="regName" placeholder="John Doe" required>
+                    <input type="text" id="regName" placeholder="John Doe" required disabled>
                 </div>
                 <div class="input-group">
                     <label>Work Email</label>
-                    <input type="email" id="regEmail" placeholder="name@company.com" required>
+                    <input type="email" id="regEmail" placeholder="name@company.com" required disabled>
                 </div>
                 <div class="input-group">
                     <label>Password</label>
-                    <input type="password" id="regPass" placeholder="Create a strong password" required>
+                    <input type="password" id="regPass" placeholder="Create a strong password" required disabled>
                 </div>
-                <button type="submit" class="btn-primary">COMPLETE REGISTRATION</button>
+                <button type="submit" class="btn-primary" disabled>COMPLETE REGISTRATION</button>
                 <div id="signupMsg" class="message"></div>
             </form>
 
@@ -310,34 +313,58 @@
 </div>
 
 <script>
-    // --- LÓGICA DA INTRODUÇÃO ---
     const introOverlay = document.getElementById('intro-overlay');
     const introVideo = document.getElementById('introVideo');
 
     function finishIntro() {
-        // Reduz a opacidade para 0 para ativar a transição CSS
         introOverlay.style.opacity = '0';
-        
-        // Remove completamente o elemento do DOM após a transição terminar (1 segundo)
-        setTimeout(() => {
-            introOverlay.style.display = 'none';
-        }, 1000);
+        setTimeout(() => { introOverlay.style.display = 'none'; }, 1000);
     }
 
     if (introVideo) {
-        // Assim que o vídeo acabar, dispara a função de finalizar
         introVideo.addEventListener('ended', finishIntro);
-        
-        // Failsafe: Se o vídeo der erro ao carregar, pula a intro automaticamente
         introVideo.addEventListener('error', finishIntro);
     } else {
         finishIntro();
     }
-    // -----------------------------
-
 
     const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTLog7uhFw___9q5ossjzRuKZq6VkC3HqgsD52RAd1y5FigIwCqmEyFeLc-_qgS1RAwtlcIhr_zK-nn/pub?gid=0&single=true&output=csv';
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzFT1YQSMLpJ2zLJQ-bD1JOUzaUJJsRcmCBkpseXd87iGvJXm5Ig7p1gYJf-PmHVwQ/exec';
+
+    // --- LÓGICA DE PROTEÇÃO INICIAL (O Porteiro) ---
+    function unlockForms() {
+        const elements = document.querySelectorAll('input, button');
+        elements.forEach(el => el.disabled = false);
+        document.getElementById('loginMsg').innerText = "";
+    }
+
+    grecaptcha.ready(function() {
+        grecaptcha.execute('6LcR7gQtAAAAACIEVWPRYCkIf1DRhBQW_OgfipT8', {action: 'homepage'}).then(async function(token) {
+            try {
+                // Envia o token para o Apps Script verificar a nota (score)
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: 'verify_human', token: token })
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === "bot") {
+                    // SE FOR BOT, REDIRECIONA PARA A ARMADILHA
+                    window.location.href = "https://www.google.com";
+                } else {
+                    // SE FOR HUMANO, DESBLOQUEIA OS CAMPOS
+                    unlockForms();
+                }
+            } catch (e) {
+                console.error("Erro na verificação:", e);
+                // Em caso de falha de conexão, libera por precaução para não travar clientes reais
+                unlockForms(); 
+            }
+        });
+    });
+    // ------------------------------------------------
 
     async function fetchUsers() {
         try {
@@ -387,6 +414,7 @@
         e.preventDefault();
         const msg = document.getElementById('signupMsg');
         const payload = {
+            action: 'register_user', // Avisa o Apps Script que isso é um registro
             name: document.getElementById('regName').value,
             email: document.getElementById('regEmail').value.toLowerCase().trim(),
             pass: document.getElementById('regPass').value
