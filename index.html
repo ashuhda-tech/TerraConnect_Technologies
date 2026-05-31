@@ -53,6 +53,7 @@
             overflow: hidden; 
         }
 
+        /* --- INTRO VIDEO OVERYLAY STYLES --- */
         #intro-overlay {
             position: fixed;
             top: 0;
@@ -64,7 +65,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: opacity 1s ease-out; 
+            transition: opacity 1s ease-out; /* Fade out suave de 1 segundo */
         }
 
         #intro-overlay video {
@@ -98,6 +99,7 @@
             border-color: #fff;
         }
 
+        /* --- Video Background Styles --- */
         .video-bg-container {
             position: fixed;
             top: 0;
@@ -234,13 +236,8 @@
         .success { color: var(--status-ok); }
         .hidden { display: none; }
     </style>
-
-<script src="https://www.google.com/recaptcha/api.js?render=6LcR7gQtAAAAACIEVWPRYCkIf1DRhBQW_OgfipT8">
-</script>
-
 </head>
-
-    <body>
+<body>
 
 <div id="intro-overlay">
     <video id="introVideo" autoplay muted playsinline>
@@ -313,22 +310,31 @@
 </div>
 
 <script>
+    // --- LÓGICA DA INTRODUÇÃO ---
     const introOverlay = document.getElementById('intro-overlay');
     const introVideo = document.getElementById('introVideo');
 
     function finishIntro() {
+        // Reduz a opacidade para 0 para ativar a transição CSS
         introOverlay.style.opacity = '0';
+        
+        // Remove completamente o elemento do DOM após a transição terminar (1 segundo)
         setTimeout(() => {
             introOverlay.style.display = 'none';
         }, 1000);
     }
 
     if (introVideo) {
+        // Assim que o vídeo acabar, dispara a função de finalizar
         introVideo.addEventListener('ended', finishIntro);
+        
+        // Failsafe: Se o vídeo der erro ao carregar, pula a intro automaticamente
         introVideo.addEventListener('error', finishIntro);
     } else {
         finishIntro();
     }
+    // -----------------------------
+
 
     const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTLog7uhFw___9q5ossjzRuKZq6VkC3HqgsD52RAd1y5FigIwCqmEyFeLc-_qgS1RAwtlcIhr_zK-nn/pub?gid=0&single=true&output=csv';
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzFT1YQSMLpJ2zLJQ-bD1JOUzaUJJsRcmCBkpseXd87iGvJXm5Ig7p1gYJf-PmHVwQ/exec';
@@ -351,7 +357,7 @@
                 };
             });
         } catch (error) {
-            console.error("Erro ao processar usuários:", error);
+            console.error("User Processing Error:", error);
             return [];
         }
     }
@@ -362,17 +368,17 @@
         const email = document.getElementById('loginEmail').value.trim().toLowerCase();
         const pass = document.getElementById('loginPass').value.trim();
 
-        msg.innerText = "Autenticando...";
+        msg.innerText = "Autenticating...";
         const users = await fetchUsers();
         const user = users.find(u => u.email === email && u.pass === pass);
 
         if (user) {
             localStorage.setItem('currentUser', JSON.stringify(user));
-            msg.innerText = "Sucesso! Entrando...";
+            msg.innerText = "Sucess! Entering...";
             msg.className = "message success";
             setTimeout(() => { window.location.href = 'home.html'; }, 1000);
         } else {
-            msg.innerText = "E-mail ou senha inválidos.";
+            msg.innerText = "Invalid E-mail or Password.    Please revise the provided information.";
             msg.className = "message error";
         }
     });
@@ -380,30 +386,21 @@
     document.getElementById('signupForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const msg = document.getElementById('signupMsg');
+        const payload = {
+            name: document.getElementById('regName').value,
+            email: document.getElementById('regEmail').value.toLowerCase().trim(),
+            pass: document.getElementById('regPass').value
+        };
 
-        grecaptcha.ready(function() {
-            grecaptcha.execute('6LcR7gQtAAAAACIEVWPRYCkIf1DRhBQW_OgfipT8', {action: 'signup'}).then(async function(token) {
-                
-                console.log("Token gerado pelo navegador: ", token);
-                
-                const payload = {
-                    name: document.getElementById('regName').value,
-                    email: document.getElementById('regEmail').value.toLowerCase().trim(),
-                    pass: document.getElementById('regPass').value,
-                    token: token
-                };
-
-                try {
-                    await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-                    msg.innerText = "Registry successfully sent! Please proceed to sign in.";
-                    msg.className = "message success";
-                    e.target.reset();
-                } catch (e) {
-                    msg.className = "message error";
-                    msg.innerText = "Registry Error.";
-                }
-            });
-        });
+        try {
+            await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+            msg.innerText = "Successfuly registered!    Please proceed to Sign in.";
+            msg.className = "message success";
+            e.target.reset();
+        } catch (e) {
+            msg.className = "message error";
+            msg.innerText = "Sign up Error.";
+        }
     });
 
     function toggleAuth() {
