@@ -53,7 +53,6 @@
             overflow: hidden; 
         }
 
-        /* --- INTRO VIDEO OVERYLAY STYLES --- */
         #intro-overlay {
             position: fixed;
             top: 0;
@@ -65,7 +64,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: opacity 1s ease-out; /* Fade out suave de 1 segundo */
+            transition: opacity 1s ease-out; 
         }
 
         #intro-overlay video {
@@ -99,7 +98,6 @@
             border-color: #fff;
         }
 
-        /* --- Video Background Styles --- */
         .video-bg-container {
             position: fixed;
             top: 0;
@@ -242,8 +240,6 @@
 
 </head>
 
-    
-    
     <body>
 
 <div id="intro-overlay">
@@ -317,31 +313,22 @@
 </div>
 
 <script>
-    // --- LÓGICA DA INTRODUÇÃO ---
     const introOverlay = document.getElementById('intro-overlay');
     const introVideo = document.getElementById('introVideo');
 
     function finishIntro() {
-        // Reduz a opacidade para 0 para ativar a transição CSS
         introOverlay.style.opacity = '0';
-        
-        // Remove completamente o elemento do DOM após a transição terminar (1 segundo)
         setTimeout(() => {
             introOverlay.style.display = 'none';
         }, 1000);
     }
 
     if (introVideo) {
-        // Assim que o vídeo acabar, dispara a função de finalizar
         introVideo.addEventListener('ended', finishIntro);
-        
-        // Failsafe: Se o vídeo der erro ao carregar, pula a intro automaticamente
         introVideo.addEventListener('error', finishIntro);
     } else {
         finishIntro();
     }
-    // -----------------------------
-
 
     const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTLog7uhFw___9q5ossjzRuKZq6VkC3HqgsD52RAd1y5FigIwCqmEyFeLc-_qgS1RAwtlcIhr_zK-nn/pub?gid=0&single=true&output=csv';
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzFT1YQSMLpJ2zLJQ-bD1JOUzaUJJsRcmCBkpseXd87iGvJXm5Ig7p1gYJf-PmHVwQ/exec';
@@ -394,14 +381,14 @@
         e.preventDefault();
         const msg = document.getElementById('signupMsg');
 
-    // Executa o reCAPTCHA v3 antes de enviar
     grecaptcha.ready(function() {
-    grecaptcha.execute('SUA_SITE_KEY_AQUI', {action: 'signup'}).then(async function(token) {
+    grecaptcha.execute('6LcR7gQtAAAAACIEVWPRYCkIf1DRhBQW_OgfipT8', {action: 'signup'}).then(async function(token) {
             
         const payload = {
             name: document.getElementById('regName').value,
             email: document.getElementById('regEmail').value.toLowerCase().trim(),
-            pass: document.getElementById('regPass').value
+            pass: document.getElementById('regPass').value,
+            token: token
         };
 
         try {
