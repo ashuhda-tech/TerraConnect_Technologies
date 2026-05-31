@@ -381,32 +381,30 @@
         e.preventDefault();
         const msg = document.getElementById('signupMsg');
 
-    grecaptcha.ready(function() {
-    grecaptcha.execute('6LcR7gQtAAAAACIEVWPRYCkIf1DRhBQW_OgfipT8', {action: 'signup'}).then(async function(token) {
-            const payload = {
-            name: document.getElementById('regName').value,
-            email: document.getElementById('regEmail').value.toLowerCase().trim(),
-            pass: document.getElementById('regPass').value,
-            token: token
-        };
+        grecaptcha.ready(function() {
+            grecaptcha.execute('6LcR7gQtAAAAACIEVWPRYCkIf1DRhBQW_OgfipT8', {action: 'signup'}).then(async function(token) {
+                
+                console.log("Token gerado pelo navegador: ", token);
+                
+                const payload = {
+                    name: document.getElementById('regName').value,
+                    email: document.getElementById('regEmail').value.toLowerCase().trim(),
+                    pass: document.getElementById('regPass').value,
+                    token: token
+                };
 
-        try {
-            await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-            msg.innerText = "Cadastro enviado! Preencha o ChannelID no Excel para ativar os sensores.";
-            msg.className = "message success";
-            e.target.reset();
-            console.log("Nome enviado pelo navegador: ", name);
-            console.log("Email enviada pelo navegador: ", email);
-            console.log("Senha enviada pelo navegador: ", pass);
-            console.log("Token gerado pelo navegador: ", token);
-            
-        } catch (e) {
-            msg.className = "message error";
-            msg.innerText = "Erro ao conectar.";
-           }
+                try {
+                    await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+                    msg.innerText = "Registry successfully sent! Please proceed to sign in.";
+                    msg.className = "message success";
+                    e.target.reset();
+                } catch (e) {
+                    msg.className = "message error";
+                    msg.innerText = "Registry Error.";
+                }
+            });
         });
     });
-});
 
     function toggleAuth() {
         document.getElementById('login-section').classList.toggle('hidden');
