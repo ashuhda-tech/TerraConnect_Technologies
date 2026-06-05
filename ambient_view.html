@@ -389,8 +389,8 @@
             </div>
             <div class="summary-card">
                 <div class="summary-title a70-font"><i class="fas fa-ruler-combined"></i> Body Lenght</div>
-                <div class="summary-main-val" id="sumLengthVal">--<span> cm</span></div>
-                <div class="summary-sub-val" id="sumLengthDate">Last: --- / --- / ----</div>
+                <div class="summary-main-val" id="sumLengthVal">--<span>cm</span></div>
+                <div class="summary-sub-val" id="sumLengthDate">--- / --- / ----</div>
             </div>
         </div>
 
@@ -830,7 +830,7 @@ async function sendDeviceConfig() {
                 document.getElementById('sumWeightDate').innerText = formatDateDisplay(lastWeight[1]);
             }
             if(lastLength) {
-                document.getElementById('sumLengthVal').innerHTML = `<b>Length:</b> ${lastLength[3]}<span> cm</span>`;
+                document.getElementById('sumLengthVal').innerHTML = `${lastLength[3]}<span> cm</span>`;
                 document.getElementById('sumLengthDate').innerText = formatDateDisplay(lastLength[1]);
             }
         
