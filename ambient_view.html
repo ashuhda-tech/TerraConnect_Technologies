@@ -87,6 +87,9 @@
     
     .cam-status-bar { position: absolute; bottom: 0; width: 100%; padding: 10px 20px; background: rgba(0,0,0,0.6); display: flex; justify-content: space-between; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;z-index: 3;}
 
+    /* Ajuste no estilo do nome do animal na sidebar */
+    .dyn-name {font-family: 'Cinzel', serif; letter-spacing: 2px; font-size: 2.5rem; letter-spacing: 2px;margin: 15px 0 0 0; color: var(--accent);}
+    
     /* --- MAIN CONTENT LAYOUT --- */
     .main-content { flex: 1; padding: 40px; overflow-y: auto; background: transparent !important; transition: 0.5s; }
 
@@ -170,7 +173,7 @@
         <div class="sidebar-top">
             <div class="bio-section">
                 <img id="dynPhoto" src="" alt="Animal Photo" class="animal-photo">
-                <h2 id="dynName" class="main-header" style="margin: 15px 0 0 0; color: var(--accent);">---</h2>
+                <h2 id="dynName" class="dyn-name" style="margin: 15px 0 0 0; color: var(--accent);">---</h2>
             </div>
 
             <div class="bio-info-list">
