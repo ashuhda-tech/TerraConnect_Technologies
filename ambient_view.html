@@ -22,7 +22,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <script src="[https://cdn.jsdelivr.net/npm/chart.js](https://cdn.jsdelivr.net/npm/chart.js)"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     
@@ -53,7 +52,7 @@
     /* Estilo para o Vídeo de Fundo */
     .background-video { position: fixed; right: 0; bottom: 0; min-width: 100%; min-height: 100%; z-index: -1; object-fit: cover; filter: brightness(0.4); }
     .a70-font { font-family: 'Cinzel', serif; letter-spacing: 2px; }
-    .animal-photo {  flex-shrink: 0; width: 200px; height: 200px; border-radius: 10px; overflow: hidden; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; border: 2px solid var(--border);}
+    .animal-photo { flex-shrink: 0; width: 55%; max-width: 180px; aspect-ratio: 1 / 1; height: auto; object-fit: cover; border-radius: 10px; background: rgba(0,0,0,0.3); border: 2px solid var(--border); margin: 0 auto; }
 
     /* --- SIDEBAR LAYOUT --- */
     .sidebar { width: 320px; background-color: var(--sidebar-bg); border-right: 1px solid var(--border); padding: 25px; display: flex; flex-direction: column; justify-content: space-between; z-index: 10; transition: background-color 0.5s, border-color 0.5s;
@@ -73,8 +72,8 @@
     .btn-edit {display: none;align-items: center;justify-content: center;gap: 8px;margin-top: 15px;padding: 10px;width: 100%;background: transparent;border: 1px solid var(--accent);color: var(--accent);text-decoration: none;border-radius: 5px;font-size: 0.8rem;font-family: 'Cinzel', serif;transition: 0.3s;cursor: pointer;}
     .btn-edit:hover {background: var(--accent);color: var(--bg-dark);}
     
-    .bio-section { text-align: center; margin-bottom: 30px; }
-    .bio-info-list { display: flex; flex-direction: column; gap: 20px; text-align: left; }
+    .bio-section { display: flex; flex-direction: column; align-items: center; text-align: center; margin-bottom: 30px; }
+    .bio-info-list { display: grid; grid-template-columns: 1fr; gap: 15px; text-align: left; width: 100%; }
     .bio-item b { color: var(--accent); display: block; font-size: 0.75rem; text-transform: uppercase; margin-bottom: 4px; }
     .bio-item span { font-size: 0.9rem; color: var(--text-light); }
 
@@ -146,11 +145,10 @@
     .chart-iframe-container { width: 90%; height: 80%; border: 1px solid var(--border); border-radius: 15px; overflow: hidden; background: #000; }
     .chart-iframe-container iframe { width: 100%; height: 100%; border: none;}
 
-
-        
     @media (max-width: 900px) {
         body { flex-direction: column; overflow: auto; height: auto; }
         .sidebar { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
+        .bio-info-list { grid-template-columns: 1fr 1fr; }
         .main-content { padding: 20px; }
     }
 </style>
@@ -162,8 +160,7 @@
 </head>
 <body>
 
-    <!-- Vídeo de Fundo Dinâmico -->
-<video autoplay muted loop playsinline id="bgVideo" class="background-video">
+    <video autoplay muted loop playsinline id="bgVideo" class="background-video">
     <source src="" type="video/mp4">
 </video>
 
@@ -285,12 +282,12 @@
             </div>
         </div>
 
-           
+            
             <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-top: 20px; margin-bottom: 15px;">
                 <i class="fas fa-broadcast-tower"></i> Remote Sensor Unit
             </h3>
 
-           
+            
         
        <div class="sensor-grid">
             <div class="sensor-card-rs" onclick="openChart(21, ' Remote Sensor | Air Temperature')" style="cursor: pointer;">
@@ -470,8 +467,7 @@
         
     </main>
 
-    <!-- Modal para Gráficos do ThingSpeak -->
-<div id="chartModal" class="chart-modal">
+    <div id="chartModal" class="chart-modal">
     <div class="chart-modal-header">
         <h2 id="modalChartTitle" class="a70-font">SENSOR CHART</h2>
         <button class="btn-close-modal" onclick="closeChart()" >
