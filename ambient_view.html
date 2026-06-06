@@ -518,6 +518,37 @@
 <script>
     const urlParams = new URLSearchParams(window.location.search);
     const currentPageId = urlParams.get('id');
+
+// 2. SISTEMA DE SEGURANÇA FRONTEND (Verificação de Login)
+    function checkSecurity() {
+    const userString = localStorage.getItem('currentUser');
+    
+    // Se não tiver ninguém logado, chuta para a página de login
+    if (!userString) {
+        alert("Acesso Negado: Por favor, faça login.");
+        window.location.href = "https://ashuhda-tech.github.io/TerraConnect_Technologies/"; // Mude para o nome da sua página de login
+        return null;}
+
+     const currentUser = JSON.parse(userString);
+
+    // IMPORTANTE: Aqui precisamos garantir que este ambiente pertence a este usuário.
+    // Supondo que no seu objeto de usuário salvo no login exista uma lista de IDs permitidos:
+    // Exemplo: currentUser.environments = ["PG-I0W0PQ", "PG-12345"]
+    
+    /* DESCOMENTE E AJUSTE ESTA PARTE SE O SEU USUÁRIO TIVER ESSA LISTA NO LOGIN
+    if (!currentUser.environments.includes(currentPageId)) {
+        alert("Acesso Restrito: Você não tem permissão para ver este ambiente.");
+        window.location.href = "maindashboard.html"; 
+        return null;
+    }
+     //  */return currentUser;
+    }
+
+// Roda a verificação imediatamente
+const loggedUser = checkSecurity();
+
+// Se a função não retornou o usuário, o script para por aqui e a pessoa é redirecionada.
+
     
     //TerraConnectPageID
     const PAGEID_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTeBz5FwvcmPue3hJ6TKwmrNZeMrz2_Su7co-mPuzKj1ZJv--5BBvPjlszF3yyEHOVuEeGT9mmwZqOp/pub?gid=0&single=true&output=csv';
@@ -538,7 +569,6 @@
     //TerraConnectVetData.xlsx
     const VETDATA_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQQ4vxhQzvVzYHZBJ8-Jc1VCnPBi9RcgqS7BYruNUgbbwBMcVVO1GOj3wq6PY3fbebz1BqqCDlv_AWR/pub?gid=0&single=true&output=csv'; 
     const VETDATA_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxxnlxSflhGHaX8IMcQj9y7H99bu4G9V-UM9f-E-SLdV2eLcUrBpQWvwh7o6GHLUXca/exec";
-
     
     let feedingChart, weightChart, sheddingChart, lengthChart, heightChart;
     let tsReadURL = "";
