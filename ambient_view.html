@@ -472,9 +472,36 @@
                 <span style="color: var(--text-muted);">Enc: Internal_Main_01</span>
             </div>
         </div>
+
+
+
+
+
         
+        <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin: 30px 0 15px 0;"><i class="fas fa-notes-medical"></i> Vet Visit </h3>
+    <div class="sensor-card" style="flex-direction: column; align-items: stretch; margin-bottom: 20px;">
+            <div id="vetMapContainer" style="width: 100%; height: 300px; border-radius: 10px; overflow: hidden; margin-bottom: 15px;">
+            </div>
+    
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; color: var(--text-light); font-size: 0.8rem;">
+                <thead>
+                    <tr style="border-bottom: 1px solid var(--border); color: var(--accent);">
+                        <th style="padding: 10px; text-align: left;">Date</th>
+                        <th style="padding: 10px; text-align: left;">Type</th>
+                        <th style="padding: 10px; text-align: left;">Doctor</th>
+                        <th style="padding: 10px; text-align: left;">Clinic</th>
+                    </tr>
+                </thead>
+                <tbody id="vetTableBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
     </main>
 
+    
     <div id="chartModal" class="chart-modal">
     <div class="chart-modal-header">
         <h2 id="modalChartTitle" class="a70-font">SENSOR CHART</h2>
@@ -506,6 +533,11 @@
     //TerraConnectEnviromentalSetup.xlsx
     const ENVIRONMENT_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRbjH7deMzP_-oUSROzLYUxU3o2UvBar6ODVwLKpLQ6xaacQKON5xlzV3KA2Tswsc0WfSGQu7LVKBvs/pub?gid=0&single=true&output=csv';
     const ENVIRONMENT_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzG2YVem9qG7sEK20lVuRm2Bhjo10dfXRF98mibREbUZnM5obTrb0QrQDJIGi0wFoE/exec";
+
+    //TerraConnectVetData.xlsx
+    const VETDATA_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQQ4vxhQzvVzYHZBJ8-Jc1VCnPBi9RcgqS7BYruNUgbbwBMcVVO1GOj3wq6PY3fbebz1BqqCDlv_AWR/pub?gid=0&single=true&output=csv'; 
+    const VETDATA_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxxnlxSflhGHaX8IMcQj9y7H99bu4G9V-UM9f-E-SLdV2eLcUrBpQWvwh7o6GHLUXca/exec";
+
     
     let feedingChart, weightChart, sheddingChart, lengthChart, heightChart;
     let tsReadURL = "";
@@ -601,6 +633,7 @@ async function loadData() {
             generateConfigQR(data);
             updateSensors();
             loadBiologicalHistory(currentPageId);
+            loadVetVisits(currentPageId);
             setInterval(updateSensors, 20000);
             
             // Carregar limites ambientais (se a função existir)
@@ -1009,6 +1042,53 @@ async function sendDeviceConfig() {
         document.getElementById('camStatusText').style.color = "#a3b18a";
     }
 
+
+
+
+async function loadVetVisits(id) {
+    try {
+        const res = await fetch(VETDATA_CSV_URL);
+        const text = await res.text();
+        const rows = parseCSV(text);
+        
+        // Filtra visitas deste animal (assumindo que a coluna 0 seja pageId)
+        const visits = rows.filter(r => r[0] && r[0].toLowerCase() === id.toLowerCase());
+        const tbody = document.getElementById('vetTableBody');
+        tbody.innerHTML = '';
+
+        if (visits.length > 0) {
+            const lastVisit = visits[visits.length - 1];
+            
+            // 1. Preenche a Tabela
+            visits.forEach(v => {
+                tbody.innerHTML += `
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        <td style="padding: 10px;">${v[1]}</td>
+                        <td style="padding: 10px;">${v[3]}</td>
+                        <td style="padding: 10px;">${v[8]}</td>
+                        <td style="padding: 10px;">${v[9]}</td>
+                    </tr>
+                `;
+            });
+
+            // 2. Atualiza o Mapa (usa o PlusCode ou Endereço da última visita)
+            const location = lastVisit[13] || lastVisit[12]; // Coluna PlusCode ou Address
+            const mapContainer = document.getElementById('vetMapContainer');
+            if (location) {
+                const encodedLoc = encodeURIComponent(location);
+                mapContainer.innerHTML = `<iframe width="100%" height="100%" frameborder="0" style="border:0; filter: invert(90%) hue-rotate(180deg) brightness(95%) contrast(90%);" 
+                src="https://www.google.com/maps/embed/v1/place?key=SUA_CHAVE_NAO_OBRIGATORIA&q=${encodedLoc}" allowfullscreen></iframe>`;
+            }
+        } else {
+            tbody.innerHTML = '<tr><td colspan="4" style="padding:20px; text-align:center;">No visits registered.</td></tr>';
+        }
+    } catch (e) {
+        console.error("Error loading Vet Data:", e);
+    }
+}
+
+
+    
     
 
     // --- MODAL DE GRÁFICOS DETALHADOS ---
