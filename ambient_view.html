@@ -588,17 +588,22 @@ const loggedUser = checkSecurity();
     }
 
 async function loadData() {
-    if (!currentPageId) return;
+    // Verifica se temos o ID da página E se temos um usuário logado validado pela Camada 1
+    if (!currentPageId || !loggedUser || !loggedUser.id) return;
         
     try {
-        const response = await fetch(PAGEID_CSV_URL);
-        const csvData = await response.text();
-        const rows = parseCSV(csvData);
+        // 1. Monta a URL segura mandando o ID do usuário e o ID da página para o Google Script
+        const secureUrl = `${PAGEID_SCRIPT_URL}?userID=${encodeURIComponent(loggedUser.id)}&pageID=${encodeURIComponent(currentPageId)}`;
+        
+        // 2. Chama o Script (Agora não baixa mais a planilha inteira, só pede 1 linha)
+        const response = await fetch(secureUrl);
+        const jsonResponse = await response.json();
 
-        // Procura os dados pelo PageID (Coluna index 1)
-        const data = rows.find(r => r[1] && r[1].toLowerCase() === currentPageId.toLowerCase());
+        // 3. Verifica se o Google autorizou a entrega dos dados
+        if (jsonResponse.status === "success") {
+            const data = jsonResponse.data; // Pega o array com os dados daquele ambiente específico
 
-        if (data) {
+            // --- A PARTIR DAQUI O CÓDIGO É EXATAMENTE O MESMO DE ANTES ---
             // Bio Info Básica
             document.getElementById('dynName').innerText = data[3] || "---";
             document.getElementById('dynSex').innerText = data[4] || "---";
@@ -613,29 +618,23 @@ async function loadData() {
             document.getElementById('dynAnimal').innerText = animalTypeRaw.toUpperCase();
             filterLayoutByAnimal(animalTypeRaw);
 
-            // --- INÍCIO DA REINSTALAÇÃO DA LÓGICA DE VÍDEO ---
+            // Lógica de Vídeo
             const videoElement = document.getElementById('bgVideo');
             if (videoElement) {
                 const videoSource = videoElement.querySelector('source');
                 const videoFileName = animalTypeRaw.toUpperCase().trim() + ".mp4";
                 const videoBaseURL = "https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/VIDEO/";
 
-                // Tenta carregar o vídeo específico do animal
                 videoSource.src = `${videoBaseURL}${videoFileName}`;
                 videoElement.load();
                 
                 videoElement.play().catch(e => {
                     console.warn(`Video ${videoFileName} not found. Using fallback.`);
-                    // Fallback: Se o vídeo do animal não existir, usa o padrão do Rio
                     videoSource.src = `${videoBaseURL}RIVER_MAINDASHBOARD.mp4`;
                     videoElement.load();
                     videoElement.play();
                 });
             }
-            // --- FIM DA LÓGICA DE VÍDEO ---
-
-
-            
 
             // IDs e Chaves do ThingSpeak
             mainChannelId = data[10];
@@ -667,13 +666,19 @@ async function loadData() {
             loadVetVisits(currentPageId);
             setInterval(updateSensors, 20000);
             
-            // Carregar limites ambientais (se a função existir)
+            // Carregar limites ambientais
             if (typeof loadExistingConfig === "function") loadExistingConfig();
             
         } else {
-            document.getElementById('dynAmbient').innerText = "ID NOT FOUND";
+            // SE O SCRIPT RECUSAR O ACESSO (Usuário tentou acessar ambiente de outro)
+            document.getElementById('dynAmbient').innerText = "ACESSO NEGADO";
+            alert("Aviso de Segurança: " + jsonResponse.message);
+            window.location.href = "maindashboard.html"; // Manda de volta pro painel dele
         }
-    } catch (e) { console.error("Database error:", e); }
+    } catch (e) { 
+        console.error("Database connection error:", e); 
+        document.getElementById('dynAmbient').innerText = "ERRO DE CONEXÃO";
+    }
 }
 
     function filterLayoutByAnimal(animalType) {
