@@ -222,6 +222,19 @@
             <p id="dynStatus">On-time Environmental Monitoring</p>
         </header>
 
+        <h3 class="a70-font" style="font-size: 0.9rem; color: #a3b18a; margin: 30px 0 15px 0;">
+            <i class="fas fa-brain"></i> AI Insights
+        </h3>
+        <div class="sensor-card" style="flex-direction: column; align-items: flex-start; background: rgba(10, 20, 15, 0.8) !important; border-left: 4px solid #a3b18a;">
+            <p id="aiInsightText" style="font-size: 0.85rem; line-height: 1.6; color: var(--text-light); margin: 0 0 15px 0; font-style: italic;">
+        Click to generate AI Insight.
+            </p>
+            <button class="btn-send" onclick="generateAIInsight()" id="btnAi" style="width: 100%; border-color: #a3b18a; color: #a3b18a;">
+                <i class="fas fa-magic"></i> ANALYZE CURRENT DATA
+            </button>
+        </div>
+        
+        
         <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-top: 20px; margin-bottom: 15px;">
                 <i class="fas fa-broadcast-tower"></i> Main Sensor Unit
             </h3>
@@ -569,7 +582,10 @@ const loggedUser = checkSecurity();
     //TerraConnectVetData.xlsx
     const VETDATA_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQQ4vxhQzvVzYHZBJ8-Jc1VCnPBi9RcgqS7BYruNUgbbwBMcVVO1GOj3wq6PY3fbebz1BqqCDlv_AWR/pub?gid=0&single=true&output=csv'; 
     const VETDATA_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxxnlxSflhGHaX8IMcQj9y7H99bu4G9V-UM9f-E-SLdV2eLcUrBpQWvwh7o6GHLUXca/exec";
-    
+
+    //TerraConnectVetData.xlsx
+    const AI_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxign7YvIXmCiAggKU9XKlveWHQ_hQzYL65MEP3yEFe1lj1ewPjHuNzbbi_S8JMTPE/exec";
+   
     let feedingChart, weightChart, sheddingChart, lengthChart, heightChart;
     let tsReadURL = "";
     let currentUUID = ""; 
@@ -1240,6 +1256,92 @@ async function openChart(fieldId, label) {
             editButton.style.display = 'inline-flex';
         }
     });
+
+    async function generateAIInsight() {
+    const btn = document.getElementById('btnAi');
+    const textBox = document.getElementById('aiInsightText');
+    
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> COMPILING HISTORY...';
+    textBox.innerText = "Coletando toda a série histórica de sensores, biometria e laudos veterinários...";
+
+    try {
+        // 1. Dados Básicos do Animal
+        const animalName = document.getElementById('dynName').innerText;
+        const animalType = document.getElementById('dynAnimal').innerText;
+        const sex = document.getElementById('dynSex').innerText;
+        const birthDate = document.getElementById('dynBirth').innerText;
+        const currTemp = document.getElementById('valField1').innerText;
+        const currHum = document.getElementById('valField2').innerText;
+
+        // 2. Extrair Histórico Biológico
+        const resBio = await fetch(BIODATA_CSV_URL);
+        const bioRows = parseCSV(await resBio.text()).filter(r => r[0].toLowerCase() === currentPageId.toLowerCase());
+        const bioHistory = bioRows.map(r => `Data: ${r[1]} | Evento: ${r[2]} | Valor: ${r[3]}`).join('\n');
+
+        // 3. Extrair Limites Ambientais
+        const resEnv = await fetch(ENVIRONMENT_CSV_URL);
+        const envRow = parseCSV(await resEnv.text()).find(r => r[0].toLowerCase() === currentPageId.toLowerCase());
+        const envConfig = envRow ? `Temp Alvo: Min ${envRow[2]}°C / Max ${envRow[1]}°C | Umidade Alvo: Min ${envRow[4]}% / Max ${envRow[3]}%` : "Não configurado.";
+
+        // 4. Extrair Histórico Veterinário (Aqui ele lê as notas/pareceres que o veterinário anotou na planilha)
+        const resVet = await fetch(VETDATA_CSV_URL);
+        const vetRows = parseCSV(await resVet.text()).filter(r => r[0].toLowerCase() === currentPageId.toLowerCase());
+        // Ajuste os índices do 'r[]' baseando-se na ordem das colunas da sua planilha VETDATA
+        const vetHistory = vetRows.map(r => `Data: ${r[1]} | Tipo: ${r[3]} | Clínico: ${r[7]} | Observações: ${r[14] || 'Nenhuma'}`).join('\n');
+
+        // 5. O Super Prompt para a IA
+        const superPrompt = `
+Please analyze the data correlation for the following animal monitored by the TerraConnect IoT system.
+
+**Profile:**
+- Name: ${animalName} (${animalType} | Sex: ${sex} | Date of Birth: ${birthDate})
+- Current Terrarium Conditions: Temp ${currTemp} | Humidity ${currHum}
+- Ideal Limits Configuration: ${envConfig}
+
+**Biological History Series (Weight, Feeding, Molting):**
+${bioHistory || "No biological records."}
+
+**Veterinary History Series (Consultations and Examinations):**
+${vetHistory || "No veterinary records."}
+
+**Task:**
+
+Reference the environmental data with the biological and veterinary data. Is there any weight stagnation? Is the feeding frequency correlated with problems described in veterinary visits? Submit 3 topics:
+
+1) General Health Analysis, 2) Identified Correlations (Cause/Effect), 3) Management Recommendations.
+
+`;
+
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ANALYZING COMPLEX DATA...';
+        textBox.innerText = "Série histórica construída. Enviando para o Google Gemini 1.5 Flash...";
+
+        // Usamos POST com 'text/plain' para evitar bloqueios de CORS e conseguir mandar um texto gigante
+        const response = await fetch(AI_SCRIPT_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ prompt: superPrompt })
+        });
+        
+        const json = await response.json();
+
+        if(json.status === "success") {
+            // Usa o Marked.js para formatar bonitinho se você quiser, ou só substitui as quebras de linha
+            // Transforma **texto** em <b>texto</b> e \n em <br>
+            textBox.innerHTML = json.insight
+                .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
+                .replace(/\*(.*?)\*/g, '<i>$1</i>')
+                .replace(/\n/g, '<br>');
+        } else {
+            textBox.innerText = "Falha na análise: " + json.message;
+        }
+
+    } catch (e) {
+        console.error(e);
+        textBox.innerText = "Erro ao conectar com o Núcleo de IA.";
+    } finally {
+        btn.innerHTML = '<i class="fas fa-magic"></i> RE-RUN ANALYSIS';
+    }
+}
 </script>
 </body>
 </html>
