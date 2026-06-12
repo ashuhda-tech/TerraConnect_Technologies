@@ -1291,9 +1291,33 @@ async function openChart(fieldId, label) {
         const resVet = await fetch(VETDATA_CSV_URL);
         const vetRows = parseCSV(await resVet.text()).filter(r => r[0].toLowerCase() === currentPageId.toLowerCase());
         // Ajuste os índices do 'r[]' baseando-se na ordem das colunas da sua planilha VETDATA
-        const vetHistory = vetRows.map(r => `Data: ${r[1]} | Tipo: ${r[3]} | Clínico: ${r[7]} | Observações: ${r[14] || 'Nenhuma'}`).join('\n');
+        const vetHistory = vetRows.map(r => `Data: ${r[1]} | Tipo: ${r[3]} | Tipo de exame: ${r[3]} | Resultados: ${r[6] || 'Nenhum'} | Observações: ${r[7] || 'Nenhuma'}`).join('\n');
+        
+        // 5. NOVO: Extrair Série Histórica do ThingSpeak (Últimos 100 registros do Sensor Principal)
+                let tsHistory = "No telemetry data available.";
+                if (mainChannelId && mainReadKey) {
+                    try {
+                        // Busca os últimos 100 pontos de dados da API do ThingSpeak
+                        const tsUrl = `https://api.thingspeak.com/channels/${mainChannelId}/feeds.json?api_key=${mainReadKey}&results=100`;
+                        const tsRes = await fetch(tsUrl);
+                        const tsJson = await tsRes.json();
+                        
+                        if (tsJson.feeds && tsJson.feeds.length > 0) {
+                            // Formata os dados numéricos para a IA entender o que é cada coluna
+                            // Considerando: Field 1 = Temp, Field 2 = Hum, Field 3 = CO2, Field 7 = Light
+                            tsHistory = tsJson.feeds.map(f => {
+                                // Formata a data para um padrão limpo (M/D/YYYY, HH:MM:SS)
+                                const date = new Date(f.created_at).toLocaleString('en-US');
+                                return `[${date}] Temp: ${f.field1 || '--'}°C | Hum: ${f.field2 || '--'}% | CO2: ${f.field3 || '--'}ppm | Light: ${f.field7 || '--'}lx`;
+                            }).join('\n');
+                        }
+                    } catch(e) {
+                        console.warn("Failed to fetch ThingSpeak history for AI", e);
+                        tsHistory = "Error retrieving telemetry.";
+                    }
+                }
 
-        // 5. O Super Prompt para a IA
+        // 6. O Super Prompt para a IA Enriquecido
         const superPrompt = `
 Please analyze the data correlation for the following animal monitored by the TerraConnect IoT system.
 
@@ -1301,6 +1325,9 @@ Please analyze the data correlation for the following animal monitored by the Te
 - Name: ${animalName} (${animalType} | Sex: ${sex} | Date of Birth: ${birthDate})
 - Current Terrarium Conditions: Temp ${currTemp} | Humidity ${currHum}
 - Ideal Limits Configuration: ${envConfig}
+
+**Environmental Telemetry History (Last 100 readings from IoT Sensors):**
+${tsHistory}
 
 **Biological History Series (Weight, Feeding, Molting):**
 ${bioHistory || "No biological records."}
