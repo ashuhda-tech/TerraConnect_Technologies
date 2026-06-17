@@ -1398,8 +1398,10 @@ async function openChart(fieldId, label) {
                     }
                 }
 
-        // 7. O Super Prompt para a IA Enriquecido
+// 7. O Super Prompt para a IA Enriquecido e Blindado (Inglês Forçado)
         const superPrompt = `
+[STRICT SYSTEM INSTRUCTION: YOUR ENTIRE RESPONSE MUST BE EXCLUSIVELY IN ENGLISH. Do not output any word in Portuguese or any other language. If the provided context data is in another language, you must translate the insights internally and provide the final output ONLY in English.]
+
 Please analyze the data correlation for the following animal monitored by the TerraConnect IoT system.
 
 **Profile:**
@@ -1423,11 +1425,11 @@ ${vetHistory || "No veterinary records."}
 
 Reference the environmental data with the biological and veterinary data. Is there any weight stagnation? Is the feeding frequency correlated with problems described in veterinary visits? Submit 3 topics:
 
-1) General Health Analysis, 
-2) Identified Correlations (Cause/Effect), 
-3) Management Recommendations.
+1) General Health Analysis
+2) Identified Correlations (Cause/Effect)
+3) Management Recommendations
 
-PLEASE, independently of the languages used at the analysed data, please give me the answer always in english.
+[FINAL RULE: REMEMBER TO GENERATE THE ENTIRE RESPONSE IN ENGLISH ONLY.]
 `;
 
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ANALYZING COMPLEX DATA...';
