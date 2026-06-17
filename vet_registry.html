@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TerraConnect | Vet Registry</title>
+    
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/TERRACONNECT_LOGO.png">
+    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/TERRACONNECT_LOGO.png">
+
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* DEFINIÇÃO DE TODOS OS TEMAS */
+        :root {--bg-dark: #070b14; --sidebar-bg: #0d1117; --accent: #d1b38b; --text-light: #f4e9d8; --gray-panel: #1e1e1e; --border: #2d3139;}
+        /* TECH SAVVY & FUTURISTIC */
+        [data-theme="tech1"] {--bg-dark: #0B1021; --sidebar-bg: #334155; --accent: #87CEFA; --text-light: #CFFAFE; --gray-panel: #E2E8F0; --border: #334155;}
+        [data-theme="tech2"] {--bg-dark: #1a1a1d; --sidebar-bg: #4e4e50; --accent: #ffff00; --text-light: #f5f5f5; --gray-panel: #2e2e2e; --border: #95a5a6;}
+        [data-theme="tech3"] {--bg-dark: #56886C; --sidebar-bg: #56887D; --accent: #FFE0FF; --text-light: #FFE9FF; --gray-panel: #56887D; --border: #56886C;}
+        /* PLAYFUL & VIBRANT */
+        [data-theme="playful1"] {--bg-dark: #040B11; --sidebar-bg: #2D322C; --accent: #CEE056; --text-light: #F3F3F2; --gray-panel: #2D322C; --border: #EBC61D;}
+        [data-theme="playful2"] {--bg-dark: #846B5A; --sidebar-bg: #CAB8A9; --accent: #D4CAC1; --text-light: #FEFCFB; --gray-panel: #FBF8F5; --border: #CAB8A9;}
+        [data-theme="playful3"] {--bg-dark: #136a7a; --sidebar-bg: #408d99; --accent: #8dc6bf; --text-light: #d1e8e4; --gray-panel: #f1f7f6; --border: #408d99;}
+        /* MINIMALISTIC & ELEGANT */
+        [data-theme="minimalist1"] {--bg-dark: #000000; --sidebar-bg: #1a1a1a; --accent: #d7ccc8; --text-light: #f5f5f5; --gray-panel: #6d4c41; --border: #e1e8ed;}
+        [data-theme="minimalist2"] {--bg-dark: #333333; --sidebar-bg: #4f4f4f; --accent: #bdb76b; --text-light: #dcdcdc; --gray-panel: #262626; --border: #e6e6fa;}
+        [data-theme="minimalist3"] {--bg-dark: #212121; --sidebar-bg: #404040; --accent: #bdc3c7; --text-light: #ffffff; --gray-panel: #616161; --border: #ff5252;}
+        /* NATURE-INSPIRED */
+        [data-theme="nature1"] {--bg-dark: #2b2d24; --sidebar-bg: #3e3e3e; --accent: #cd853f; --text-light: #dad7cd; --gray-panel: #344e41; --border: #588157;}
+        [data-theme="nature2"] {--bg-dark: #322D29; --sidebar-bg: #72383D; --accent: #AC9C8D; --text-light: #EFE9E1; --gray-panel: #D1C7BD; --border: #D9D9D9;}
+        [data-theme="nature3"] {--bg-dark: #3b4d7b; --sidebar-bg: #1a2a4d; --accent: #c0c0e0; --text-light: #fef9e7; --gray-panel: #804040; --border: #e6b0aa;}
+
+        body { background-color: var(--bg-dark); color: var(--text-light); font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
+        .video-bg-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; overflow: hidden; }
+        .video-bg-container video { min-width: 100%; min-height: 100%; width: auto; height: auto; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); object-fit: cover; }
+        .video-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: -1; }
+        .register-container { background-color: var(--sidebar-bg); padding: 40px; border: 1px solid var(--border); border-radius: 20px; width: 100%; max-width: 600px; text-align: center; z-index: 1; position: relative; box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
+        .a70-font { font-family: 'Cinzel', serif; letter-spacing: 2px; }
+        h1 { color: var(--accent); font-size: 1.2rem; margin-bottom: 30px; }
+        .input-group { text-align: left; margin-bottom: 20px; }
+        label { font-size: 0.7rem; color: var(--accent); display: block; margin-bottom: 8px; }
+        input, textarea { width: 100%; padding: 12px; background: var(--bg-dark); border: 1px solid var(--border); color: var(--text-light); border-radius: 4px; box-sizing: border-box; font-size: 0.85rem; font-family: inherit; }
+        input:focus, textarea:focus { outline: none; border-color: var(--accent); }
+        .info-box { background: rgba(0, 0, 0, 0.2); padding: 10px; border-radius: 4px; font-size: 0.7rem; margin-bottom: 25px; border: 1px dashed var(--border); color: var(--text-light); }
+        .btn-save { background: var(--accent); color: var(--bg-dark); border: none; width: 100%; padding: 15px; font-weight: bold; cursor: pointer; border-radius: 4px; transition: 0.3s; margin-top: 20px; }
+        .btn-save:hover { filter: brightness(1.2); transform: translateY(-2px); } 
+        .btn-back { display: block; margin-top: 15px; color: var(--text-light); text-decoration: none; font-size: 0.8rem; opacity: 0.7; cursor: pointer; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .grid-full { grid-column: span 2; }
+    </style>
+</head>
+<body>
+
+    <div class="video-bg-container">
+        <video autoplay loop muted playsinline poster="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/b1c4c1f080d96ec1c35ff823176f214b761eb6a6/assets/WALLPAPER_MAINDASHBOARD.png">
+            <source src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/b1c4c1f080d96ec1c35ff823176f214b761eb6a6/assets/VIDEO/RIVER_MAINDASHBOARD.mp4" type="video/mp4">
+        </video>
+    </div>
+    <div class="video-overlay"></div>
+
+    <div class="register-container">
+        <h1 class="a70-font" id="mainTitle"><i class="fas fa-notes-medical"></i> VETERINARY RECORD</h1>
+        
+        <div class="info-box">
+            <span style="font-size: 0.6rem;">LINKED ANIMAL ID:</span>
+            <strong id="displayPageId" style="font-size: 0.6rem;">---</strong>
+        </div>
+
+        <div class="grid-2">
+            <div class="input-group">
+                <label class="a70-font">DATE OF VISIT</label>
+                <input type="date" id="vetDate">
+            </div>
+            <div class="input-group">
+                <label class="a70-font">TYPE</label>
+                <input type="text" id="vetType" placeholder="Ex: Routine, X-Ray, Blood Test">
+            </div>
+
+            <div class="input-group">
+                <label class="a70-font">DOCTOR</label>
+                <input type="text" id="vetDoctor" placeholder="Ex: Dr. John Doe">
+            </div>
+            <div class="input-group">
+                <label class="a70-font">CLINIC / VET NAME</label>
+                <input type="text" id="vetClinic" placeholder="Ex: TerraVet Health">
+            </div>
+
+            <div class="input-group grid-full">
+                <label class="a70-font">RESULTS</label>
+                <input type="text" id="vetResult" placeholder="Ex: Healthy, Parasites found, Cleared">
+            </div>
+
+            <div class="input-group grid-full">
+                <label class="a70-font">OBSERVATIONS & RECOMMENDATIONS</label>
+                <textarea id="vetObs" rows="3" placeholder="Diet adjustments, medications, next visit..."></textarea>
+            </div>
+
+            <div class="input-group grid-full">
+                <label class="a70-font">MEDICAL REPORT LINK (URL)</label>
+                <input type="url" id="vetFileLink" placeholder="Google Drive, Dropbox link...">
+            </div>
+            
+            <div class="input-group grid-full">
+                <label class="a70-font">CLINIC WEBSITE (URL)</label>
+                <input type="url" id="vetWebLink" placeholder="https://clinic-website.com">
+            </div>
+
+            <div class="input-group grid-full">
+                <label class="a70-font">CLINIC LOCATION (ADDRESS / PLUS CODE)</label>
+                <input type="text" id="vetLocation" placeholder="Ex: 8645+3J São Paulo, SP">
+            </div>
+        </div>
+
+        <button class="btn-save a70-font" id="btnAction" onclick="processVetRegistration()">SAVE VET RECORD</button>
+        <a onclick="window.history.back()" class="btn-back"><i class="fas fa-arrow-left"></i> CANCEL AND BACK</a>
+    </div>
+
+    <script>
+        // O Script específico do banco de dados Veterinário
+        const VETDATA_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxxnlxSflhGHaX8IMcQj9y7H99bu4G9V-UM9f-E-SLdV2eLcUrBpQWvwh7o6GHLUXca/exec";
+
+        let targetPageID = null;
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const userData = localStorage.getItem('currentUser');
+            if (!userData) { window.location.href = 'index.html'; return; }
+            
+            const user = JSON.parse(userData);
+            window.currentUser = user; 
+
+            // Aplica o tema
+            const savedTheme = localStorage.getItem(`theme_${user.id}`) || 'default';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            
+            // Puxa o PageID da URL (Ex: vet_registry.html?pageID=PG-12345)
+            const urlParams = new URLSearchParams(window.location.search);
+            targetPageID = urlParams.get('pageID');
+
+            if (!targetPageID) {
+                alert("Error: Animal ID not found. Returning to dashboard.");
+                window.location.href = 'maindashboard.html';
+            } else {
+                document.getElementById('displayPageId').innerText = targetPageID;
+            }
+        });
+
+        async function processVetRegistration() {
+            const date = document.getElementById('vetDate').value;
+            const type = document.getElementById('vetType').value;
+            
+            if (!date || !type) return alert("Please, fill at least the Date and Type of the visit.");
+
+            const btn = document.getElementById('btnAction');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> SAVING RECORD...';
+
+            const payload = {
+                pageID: targetPageID,
+                date: date,
+                type: type,
+                result: document.getElementById('vetResult').value,
+                observation: document.getElementById('vetObs').value,
+                fileLink: document.getElementById('vetFileLink').value,
+                doctor: document.getElementById('vetDoctor').value,
+                clinic: document.getElementById('vetClinic').value,
+                webLink: document.getElementById('vetWebLink').value,
+                location: document.getElementById('vetLocation').value,
+                timestamp: new Date().toLocaleString('pt-BR')
+            };
+            
+            try {
+                // Postando os dados no App Script do VetData
+                await fetch(VETDATA_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: JSON.stringify(payload)
+                });
+                alert("Success! Vet Record added.");
+                window.history.back(); // Volta automaticamente para a página do animal
+            } catch (e) { 
+                alert("Error connecting to DB."); 
+                btn.innerHTML = originalText;
+            }
+        }
+    </script>
+</body>
+</html>
