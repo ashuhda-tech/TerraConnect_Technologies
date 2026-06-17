@@ -1158,8 +1158,8 @@ async function loadVetVisits(id) {
                 
                 //Link Arquivo Laudo Medico
                 let vetFile = "---";
-                if (v[7] && v[7].trim() !== "") { 
-                    let url_link = v[7].trim();
+                if (v[8] && v[8].trim() !== "") { 
+                    let url_link = v[8].trim();
                     if (!url_link.startsWith("http")) {
                         url_link = "https://" + url_link;
                     }
@@ -1184,7 +1184,6 @@ async function loadVetVisits(id) {
                         <td style="padding: 10px;">${vetFile}</td>
                         <td style="padding: 10px;">${v[9]}</td>
                         <td style="padding: 10px;">${v[10]}</td>
-                        <td style="padding: 10px;">${v[12]}</td>
                         <td style="padding: 10px;">${webContent}</td>
                     </tr>
                 `;
