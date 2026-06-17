@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* DEFINIÇÃO DE TODOS OS TEMAS */
+        /* DEFINIÇÃO DE TODOS OS TEMAS CONFORME PADRÃO DO SISTEMA */
         :root {--bg-dark: #070b14; --sidebar-bg: #0d1117; --accent: #d1b38b; --text-light: #f4e9d8; --gray-panel: #1e1e1e; --border: #2d3139;}
         /* TECH SAVVY & FUTURISTIC */
         [data-theme="tech1"] {--bg-dark: #0B1021; --sidebar-bg: #334155; --accent: #87CEFA; --text-light: #CFFAFE; --gray-panel: #E2E8F0; --border: #334155;}
@@ -35,13 +35,13 @@
         .video-bg-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; overflow: hidden; }
         .video-bg-container video { min-width: 100%; min-height: 100%; width: auto; height: auto; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); object-fit: cover; }
         .video-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: -1; }
-        .register-container { background-color: var(--sidebar-bg); padding: 40px; border: 1px solid var(--border); border-radius: 20px; width: 100%; max-width: 600px; text-align: center; z-index: 1; position: relative; box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
+        .register-container { background-color: var(--sidebar-bg); padding: 40px; border: 1px solid var(--border); border-radius: 20px; width: 100%; max-width: 650px; text-align: center; z-index: 1; position: relative; box-shadow: 0 15px 35px rgba(0,0,0,0.5); margin-top: 20px; margin-bottom: 20px;}
         .a70-font { font-family: 'Cinzel', serif; letter-spacing: 2px; }
         h1 { color: var(--accent); font-size: 1.2rem; margin-bottom: 30px; }
         .input-group { text-align: left; margin-bottom: 20px; }
         label { font-size: 0.7rem; color: var(--accent); display: block; margin-bottom: 8px; }
-        input, textarea { width: 100%; padding: 12px; background: var(--bg-dark); border: 1px solid var(--border); color: var(--text-light); border-radius: 4px; box-sizing: border-box; font-size: 0.85rem; font-family: inherit; }
-        input:focus, textarea:focus { outline: none; border-color: var(--accent); }
+        input, textarea, select { width: 100%; padding: 12px; background: var(--bg-dark); border: 1px solid var(--border); color: var(--text-light); border-radius: 4px; box-sizing: border-box; font-size: 0.85rem; font-family: inherit; }
+        input:focus, textarea:focus, select:focus { outline: none; border-color: var(--accent); }
         .info-box { background: rgba(0, 0, 0, 0.2); padding: 10px; border-radius: 4px; font-size: 0.7rem; margin-bottom: 25px; border: 1px dashed var(--border); color: var(--text-light); }
         .btn-save { background: var(--accent); color: var(--bg-dark); border: none; width: 100%; padding: 15px; font-weight: bold; cursor: pointer; border-radius: 4px; transition: 0.3s; margin-top: 20px; }
         .btn-save:hover { filter: brightness(1.2); transform: translateY(-2px); } 
@@ -69,46 +69,65 @@
 
         <div class="grid-2">
             <div class="input-group">
-                <label class="a70-font">DATE OF VISIT</label>
+                <label class="a70-font">DATE</label>
                 <input type="date" id="vetDate">
             </div>
             <div class="input-group">
-                <label class="a70-font">TYPE</label>
-                <input type="text" id="vetType" placeholder="Ex: Routine, X-Ray, Blood Test">
+                <label class="a70-font">TIME</label>
+                <input type="time" id="vetTime">
+            </div>
+
+            <div class="input-group grid-full">
+                <label class="a70-font">EXAM TYPE</label>
+                <input type="text" id="vetExamType" placeholder="Ex: Blood Test, Routine Checkup, Ultrasound">
+            </div>
+            <div class="input-group">
+                <label class="a70-font">EXAM COST</label>
+                <input type="number" id="vetExamCost" step="0.01" placeholder="0.00">
+            </div>
+            <div class="input-group">
+                <label class="a70-font">COST CURRENCY</label>
+                <input type="text" id="vetCostCurrency" placeholder="Ex: BRL, USD, EUR">
             </div>
 
             <div class="input-group">
-                <label class="a70-font">DOCTOR</label>
-                <input type="text" id="vetDoctor" placeholder="Ex: Dr. John Doe">
+                <label class="a70-font">DOCTOR NAME</label>
+                <input type="text" id="vetDoctorName" placeholder="Ex: Dr. Jane Doe">
             </div>
             <div class="input-group">
-                <label class="a70-font">CLINIC / VET NAME</label>
-                <input type="text" id="vetClinic" placeholder="Ex: TerraVet Health">
+                <label class="a70-font">VET CLINIC NAME</label>
+                <input type="text" id="vetName" placeholder="Ex: Central Veterinary Hospital">
+            </div>
+            <div class="input-group grid-full">
+                <label class="a70-font">VET PHONE NUMBER</label>
+                <input type="tel" id="vetPhoneNumber" placeholder="Ex: +55 11 99999-9999">
             </div>
 
             <div class="input-group grid-full">
                 <label class="a70-font">RESULTS</label>
-                <input type="text" id="vetResult" placeholder="Ex: Healthy, Parasites found, Cleared">
+                <input type="text" id="vetResults" placeholder="Ex: Normal parameters, Medication prescribed">
+            </div>
+            <div class="input-group grid-full">
+                <label class="a70-font">OBSERVATION</label>
+                <textarea id="vetObservation" rows="3" placeholder="Additional details about the animal status, dosage instructions, etc..."></textarea>
             </div>
 
             <div class="input-group grid-full">
-                <label class="a70-font">OBSERVATIONS & RECOMMENDATIONS</label>
-                <textarea id="vetObs" rows="3" placeholder="Diet adjustments, medications, next visit..."></textarea>
+                <label class="a70-font">FILE LINK (URL)</label>
+                <input type="url" id="vetFileLink" placeholder="https://drive.google.com/... (Medical Report PDF)">
+            </div>
+            <div class="input-group grid-full">
+                <label class="a70-font">VET WEB PAGE (URL)</label>
+                <input type="url" id="vetWebPage" placeholder="https://www.clinicwebsite.com">
             </div>
 
             <div class="input-group grid-full">
-                <label class="a70-font">MEDICAL REPORT LINK (URL)</label>
-                <input type="url" id="vetFileLink" placeholder="Google Drive, Dropbox link...">
+                <label class="a70-font">VET ADDRESS</label>
+                <input type="text" id="vetAdress" placeholder="Ex: 123 Green Ave, New York">
             </div>
-            
             <div class="input-group grid-full">
-                <label class="a70-font">CLINIC WEBSITE (URL)</label>
-                <input type="url" id="vetWebLink" placeholder="https://clinic-website.com">
-            </div>
-
-            <div class="input-group grid-full">
-                <label class="a70-font">CLINIC LOCATION (ADDRESS / PLUS CODE)</label>
-                <input type="text" id="vetLocation" placeholder="Ex: 8645+3J São Paulo, SP">
+                <label class="a70-font">VET PLUS CODE</label>
+                <input type="text" id="vetPlusCode" placeholder="Ex: 8645+3J São Paulo, SP">
             </div>
         </div>
 
@@ -117,7 +136,6 @@
     </div>
 
     <script>
-        // O Script específico do banco de dados Veterinário
         const VETDATA_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxxnlxSflhGHaX8IMcQj9y7H99bu4G9V-UM9f-E-SLdV2eLcUrBpQWvwh7o6GHLUXca/exec";
 
         let targetPageID = null;
@@ -129,11 +147,11 @@
             const user = JSON.parse(userData);
             window.currentUser = user; 
 
-            // Aplica o tema
+            // Aplicação automática do tema salvo
             const savedTheme = localStorage.getItem(`theme_${user.id}`) || 'default';
             document.documentElement.setAttribute('data-theme', savedTheme);
             
-            // Puxa o PageID da URL (Ex: vet_registry.html?pageID=PG-12345)
+            // Captura do pageID vindo da URL externa
             const urlParams = new URLSearchParams(window.location.search);
             targetPageID = urlParams.get('pageID');
 
@@ -147,37 +165,43 @@
 
         async function processVetRegistration() {
             const date = document.getElementById('vetDate').value;
-            const type = document.getElementById('vetType').value;
+            const examType = document.getElementById('vetExamType').value;
             
-            if (!date || !type) return alert("Please, fill at least the Date and Type of the visit.");
+            if (!date || !examType) return alert("Please, fill at least the Date and Exam Type fields.");
 
             const btn = document.getElementById('btnAction');
             const originalText = btn.innerHTML;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> SAVING RECORD...';
 
+            // Mapeamento idêntico à lista ordenada do seu Excel / CVS
             const payload = {
                 pageID: targetPageID,
                 date: date,
-                type: type,
-                result: document.getElementById('vetResult').value,
-                observation: document.getElementById('vetObs').value,
+                time: document.getElementById('vetTime').value,
+                examType: examType,
+                examCost: document.getElementById('vetExamCost').value,
+                costCurrency: document.getElementById('vetCostCurrency').value,
+                results: document.getElementById('vetResults').value,
+                observation: document.getElementById('vetObservation').value,
                 fileLink: document.getElementById('vetFileLink').value,
-                doctor: document.getElementById('vetDoctor').value,
-                clinic: document.getElementById('vetClinic').value,
-                webLink: document.getElementById('vetWebLink').value,
-                location: document.getElementById('vetLocation').value,
+                doctorName: document.getElementById('vetDoctorName').value,
+                vetName: document.getElementById('vetName').value,
+                vetPhoneNumber: document.getElementById('vetPhoneNumber').value,
+                vetWebPage: document.getElementById('vetWebPage').value,
+                vetAdress: document.getElementById('vetAdress').value,
+                vetPlusCode: document.getElementById('vetPlusCode').value,
                 timestamp: new Date().toLocaleString('pt-BR')
             };
             
             try {
-                // Postando os dados no App Script do VetData
+                // Envio dos dados estruturados via POST para o AppScript
                 await fetch(VETDATA_SCRIPT_URL, {
                     method: 'POST',
                     mode: 'no-cors',
                     body: JSON.stringify(payload)
                 });
                 alert("Success! Vet Record added.");
-                window.history.back(); // Volta automaticamente para a página do animal
+                window.history.back(); // Retorna de forma segura à página de monitoramento anterior
             } catch (e) { 
                 alert("Error connecting to DB."); 
                 btn.innerHTML = originalText;
