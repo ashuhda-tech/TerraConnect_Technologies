@@ -518,8 +518,11 @@
                 </tbody>
             </table>
         </div>
+        <a href="#" id="addVetLink" class="btn-edit" style="margin-top: 20px;">
+                <i class="fas fa-plus-circle"></i> Add Vet Visit Record
+        </a>
     </div>
-    
+        
     </main>
 
     
@@ -1310,6 +1313,12 @@ async function openChart(fieldId, label) {
         if (currentPageId && editButton) {
             editButton.href = `register_ambient.html?pageID=${currentPageId}`;
             editButton.style.display = 'inline-flex';
+        }
+        // 2. Configuração do botão "Add Vet Visit Record" (Tabela Vet)
+        const addVetButton = document.getElementById('addVetLink');
+        if (currentPageId && addVetButton) {
+            addVetButton.href = `vet_registry.html?pageID=${currentPageId}`;
+            addVetButton.style.display = 'inline-flex';
         }
     });
 
