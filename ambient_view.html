@@ -1360,7 +1360,7 @@ async function openChart(fieldId, label) {
                             tsHistory = tsJson.feeds.map(f => {
                                 // Formata a data para um padrão limpo (M/D/YYYY, HH:MM:SS)
                                 const date = new Date(f.created_at).toLocaleString('en-US');
-                                return `[${date}] Temp: ${f.field1 || '--'}°C | Hum: ${f.field2 || '--'}% | CO2: ${f.field3 || '--'}ppm | Light: ${f.field7 || '--'}lx`;
+                                return `[${date}] Air Temperature of Main sensor: ${f.field1 || '--'}°C | Air Humidity of Main sensor: ${f.field2 || '--'}% | CO2: ${f.field3 || '--'}ppm | Ground Humidity of Main sensor: ${f.field4 || '--'}% | Light intensity of Main sensor: ${f.field7 || '--'}lx`;
                             }).join('\n');
                         }
                     } catch(e) {
@@ -1368,8 +1368,28 @@ async function openChart(fieldId, label) {
                         tsHistory = "Error retrieving telemetry.";
                     }
                 }
+                // 6. NOVO: Extrair Série Histórica do SENSOR REMOTO (Zona Quente)
+                let rsHistory = "No telemetry data available for Remote Sensor.";
+                if (r1ChannelId && r1ReadKey) {
+                    try {
+                        const rsUrl = `https://api.thingspeak.com/channels/${r1ChannelId}/feeds.json?api_key=${r1ReadKey}&results=100`;
+                        const rsRes = await fetch(rsUrl);
+                        const rsJson = await rsRes.json();
+                        
+                        if (rsJson.feeds && rsJson.feeds.length > 0) {
+                            rsHistory = rsJson.feeds.map(f => {
+                                const date = new Date(f.created_at).toLocaleString('en-US');
+                                // Mapeamento baseado no seu painel: field1=Temp, field2=Hum, field3=Solo
+                                return `[${date}] Air Temperature of Remote sensor: ${f.field1 || '--'}°C | Air Humidity of Remote sensor: ${f.field2 || '--'}% | Ground Humidity of remote sensor: ${f.field3 || '--'}%`;
+                            }).join('\n');
+                        }
+                    } catch(e) {
+                        console.warn("Failed to fetch Remote ThingSpeak history for AI", e);
+                        rsHistory = "Error retrieving remote telemetry.";
+                    }
+                }
 
-        // 6. O Super Prompt para a IA Enriquecido
+        // 7. O Super Prompt para a IA Enriquecido
         const superPrompt = `
 Please analyze the data correlation for the following animal monitored by the TerraConnect IoT system.
 
@@ -1381,6 +1401,9 @@ Please analyze the data correlation for the following animal monitored by the Te
 **Environmental Telemetry History (Last 100 readings from IoT Sensors):**
 ${tsHistory}
 
+**Remote Sensor Telemetry History (Warm Zone / Thermal Regulation) - Last 100 readings:**
+${rsHistory}
+
 **Biological History Series (Weight, Feeding, Molting):**
 ${bioHistory || "No biological records."}
 
@@ -1391,8 +1414,9 @@ ${vetHistory || "No veterinary records."}
 
 Reference the environmental data with the biological and veterinary data. Is there any weight stagnation? Is the feeding frequency correlated with problems described in veterinary visits? Submit 3 topics:
 
-1) General Health Analysis, 2) Identified Correlations (Cause/Effect), 3) Management Recommendations.
-
+1) General Health Analysis, 
+2) Identified Correlations (Cause/Effect), 
+3) Management Recommendations.
 `;
 
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ANALYZING COMPLEX DATA...';
