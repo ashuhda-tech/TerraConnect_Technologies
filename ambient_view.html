@@ -1426,6 +1426,8 @@ Reference the environmental data with the biological and veterinary data. Is the
 1) General Health Analysis, 
 2) Identified Correlations (Cause/Effect), 
 3) Management Recommendations.
+
+PLEASE, independently of the languages used at the analysed data, please give me the answer always in english.
 `;
 
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ANALYZING COMPLEX DATA...';
@@ -1461,52 +1463,78 @@ Reference the environmental data with the biological and veterinary data. Is the
     }
 }
 
-    // Variável global para controlar a instância da voz
-let aiSpeechUtterance = null;
+   // 1. Variável global como ARRAY para proteger o áudio contra o "Garbage Collector" do Chrome
+    window.aiSpeechUtterances = [];
 
-function toggleSpeakAI() {
-    const textBox = document.getElementById('aiInsightText');
-    const icon = document.getElementById('speakIcon');
-    const btn = document.getElementById('btnListenAI');
-    
-    // 1. Se a IA já estiver falando, o clique interrompe a fala (Stop)
-    if (window.speechSynthesis.speaking) {
+    function toggleSpeakAI() {
+        const textBox = document.getElementById('aiInsightText');
+        const icon = document.getElementById('speakIcon');
+        const btn = document.getElementById('btnListenAI');
+        
+        // 2. Se já estiver falando ou pendente, a intenção do clique é PARAR (Stop)
+        if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
+            window.speechSynthesis.cancel();
+            window.aiSpeechUtterances = []; // Limpa memória
+            icon.className = "fas fa-volume-up";
+            btn.style.borderColor = "#a3b18a";
+            btn.style.color = "#a3b18a";
+            return;
+        }
+
+        // Extrai o texto puro
+        const textToRead = textBox.innerText;
+        if (!textToRead || textToRead.includes("Click to generate")) return;
+
+        // 3. Limpeza preventiva (resolve travamentos em que a API fica presa no background do PC/Celular)
         window.speechSynthesis.cancel();
-        icon.className = "fas fa-volume-up";
-        btn.style.borderColor = "#a3b18a";
-        btn.style.color = "#a3b18a";
-        return;
+        window.aiSpeechUtterances = [];
+
+        // 4. Resolve o Bug do Chrome do Texto Longo:
+        // Divide o texto completo em um array de frases (quebra por pontos, exclamações, interrogações ou quebras de linha).
+        const sentences = textToRead.match(/[^.!?\n]+[.!?\n]*/g) || [textToRead];
+
+        // Altera o botão para o modo "TOCANDO"
+        icon.className = "fas fa-stop";
+        btn.style.borderColor = "#ff5f5f";
+        btn.style.color = "#ff5f5f";
+
+        // 5. Enfileira cada frase uma por uma
+        sentences.forEach((sentence, index) => {
+            const chunkText = sentence.trim();
+            if (chunkText === "") return;
+
+            const utterance = new SpeechSynthesisUtterance(chunkText);
+            
+            // IMPORTANTE: Como configuramos o Super Prompt anterior para responder em Inglês,
+            // a voz precisa ser configurada em inglês ('en-US'). 
+            utterance.lang = 'en-US'; 
+            utterance.rate = 1.0;  
+            utterance.pitch = 1.0; 
+
+            // Guarda a referência global para o Chrome não deletar o áudio no meio da frase
+            window.aiSpeechUtterances.push(utterance);
+
+            // Quando a ÚLTIMA frase da fila terminar, reseta o visual do botão
+            if (index === sentences.length - 1) {
+                utterance.onend = function() {
+                    icon.className = "fas fa-volume-up";
+                    btn.style.borderColor = "#a3b18a";
+                    btn.style.color = "#a3b18a";
+                    window.aiSpeechUtterances = []; // Libera a memória ao terminar
+                };
+            }
+
+            // Proteção extra: Em caso de falha de leitura, reseta o botão para não deixar travado
+            utterance.onerror = function() {
+                icon.className = "fas fa-volume-up";
+                btn.style.borderColor = "#a3b18a";
+                btn.style.color = "#a3b18a";
+            };
+
+            // Manda o navegador falar este pedaço da fila
+            window.speechSynthesis.speak(utterance);
+        });
     }
-
-    // Extrai apenas o texto puro do card (removendo tags HTML como <br> ou <b>)
-    const textToRead = textBox.innerText;
-    if (!textToRead || textToRead.includes("Click to generate")) return;
-
-    // 2. Configura a nova fala
-    aiSpeechUtterance = new SpeechSynthesisUtterance(textToRead);
-    
-    // IMPORTANTE: Como configuramos o Super Prompt anterior para responder em Inglês,
-    // a voz precisa ser configurada em inglês ('en-US'). 
-    // Se você mudar o prompt para português no futuro, altere aqui para 'pt-BR'.
-    aiSpeechUtterance.lang = 'en-US'; 
-    aiSpeechUtterance.rate = 1.0;  // Velocidade da fala (1.0 é o normal)
-    aiSpeechUtterance.pitch = 1.0; // Tom da voz
-
-    // Quando a leitura terminar naturalmente, reseta o ícone do botão
-    aiSpeechUtterance.onend = function() {
-        icon.className = "fas fa-volume-up";
-        btn.style.borderColor = "#a3b18a";
-        btn.style.color = "#a3b18a";
-    };
-
-    // Altera o layout do botão indicando que está tocando e permite parar com um clique
-    icon.className = "fas fa-stop";
-    btn.style.borderColor = "#ff5f5f";
-    btn.style.color = "#ff5f5f";
-
-    // Executa a fala nativa do navegador
-    window.speechSynthesis.speak(aiSpeechUtterance);
-}
 </script>
 </body>
 </html>
