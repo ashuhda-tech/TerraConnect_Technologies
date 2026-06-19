@@ -1134,7 +1134,7 @@ function buildForecastChartConfig(labelString, dataArray, color, ctx) {
                 {
                     label: dynamicLabel,
                     data: paddedRealValues,
-                    borderColor: color,
+                    borderColor: color, // This dynamically grabs your active theme color
                     fill: true,
                     backgroundColor: getGradient(ctx, color),
                     tension: 0.4
@@ -1142,11 +1142,11 @@ function buildForecastChartConfig(labelString, dataArray, color, ctx) {
                 {
                     label: 'Forecast',
                     data: forecastValues,
-                    borderColor: '#a3b18a', // Distinct color for prediction
+                    borderColor: '#ff5f5f', // <--- CHANGED HERE to Red
                     borderDash: [5, 5], // Dotted line
                     fill: false,
                     tension: 0.4,
-                    pointBackgroundColor: '#a3b18a'
+                    pointBackgroundColor: '#ff5f5f' // <--- CHANGED HERE to Red
                 }
             ]
         },
