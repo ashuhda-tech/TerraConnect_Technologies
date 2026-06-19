@@ -981,46 +981,178 @@ async function sendDeviceConfig() {
         return gradient;
     }
 
-    function renderFeeding(events, color) { 
-        const canvas = document.getElementById('feedingChart');
-    if(!canvas) return
-        const ctx = document.getElementById('feedingChart').getContext('2d');
-        const data = events.filter(e => e[2] === "Feeding");
-        if(feedingChart) feedingChart.destroy();
-        feedingChart = new Chart(ctx, { type: 'line', data: { labels: data.map(e => e[1]), datasets: [{ label: 'Feeding (g)', data: data.map(e => e[3]), borderColor: color, fill: true, backgroundColor: getGradient(ctx, color), tension: 0.4 }] }, options: commonOptions() });
+    // --- PREDICTIVE FORECASTING ENGINE ---
+function generateForecast(dataArray, numPredictions = 2) {
+    if (dataArray.length < 3) return { values: [], type: 'Insufficient Data' };
+
+    const n = dataArray.length;
+    let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
+    
+    for (let i = 0; i < n; i++) {
+        sumX += i;
+        sumY += dataArray[i];
+        sumXY += i * dataArray[i];
+        sumX2 += i * i;
     }
-    function renderWeight(events, color) {
-        const canvas = document.getElementById('weightChart');
-    if(!canvas) return
-        const ctx = document.getElementById('weightChart').getContext('2d');
-        const data = events.filter(e => e[2] === "Weighting");
-        if(weightChart) weightChart.destroy();
-        weightChart = new Chart(ctx, { type: 'line', data: { labels: data.map(e => e[1]), datasets: [{ label: 'Body (g)', data: data.map(e => e[3]), borderColor: color, fill: true, backgroundColor: getGradient(ctx, color), tension: 0.4 }] }, options: commonOptions() });
+
+    // Linear Regression Variables
+    const m = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+    const b = (sumY - m * sumX) / n;
+    const meanY = sumY / n;
+
+    // Calculate R-Squared (Linearity check) and Variance (Stability check)
+    let sse = 0, sst = 0;
+    for (let i = 0; i < n; i++) {
+        const yPred = m * i + b;
+        sse += Math.pow(dataArray[i] - yPred, 2);
+        sst += Math.pow(dataArray[i] - meanY, 2);
     }
-    function renderShedding(processedData, color) {
+    const rSquared = sst === 0 ? 1 : 1 - (sse / sst);
+    const variance = sst / n;
+
+    let predictions = [];
+    let method = '';
+
+    // Auto-Select Algorithm
+    if (rSquared > 0.65 && Math.abs(m) > 0.05) {
+        // Strong trend -> Linear Regression
+        method = 'Trend (Linear)';
+        for (let i = 0; i < numPredictions; i++) {
+            predictions.push(+(m * (n + i) + b).toFixed(1));
+        }
+    } else if (variance < (meanY * 0.05)) {
+        // Highly stable/flat -> Simple Average
+        method = 'Stable (Average)';
+        for (let i = 0; i < numPredictions; i++) {
+            predictions.push(+(meanY).toFixed(1));
+        }
+    } else {
+        // Fluctuating -> Exponential Smoothing (alpha = 0.6)
+        method = 'Volatile (EMA)';
+        let st = dataArray[0];
+        const alpha = 0.6;
+        for (let i = 1; i < n; i++) {
+            st = alpha * dataArray[i] + (1 - alpha) * st;
+        }
+        for (let i = 0; i < numPredictions; i++) {
+            predictions.push(+(st).toFixed(1)); 
+        }
+    }
+
+    return { values: predictions, method: method };
+}
+    
+// --- UPDATED CHART RENDERERS WITH FORECASTING ---
+
+function renderFeeding(events, color) { 
+    const canvas = document.getElementById('feedingChart');
+    if(!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const data = events.filter(e => e[2] === "Feeding");
+    
+    if(feedingChart) feedingChart.destroy();
+    feedingChart = new Chart(ctx, buildForecastChartConfig('Feeding (g)', data, color, ctx));
+}
+
+function renderWeight(events, color) {
+    const canvas = document.getElementById('weightChart');
+    if(!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const data = events.filter(e => e[2] === "Weighting");
+    
+    if(weightChart) weightChart.destroy();
+    weightChart = new Chart(ctx, buildForecastChartConfig('Body (g)', data, color, ctx));
+}
+
+function renderShedding(processedData, color) {
     const canvas = document.getElementById('sheddingChart');
     if(!canvas) return;
-    const ctx = document.getElementById('sheddingChart').getContext('2d');
-    if(sheddingChart) sheddingChart.destroy();
+    const ctx = canvas.getContext('2d');
+    
+    // Processed data structure is slightly different for shedding
     const displayData = processedData.filter(d => d.interval > 0);
-    sheddingChart = new Chart(ctx, { type: 'line', data: { labels: displayData.map(d => d.date), datasets: [{ label: 'Days between Sheds', data: displayData.map(d => d.interval), borderColor: color, fill: true,  backgroundColor: getGradient(ctx, color), tension: 0.4 }] }, options: commonOptions() });
-    }
-    function renderLength(events, color) {
+    // Convert to standard format [0, Date, 'Shedding', Value] to use our universal builder
+    const formattedData = displayData.map(d => [null, d.date, 'Shedding', d.interval]);
+    
+    if(sheddingChart) sheddingChart.destroy();
+    sheddingChart = new Chart(ctx, buildForecastChartConfig('Days between Sheds', formattedData, color, ctx));
+}
+
+function renderLength(events, color) {
     const canvas = document.getElementById('lengthChart');
     if(!canvas) return;
-        const ctx = document.getElementById('lengthChart').getContext('2d');
-        const data = events.filter(e => e[2] === "Length");
-        if(lengthChart) lengthChart.destroy();
-        lengthChart = new Chart(ctx, { type: 'line', data: { labels: data.map(e => e[1]), datasets: [{ label: 'Length (cm)', data: data.map(e => e[3]), borderColor: color, fill: true, backgroundColor: getGradient(ctx, color), tension: 0.4 }] }, options: commonOptions() });
-    }
-    function renderHeigth(events, color) {
+    const ctx = canvas.getContext('2d');
+    const data = events.filter(e => e[2] === "Length");
+    
+    if(lengthChart) lengthChart.destroy();
+    lengthChart = new Chart(ctx, buildForecastChartConfig('Length (cm)', data, color, ctx));
+}
+
+function renderHeigth(events, color) {
     const canvas = document.getElementById('heightChart');
     if(!canvas) return;
-        const ctx = document.getElementById('heightChart').getContext('2d');
-        const data = events.filter(e => e[2] === "Height");
-        if(heightChart) heightChart.destroy();
-        heightChart = new Chart(ctx, { type: 'line', data: { labels: data.map(e => e[1]), datasets: [{ label: 'Heigth (cm)', data: data.map(e => e[3]), borderColor: color, fill: true, backgroundColor: getGradient(ctx, color), tension: 0.4 }] }, options: commonOptions() });
+    const ctx = canvas.getContext('2d');
+    const data = events.filter(e => e[2] === "Height");
+    
+    if(heightChart) heightChart.destroy();
+    heightChart = new Chart(ctx, buildForecastChartConfig('Height (cm)', data, color, ctx));
+}
+
+// --- UNIVERSAL CHART CONFIG BUILDER ---
+function buildForecastChartConfig(labelString, dataArray, color, ctx) {
+    const labels = dataArray.map(e => e[1]);
+    const realValues = dataArray.map(e => parseFloat(e[3]));
+    
+    // 1. Generate Forecast
+    const forecast = generateForecast(realValues, 2); // Predict next 2 inputs
+    
+    // 2. Prepare overlapping arrays to connect the lines smoothly
+    const paddedRealValues = [...realValues];
+    const forecastValues = new Array(realValues.length - 1).fill(null);
+    
+    // Connect the last real data point to the forecast
+    if (realValues.length > 0) {
+        forecastValues.push(realValues[realValues.length - 1]); 
     }
+    
+    // Append future labels and forecast data
+    if (forecast.values.length > 0) {
+        labels.push(`Predict 1`);
+        labels.push(`Predict 2`);
+        forecastValues.push(...forecast.values);
+        paddedRealValues.push(null, null); // Pad real data to match new length
+    }
+
+    // Modifying the chart label to show which AI math is being used
+    const dynamicLabel = forecast.method ? `${labelString} [AI: ${forecast.method}]` : labelString;
+
+    return {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: dynamicLabel,
+                    data: paddedRealValues,
+                    borderColor: color,
+                    fill: true,
+                    backgroundColor: getGradient(ctx, color),
+                    tension: 0.4
+                },
+                {
+                    label: 'Forecast',
+                    data: forecastValues,
+                    borderColor: '#a3b18a', // Distinct color for prediction
+                    borderDash: [5, 5], // Dotted line
+                    fill: false,
+                    tension: 0.4,
+                    pointBackgroundColor: '#a3b18a'
+                }
+            ]
+        },
+        options: commonOptions() 
+    };
+}
 
     function commonOptions() {
     return {
