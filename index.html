@@ -303,6 +303,13 @@
                     <label>Password</label>
                     <input type="password" id="regPass" placeholder="Create a strong password" required disabled>
                 </div>
+                <!-- AI CONSENT CHECKBOX -->
+                <div class="input-group" style="display: flex; align-items: flex-start; gap: 10px; margin-top: 15px; margin-bottom: 25px; text-align: left;">
+                    <input type="checkbox" id="aiConsent" style="width: 20px; height: 20px; flex-shrink: 0; cursor: pointer; accent-color: var(--accent); margin-top: 2px;">
+                    <label for="aiConsent" style="font-size: 0.75rem; color: var(--text-light); line-height: 1.5; text-transform: none; cursor: pointer;">
+                        I agree to the <a href="javascript:void(0)" onclick="alert('Place your Privacy Policy Modal or Link here.')" style="color: var(--accent); text-decoration: underline;">Terms of Service & Privacy Policy</a>, and I explicitly consent to my IoT telemetry and animal data being processed by third-party AI services to generate health insights.
+                    </label>
+                </div>
                 <button type="submit" class="btn-primary" disabled>COMPLETE REGISTRATION</button>
                 <div id="signupMsg" class="message"></div>
             </form>
@@ -412,6 +419,16 @@
 
     document.getElementById('signupForm').addEventListener('submit', async (e) => {
         e.preventDefault();
+        
+        // --- 1. AI CONSENT VALIDATION MOVED HERE ---
+        const consentBox = document.getElementById('aiConsent');
+        if (!consentBox.checked) {
+            alert("Action Required: You must agree to the Data Processing & AI Consent terms to create an account.");
+            return; // Stops the function immediately
+        }
+        // -------------------------------------------
+
+        
         const msg = document.getElementById('signupMsg');
         const payload = {
             action: 'register_user', // Avisa o Apps Script que isso é um registro
