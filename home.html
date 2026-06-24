@@ -90,9 +90,9 @@
 
             // 1. Encontra Sensor Data (Source: PAGEID_CSV)
             // Assumindo row[1] = UserID, row[10] = ChannelID, row[12] = APIKey
-            const userEnv = envRows.find(row => row[1] && row[1].trim() === userId);
+            const userEnv = envRows.find(row => row[0] && row[0].trim() === userId);
 
-            // 2. Encontra Sub/Plan Data (Source: SignUp_URL)
+            // 2. Encontra Sub/Plan Data (Source: SIGNUP_URL)
             // Assumindo row[3] = UserID, row[4] = PlanType
             const userSubs = subRows.find(row => row[3] && row[3].trim() === userId);
 
@@ -109,7 +109,7 @@
                 // Atualiza o objeto do usuário com os dados de AMBOS os excels
                 user.channelId = userEnv[12];
                 user.apiKey = userEnv[14];
-                user.planType = userSubs[4] || "0"; // Default to level 1 if not set
+                user.planType = userSubs[4] || "0"; // Default to level 0 if not set
                 user.planValidDate = expiryDateStr;
 
                 // Salva o objeto atualizado no localStorage
