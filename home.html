@@ -74,7 +74,7 @@
         const statusMsg = document.getElementById('statusMsg');
         
         try {
-            statusMsg.innerText = "Synchronizing sensor data...";
+            statusMsg.innerText = "Synchronizing User data...";
             
             // Busca os dois arquivos simultaneamente
             const [envRes, subRes] = await Promise.all([
@@ -97,25 +97,35 @@
             const userSubs = subRows.find(row => row[3] && row[3].trim() === userId);
 
             if (userEnv && userSubs) {
+                // 1. DATA EXTRACTION
+                const expiryDateStr = userSubs[5] || "01/01/2000"; // Default to old date if empty
+        
+                // 2. EXPIRATION CHECK
+                if (!isPlanValid(expiryDateStr)) {
+                    statusMsg.innerHTML = '<span style="color: #ef4e4e;">Access Denied: Your plan expired on ' + expiryDateStr + '.</span>';
+                    return; // Stops here, no redirect
+                }
+                // 3. SUCCESS - PROCEED
                 // Atualiza o objeto do usuário com os dados de AMBOS os excels
-                user.channelId = userEnv[10];
-                user.apiKey = userEnv[12];
+                user.channelId = userEnv[12];
+                user.apiKey = userEnv[14];
                 user.planType = userSubs[4] || "0"; // Default to level 1 if not set
+                user.planValidDate = expiryDateStr;
 
                 // Salva o objeto atualizado no localStorage
                 localStorage.setItem('currentUser', JSON.stringify(user));
 
-                statusMsg.innerText = "Dados localizados! Redirecionando...";
+                statusMsg.innerText = "Data located! Redirecting...";
                 statusMsg.style.color = "#48bb3a";
                 
                 setTimeout(() => { window.location.href = 'maindashboard.html'; }, 1000);
             } else {
-                statusMsg.innerHTML = '<span style="color: #ef4e4e;">Erro: Nenhuma configuração de ambiente encontrada para este usuário.</span>';
+                statusMsg.innerHTML = '<span style="color: #ef4e4e;">Error: No environment configuration found for this user.</span>';
             }
 
         } catch (e) {
             console.error("Fetch Error:", e);
-            statusMsg.innerHTML = '<span style="color: #ef4e4e;">Erro ao conectar com o servidor de dados.</span>';
+            statusMsg.innerHTML = '<span style="color: #ef4e4e;">Error connecting to the data server.</span>';
         }
     }
 
@@ -134,6 +144,25 @@
             arr[row][col] += cc;
         }
         return arr.map(r => r.map(c => c.trim()));
+    }
+
+    // --- HELPER FUNCTION: DATE VALIDATION ---
+    function isPlanValid(dateStr) {
+        if (dateStr.toUpperCase() === "LIFETIME") return true;
+        
+        // Parse DD/MM/YYYY
+        const parts = dateStr.split('/');
+        if (parts.length !== 3) return false;
+        
+        const day = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10) - 1; // Month is 0-11
+        const year = parseInt(parts[2], 10);
+        
+        const expiryDate = new Date(year, month, day);
+        const today = new Date();
+        
+        // Return true if today is before or equal to expiry date
+        return today <= expiryDate;
     }
 
     function logout() {
