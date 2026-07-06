@@ -1351,7 +1351,7 @@ async function loadVetVisits(id) {
                 `;
 
                 // TARGET UPDATED: Explicitly grab the standard street address from column 13
-                const loc = v[13];
+                const loc = v[14];
                 if (loc && loc.trim() !== "" && !vetLocations.includes(loc.trim())) {
                     vetLocations.push(loc.trim());
                 }
@@ -1370,7 +1370,7 @@ async function loadVetVisits(id) {
     }
 }
 
-// THE LEAFLET MAP GENERATOR FUNCTION
+// THE LEAFLET MAP GENERATOR FUNCTION (COORDINATES ONLY)
 async function updateVetMap(vetLocationsArray) {
     const mapContainer = document.getElementById('vetMapContainer');
 
@@ -1415,29 +1415,26 @@ async function updateVetMap(vetLocationsArray) {
     });
 
     for (let i = 0; i < vetLocationsArray.length; i++) {
-        let vetAddress = vetLocationsArray[i];
+        let coordsString = vetLocationsArray[i];
+        
         try {
-            // Geocode the standard text address to coordinates
-            const geocodeUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(vetAddress)}&limit=1`;
-            const geoRes = await fetch(geocodeUrl);
-            const geoData = await geoRes.json();
+            // Expecting format: "-23.6091, -46.6968"
+            const parts = coordsString.split(',');
+            
+            if (parts.length === 2) {
+                const vLat = parseFloat(parts[0].trim());
+                const vLon = parseFloat(parts[1].trim());
 
-            if (geoData && geoData.length > 0) {
-                const vLat = parseFloat(geoData[0].lat);
-                const vLon = parseFloat(geoData[0].lon);
-
-                L.marker([vLat, vLon], { icon: vetIcon })
-                 .addTo(vetMap)
-                 .bindPopup(`<b>Vet Clinic</b><br>${vetAddress}`);
-                
-                bounds.push([vLat, vLon]);
+                if (!isNaN(vLat) && !isNaN(vLon)) {
+                    L.marker([vLat, vLon], { icon: vetIcon })
+                     .addTo(vetMap)
+                     .bindPopup(`<b>Vet Clinic</b><br>Lat: ${vLat}<br>Lon: ${vLon}`);
+                    
+                    bounds.push([vLat, vLon]);
+                }
             }
-            
-            // CRITICAL: Nominatim allows maximum 1 request per second. We must pause to avoid getting banned.
-            await new Promise(r => setTimeout(r, 1100));
-            
         } catch(e) {
-            console.warn("Geocoding Vet failed for:", vetAddress);
+            console.warn("Failed to plot Vet Coordinates for:", coordsString);
         }
     }
 
@@ -1448,7 +1445,6 @@ async function updateVetMap(vetLocationsArray) {
         vetMap.setView([-23.5505, -46.6333], 10); // Fallback to a generic view
     }
 }
-
     
     
 
