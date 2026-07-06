@@ -1309,77 +1309,145 @@ function buildForecastChartConfig(labelString, dataArray, color, ctx) {
 
 
 
-async function updateVetMap(vetAddress) {
+async function loadVetVisits(id) {
+    try {
+        const res = await fetch(VETDATA_CSV_URL);
+        const text = await res.text();
+        const rows = parseCSV(text);
+        
+        const visits = rows.filter(r => r[0] && r[0].toLowerCase() === id.toLowerCase());
+        const tbody = document.getElementById('vetTableBody');
+        tbody.innerHTML = '';
+
+        if (visits.length > 0) {
+            let vetLocations = []; // We will collect ALL unique vet locations here
+
+            // 1. Preenche a Tabela 
+            visits.forEach(v => {
+                let vetFile = "---";
+                if (v[8] && v[8].trim() !== "") { 
+                    let url_link = v[8].trim();
+                    if (!url_link.startsWith("http")) url_link = "https://" + url_link;
+                    vetFile = `<a href="${url_link}" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: bold;"><i class="fas fa-link"></i> File</a>`;
+                }
+                let webContent = "---";
+                if (v[12] && v[12].trim() !== "") {
+                    let url = v[12].trim();
+                    if (!url.startsWith("http")) url = "https://" + url;
+                    webContent = `<a href="${url}" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: bold;"><i class="fas fa-globe"></i> Site</a>`;
+                }
+
+                tbody.innerHTML += `
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        <td style="padding: 10px;">${v[1]}</td>
+                        <td style="padding: 10px;">${v[3]}</td>
+                        <td style="padding: 10px;">${v[6]}</td>
+                        <td style="padding: 10px;">${v[7]}</td>
+                        <td style="padding: 10px;">${vetFile}</td>
+                        <td style="padding: 10px;">${v[9]}</td>
+                        <td style="padding: 10px;">${v[10]}</td>
+                        <td style="padding: 10px;">${webContent}</td>
+                    </tr>
+                `;
+
+                // Grab the location for this specific visit (PlusCode or Address)
+                const loc = v[13] || v[12];
+                if (loc && !vetLocations.includes(loc)) {
+                    vetLocations.push(loc); // Add to our map array if it's new
+                }
+            });
+
+            // 2. Update Map with ALL locations
+            if (vetLocations.length > 0 || (homeLat && homeLon)) {
+                await updateVetMap(vetLocations);
+            }
+        } else {
+            tbody.innerHTML = '<tr><td colspan="8" style="padding:20px; text-align:center;">No visits registered.</td></tr>';
+            document.getElementById('vetMapContainer').innerHTML = ''; // Clear map
+        }
+    } catch (e) {
+        console.error("Error loading Vet Data:", e);
+    }
+}
+
+// THE NEW MAP GENERATOR FUNCTION
+async function updateVetMap(vetLocationsArray) {
     const mapContainer = document.getElementById('vetMapContainer');
 
-    // Reset container and destroy old map instance if it exists
-    if (vetMap) {
+    // Clean up old map to prevent errors if the user reloads the page
+    if (typeof vetMap !== 'undefined' && vetMap !== null) {
         vetMap.remove();
-        vetMap = null;
     }
-    mapContainer.innerHTML = "<div id='actualLeafletMap' style='width: 100%; height: 100%;'></div>";
+    
+    // Force CSS boundaries so the map doesn't collapse to 0 pixels
+    mapContainer.innerHTML = "<div id='actualLeafletMap' style='width: 100%; height: 100%; min-height: 300px; border-radius: 10px; z-index: 1;'></div>";
 
     // Initialize Map
     vetMap = L.map('actualLeafletMap');
 
-    // Add CARTO Dark Matter Tiles (Perfect for your UI theme)
+    // Dark Theme Base Map
     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
         attribution: '&copy; OpenStreetMap &copy; CARTO'
     }).addTo(vetMap);
 
-    // Green Icon for the Animal's Home
-    const homeIcon = L.icon({
-        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
-        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-        iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
-    });
+    let bounds = [];
 
-    // Red Icon for the Vet Clinic
+    // --- PLOT 1: THE ANIMAL'S HOME LOCATION (GREEN PIN) ---
+    if (typeof homeLat !== 'undefined' && typeof homeLon !== 'undefined' && !isNaN(homeLat) && homeLat !== 0) {
+        const homeIcon = L.icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+            iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
+        });
+
+        L.marker([homeLat, homeLon], { icon: homeIcon })
+         .addTo(vetMap)
+         .bindPopup('<b>Home Base</b><br>Terrarium Location');
+        
+        bounds.push([homeLat, homeLon]);
+    }
+
+    // --- PLOT 2: ALL VET LOCATIONS (RED PINS) ---
     const vetIcon = L.icon({
         iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
         shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
         iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
     });
 
-    let bounds = [];
+    for (let i = 0; i < vetLocationsArray.length; i++) {
+        let vetAddress = vetLocationsArray[i];
+        try {
+            // Geocode the address to coordinates
+            const geocodeUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(vetAddress)}&limit=1`;
+            const geoRes = await fetch(geocodeUrl);
+            const geoData = await geoRes.json();
 
-    // Plot Home Location
-    if (homeLat && homeLon && !isNaN(homeLat)) {
-        L.marker([homeLat, homeLon], { icon: homeIcon })
-         .addTo(vetMap)
-         .bindPopup('<b>Ambient Origin</b><br>Terrarium Location');
-        bounds.push([homeLat, homeLon]);
-    }
+            if (geoData && geoData.length > 0) {
+                const vLat = parseFloat(geoData[0].lat);
+                const vLon = parseFloat(geoData[0].lon);
 
-    // Geocode the Vet Address to Coordinates, then plot
-    try {
-        const geocodeUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(vetAddress)}&limit=1`;
-        const geoRes = await fetch(geocodeUrl);
-        const geoData = await geoRes.json();
-
-        if (geoData && geoData.length > 0) {
-            const vLat = parseFloat(geoData[0].lat);
-            const vLon = parseFloat(geoData[0].lon);
-
-            L.marker([vLat, vLon], { icon: vetIcon })
-             .addTo(vetMap)
-             .bindPopup(`<b>Vet Clinic</b><br>${vetAddress}`);
-            bounds.push([vLat, vLon]);
-        } else {
-            console.warn("Could not geocode Vet address. Try using a standard Street, City format.");
+                L.marker([vLat, vLon], { icon: vetIcon })
+                 .addTo(vetMap)
+                 .bindPopup(`<b>Vet Clinic</b><br>${vetAddress}`);
+                
+                bounds.push([vLat, vLon]);
+            }
+            
+            // CRITICAL: Nominatim allows maximum 1 request per second. We must pause to avoid getting banned.
+            await new Promise(r => setTimeout(r, 1100));
+            
+        } catch(e) {
+            console.warn("Geocoding Vet failed for:", vetAddress);
         }
-    } catch(e) {
-        console.error("Geocoding Vet failed", e);
     }
 
-    // Auto-zoom the map so both markers fit perfectly on screen
+    // --- AUTO-ZOOM TO FIT EVERYTHING ---
     if (bounds.length > 0) {
         vetMap.fitBounds(bounds, { padding: [30, 30], maxZoom: 15 });
     } else {
-        vetMap.setView([0, 0], 2); // Fallback zoom
+        vetMap.setView([-23.5505, -46.6333], 10); // Fallback to a generic view
     }
 }
-
 
     
     
