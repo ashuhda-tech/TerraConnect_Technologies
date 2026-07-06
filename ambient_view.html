@@ -636,7 +636,14 @@ async function loadData() {
             document.getElementById('dynScientific').innerText = data[5] || "---";
             document.getElementById('dynBirth').innerText = data[6] || "---";
             document.getElementById('dynReg').innerText = data[7] || "---";
-            document.getElementById('dynLoc').innerText = `${data[8]}, ${data[9]}` || "---";
+            const lat = data[8];
+            const lon = data[9];
+            const locElement = document.getElementById('dynLoc');
+            if (lat && lon && lat !== "---" && lon !== "---") {
+                locElement.innerText = "Locating..."; // Temporary text while fetching
+                getGeocodedLocation(lat, lon).then(locationString => {
+                    locElement.innerText = locationString;});
+            } else {locElement.innerText = "---";}
             document.getElementById('dynAmbient').innerText = (data[2] || "Ambient").toUpperCase();
             
             // Tipo de Animal (Coluna index 22) e Filtragem
@@ -707,6 +714,25 @@ async function loadData() {
     }
 }
 
+    // --- REVERSE GEOCODING ---
+    async function getGeocodedLocation(lat, lon) {
+    try {
+        // OpenStreetMap Nominatim API (Free, no key required for low volume)
+        const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10&addressdetails=1`);
+        const data = await response.json();
+        
+        if (data && data.address) {
+            const city = data.address.city || data.address.town || data.address.municipality || "Unknown City";
+            const state = data.address.state || "Unknown State";
+            const country = data.address.country || "Unknown Country";
+            return `${city}, ${state} - ${country}`;
+        }
+    } catch (error) {
+        console.warn("Geocoding failed, falling back to raw coordinates.", error);
+    }
+    return `${lat}, ${lon}`; // Fallback to raw coordinates if API fails
+}
+    
     function filterLayoutByAnimal(animalType) {
     const type = animalType.toUpperCase().trim();
     document.querySelectorAll('[data-hide-for]').forEach(el => {
@@ -1465,8 +1491,10 @@ async function openChart(fieldId, label) {
         // 1. Dados Básicos do Animal
         const animalName = document.getElementById('dynName').innerText;
         const animalType = document.getElementById('dynAnimal').innerText;
+        const scientificName = document.getElementById('dynScientific').innerText; // NEW
         const sex = document.getElementById('dynSex').innerText;
         const birthDate = document.getElementById('dynBirth').innerText;
+        const currentLocation = document.getElementById('dynLoc').innerText; // NEW
         const currTemp = document.getElementById('valField1').innerText;
         const currHum = document.getElementById('valField2').innerText;
 
@@ -1537,7 +1565,8 @@ async function openChart(fieldId, label) {
 Please analyze the data correlation for the following animal monitored by the TerraConnect IoT system.
 
 **Profile:**
-- Name: ${animalName} (${animalType} | Sex: ${sex} | Date of Birth: ${birthDate})
+- Name: ${animalName} (${animalType} | Scientific Name: ${scientificName} | Sex: ${sex})
+- Enclosure Physical Location: ${currentLocation}
 - Current Terrarium Conditions: Temp ${currTemp} | Humidity ${currHum}
 - Ideal Limits Configuration: ${envConfig}
 
