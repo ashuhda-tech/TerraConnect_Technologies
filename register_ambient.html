@@ -4,13 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TerraConnect | Registration</title>
-    
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/TERRACONNECT_LOGO.png">
     <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/TERRACONNECT_LOGO.png">
-
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <style>
         /* DEFINIÇÃO DE TODOS OS TEMAS */
         :root {--bg-dark: #070b14; --sidebar-bg: #0d1117; --accent: #d1b38b; --text-light: #f4e9d8; --gray-panel: #1e1e1e; --border: #2d3139;}
@@ -30,7 +27,6 @@
         [data-theme="nature1"] {--bg-dark: #2b2d24; --sidebar-bg: #3e3e3e; --accent: #cd853f; --text-light: #dad7cd; --gray-panel: #344e41; --border: #588157;}
         [data-theme="nature2"] {--bg-dark: #322D29; --sidebar-bg: #72383D; --accent: #AC9C8D; --text-light: #EFE9E1; --gray-panel: #D1C7BD; --border: #D9D9D9;}
         [data-theme="nature3"] {--bg-dark: #3b4d7b; --sidebar-bg: #1a2a4d; --accent: #c0c0e0; --text-light: #fef9e7; --gray-panel: #804040; --border: #e6b0aa;}
-
         body { background-color: var(--bg-dark); color: var(--text-light); font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
         .video-bg-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; overflow: hidden; }
         .video-bg-container video { min-width: 100%; min-height: 100%; width: auto; height: auto; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); object-fit: cover; }
@@ -51,22 +47,18 @@
     </style>
 </head>
 <body>
-
     <div class="video-bg-container">
         <video autoplay loop muted playsinline poster="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/b1c4c1f080d96ec1c35ff823176f214b761eb6a6/assets/WALLPAPER_MAINDASHBOARD.png">
             <source src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/b1c4c1f080d96ec1c35ff823176f214b761eb6a6/assets/VIDEO/RIVER_MAINDASHBOARD.mp4" type="video/mp4">
         </video>
     </div>
     <div class="video-overlay"></div>
-
     <div class="register-container">
         <h1 class="a70-font" id="mainTitle">REGISTRATION</h1>
-        
         <div class="info-box">
             <span style="font-size: 0.6rem;">LINKED TO ID:</span>
             <strong id="displayUserId" style="font-size: 0.6rem;">---</strong>
         </div>
-
         <div class="grid-2">
             <div class="input-group">
                 <label class="a70-font">AMBIENT NAME</label>
@@ -96,7 +88,6 @@
                 <label class="a70-font">REGULATORY REGISTRATION Nº</label>
                 <input type="text" id="regNumber" placeholder="IBAMA / CITES">
             </div>
-            
             <div class="input-group grid-full">
                 <label class="a70-font">LOCATION (LAT, LONG)</label>
                 <div style="display: flex; gap: 5px;">
@@ -106,23 +97,19 @@
                     </button>
                 </div>
             </div>
-
             <div class="input-group grid-full">
                 <label class="a70-font">CAMERA IP / STREAM URL</label>
                 <input type="text" id="cameraIp" placeholder="Ex: 192.168.1.50">
             </div>
-            
             <div class="input-group grid-full">
                 <label class="a70-font">PHOTO URL</label>
                 <input type="text" id="photoURL" placeholder="https://exemplo.com/foto.jpg">
             </div>
-
             <div class="input-group grid-full">
                 <label class="a70-font">ANIMAL PHOTO (UPLOAD)</label>
                 <input type="file" id="animalPhoto" accept="image/*">
                 <canvas id="resizeCanvas" style="display:none;"></canvas>
             </div>
-
             <div class="info-box grid-full">MAIN SENSOR | THINGSPEAK</div>
             <div class="input-group">
                 <label class="a70-font">MAIN CHANNEL ID</label>
@@ -136,7 +123,6 @@
                 <label class="a70-font">MAIN READ API KEY</label>
                 <input type="text" id="mainTsRead">
             </div>
-
             <div class="info-box grid-full">REMOTE SENSOR | THINGSPEAK</div>
             <div class="input-group">
                 <label class="a70-font">REMOTE CHANNEL ID</label>
@@ -150,7 +136,6 @@
                 <label class="a70-font">REMOTE READ API KEY</label>
                 <input type="text" id="r1TsRead">
             </div>
-            
             <div class="info-box grid-full">WIFI CONFIGURATOR</div>
             <div class="input-group">
                 <label class="a70-font">WIFI SSID</label>
@@ -161,38 +146,29 @@
                 <input type="text" id="wifiPassword">
             </div>
         </div>
-
         <button class="btn-save a70-font" id="btnAction" onclick="processRegistration()">COMPLETE REGISTRATION</button>
         <a href="maindashboard.html" class="btn-back">CANCEL AND BACK</a>
     </div>
-
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbw3LbOYDqljAxQ8joYW8yDhwe6lsi7AdFCAoi4HG1iRdglS0k9-fI1Oj2eA12ePc6g/exec';
+        const scriptURL = 'https://script.google.com/macros/s/AKfycb3LbOYDqljAxQ8joYW8yDhwe6lsi7AdFCAoi4HG1iRdglS0k9-fI1Oj2eA12ePc6g/exec';
         const csvReadURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTeBz5FwvcmPue3hJ6TKwmrNZeMrz2_Su7co-mPuzKj1ZJv--5BBvPjlszF3yyEHOVuEeGT9mmwZqOp/pub?gid=0&single=true&output=csv';
-
         let isEditMode = false;
         let editingPageID = null;
-        
         document.addEventListener('DOMContentLoaded', () => {
             const userData = localStorage.getItem('currentUser');
             if (!userData) { window.location.href = 'index.html'; return; }
-            
             const user = JSON.parse(userData);
             document.getElementById('displayUserId').innerText = user.id;
             window.currentUser = user; 
-
             const savedTheme = localStorage.getItem(`theme_${user.id}`) || 'default';
             document.documentElement.setAttribute('data-theme', savedTheme);
-            
             const urlParams = new URLSearchParams(window.location.search);
             editingPageID = urlParams.get('pageID');
-
             if (editingPageID) {
                 isEditMode = true;
                 setupEditMode();
             }     
         });
-
         function parseCSVRow(str) {
             let arr = [];
             let quote = false;
@@ -207,17 +183,14 @@
             arr.push(col.trim());
             return arr;
         }
-
         async function setupEditMode() {
             document.getElementById('mainTitle').innerText = "EDIT REGISTRATION";
             document.getElementById('btnAction').innerText = "UPDATE REGISTRATION";
             document.getElementById('displayUserId').innerText = `EDITING: ${editingPageID}`;
-
             try {
                 const response = await fetch(csvReadURL);
                 const csvText = await response.text();
                 const rows = csvText.split('\n');
-                
                 let targetRow = null;
                 for (let i = 1; i < rows.length; i++) {
                     const columns = parseCSVRow(rows[i]);
@@ -226,7 +199,6 @@
                         break;
                     }
                 }
-
                 if (targetRow) {
                     // Mapeamento baseado na ordem do seu appendRow
                     document.getElementById('ambientName').value = targetRow[2] || "";
@@ -236,15 +208,12 @@
                     document.getElementById('birthDate').value = targetRow[6] ? targetRow[6].split('T')[0] : "";
                     document.getElementById('regNumber').value = targetRow[7] || "";
                     document.getElementById('location').value = `${targetRow[8]}, ${targetRow[9]}`;
-                    
                     document.getElementById('mainChannelId').value = targetRow[10] || "";
                     document.getElementById('mainTsWrite').value = targetRow[11] || "";
                     document.getElementById('mainTsRead').value = targetRow[12] || "";
-                    
                     document.getElementById('r1ChannelId').value = targetRow[13] || "";
                     document.getElementById('r1TsWrite').value = targetRow[14] || "";
                     document.getElementById('r1TsRead').value = targetRow[15] || "";
-
                     document.getElementById('cameraIp').value = targetRow[17] || "";
                     document.getElementById('photoURL').value = targetRow[19] || "";
                     document.getElementById('wifiSsid').value = targetRow[20] || "";
@@ -253,7 +222,6 @@
                 }
             } catch (e) { console.error("Error loading CSV:", e); }
         }
-
         function getLocation() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition((position) => {
@@ -261,21 +229,16 @@
                 });
             }
         }
-
         async function processRegistration() {
             const user = window.currentUser;
             const ambientName = document.getElementById('ambientName').value;
             const animalName = document.getElementById('animalName').value;
             const loc = document.getElementById('location').value.split(',');
-
             if (!ambientName || !animalName) return alert("Fill essential names.");
-
             const pageId = isEditMode ? editingPageID : 'PG-' + Math.random().toString(36).substr(2, 6).toUpperCase();
-            
             let photoData = "";
             const fileInput = document.getElementById('animalPhoto');
             if (fileInput.files[0]) photoData = await resizeImage(fileInput.files[0]);
-
             // OBJETO PAYLOAD: Deve conter exatamente as chaves que o AppScript vai ler
             const payload = {
                 action: isEditMode ? "update" : "create",
@@ -304,21 +267,16 @@
                 animalType: document.getElementById('animalType').value,
                 timestamp: new Date().toLocaleString('pt-BR')
             };
-            
             try {
                 await fetch(scriptURL, {
                     method: 'POST',
                     mode: 'no-cors',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // FIX: ADDED HEADERS
                     body: JSON.stringify(payload)
                 });
                 alert("Success! Data sent.");
                 window.location.href = 'maindashboard.html';
-            } catch (e) { 
-                alert("Error connecting to DB."); 
-                console.error(e);
-            }
-
+            } catch (e) { alert("Error connecting to DB."); }
+        }
         function resizeImage(file) {
             return new Promise((resolve) => {
                 const reader = new FileReader();
