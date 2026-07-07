@@ -188,8 +188,24 @@
         finishIntro();
     }
 
+    
+        //TerraConnectSignUp
     const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTLog7uhFw___9q5ossjzRuKZq6VkC3HqgsD52RAd1y5FigIwCqmEyFeLc-_qgS1RAwtlcIhr_zK-nn/pub?gid=0&single=true&output=csv';
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzFT1YQSMLpJ2zLJQ-bD1JOUzaUJJsRcmCBkpseXd87iGvJXm5Ig7p1gYJf-PmHVwQ/exec';
+
+        //TerraConnectPageID
+    const PAGEID_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTeBz5FwvcmPue3hJ6TKwmrNZeMrz2_Su7co-mPuzKj1ZJv--5BBvPjlszF3yyEHOVuEeGT9mmwZqOp/pub?gid=0&single=true&output=csv';
+    const PAGEID_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw3LbOYDqljAxQ8joYW8yDhwe6lsi7AdFCAoi4HG1iRdglS0k9-fI1Oj2eA12ePc6g/exec";
+
+
+    
+// Generates a secure, random User ID
+function generateUUID() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+}
 
     // --- LÓGICA DE PROTEÇÃO INICIAL (O Porteiro) ---
     function unlockForms() {
@@ -270,37 +286,57 @@
         }
     });
 
-    document.getElementById('signupForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
+document.getElementById('signupForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    // --- 1. AI CONSENT VALIDATION ---
+    const consentBox = document.getElementById('aiConsent');
+    if (!consentBox.checked) {
+        alert("Action Required: You must agree to the Data Processing & AI Consent terms to create an account.");
+        return; 
+    }
+
+    const msg = document.getElementById('signupMsg');
+    const newUserID = generateUUID(); // Create the ID here in the frontend!
+
+    // Payload for the User Registration Sheet
+    const payloadSignUp = {
+        action: 'register_user', 
+        name: document.getElementById('regName').value,
+        email: document.getElementById('regEmail').value.toLowerCase().trim(),
+        pass: document.getElementById('regPass').value,
+        id: newUserID // Attach the new ID
+    };
+
+    // Payload for the PageID Database Sheet
+    const payloadPageID = {
+        action: 'init_user_page',
+        userID: newUserID
+    };
+
+    try {
+        msg.className = "message";
+        msg.innerText = "Registering user profile...";
         
-        // --- 1. AI CONSENT VALIDATION MOVED HERE ---
-        const consentBox = document.getElementById('aiConsent');
-        if (!consentBox.checked) {
-            alert("Action Required: You must agree to the Data Processing & AI Consent terms to create an account.");
-            return; // Stops the function immediately
-        }
-        // -------------------------------------------
-
+        // 1. Send data to the Sign Up Sheet
+        await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payloadSignUp) });
         
-        const msg = document.getElementById('signupMsg');
-        const payload = {
-            action: 'register_user', // Avisa o Apps Script que isso é um registro
-            name: document.getElementById('regName').value,
-            email: document.getElementById('regEmail').value.toLowerCase().trim(),
-            pass: document.getElementById('regPass').value
-        };
-
-        try {
-            await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-            msg.innerText = "Successfuly registered!    Please proceed to Sign in.";
-            msg.className = "message success";
-            e.target.reset();
-        } catch (e) {
-            msg.className = "message error";
-            msg.innerText = "Sign up Error.";
-        }
-    });
-
+        msg.innerText = "Initializing secure environment...";
+        
+        // 2. Send data to the PageID Sheet
+        await fetch(PAGEID_SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payloadPageID) });
+        
+        msg.innerText = "Successfully registered! Please proceed to Sign in.";
+        msg.className = "message success";
+        e.target.reset();
+        
+    } catch (error) {
+        msg.className = "message error";
+        msg.innerText = "Sign up Error. Please try again.";
+        console.error(error);
+    }
+});
+    
     function toggleAuth() {
         document.getElementById('login-section').classList.toggle('hidden');
         document.getElementById('signup-section').classList.toggle('hidden');
