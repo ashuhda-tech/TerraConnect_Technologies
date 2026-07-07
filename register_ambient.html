@@ -309,12 +309,15 @@
                 await fetch(scriptURL, {
                     method: 'POST',
                     mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // FIX: ADDED HEADERS
                     body: JSON.stringify(payload)
                 });
                 alert("Success! Data sent.");
                 window.location.href = 'maindashboard.html';
-            } catch (e) { alert("Error connecting to DB."); }
-        }
+            } catch (e) { 
+                alert("Error connecting to DB."); 
+                console.error(e);
+            }
 
         function resizeImage(file) {
             return new Promise((resolve) => {
