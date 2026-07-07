@@ -318,13 +318,23 @@ document.getElementById('signupForm').addEventListener('submit', async (e) => {
         msg.className = "message";
         msg.innerText = "Registering user profile...";
         
-        // 1. Send data to the Sign Up Sheet
-        await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payloadSignUp) });
+        // 1. Send data to the Sign Up Sheet (ADDED HEADERS)
+        await fetch(SCRIPT_URL, { 
+            method: 'POST', 
+            mode: 'no-cors', 
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(payloadSignUp) 
+        });
         
         msg.innerText = "Initializing secure environment...";
         
-        // 2. Send data to the PageID Sheet
-        await fetch(PAGEID_SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payloadPageID) });
+        // 2. Send data to the PageID Sheet (ADDED HEADERS)
+        await fetch(PAGEID_SCRIPT_URL, { 
+            method: 'POST', 
+            mode: 'no-cors', 
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(payloadPageID) 
+        });
         
         msg.innerText = "Successfully registered! Please proceed to Sign in.";
         msg.className = "message success";
