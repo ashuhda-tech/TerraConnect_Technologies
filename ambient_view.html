@@ -75,6 +75,9 @@
     .btn-send:hover { background: var(--accent); color: var(--bg-dark); }
     .btn-edit {display: none;align-items: center;justify-content: center;gap: 8px;margin-top: 15px;padding: 10px;width: 100%;background: transparent;border: 1px solid var(--accent);color: var(--accent);text-decoration: none;border-radius: 5px;font-size: 0.8rem;font-family: 'Cinzel', serif;transition: 0.3s;cursor: pointer;}
     .btn-edit:hover {background: var(--accent);color: var(--bg-dark);}
+
+    .btn-share {display: flex;align-items: center;justify-content: center;gap: 8px;margin-top: 0;padding: 10px;width: 100%;background: transparent;border: 1px solid var(--accent);color: var(--accent);text-decoration: none;border-radius: 5px;font-size: 0.8rem;font-family: 'Cinzel', serif;transition: 0.3s;cursor: pointer;}
+    .btn-share:hover {background: var(--accent);color: var(--bg-dark);}
     
     .bio-section { display: flex; flex-direction: column; align-items: center; text-align: center; margin-bottom: 30px; }
     .bio-info-list { display: grid; grid-template-columns: 1fr; gap: 15px; text-align: left; width: 100%; }
@@ -197,6 +200,10 @@
                 <a href="#" id="editLink" class="btn-edit" style="margin-top: 0;">
                     <i class="fa fa-edit"></i> Edit Registry Data
                 </a>
+                
+                <button onclick="sharePublicLink()" class="btn-share">
+                    <i class="fas fa-link"></i> Share Public View
+                </button>
                 
                 <a href="maindashboard.html" class="btn-back a70-font" style="margin-bottom: 0; width: 100%; box-sizing: border-box; display: flex; justify-content: center; align-items: center; gap: 8px;">
                     <i class="fas fa-arrow-left"></i> BACK TO DASHBOARD
@@ -1808,6 +1815,41 @@ Reference the environmental data with the biological and veterinary data. Is the
 
             // Manda o navegador falar este pedaço da fila
             window.speechSynthesis.speak(utterance);
+        });
+    }
+
+    // --- SHARE PUBLIC VIEW LOGIC ---
+    function sharePublicLink() {
+        if (!currentPageId) {
+            alert("Error: Environment ID not found.");
+            return;
+        }
+        
+        // This relies on your public domain logic mapping
+        const shareUrl = `https://ashuhda-tech.github.io/TerraConnect_Technologies/public_view.html?id=${currentPageId}`;
+        
+        // Checks if the browser has the native 'Share' API built-in (great for mobile Safari/Chrome)
+        if (navigator.share) {
+            navigator.share({
+                title: 'TerraConnect Public Dashboard',
+                text: 'Check out this live environmental monitoring dashboard!',
+                url: shareUrl
+            }).catch(err => {
+                console.log("Native share canceled or failed.", err);
+                copyToClipboardFallback(shareUrl);
+            });
+        } else {
+            // Standard Desktop Browser Fallback
+            copyToClipboardFallback(shareUrl);
+        }
+    }
+
+    function copyToClipboardFallback(text) {
+        navigator.clipboard.writeText(text).then(() => {
+            alert("Public link copied to clipboard!\n\n" + text);
+        }).catch(err => {
+            console.error('Could not copy text: ', err);
+            alert("Failed to copy link automatically. Please manually copy this URL:\n\n" + text);
         });
     }
 </script>
