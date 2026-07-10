@@ -641,7 +641,12 @@ async function loadData() {
             document.getElementById('dynName').innerText = data[3] || "---";
             document.getElementById('dynSex').innerText = data[4] || "---";
             document.getElementById('dynScientific').innerText = data[5] || "---";
-            document.getElementById('dynBirth').innerText = data[6] || "---";
+            const rawBirthDate = data[6];            // Birth Date and Age Calculation
+            if (rawBirthDate && rawBirthDate !== "---") {
+                const ageString = getAgeString(rawBirthDate);
+                const formattedDate = formatDateDisplay(rawBirthDate);
+                document.getElementById('dynBirth').innerText = `${ageString}${formattedDate}`;
+            } else {document.getElementById('dynBirth').innerText = "---"; }
             document.getElementById('dynReg').innerText = data[7] || "---";
             const lat = data[8];
             const lon = data[9];
@@ -723,6 +728,35 @@ async function loadData() {
     }
 }
 
+    function getAgeString(dateStr) {
+        if (!dateStr || dateStr === "---") return "";
+        const b = new Date(dateStr);
+        if (isNaN(b.getTime())) return "";
+
+        const today = new Date();
+        let years = today.getFullYear() - b.getFullYear();
+        let months = today.getMonth() - b.getMonth();
+
+        // Adjust months if the current day of the month hasn't passed the birth day yet
+        if (today.getDate() < b.getDate()) {
+            months--;
+        }
+
+        // Adjust years and months if months went negative
+        if (months < 0) {
+            years--;
+            months += 12;
+        }
+
+        if (years < 0) return ""; // Failsafe for future dates
+
+        let ageStr = "";
+        if (years > 0) ageStr += `${years} yrs `;
+        if (months > 0 || years === 0) ageStr += `${months} mos `;
+        
+        return ageStr ? ageStr.trim() + " | " : "";
+    }
+    
     // --- REVERSE GEOCODING ---
     async function getGeocodedLocation(lat, lon) {
     try {
