@@ -914,11 +914,11 @@ async function sendDeviceConfig() {
                         .getPropertyValue('--accent').trim() || "#2c3e50"; // Fallback para cor escura se falhar
 
     // Payload baseado nas colunas da imagem:
-    // B(1)=PageID, K(10)=ID, L(11)=Write, M(12)=Read, R(17)=SSID, S(18)=Pass
+    // B(1)=PageID, K(10)=Channel_ID, L(11)=TS_Write, U(20)=WIFI_SSID, V(21)=Pass
     const configPayload = {
         pgid: data[1] || "",
-        ssid: data[17] || "",
-        pass: data[18] || "",
+        ssid: data[20] || "",
+        pass: data[21] || "",
         chid: data[10] || "",
         tswk: data[11] || ""
     };
