@@ -187,42 +187,47 @@
             document.getElementById('mainTitle').innerText = "EDIT REGISTRATION";
             document.getElementById('btnAction').innerText = "UPDATE REGISTRATION";
             document.getElementById('displayUserId').innerText = `EDITING: ${editingPageID}`;
+            
             try {
                 const response = await fetch(csvReadURL);
                 const csvText = await response.text();
                 const rows = csvText.split('\n');
+                
                 let targetRow = null;
                 for (let i = 1; i < rows.length; i++) {
                     const columns = parseCSVRow(rows[i]);
-                    if (columns[1] === editingPageID) { // Coluna 1 é PageID
+                    if (columns[1] === editingPageID) { 
                         targetRow = columns;
                         break;
                     }
                 }
+
                 if (targetRow) {
-                    // Mapeamento baseado na ordem do seu appendRow
                     document.getElementById('ambientName').value = targetRow[2] || "";
                     document.getElementById('animalName').value = targetRow[3] || "";
                     document.getElementById('animalSex').value = targetRow[4] || "";
                     document.getElementById('scientificName').value = targetRow[5] || "";
                     document.getElementById('birthDate').value = targetRow[6] ? targetRow[6].split('T')[0] : "";
                     document.getElementById('regNumber').value = targetRow[7] || "";
-                    document.getElementById('location').value = `${targetRow[8]}, ${targetRow[9]}`;
+                    document.getElementById('location').value = `${targetRow[8] || ""}, ${targetRow[9] || ""}`;
                     document.getElementById('mainChannelId').value = targetRow[10] || "";
                     document.getElementById('mainTsWrite').value = targetRow[11] || "";
                     document.getElementById('mainTsRead').value = targetRow[12] || "";
                     document.getElementById('r1ChannelId').value = targetRow[13] || "";
                     document.getElementById('r1TsWrite').value = targetRow[14] || "";
                     document.getElementById('r1TsRead').value = targetRow[15] || "";
+                    currentPhotoBase64 = targetRow[16] || ""; 
                     document.getElementById('cameraIp').value = targetRow[17] || "";
-                    document.getElementById('theme').value = targetRow[18] || "";
-                    document.getElementById('photoURL').value = targetRow[19] || "";
+                    // Index 18 is Theme, but since there is no UI input for it, we skip trying to map it to the DOM!
+                    document.getElementById('photoURL').value = targetRow[19] || ""; 
                     document.getElementById('wifiSsid').value = targetRow[20] || "";
                     document.getElementById('wifiPassword').value = targetRow[21] || "";
                     document.getElementById('animalType').value = targetRow[22] || "";
                 }
             } catch (e) { console.error("Error loading CSV:", e); }
         }
+        
+        
         function getLocation() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition((position) => {
