@@ -589,7 +589,9 @@ const loggedUser = checkSecurity();
 
     
     // URLs do Backend
-    // IMPORTANTE: Insira aqui a URL do seu Deploy do Apps Script da tabela Feature_Flags
+
+    const SIGNUP_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTLog7uhFw___9q5ossjzRuKZq6VkC3HqgsD52RAd1y5FigIwCqmEyFeLc-_qgS1RAwtlcIhr_zK-nn/pub?gid=0&single=true&output=csv';
+    const SIGNUP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzFT1YQSMLpJ2zLJQ-bD1JOUzaUJJsRcmCBkpseXd87iGvJXm5Ig7p1gYJf-PmHVwQ/exec';
 
     const FLAGS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTtzrewlPNn5k-Jsmc-tKMkEgBIkMiyKAoH5ysSWI9iCral0cwWkQCUkpK7VzQIVWD4NAYHh7hI0b7n/pub?gid=0&single=true&output=csv';
     const FLAGS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyZaoQyRiQDaTP9IkbOK89A2l9DtH6tOtwL6TFn38x5N_gYiiQc2Os-NZ1dvEsZMZKF/exec"; 
@@ -630,6 +632,21 @@ const loggedUser = checkSecurity();
         }
     }
 
+    async function getLiveUserPlan(userId) {
+        try {
+            const response = await fetch(`${SIGNUP_SCRIPT_URL}?action=get_plan&userId=${encodeURIComponent(userId)}`);
+            const result = await response.json();
+            
+            if (result.status === "success") {
+                console.log(`Plano real no banco: ${result.plan} | Ativo: ${result.active}`);
+                return result.plan;
+            }
+        } catch (e) {
+            console.error("Erro ao validar plano com o servidor:", e);
+        }
+        return 0; // Se houver erro de rede, assume plano 0 por segurança
+    }
+    
     // --- NOVO MOTOR DINÂMICO DE VISIBILIDADE (FEATURE FLAGS) ---
     async function applyVisibilityRules(animalTypeRaw, userPlan) {
         if (!FLAGS_SCRIPT_URL || FLAGS_SCRIPT_URL === "SUA_URL_DO_APPS_SCRIPT_DE_FLAGS_AQUI") {
@@ -716,10 +733,13 @@ async function loadData() {
             const animalTypeRaw = data[22] || "DEFAULT";
             document.getElementById('dynAnimal').innerText = animalTypeRaw.toUpperCase();
             
-            // Aqui substituímos a antiga lógica engessada pelo sistema conectado ao Google Sheets.
-            // Verifica o "plan" do usuário logado (assumindo 1 se não definido)
-            const userPlan = loggedUser.plan || 1; 
-            await applyVisibilityRules(animalTypeRaw, userPlan);
+            // NOVO: Busca o plano REAL validado com a data no momento em que a página carrega
+            document.getElementById('dynStatus').innerText = "Validando credenciais do plano..."; // Opcional: Feedback pro usuário
+            const liveUserPlan = await getLiveUserPlan(loggedUser.id);
+            document.getElementById('dynStatus').innerText = "On-time Environmental Monitoring"; // Restaura o texto
+            
+            // Aplica as regras cruzando Espécie VS Plano Validado
+            await applyVisibilityRules(animalTypeRaw, liveUserPlan);
 
             const videoElement = document.getElementById('bgVideo');
             if (videoElement) {
