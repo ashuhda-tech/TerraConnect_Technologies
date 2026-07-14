@@ -480,6 +480,62 @@
             </div>
         </div>
 
+
+        <!-- --- EDUCATIONAL PET SECTION --- -->
+        <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-top: 30px; margin-bottom: 15px;">
+            <i class="fas fa-graduation-cap"></i> Educational Pet | Training
+        </h3>
+
+        <!-- Dog Educational Panel -->
+        <div id="edu-clicker-section" style="display: none; margin-bottom: 20px;">
+            <h4 style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0; margin-bottom: 10px;">Dog Commands (Audio & Voice)</h4>
+            <div class="management-grid">
+                <div class="sensor-card" style="flex-direction: column; cursor: pointer; justify-content: center;" onclick="playDogCommand('sit')">
+                    <i class="fas fa-chair" style="font-size: 1.5rem; color: #74b9ff; margin-bottom: 10px;"></i>
+                    <div class="sensor-label">Sit</div>
+                    <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 5px; text-transform: none;">1 Click + "Sit"</div>
+                </div>
+                <div class="sensor-card" style="flex-direction: column; cursor: pointer; justify-content: center;" onclick="playDogCommand('laydown')">
+                    <i class="fas fa-bed" style="font-size: 1.5rem; color: #a3b18a; margin-bottom: 10px;"></i>
+                    <div class="sensor-label">Lay Down</div>
+                    <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 5px; text-transform: none;">1 Click + "Down"</div>
+                </div>
+                <div class="sensor-card" style="flex-direction: column; cursor: pointer; justify-content: center;" onclick="playDogCommand('follow')">
+                    <i class="fas fa-walking" style="font-size: 1.5rem; color: #d4a373; margin-bottom: 10px;"></i>
+                    <div class="sensor-label">Follow Me</div>
+                    <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 5px; text-transform: none;">2 Clicks + "Come"</div>
+                </div>
+                <div class="sensor-card" style="flex-direction: column; cursor: pointer; justify-content: center;" onclick="playDogCommand('cross')">
+                    <i class="fas fa-road" style="font-size: 1.5rem; color: #ff5f5f; margin-bottom: 10px;"></i>
+                    <div class="sensor-label">Cross Street</div>
+                    <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 5px; text-transform: none; text-align: center;">Continuous Clicks + "Cross"</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bird Educational Panel -->
+        <div id="edu-voice-section" style="display: none; margin-bottom: 20px;">
+            <h4 style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0; margin-bottom: 10px;">Bird Vocal Learning</h4>
+            <div class="management-grid">
+                <div class="sensor-card" style="flex-direction: column; cursor: pointer; justify-content: center;" onclick="playBirdCommand('Hello')">
+                    <i class="fas fa-comment-dots" style="font-size: 1.5rem; color: #00f2ff; margin-bottom: 10px;"></i>
+                    <div class="sensor-label">Say Hello</div>
+                    <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 5px; text-transform: none;">Voice: "Hello!"</div>
+                </div>
+                <div class="sensor-card" style="flex-direction: column; cursor: pointer; justify-content: center;" onclick="playBirdCommand('Food')">
+                    <i class="fas fa-seedling" style="font-size: 1.5rem; color: #6ecc87; margin-bottom: 10px;"></i>
+                    <div class="sensor-label">Request Food</div>
+                    <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 5px; text-transform: none;">Voice: "Food!"</div>
+                </div>
+                <div class="sensor-card" style="flex-direction: column; cursor: pointer; justify-content: center;" onclick="playBirdCommand('Water')">
+                    <i class="fas fa-tint" style="font-size: 1.5rem; color: #74b9ff; margin-bottom: 10px;"></i>
+                    <div class="sensor-label">Request Water</div>
+                    <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 5px; text-transform: none;">Voice: "Water!"</div>
+                </div>
+            </div>
+        </div>
+
+
         <div class="charts-section">
             <div class="chart-card" id="chart-feeding">
                 <h3 class="a70-font">Feeding History (g)</h3>
@@ -1790,6 +1846,88 @@ Reference the environmental data with the biological and veterinary data. Is the
             console.error('Could not copy text: ', err);
             alert("Failed to copy link automatically. Please manually copy this URL:\n\n" + text);
         });
+    }
+
+
+    // ==========================================
+    // --- EDUCATIONAL PET AUDIO ENGINE ---
+    // ==========================================
+    
+    let audioCtx;
+
+    // Initializes the Web Audio API context safely upon user interaction
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+    }
+
+    // Generates a sharp "click" sound simulating a professional clicker
+    function playClickSound(timeOffset) {
+        initAudio();
+        const osc = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+
+        osc.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
+        // A sharp square wave resembles a mechanical click
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(600, audioCtx.currentTime + timeOffset);
+
+        // Amplitude envelope to make it extremely brief and percussive
+        gainNode.gain.setValueAtTime(0, audioCtx.currentTime + timeOffset);
+        gainNode.gain.linearRampToValueAtTime(0.5, audioCtx.currentTime + timeOffset + 0.01);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + timeOffset + 0.08);
+
+        osc.start(audioCtx.currentTime + timeOffset);
+        osc.stop(audioCtx.currentTime + timeOffset + 0.1);
+    }
+
+    // Fires the speech synthesis after a specific delay
+    function speakCommand(word, delayMs, pitch = 1.0) {
+        setTimeout(() => {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(word);
+            utterance.lang = 'en-US';
+            utterance.rate = 1.0;
+            utterance.pitch = pitch;
+            window.speechSynthesis.speak(utterance);
+        }, delayMs);
+    }
+
+    // Command Logic Engine for Dogs
+    function playDogCommand(cmd) {
+        initAudio();
+        window.speechSynthesis.cancel();
+
+        if (cmd === 'sit') {
+            playClickSound(0);
+            speakCommand("Sit", 300);
+        } else if (cmd === 'laydown') {
+            playClickSound(0);
+            speakCommand("Down", 300);
+        } else if (cmd === 'follow') {
+            playClickSound(0);
+            playClickSound(0.2); // Second click 200ms later
+            speakCommand("Come", 500);
+        } else if (cmd === 'cross') {
+            // Rapid continuous clicks imitating an accessibility traffic light
+            for (let i = 0; i < 6; i++) {
+                playClickSound(i * 0.15); // 150ms gap between each click
+            }
+            speakCommand("Cross", 1000); // Wait for sequence to finish before speaking
+        }
+    }
+
+    // Command Logic Engine for Birds
+    function playBirdCommand(cmd) {
+        window.speechSynthesis.cancel();
+        // Give birds a slightly higher pitch (1.2) to simulate an avian-friendly tone
+        speakCommand(cmd, 0, 1.2); 
     }
 </script>
 </body>
