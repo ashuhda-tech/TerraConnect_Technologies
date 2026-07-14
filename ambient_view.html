@@ -481,6 +481,46 @@
         </div>
 
 
+        <div class="charts-section">
+            <div class="chart-card" id="chart-feeding">
+                <h3 class="a70-font">Feeding History (g)</h3>
+                <canvas id="feedingChart"></canvas>
+            </div>
+            <div class="chart-card" id="chart-weight">
+                <h3 class="a70-font">Weight Evolution (g)</h3>
+                <canvas id="weightChart"></canvas>
+            </div>
+            <div class="chart-card" id="chart-shedding">
+                <h3 class="a70-font">Shedding Intervals (Days)</h3>
+                <canvas id="sheddingChart"></canvas>
+            </div>
+            <div class="chart-card" id="chart-length">
+                <h3 class="a70-font">Length Measurement (cm)</h3>
+                <canvas id="lengthChart"></canvas>
+            </div>
+            <div class="chart-card" id="chart-height">
+                <h3 class="a70-font">Height Measurement (cm)</h3>
+                <canvas id="heightChart"></canvas>
+            </div>
+        </div>
+
+        <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin: 30px 0 15px 0;">Live Monitoring | Camera</h3>
+        <div class="camera-card" id="camera-card">
+            <div id="cameraOverlay" class="camera-overlay">
+                <img src="https://i.pinimg.com/originals/17/ec/4d/17ec4d0b9d0f6aae55cca07095a10e48.gif" class="signal-lost-gif" alt="Signal Lost Animation">
+                
+                <i class="fas fa-wifi" style="font-size: 2rem; color: var(--accent); margin-bottom: 10px; opacity: 0.8;"></i>
+                <p class="a70-font" style="font-size: 0.8rem; color: var(--accent); text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">SIGNAL LOST - RECONNECTING...</p>
+            </div>
+    
+            <img id="cameraStream" class="camera-stream" src="" onload="hideCamOverlay()" onerror="showCamOverlay()">
+
+            <div class="cam-status-bar">
+                <span id="camStatusText" style="color: #ff5f5f;">Status: Offline</span>
+                <span style="color: var(--text-muted);">Enc: Internal_Main_01</span>
+            </div>
+        </div>
+
         <!-- --- EDUCATIONAL PET SECTION --- -->
         <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-top: 30px; margin-bottom: 15px;">
             <i class="fas fa-graduation-cap"></i> Educational Pet | Training
@@ -535,46 +575,6 @@
             </div>
         </div>
 
-
-        <div class="charts-section">
-            <div class="chart-card" id="chart-feeding">
-                <h3 class="a70-font">Feeding History (g)</h3>
-                <canvas id="feedingChart"></canvas>
-            </div>
-            <div class="chart-card" id="chart-weight">
-                <h3 class="a70-font">Weight Evolution (g)</h3>
-                <canvas id="weightChart"></canvas>
-            </div>
-            <div class="chart-card" id="chart-shedding">
-                <h3 class="a70-font">Shedding Intervals (Days)</h3>
-                <canvas id="sheddingChart"></canvas>
-            </div>
-            <div class="chart-card" id="chart-length">
-                <h3 class="a70-font">Length Measurement (cm)</h3>
-                <canvas id="lengthChart"></canvas>
-            </div>
-            <div class="chart-card" id="chart-height">
-                <h3 class="a70-font">Height Measurement (cm)</h3>
-                <canvas id="heightChart"></canvas>
-            </div>
-        </div>
-
-        <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin: 30px 0 15px 0;">Live Monitoring | Camera</h3>
-        <div class="camera-card" id="camera-card">
-            <div id="cameraOverlay" class="camera-overlay">
-                <img src="https://i.pinimg.com/originals/17/ec/4d/17ec4d0b9d0f6aae55cca07095a10e48.gif" class="signal-lost-gif" alt="Signal Lost Animation">
-                
-                <i class="fas fa-wifi" style="font-size: 2rem; color: var(--accent); margin-bottom: 10px; opacity: 0.8;"></i>
-                <p class="a70-font" style="font-size: 0.8rem; color: var(--accent); text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">SIGNAL LOST - RECONNECTING...</p>
-            </div>
-    
-            <img id="cameraStream" class="camera-stream" src="" onload="hideCamOverlay()" onerror="showCamOverlay()">
-
-            <div class="cam-status-bar">
-                <span id="camStatusText" style="color: #ff5f5f;">Status: Offline</span>
-                <span style="color: var(--text-muted);">Enc: Internal_Main_01</span>
-            </div>
-        </div>
 
         
         <div id="vet-section">
