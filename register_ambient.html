@@ -136,7 +136,7 @@
                 <label class="a70-font">REMOTE READ API KEY</label>
                 <input type="text" id="r1TsRead">
             </div>
-            <div class="info-box grid-full">WIFI CONFIGURATOR</div>
+            <div class="info-box grid-full">DEVICE WIFI CONFIGURATOR</div>
             <div class="input-group">
                 <label class="a70-font">WIFI SSID</label>
                 <input type="text" id="wifiSsid">
@@ -144,6 +144,16 @@
             <div class="input-group">
                 <label class="a70-font">WIFI PASSWORD</label>
                 <input type="text" id="wifiPassword">
+            </div>
+            
+            <div class="info-box grid-full">PUBLIC WIFI (GUEST VIEW)</div>
+            <div class="input-group">
+                <label class="a70-font">PUBLIC WIFI SSID</label>
+                <input type="text" id="publicWifiSsid" placeholder="Guest Network Name">
+            </div>
+            <div class="input-group">
+                <label class="a70-font">PUBLIC WIFI PASSWORD</label>
+                <input type="text" id="publicWifiPassword" placeholder="Guest Password">
             </div>
         </div>
         <button class="btn-save a70-font" id="btnAction" onclick="processRegistration()">COMPLETE REGISTRATION</button>
@@ -223,6 +233,8 @@
                     document.getElementById('wifiSsid').value = targetRow[20] || "";
                     document.getElementById('wifiPassword').value = targetRow[21] || "";
                     document.getElementById('animalType').value = targetRow[22] || "";
+                    document.getElementById('publicWifiSsid').value = targetRow[23] || "";
+                    document.getElementById('publicWifiPassword').value = targetRow[24] || "";
                 }
             } catch (e) { console.error("Error loading CSV:", e); }
         }
@@ -271,6 +283,8 @@
                 wifiSsid: document.getElementById('wifiSsid').value,
                 wifiPassword: document.getElementById('wifiPassword').value,
                 animalType: document.getElementById('animalType').value,
+                publicWifiSsid: document.getElementById('publicWifiSsid').value,
+                publicWifiPassword: document.getElementById('publicWifiPassword').value,
                 timestamp: new Date().toLocaleString('pt-BR')
             };
             try {
