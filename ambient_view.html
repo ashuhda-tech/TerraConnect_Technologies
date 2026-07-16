@@ -33,8 +33,8 @@
         /* --- PAGE LOADER SPLASH SCREEN --- */
     #page-loader {position: fixed;top: 0;left: 0;width: 100vw;height: 100vh;background-color: var(--bg-dark); /* Uses your active theme's background */
         z-index: 99999;display: flex;flex-direction: column;justify-content: center;align-items: center;transition: opacity 0.8s ease-out, visibility 0.8s ease-out;}
-    .loader-visual {width: 180px; /* Adjust based on your animation's aspect ratio */
-        height: auto;border-radius: 15px; /* Optional: in case your video has sharp edges */
+    .loader-visual {width: 100vw; /* Modificado para tela cheia */
+        height: 100vh; object-fit: cover;
     }
         
     /* DEFINIÇÃO DE TODOS OS TEMAS COM BASE NAS PALETAS DAS IMAGENS */
@@ -172,9 +172,6 @@
         <video autoplay muted loop playsinline class="loader-visual">
             <source src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/VIDEO/LOADING.mp4" type="video/mp4">
         </video>
-        <h2 class="a70-font" style="color: var(--accent); margin-top: 25px; font-size: 1.2rem; letter-spacing: 3px;">
-            INITIALIZING...
-        </h2>
     </div>
 
     <video autoplay muted loop playsinline id="bgVideo" class="background-video">
