@@ -443,12 +443,19 @@
 
         <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-bottom: 15px;">Control Center</h3>
         <div class="management-grid">
-                        <div class="input-card">
+            <div class="input-card" style="gap: 8px;">
                 <div class="input-header"><i class="fas fa-utensils"></i> Add Feeding (g)</div>
-                <div class="input-group">
-                    <input type="number" id="inFeed" class="input-field" placeholder="0">
-                    <button class="btn-send" onclick="sendToCloud('Feeding', 'inFeed')"><i class="fas fa-plus"></i></button>
-                </div>
+                <input type="number" id="inFeed" class="input-field" placeholder="Amount (g)">
+                
+                <input list="foodTypeList" id="inFoodType" class="input-field" placeholder="Food Type (e.g. Mouse)">
+                <input list="brandList" id="inBrand" class="input-field" placeholder="Brand (e.g. PetCo)">
+                
+                <datalist id="foodTypeList"></datalist>
+                <datalist id="brandList"></datalist>
+
+                <button class="btn-send" onclick="sendToCloud('Feeding', 'inFeed')" style="margin-top: 5px; justify-content: center;">
+                    <i class="fas fa-plus"></i> ADD RECORD
+                </button>
             </div>
             <div class="input-card">
                 <div class="input-header"><i class="fas fa-snake"></i> Add Shedd (Date)</div>
@@ -1063,6 +1070,15 @@ async function sendDeviceConfig() {
             const lastHeight = events.filter(e => e[2] === "Height").pop();
             const lastShed = events.filter(e => e[2] === "Shedding").sort((a, b) => new Date(a[1]) - new Date(b[1])); 
         
+            const feedingEvents = events.filter(e => e[2] === "Feeding");
+            const uniqueFoodTypes = [...new Set(feedingEvents.map(e => e[4]).filter(val => val && val.trim() !== ""))];
+            const uniqueBrands = [...new Set(feedingEvents.map(e => e[5]).filter(val => val && val.trim() !== ""))];
+            
+            const foodListEl = document.getElementById('foodTypeList');
+            const brandListEl = document.getElementById('brandList');
+            if (foodListEl) foodListEl.innerHTML = uniqueFoodTypes.map(ft => `<option value="${ft}">`).join('');
+            if (brandListEl) brandListEl.innerHTML = uniqueBrands.map(b => `<option value="${b}">`).join('');
+
             const sheddingProcessed = lastShed.map((event, index) => {
                 if (index === 0) {
                     return { date: event[1], interval: 0 }; 
@@ -1191,7 +1207,40 @@ function renderFeeding(events, color) {
     const data = events.filter(e => e[2] === "Feeding");
     
     if(feedingChart) feedingChart.destroy();
-    feedingChart = new Chart(ctx, buildForecastChartConfig('Feeding (g)', data, color, ctx));
+    
+    const config = buildForecastChartConfig('Feeding (g)', data, color, ctx);
+    
+    const combos = data.map(e => {
+        const ft = (e[4] && e[4].trim() !== "") ? e[4].trim() : 'N/A';
+        const br = (e[5] && e[5].trim() !== "") ? e[5].trim() : 'N/A';
+        return `${ft} | ${br}`;
+    });
+    
+    const uniqueCombos = [...new Set(combos)];
+    
+    const palette = ['#a3b18a', '#ff9ff3', '#feca57', '#ff6b6b', '#48dbfb', '#1dd1a1', '#5f27cd'];
+    const comboColorMap = {};
+    uniqueCombos.forEach((combo, index) => {
+        comboColorMap[combo] = palette[index % palette.length];
+    });
+    
+    const pointColors = combos.map(combo => comboColorMap[combo]);
+    
+    config.data.datasets[0].pointBackgroundColor = pointColors;
+    config.data.datasets[0].pointBorderColor = '#ffffff';
+    config.data.datasets[0].pointBorderWidth = 1.5;
+    config.data.datasets[0].pointRadius = 5;
+    config.data.datasets[0].pointHoverRadius = 8;
+    
+    config.options.plugins.tooltip = config.options.plugins.tooltip || { callbacks: {} };
+    config.options.plugins.tooltip.callbacks.afterLabel = function(context) {
+        if (context.datasetIndex === 0 && combos[context.dataIndex]) {
+            return `Specs: ${combos[context.dataIndex]}`;
+        }
+        return null;
+    };
+    
+    feedingChart = new Chart(ctx, config);
 }
 
 function renderWeight(events, color) {
@@ -1357,12 +1406,27 @@ function buildForecastChartConfig(labelString, dataArray, color, ctx) {
 
         const today = new Date();
         const dateStr = (today.getMonth() + 1) + "/" + today.getDate() + "/" + today.getFullYear();
-        const finalUrl = `${BIODATA_SCRIPT_URL}?pageId=${encodeURIComponent(currentPageId)}&date=${encodeURIComponent(dateStr)}&registerType=${encodeURIComponent(type)}&value=${encodeURIComponent(inputValue)}`;
+        
+        let finalUrl = `${BIODATA_SCRIPT_URL}?pageId=${encodeURIComponent(currentPageId)}&date=${encodeURIComponent(dateStr)}&registerType=${encodeURIComponent(type)}&value=${encodeURIComponent(inputValue)}`;
+
+        if (type === 'Feeding') {
+            const inFoodType = document.getElementById('inFoodType');
+            const inBrand = document.getElementById('inBrand');
+            const ftVal = inFoodType ? inFoodType.value : "";
+            const brVal = inBrand ? inBrand.value : "";
+            finalUrl += `&foodType=${encodeURIComponent(ftVal)}&brand=${encodeURIComponent(brVal)}`;
+        }
 
         try {
             await fetch(finalUrl, { method: 'GET', mode: 'no-cors' });
             alert(`Success: ${type} registered!`);
             inputElement.value = "";
+            
+            if (type === 'Feeding') {
+                if (document.getElementById('inFoodType')) document.getElementById('inFoodType').value = "";
+                if (document.getElementById('inBrand')) document.getElementById('inBrand').value = "";
+            }
+
             if (typeof loadBiologicalHistory === "function") {
                 setTimeout(() => loadBiologicalHistory(currentPageId), 1000);
             }
