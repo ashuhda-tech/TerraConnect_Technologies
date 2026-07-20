@@ -188,24 +188,17 @@
         finishIntro();
     }
 
-    
-        //TerraConnectSignUp
-    const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTLog7uhFw___9q5ossjzRuKZq6VkC3HqgsD52RAd1y5FigIwCqmEyFeLc-_qgS1RAwtlcIhr_zK-nn/pub?gid=0&single=true&output=csv';
+    // Apenas a URL Segura do Apps Script (SEM O LINK PÚBLICO DO CSV)
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzFT1YQSMLpJ2zLJQ-bD1JOUzaUJJsRcmCBkpseXd87iGvJXm5Ig7p1gYJf-PmHVwQ/exec';
-
-        //TerraConnectPageID
-    const PAGEID_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTeBz5FwvcmPue3hJ6TKwmrNZeMrz2_Su7co-mPuzKj1ZJv--5BBvPjlszF3yyEHOVuEeGT9mmwZqOp/pub?gid=0&single=true&output=csv';
     const PAGEID_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw3LbOYDqljAxQ8joYW8yDhwe6lsi7AdFCAoi4HG1iRdglS0k9-fI1Oj2eA12ePc6g/exec";
 
-
-    
-// Generates a secure, random User ID
-function generateUUID() {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-        return v.toString(16);
-    });
-}
+    // Generates a secure, random User ID
+    function generateUUID() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+    }
 
     // --- LÓGICA DE PROTEÇÃO INICIAL (O Porteiro) ---
     function unlockForms() {
@@ -242,110 +235,101 @@ function generateUUID() {
     });
     // ------------------------------------------------
 
-    async function fetchUsers() {
-        try {
-            const response = await fetch(`${CSV_URL}&t=${new Date().getTime()}`);
-            const data = await response.text();
-            const rows = data.split(/\r?\n/).filter(row => row.trim() !== "").slice(1);
-            
-            return rows.map(row => {
-                const col = row.split(',');
-                return { 
-                    name: col[0]?.trim(), 
-                    email: col[1]?.trim().toLowerCase(), 
-                    pass: col[2]?.trim(),
-                    id: col[3]?.trim(),
-                    channelId: col[4]?.trim().replace(/[^0-9]/g, ''), 
-                    apiKey: col[5]?.trim().replace(/\s/g, '') 
-                };
-            });
-        } catch (error) {
-            console.error("User Processing Error:", error);
-            return [];
-        }
-    }
-
+    // --- NOVA LÓGICA DE LOGIN (AUTENTICAÇÃO NO SERVIDOR) ---
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const msg = document.getElementById('loginMsg');
         const email = document.getElementById('loginEmail').value.trim().toLowerCase();
         const pass = document.getElementById('loginPass').value.trim();
 
-        msg.innerText = "Autenticating...";
-        const users = await fetchUsers();
-        const user = users.find(u => u.email === email && u.pass === pass);
+        msg.innerText = "Authenticating securely...";
+        msg.className = "message";
 
-        if (user) {
-            localStorage.setItem('currentUser', JSON.stringify(user));
-            msg.innerText = "Sucess! Entering...";
-            msg.className = "message success";
-            setTimeout(() => { window.location.href = 'home.html'; }, 1000);
-        } else {
-            msg.innerText = "Invalid E-mail or Password.    Please revise the provided information.";
+        try {
+            // Envia e-mail e senha para o servidor validar (Sem baixar a planilha)
+            const response = await fetch(SCRIPT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ action: 'login_user', email: email, pass: pass })
+            });
+            
+            const result = await response.json();
+
+            if (result.status === "success") {
+                localStorage.setItem('currentUser', JSON.stringify(result.user));
+                msg.innerText = "Success! Entering...";
+                msg.className = "message success";
+                setTimeout(() => { window.location.href = 'home.html'; }, 1000);
+            } else {
+                msg.innerText = result.message || "Invalid E-mail or Password.";
+                msg.className = "message error";
+            }
+        } catch (error) {
+            console.error("Login Error:", error);
+            msg.innerText = "Connection error to authentication server.";
             msg.className = "message error";
         }
     });
 
-document.getElementById('signupForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    // --- 1. AI CONSENT VALIDATION ---
-    const consentBox = document.getElementById('aiConsent');
-    if (!consentBox.checked) {
-        alert("Action Required: You must agree to the Data Processing & AI Consent terms to create an account.");
-        return; 
-    }
+    // --- NOVA LÓGICA DE REGISTRO ---
+    document.getElementById('signupForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        // --- 1. AI CONSENT VALIDATION ---
+        const consentBox = document.getElementById('aiConsent');
+        if (!consentBox.checked) {
+            alert("Action Required: You must agree to the Data Processing & AI Consent terms to create an account.");
+            return; 
+        }
 
-    const msg = document.getElementById('signupMsg');
-    const newUserID = generateUUID(); // Create the ID here in the frontend!
+        const msg = document.getElementById('signupMsg');
+        const newUserID = generateUUID(); 
 
-    // Payload for the User Registration Sheet
-    const payloadSignUp = {
-        action: 'register_user', 
-        name: document.getElementById('regName').value,
-        email: document.getElementById('regEmail').value.toLowerCase().trim(),
-        pass: document.getElementById('regPass').value,
-        id: newUserID // Attach the new ID
-    };
+        // Payload for the User Registration Sheet
+        const payloadSignUp = {
+            action: 'register_user', 
+            name: document.getElementById('regName').value,
+            email: document.getElementById('regEmail').value.toLowerCase().trim(),
+            pass: document.getElementById('regPass').value,
+            id: newUserID 
+        };
 
-    // Payload for the PageID Database Sheet
-    const payloadPageID = {
-        action: 'init_user_page',
-        userID: newUserID
-    };
+        // Payload for the PageID Database Sheet
+        const payloadPageID = {
+            action: 'init_user_page',
+            userID: newUserID
+        };
 
-    try {
-        msg.className = "message";
-        msg.innerText = "Registering user profile...";
-        
-        // 1. Send data to the Sign Up Sheet (ADDED HEADERS)
-        await fetch(SCRIPT_URL, { 
-            method: 'POST', 
-            mode: 'no-cors', 
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify(payloadSignUp) 
-        });
-        
-        msg.innerText = "Initializing secure environment...";
-        
-        // 2. Send data to the PageID Sheet (ADDED HEADERS)
-        await fetch(PAGEID_SCRIPT_URL, { 
-            method: 'POST', 
-            mode: 'no-cors', 
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify(payloadPageID) 
-        });
-        
-        msg.innerText = "Successfully registered! Please proceed to Sign in.";
-        msg.className = "message success";
-        e.target.reset();
-        
-    } catch (error) {
-        msg.className = "message error";
-        msg.innerText = "Sign up Error. Please try again.";
-        console.error(error);
-    }
-});
+        try {
+            msg.className = "message";
+            msg.innerText = "Registering user profile...";
+            
+            // Send data to the Sign Up Sheet
+            await fetch(SCRIPT_URL, { 
+                method: 'POST', 
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(payloadSignUp) 
+            });
+            
+            msg.innerText = "Initializing secure environment...";
+            
+            // Send data to the PageID Sheet
+            await fetch(PAGEID_SCRIPT_URL, { 
+                method: 'POST', 
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(payloadPageID) 
+            });
+            
+            msg.innerText = "Successfully registered! Please proceed to Sign in.";
+            msg.className = "message success";
+            e.target.reset();
+            
+        } catch (error) {
+            msg.className = "message error";
+            msg.innerText = "Sign up Error. Please try again.";
+            console.error(error);
+        }
+    });
     
     function toggleAuth() {
         document.getElementById('login-section').classList.toggle('hidden');
