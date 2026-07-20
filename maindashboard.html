@@ -48,12 +48,12 @@
 
         /* BARRA LATERAL */
         .sidebar {width: 320px; background-color: var(--sidebar-bg); border-right: 1px solid var(--border); padding: 25px; display: flex; flex-direction: column; justify-content: space-between; z-index: 10; transition: background-color 0.5s, border-color 0.5s;
-    /* --- CONFIGURAÇÃO PARA OCULTAR BARRAS DE ROLAGEM (VERTICAL E HORIZONTAL) --- */
-    overflow: auto;            /* Captura o transbordo horizontal e esconde a barra */
-    scrollbar-width: none;     /* Oculta no Firefox */
-    -ms-overflow-style: none;  /* Oculta no IE e Edge */
-}
-/* Oculta as barras de rolagem no Chrome, Safari e Opera */
+        /* --- CONFIGURAÇÃO PARA OCULTAR BARRAS DE ROLAGEM (VERTICAL E HORIZONTAL) --- */
+        overflow: auto;            /* Captura o transbordo horizontal e esconde a barra */
+        scrollbar-width: none;     /* Oculta no Firefox */
+        -ms-overflow-style: none;  /* Oculta no IE e Edge */
+        }
+        /* Oculta as barras de rolagem no Chrome, Safari e Opera */
         .sidebar::-webkit-scrollbar { display: none; }
 
         
@@ -100,38 +100,32 @@
         .btn-exit:hover { background: #ef4e4e; color: white; }
 
         /* PAINEL PRINCIPAL */
-        /* Ajuste no Painel Principal para suportar o fundo */
         .main-panel {flex-grow: 1; margin: 20px; border-radius: 40px; display: flex; justify-content: center;  align-items: center;  border: 1px solid var(--border); 
-    position: relative; /* Necessário para posicionar o fundo */
-    overflow: hidden;   /* Garante que o vídeo/gif não saia das bordas arredondadas */
-    background-color: #000; /* Fundo de segurança */
-}
+        position: relative; overflow: hidden;   background-color: #000; }
 
-/* O Fundo (GIF ou Vídeo) */
+        /* O Fundo (GIF ou Vídeo) */
         .panel-background { position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    object-fit: cover; /* Preenche sem distorcer */
-    z-index: 1; opacity: 0.6; /* Ajuste a opacidade para não brigar com o texto */
-}
+        object-fit: cover; z-index: 1; opacity: 0.6; }
 
-/* O Card com Efeito Glassmorphism (Referência: image_577e00.png) */
+        /* O Card com Efeito Glassmorphism */
         .glass-card {  position: relative; z-index: 2; text-align: center;  padding: 60px;
-    background: rgba(255, 255, 255, 0.05); /* Branco bem transparente */
-    backdrop-filter: blur(15px);           /* O efeito de desfoque/vidro */
-    -webkit-backdrop-filter: blur(15px);   /* Suporte para Safari */
-    border: 1px solid rgba(255, 255, 255, 0.1);  border-radius: 30px; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8); max-width: 80%;}
+        background: rgba(255, 255, 255, 0.05); 
+        backdrop-filter: blur(15px);            
+        -webkit-backdrop-filter: blur(15px);   
+        border: 1px solid rgba(255, 255, 255, 0.1);  border-radius: 30px; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8); max-width: 80%;}
 
-/* Ajuste no conteúdo para não herdar a opacidade baixa anterior */
         .glass-card i { font-size: 5rem; margin-bottom: 20px; display: inline-block; color: var(--accent); }
         .glass-card p {font-size: 1.2rem; letter-spacing: 4px; margin: 0; color: #fff; font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.5);}
-        .placeholder-content { text-align: center; opacity: 0.25; }
-        .placeholder-content i { font-size: 8rem; margin-bottom: 20px; display: block; }
-        .placeholder-content p { font-size: 1.2rem; letter-spacing: 2px; margin: 0; }
+        
+        .loading-text { font-size: 0.85rem; color: var(--accent); margin-top: 10px; display: block; text-align: center; }
     </style>
 </head>
 <body>
 
     <div class="sidebar">
-        <div class="nav-section"></div>
+        <div class="nav-section" id="navSection">
+            <span class="loading-text">Loading secure data...</span>
+        </div>
          
         <div class="nav-section-bottom">
             <a href="register_ambient.html" class="ambient-card add-card a70-font">
@@ -229,23 +223,10 @@
         document.getElementById('userName').innerText = user.name || "User";
         document.getElementById('userId').innerText = `ID: ${user.id}`;
 
-    //TerraConnectPageID
-    const PAGEID_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTeBz5FwvcmPue3hJ6TKwmrNZeMrz2_Su7co-mPuzKj1ZJv--5BBvPjlszF3yyEHOVuEeGT9mmwZqOp/pub?gid=0&single=true&output=csv';
-    const PAGEID_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw3LbOYDqljAxQ8joYW8yDhwe6lsi7AdFCAoi4HG1iRdglS0k9-fI1Oj2eA12ePc6g/exec";
-
-    //TerraConnectTheme
-    const THEME_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQxrbVDyA-y5qOfbXcmpyCppyTDtGxOAYzGj_QR6uA27gVY3KWeT3Ka6IYvKDUM3QiU6iK0aNq3O6wr/pub?gid=0&single=true&output=csv';
-    const THEME_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzPCMbwa8NXy253hSbR4ewodPAiN_20qUlwvcFl8Uexo9SOZRUp5vxDPFlksh8NyNnD/exec";
-    
-    //TerraConnectBiodata.xlsx
-    const BIODATA_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS0Ra5VUE1xSCkCJCXaAObs1wBlUlrhH1YnnQ6e91S4fLT4sh_Nt7ECxaW15EMgS4_yjVcEs0OQECta/pub?gid=0&single=true&output=csv';
-    const BIODATA_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxnOcWSHRutBkHc_45tSLOFjowJXMeplk333TmaddrvfWgETljbZZ6shOuwYTIG4AkD/exec";
+        // Apenas URLs de Execução Segura (Scripts), sem links diretos para CSV.
+        const PAGEID_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw3LbOYDqljAxQ8joYW8yDhwe6lsi7AdFCAoi4HG1iRdglS0k9-fI1Oj2eA12ePc6g/exec";
+        const THEME_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzPCMbwa8NXy253hSbR4ewodPAiN_20qUlwvcFl8Uexo9SOZRUp5vxDPFlksh8NyNnD/exec";
         
-    //TerraConnectEnviromentalSetup.xlsx
-    const ENVIRONMENT_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRbjH7deMzP_-oUSROzLYUxU3o2UvBar6ODVwLKpLQ6xaacQKON5xlzV3KA2Tswsc0WfSGQu7LVKBvs/pub?gid=0&single=true&output=csv';
-    const ENVIRONMENT_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzG2YVem9qG7sEK20lVuRm2Bhjo10dfXRF98mibREbUZnM5obTrb0QrQDJIGi0wFoE/exec";
-    
-
         function applyInitialTheme() {
             const savedTheme = localStorage.getItem(`theme_${user.id}`) || 'default';
             document.documentElement.setAttribute('data-theme', savedTheme);
@@ -258,42 +239,58 @@
             const finalUrl = `${THEME_SCRIPT_URL}?pageId=${encodeURIComponent(user.id)}&registerType=ThemePreference&value=${encodeURIComponent(themeName)}`;
             
             try {
-                await fetch(finalUrl, { method: 'GET', mode: 'no-cors' });
+                // Removemos o 'no-cors' por padrão, mas você pode recolocar caso a nuvem do Google bloqueie
+                await fetch(finalUrl, { method: 'GET' });
                 console.log("Cloud Saved Theme: ", themeName);
             } catch (e) {
                 console.warn("Cloud Sync Error.");
             }
         }
 
+        // NOVA FUNÇÃO TOTALMENTE SEGURA: Busca apenas as páginas do usuário logado via JSON
         async function loadUserAmbients() {
+            const navSection = document.getElementById('navSection');
+            
             try {
-                const response = await fetch(PAGEID_CSV_URL);
-                const data = await response.text();
-                const rows = data.split('\n').slice(1);
-                const navSection = document.querySelector('.nav-section');
+                // Consome a rota 'get_user_pages' do nosso Page ID Script atualizado
+                const response = await fetch(`${PAGEID_SCRIPT_URL}?action=get_user_pages&userID=${encodeURIComponent(user.id)}`);
+                const result = await response.json();
+                
                 navSection.innerHTML = ''; 
 
-                rows.forEach(row => {
-                    const columns = row.split(',');
-                    const dbUserId = columns[0]?.trim();
-                    const dbPageId = columns[1]?.trim();
-                    const dbName = columns[2]?.trim();
-                    const dbTheme = columns[15]?.trim(); 
+                if (result.status === "success" && result.data.length > 0) {
+                    
+                    let firstThemeToApply = null;
 
-                    if (dbUserId === user.id) {
+                    result.data.forEach(columns => {
+                        // O Apps Script já nos entrega a array exata da linha!
+                        // Index 0: UserID, Index 1: PageID, Index 2: AmbientName... Index 18: Theme
+                        const dbPageId = columns[1];
+                        const dbName = columns[2] || "Ambiente sem Nome";
+                        const dbTheme = columns[18]; // Baseado no mapeamento do seu doPost (ThemePhotoURL)
+
                         const card = document.createElement('a');
                         card.href = `ambient_view.html?id=${dbPageId}`;
                         card.className = 'ambient-card a70-font';
                         card.innerHTML = `<i class="fas fa-microchip"></i> ${dbName.toUpperCase()}`;
                         navSection.appendChild(card);
                         
-                        if(dbTheme && !localStorage.getItem(`theme_${user.id}`)) {
-                            setTheme(dbTheme);
+                        if (dbTheme && !firstThemeToApply) {
+                            firstThemeToApply = dbTheme;
                         }
+                    });
+
+                    // Aplica tema do servidor se não houver no cache local
+                    if (firstThemeToApply && !localStorage.getItem(`theme_${user.id}`)) {
+                        setTheme(firstThemeToApply);
                     }
-                });
+
+                } else {
+                    navSection.innerHTML = '<span class="loading-text" style="color:#ef4e4e;">No environments found. Register one below.</span>';
+                }
             } catch (error) {
                 console.error("Ambient Loading Error: ", error);
+                navSection.innerHTML = '<span class="loading-text" style="color:#ef4e4e;">Failed to load secure data.</span>';
             }
         }
 
