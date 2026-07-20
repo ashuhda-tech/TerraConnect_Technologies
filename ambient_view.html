@@ -154,6 +154,8 @@
     .chart-iframe-container { width: 90%; height: 80%; border: 1px solid var(--border); border-radius: 15px; overflow: hidden; background: #000; }
     .chart-iframe-container iframe { width: 100%; height: 100%; border: none;}
 
+    .custom-gps-marker { background: none; border: none; }
+
     @media (max-width: 900px) {
         body { flex-direction: column; overflow: auto; height: auto; }
         .sidebar { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
@@ -586,7 +588,7 @@
 
         
         <div id="vet-section">
-            <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin: 30px 0 15px 0;"><i class="fas fa-notes-medical"></i> Vet Visit </h3>
+            <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin: 30px 0 15px 0;"><i class="fas fa-notes-medical"></i> Vet Visit & GPS Tracker </h3>
             <div class="sensor-card" style="flex-direction: column; align-items: stretch; margin-bottom: 20px;">
                     <div id="vetMapContainer" style="width: 100%; height: 300px; border-radius: 10px; overflow: hidden; margin-bottom: 15px;">
                     </div>
@@ -682,6 +684,7 @@ const loggedUser = checkSecurity();
     let currentUUID = ""; 
     let mainChannelId = "", mainReadKey = "";
     let r1ChannelId = "", r1ReadKey = "";
+    let gpsChannelId = "", gpsReadKey = ""; // NEW: Variáveis para o GPS
     let myChart; 
     let vetMap = null;
     let homeLat = 0;
@@ -826,6 +829,8 @@ async function loadData() {
             mainReadKey = data[12];
             r1ChannelId = data[13];
             r1ReadKey = data[15];
+            gpsChannelId = data[25]; // Mapeado do JSON Backend
+            gpsReadKey = data[27];   // Mapeado do JSON Backend
             document.getElementById('dynChannel').innerText = mainChannelId || "---";
 
             const photoURL = data[19];
@@ -963,6 +968,8 @@ function updateFieldUI(id, val) {
                 document.getElementById('cfgTempMin').value = config[2];
                 document.getElementById('cfgHumMax').value = config[3];
                 document.getElementById('cfgHumMin').value = config[4];
+                document.getElementById('cfgFeedInterval').value = config[5];
+                document.getElementById('cfgFeedAmount').value = config[6];
                 console.log("Config limits loaded successfully.");
             }
         } catch (e) { console.error("Error loading setup CSV:", e); }
@@ -1465,6 +1472,31 @@ function buildForecastChartConfig(labelString, dataArray, color, ctx) {
         document.getElementById('camStatusText').style.color = "#a3b18a";
     }
 
+// FUNÇÃO PARA BUSCAR GPS NO THINGSPEAK
+async function fetchLatestGPS() {
+    if (!gpsChannelId || !gpsReadKey) return null;
+    try {
+        const url = `https://api.thingspeak.com/channels/${gpsChannelId}/feeds.json?api_key=${gpsReadKey}&results=1`;
+        const res = await fetch(url);
+        const json = await res.json();
+        const last = json.feeds[0];
+        
+        if (last && last.field1 && last.field2) {
+            return {
+                lat: parseFloat(last.field1),
+                lon: parseFloat(last.field2),
+                alt: last.field3 || '---',
+                sat: last.field4 || '---',
+                signal: last.field5 || '---',
+                dimens: last.field6 || '---'
+            };
+        }
+    } catch (e) {
+        console.warn("Falha ao recuperar os dados de GPS do ThingSpeak:", e);
+    }
+    return null;
+}
+
 async function loadVetVisits(id) {
     try {
         const res = await fetch(VETDATA_CSV_URL);
@@ -1475,9 +1507,9 @@ async function loadVetVisits(id) {
         const tbody = document.getElementById('vetTableBody');
         tbody.innerHTML = '';
 
-        if (visits.length > 0) {
-            let vetLocations = []; 
+        let vetLocations = []; 
 
+        if (visits.length > 0) {
             visits.forEach(v => {
                 let vetFile = "---";
                 if (v[8] && v[8].trim() !== "") { 
@@ -1510,20 +1542,24 @@ async function loadVetVisits(id) {
                     vetLocations.push(loc.trim());
                 }
             });
-
-            if (vetLocations.length > 0 || (homeLat && homeLon)) {
-                await updateVetMap(vetLocations);
-            }
         } else {
             tbody.innerHTML = '<tr><td colspan="8" style="padding:20px; text-align:center;">No visits registered.</td></tr>';
+        }
+
+        let gpsData = await fetchLatestGPS();
+
+        if (vetLocations.length > 0 || (homeLat && homeLon) || gpsData) {
+            await updateVetMap(vetLocations, gpsData);
+        } else {
             document.getElementById('vetMapContainer').innerHTML = ''; 
         }
+
     } catch (e) {
         console.error("Error loading Vet Data:", e);
     }
 }
 
-async function updateVetMap(vetLocationsArray) {
+async function updateVetMap(vetLocationsArray, gpsData = null) {
     const mapContainer = document.getElementById('vetMapContainer');
 
     if (typeof vetMap !== 'undefined' && vetMap !== null) {
@@ -1552,6 +1588,23 @@ async function updateVetMap(vetLocationsArray) {
          .bindPopup('<b>Home Base</b><br>Terrarium Location');
         
         bounds.push([homeLat, homeLon]);
+    }
+
+    // --- RENDERIZAR O NOVO MARKER DE GPS ---
+    if (gpsData && !isNaN(gpsData.lat) && !isNaN(gpsData.lon)) {
+        const cyanIcon = L.divIcon({
+            html: '<i class="fas fa-map-marker-alt" style="color: cyan; font-size: 32px; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);"></i>',
+            iconSize: [20, 32],
+            iconAnchor: [10, 32],
+            popupAnchor: [0, -32],
+            className: 'custom-gps-marker'
+        });
+
+        L.marker([gpsData.lat, gpsData.lon], { icon: cyanIcon })
+         .addTo(vetMap)
+         .bindPopup(`<b>Latest GPS Location</b><br>Lat: ${gpsData.lat.toFixed(6)}<br>Lon: ${gpsData.lon.toFixed(6)}<br>Alt: ${gpsData.alt}m<br>Satellites: ${gpsData.sat}<br>Signal: ${gpsData.signal}%<br>Mode: ${gpsData.dimens}`);
+        
+        bounds.push([gpsData.lat, gpsData.lon]);
     }
 
     const vetIcon = L.icon({
