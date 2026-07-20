@@ -41,7 +41,6 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            /* Diferente do index, permitimos o scroll vertical caso a tela seja pequena */
             overflow-y: auto; 
             overflow-x: hidden;
             padding: 40px 20px;
@@ -76,7 +75,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.75); /* Overlay ligeiramente mais escuro para facilitar a leitura */
+            background: rgba(0, 0, 0, 0.75); 
             z-index: -1;
         }
 
@@ -94,7 +93,7 @@
             border-radius: var(--border-radius);
             padding: 50px 60px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
-            max-width: 800px; /* Mais largo que o login para leitura confortável */
+            max-width: 800px; 
             width: 100%;
             backdrop-filter: blur(12px); 
         }
@@ -126,11 +125,10 @@
         p {
             font-size: 0.95rem;
             line-height: 1.7;
-            color: rgba(244, 233, 216, 0.85); /* Um pouco menos brilhante que o texto principal para não cansar a vista */
+            color: rgba(244, 233, 216, 0.85); 
             margin-bottom: 15px;
         }
 
-        /* Destaque para o Free Tier Notice */
         .notice-box {
             background: rgba(209, 179, 139, 0.08);
             border-left: 3px solid var(--accent-dark);
@@ -179,26 +177,16 @@
             box-shadow: 0 4px 15px rgba(209, 179, 139, 0.2);
         }
 
-        /* Responsividade para celulares */
         @media (max-width: 600px) {
-            .privacy-card {
-                padding: 30px 20px;
-            }
-            h1 {
-                font-size: 1.5rem;
-            }
-            h2 {
-                font-size: 1.05rem;
-            }
-            p {
-                font-size: 0.9rem;
-            }
+            .privacy-card { padding: 30px 20px; }
+            h1 { font-size: 1.5rem; }
+            h2 { font-size: 1.05rem; }
+            p { font-size: 0.9rem; }
         }
     </style>
 </head>
 <body>
 
-<!-- Background Video (Mesmo do Index) -->
 <div class="video-bg-container">
     <video autoplay loop muted playsinline 
            poster="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/b1c4c1f080d96ec1c35ff823176f214b761eb6a6/assets/WALLPAPER_MAINDASHBOARD.png">
@@ -207,10 +195,9 @@
 </div>
 <div class="video-overlay"></div>
 
-<!-- Conteúdo Principal -->
 <div class="container">
     <div class="privacy-card">
-        <h1>Data Processing & AI Consent</h1>
+        <h1>Terms of Service & Privacy Policy</h1>
         
         <div class="content-body">
             <h2>1. Data Collection</h2>
@@ -229,6 +216,14 @@
 
             <h2>4. Right to Revoke & Delete</h2>
             <p>You maintain full ownership of your data. You have the right to revoke this consent at any time by deleting your account. Upon account deletion, your historical telemetry, biological records, and configurations will be permanently erased from our active databases.</p>
+
+            <h2>5. Legal Compliance & IBAMA Disclaimer</h2>
+            <p>TerraConnect is strictly an internal monitoring and administrative tool. <strong>We do not verify, validate, or authenticate official IBAMA, CITES, or SISPASS/SISFAUNA licenses</strong> and registration numbers provided by users. The platform waives all liability for any false, inaccurate, or counterfeit user entries.</p>
+            
+            <div class="notice-box">
+                <strong>Regulatory Warning (Lei de Crimes Ambientais)</strong>
+                <p>Under the Brazilian Environmental Crimes Law (Lei nº 9.605/1998), breeding, keeping, or trading native or exotic wild fauna without valid official authorization is a criminal offense. Users are solely responsible for ensuring their animals are legally obtained. TerraConnect cannot be used as proof of legal origin.</p>
+            </div>
         </div>
 
         <a href="index.html" class="btn-back">Return to Sign In</a>
