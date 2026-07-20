@@ -8,6 +8,17 @@
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/TERRACONNECT_LOGO.png">
     <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/TERRACONNECT_LOGO.png">
 
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="TerraConnect Technologies">
+    <meta property="og:description" content="Environmental Animal IOT Monitoring Center">
+    <meta property="og:url" content="https://ashuhda-tech.github.io/TerraConnect_Technologies/">
+
+    <meta property="og:image" content="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/TERRACONNECT_LOGOBRAND.png">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="TerraConnect Technologies">
+    <meta name="twitter:image" content="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/TERRACONNECT_LOGOBRAND.png">
+
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -17,12 +28,13 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-    
     <style>
         /* --- PAGE LOADER SPLASH SCREEN --- */
-    #page-loader {position: fixed;top: 0;left: 0;width: 100vw;height: 100vh;background-color: var(--bg-dark); 
+    #page-loader {position: fixed;top: 0;left: 0;width: 100vw;height: 100vh;background-color: var(--bg-dark); /* Uses your active theme's background */
         z-index: 99999;display: flex;flex-direction: column;justify-content: center;align-items: center;transition: opacity 0.8s ease-out, visibility 0.8s ease-out;}
-    .loader-visual {width: 100vw; height: 100vh; object-fit: cover;}
+    .loader-visual {width: 100vw; /* Modificado para tela cheia */
+        height: 100vh; object-fit: cover;
+    }
         
     /* DEFINIÇÃO DE TODOS OS TEMAS COM BASE NAS PALETAS DAS IMAGENS */
     :root {--bg-dark: #070b14; --sidebar-bg: #0d1117; --accent: #d1b38b; --text-light: #f4e9d8; --gray-panel: #1e1e1e; --border: #2d3139;}
@@ -54,10 +66,13 @@
 
     /* --- SIDEBAR LAYOUT --- */
     .sidebar { width: 320px; background-color: var(--sidebar-bg); border-right: 1px solid var(--border); padding: 25px; display: flex; flex-direction: column; justify-content: space-between; z-index: 10; transition: background-color 0.5s, border-color 0.5s;
-    overflow: auto;          
-    scrollbar-width: none;     
-    -ms-overflow-style: none;  
+    /* --- NOVA CONFIGURAÇÃO PARA OCULTAR A BARRA DE ROLAGEM --- */
+    overflow: auto;          /* Permite a rolagem interna se os elementos passarem da tela */
+    scrollbar-width: none;     /* Oculta a barra no Firefox */
+    -ms-overflow-style: none;  /* Oculta a barra no IE e Edge */
 }
+
+/* Oculta a barra de rolagem no Chrome, Safari e Opera */
     .sidebar::-webkit-scrollbar { display: none; }
 
     .btn-back { text-decoration: none; color: var(--accent); border: 1px solid var(--accent); padding: 8px 15px; border-radius: 5px; font-size: 0.8rem; transition: 0.3s; display: inline-block; margin-bottom: 30px; text-align: center; }
@@ -82,6 +97,7 @@
     .camera-stream { width: 100%; height: 100%; object-fit: cover; z-index: 1; }
     .cam-status-bar { position: absolute; bottom: 0; width: 100%; padding: 10px 20px; background: rgba(0,0,0,0.6); display: flex; justify-content: space-between; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;z-index: 3;}
 
+    /* Ajuste no estilo do nome do animal na sidebar */
     .dyn-name {font-family: 'Cinzel', serif; letter-spacing: 2px; font-size: 2.5rem; letter-spacing: 2px;margin: 15px 0 0 0; color: var(--accent);}
     /* --- MAIN CONTENT LAYOUT --- */
     .main-content { flex: 1; padding: 40px; overflow-y: auto; background: transparent !important; transition: 0.5s; }
@@ -90,6 +106,7 @@
     .main-header p { color: var(--text-muted); margin: 5px 0 0; }
     .management-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-bottom: 30px; }
 
+        /* NOVO LAYOUT PARA O CONTROL CENTER (MASONRY) */
     .masonry-grid {column-width: 260px;column-gap: 12px;width: 100%;margin-bottom: 30px;}
     .masonry-grid > .input-card {break-inside: avoid;page-break-inside: avoid;-webkit-column-break-inside: avoid;margin-bottom: 12px;display: flex; width: 100%;box-sizing: border-box;}
     
@@ -126,6 +143,8 @@
     .chart-card { height: 320px; }
     .chart-card h3 { margin: 0 0 15px 0; font-size: 0.9rem; color: var(--accent); text-transform: uppercase; }
 
+
+        /* Estilo do Modal de Gráfico Fullscreen */
     .chart-modal {display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(7, 11, 20, 0.95); backdrop-filter: blur(15px); z-index: 9999; flex-direction: column; align-items: center; justify-content: center;}
     .chart-modal-header { width: 90%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
     .chart-modal-header h2 { color: var(--accent); margin: 0; }
@@ -155,6 +174,7 @@
     <video autoplay muted loop playsinline id="bgVideo" class="background-video">
     <source src="" type="video/mp4">
 </video>
+
 
     
     <aside class="sidebar">
@@ -196,14 +216,11 @@
             <div id="qr-section" style="text-align: center; padding-bottom: 20px;">
                 <h4 style="font-size: 0.9em; color: var(--text-light); margin-bottom: 10px;">Ambient Configuration Sync</h4>
                 <div id="qrcode" style="display: flex; justify-content: center;"></div>
-                <p style="font-size: 0.7em; color: var(--text-muted); margin-top: 10px;">Scan the QR code for device configuration with this environment.</p>
-                <!-- Aviso de Segurança adicionado -->
-                <p style="font-size: 0.6em; color: #ff5f5f; margin-top: 5px;"><i class="fas fa-shield-alt"></i> Local network credentials are generated in-memory and protected.</p>
+                <p style="font-size: 0.7em; color: var(--text-muted); margin-top: 10px;">Scan the QR code for device configuration with this environment</p>
             </div>
         </div>
     </aside>
 
-    
     <main class="main-content">
         <header class="main-header">
             <h1 id="dynAmbient" class="a70-font">LOADING...</h1>
@@ -419,6 +436,7 @@
         </div>
 
         <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-bottom: 15px;">Control Center</h3>
+        <!-- TROCAMOS PARA masonry-grid AQUI -->
         <div class="masonry-grid">
             <div class="input-card" style="gap: 8px;">
                 <div class="input-header"><i class="fas fa-utensils"></i> Add Feeding (g)</div>
@@ -497,7 +515,7 @@
 
             <div class="cam-status-bar">
                 <span id="camStatusText" style="color: #ff5f5f;">Status: Offline</span>
-                <span style="color: var(--text-muted);">Enc: Local_Stream</span>
+                <span style="color: var(--text-muted);">Enc: Internal_Main_01</span>
             </div>
         </div>
 
@@ -555,6 +573,7 @@
             </div>
         </div>
 
+
         
         <div id="vet-section">
             <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin: 30px 0 15px 0;"><i class="fas fa-notes-medical"></i> Vet Visit & GPS Tracker </h3>
@@ -602,6 +621,18 @@
 </div>
 
 <script>
+    // --- MECANISMO DE SEGURANÇA: FAILSAFE DO LOADER ---
+    // Garante que o loading saia da tela no máximo após 5 segundos, evitando o loop infinito
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            const loader = document.getElementById('page-loader');
+            if (loader && loader.style.opacity !== '0') {
+                loader.style.opacity = '0';
+                setTimeout(() => loader.style.visibility = 'hidden', 800);
+            }
+        }, 5000); 
+    });
+
     const urlParams = new URLSearchParams(window.location.search);
     const currentPageId = urlParams.get('id');
 
@@ -623,19 +654,16 @@
 const loggedUser = checkSecurity();
 
     
-    // URLs do Backend Seguras (Substituímos todos os CSVs públicos por JSON autenticado)
+    // URLs do Backend: CSVs Removidos para sempre
     const SIGNUP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzFT1YQSMLpJ2zLJQ-bD1JOUzaUJJsRcmCBkpseXd87iGvJXm5Ig7p1gYJf-PmHVwQ/exec';
     const FLAGS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyZaoQyRiQDaTP9IkbOK89A2l9DtH6tOtwL6TFn38x5N_gYiiQc2Os-NZ1dvEsZMZKF/exec"; 
     
-    // Page ID - Usado para pegar o ambiente principal
     const PAGEID_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw3LbOYDqljAxQ8joYW8yDhwe6lsi7AdFCAoi4HG1iRdglS0k9-fI1Oj2eA12ePc6g/exec";
     const THEME_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzPCMbwa8NXy253hSbR4ewodPAiN_20qUlwvcFl8Uexo9SOZRUp5vxDPFlksh8NyNnD/exec";
     
-    // Novas URLs substituídas (Requerem alteração no backend do Apps Script)
     const BIODATA_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxnOcWSHRutBkHc_45tSLOFjowJXMeplk333TmaddrvfWgETljbZZ6shOuwYTIG4AkD/exec";
     const ENVIRONMENT_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzG2YVem9qG7sEK20lVuRm2Bhjo10dfXRF98mibREbUZnM5obTrb0QrQDJIGi0wFoE/exec";
     const VETDATA_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxxnlxSflhGHaX8IMcQj9y7H99bu4G9V-UM9f-E-SLdV2eLcUrBpQWvwh7o6GHLUXca/exec";
-
     const AI_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxign7YvIXmCiAggKU9XKlveWHQ_hQzYL65MEP3yEFe1lj1ewPjHuNzbbi_S8JMTPE/exec";
    
     let feedingChart, weightChart, sheddingChart, lengthChart, heightChart;
@@ -643,7 +671,7 @@ const loggedUser = checkSecurity();
     let currentUUID = ""; 
     let mainChannelId = "", mainReadKey = "";
     let r1ChannelId = "", r1ReadKey = "";
-    let gpsChannelId = "", gpsReadKey = "";
+    let gpsChannelId = "", gpsReadKey = ""; // NEW: Variáveis para o GPS
     let myChart; 
     let vetMap = null;
     let homeLat = 0;
@@ -692,6 +720,7 @@ const loggedUser = checkSecurity();
                     let element = document.getElementById(flag.element);
                     if (!element) return;
 
+                    // Se o ID referenciado for um input, queremos ocultar o cartão inteiro (pai)
                     if (element.tagName === 'INPUT') {
                         const parentCard = element.closest('.input-card');
                         if (parentCard) element = parentCard;
@@ -700,13 +729,15 @@ const loggedUser = checkSecurity();
                     const minPlan = parseInt(flag.minPlan) || 1;
                     const allowedAnimals = flag.allowedAnimals;
 
+                    // Verifica as condições cruzadas da planilha
                     const planOk = userPlan >= minPlan;
                     const animalOk = allowedAnimals.includes('ALL') || allowedAnimals.includes(animalType);
 
+                    // Aplica o display baseado na avaliação
                     if (!planOk || !animalOk) {
                         element.style.display = 'none';
                     } else {
-                        element.style.display = ''; 
+                        element.style.display = ''; // Reseta para o CSS padrão
                     }
                 });
                 console.log("Regras de Feature Flags aplicadas com sucesso.");
@@ -738,12 +769,9 @@ async function loadData() {
                 document.getElementById('dynBirth').innerText = `${ageString}${formattedDate}`;
             } else {document.getElementById('dynBirth').innerText = "---"; }
             
-            // --- VALIDADOR SISPASS/SISFAUNA ---
+            // --- DISCLAIMER LEGAL SISPASS/SISFAUNA ---
             const regValue = data[7] && data[7].trim() !== "" ? data[7] : "---";
-            let regHtml = regValue;
-            // Presume-se que o usuário digita os dados. Como não verificamos o governo:
-            regHtml += ` <i class="fas fa-exclamation-triangle" style="color: #ff5f5f; font-size: 0.85em; margin-left: 5px; cursor: help;" title="Unverified SISPASS/SISFAUNA / Not Legally Authenticated by TerraConnect"></i>`;
-            document.getElementById('dynReg').innerHTML = regHtml;
+            document.getElementById('dynReg').innerHTML = `${regValue} <i class="fas fa-exclamation-triangle" style="color: #ff5f5f; font-size: 0.85em; margin-left: 5px; cursor: help;" title="Unverified SISPASS/SISFAUNA / Not Legally Authenticated by TerraConnect"></i>`;
 
             const lat = data[8];
             const lon = data[9];
@@ -758,13 +786,16 @@ async function loadData() {
             } else {locElement.innerText = "---";}
             document.getElementById('dynAmbient').innerText = (data[2] || "Ambient").toUpperCase();
             
+            // --- CAPTURA E APLICAÇÃO DINÂMICA DA ESPÉCIE E REGRAS DA PLANILHA ---
             const animalTypeRaw = data[22] || "DEFAULT";
             document.getElementById('dynAnimal').innerText = animalTypeRaw.toUpperCase();
             
-            document.getElementById('dynStatus').innerText = "Validando credenciais do plano..."; 
+            // NOVO: Busca o plano REAL validado com a data no momento em que a página carrega
+            document.getElementById('dynStatus').innerText = "Validando credenciais do plano..."; // Opcional: Feedback pro usuário
             const liveUserPlan = await getLiveUserPlan(loggedUser.id);
-            document.getElementById('dynStatus').innerText = "On-time Environmental Monitoring";
+            document.getElementById('dynStatus').innerText = "On-time Environmental Monitoring"; // Restaura o texto
             
+            // Aplica as regras cruzando Espécie VS Plano Validado
             await applyVisibilityRules(animalTypeRaw, liveUserPlan);
 
             const videoElement = document.getElementById('bgVideo');
@@ -788,8 +819,8 @@ async function loadData() {
             mainReadKey = data[12];
             r1ChannelId = data[13];
             r1ReadKey = data[15];
-            gpsChannelId = data[25]; 
-            gpsReadKey = data[27];   
+            gpsChannelId = data[25]; // Mapeado do JSON Backend
+            gpsReadKey = data[27];   // Mapeado do JSON Backend
             document.getElementById('dynChannel').innerText = mainChannelId || "---";
 
             const photoURL = data[19];
@@ -800,7 +831,6 @@ async function loadData() {
 
             let camSource = data[17];
             if (camSource) {
-                // Apenas exibe no src, nunca no texto da tela.
                 let finalUrl = camSource.includes('://') ? camSource : `http://${camSource}/stream`;
                 document.getElementById('cameraStream').src = finalUrl;
             } else {
@@ -809,15 +839,20 @@ async function loadData() {
 
             generateConfigQR(data);
             updateSensors();
-            loadBiologicalHistory(currentPageId);
-            loadVetVisits(currentPageId);
+            
+            // Disparamos o carregamento dos extras
+            await loadBiologicalHistory(currentPageId);
+            await loadVetVisits(currentPageId);
+            await loadExistingConfig();
+            
             setInterval(updateSensors, 20000);
             
-            if (typeof loadExistingConfig === "function") loadExistingConfig();
-            
+            // --- FADE OUT LOADER DE SUCESSO ---
             setTimeout(() => {
                 const loader = document.getElementById('page-loader');
-                if (loader) {loader.style.opacity = '0';loader.style.visibility = 'hidden';}}, 800);
+                if (loader) {loader.style.opacity = '0';loader.style.visibility = 'hidden';}
+            }, 800);
+            
         } else {
             document.getElementById('dynAmbient').innerText = "ACESSO NEGADO";
             alert("Aviso de Segurança: " + jsonResponse.message);
@@ -826,6 +861,7 @@ async function loadData() {
     } catch (e) { 
         console.error("Database connection error:", e); 
         document.getElementById('dynAmbient').innerText = "ERRO DE CONEXÃO";
+        // Loader falha silenciosamente caso ocorra timeout (definido lá no topo)
     }
 }
 
@@ -913,23 +949,23 @@ function updateFieldUI(id, val) {
     }
 }
 
-    async function loadExistingConfig() {
-        if (!currentPageId) return;
-        try {
-            const response = await fetch(`${ENVIRONMENT_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(currentPageId)}`);
-            const jsonResponse = await response.json();
-            
-            if (jsonResponse.status === "success") {
-                const config = jsonResponse.data;
-                document.getElementById('cfgTempMax').value = config[1];
-                document.getElementById('cfgTempMin').value = config[2];
-                document.getElementById('cfgHumMax').value = config[3];
-                document.getElementById('cfgHumMin').value = config[4];
-                document.getElementById('cfgFeedInterval').value = config[5];
-                document.getElementById('cfgFeedAmount').value = config[6];
-            }
-        } catch (e) { console.error("Error loading JSON setup:", e); }
-    }
+async function loadExistingConfig() {
+    if (!currentPageId) return;
+    try {
+        const response = await fetch(`${ENVIRONMENT_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(currentPageId)}`);
+        const jsonResponse = await response.json();
+        
+        if (jsonResponse.status === "success" && jsonResponse.data) {
+            const config = jsonResponse.data;
+            document.getElementById('cfgTempMax').value = config[1] || "";
+            document.getElementById('cfgTempMin').value = config[2] || "";
+            document.getElementById('cfgHumMax').value = config[3] || "";
+            document.getElementById('cfgHumMin').value = config[4] || "";
+            document.getElementById('cfgFeedInterval').value = config[5] || "";
+            document.getElementById('cfgFeedAmount').value = config[6] || "";
+        }
+    } catch (e) { console.error("Error loading JSON setup:", e); }
+}
 
 async function sendDeviceConfig() {
     const params = new URLSearchParams({
@@ -952,7 +988,7 @@ async function sendDeviceConfig() {
 }
 
     
-    function generateConfigQR(data) {
+function generateConfigQR(data) {
     const qrContainer = document.getElementById("qrcode");
     if (!qrContainer) return; 
     
@@ -961,7 +997,6 @@ async function sendDeviceConfig() {
     const accentColor = getComputedStyle(document.documentElement)
                         .getPropertyValue('--accent').trim() || "#2c3e50"; 
 
-    // Oculta e protege a senha dentro do payload local, mas NUNCA a exibe
     const configPayload = {
         pgid: data[1] || "",
         ssid: data[20] || "",
@@ -980,104 +1015,103 @@ async function sendDeviceConfig() {
     });
 }
 
+function formatDateDisplay(dateStr) {
+    if (!dateStr || dateStr === "---") return "--- / --- / ----";
+    const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+    const d = new Date(dateStr);
+    if (isNaN(d)) return dateStr;
+    return `${String(d.getDate()).padStart(2, '0')} / ${months[d.getMonth()]} / ${d.getFullYear()}`;
+}
 
-    function formatDateDisplay(dateStr) {
-        if (!dateStr || dateStr === "---") return "--- / --- / ----";
-        const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-        const d = new Date(dateStr);
-        if (isNaN(d)) return dateStr;
-        return `${String(d.getDate()).padStart(2, '0')} / ${months[d.getMonth()]} / ${d.getFullYear()}`;
-    }
 
-
-    // --- HISTÓRICO BIOLÓGICO E GRÁFICOS (MIGRADOS PARA JSON) ---
-    async function loadBiologicalHistory(id) {
-        try {
-            const res = await fetch(`${BIODATA_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(id)}`);
-            const jsonResponse = await res.json();
-            const events = jsonResponse.data || [];
-            
-            const lastFeeding = events.filter(e => e[2] === "Feeding").pop();
-            const lastWeight = events.filter(e => e[2] === "Weighting").pop();
-            const lastLength = events.filter(e => e[2] === "Length").pop();
-            const lastHeight = events.filter(e => e[2] === "Height").pop();
-            const lastShed = events.filter(e => e[2] === "Shedding").sort((a, b) => new Date(a[1]) - new Date(b[1])); 
+// --- HISTÓRICO BIOLÓGICO E GRÁFICOS ---
+async function loadBiologicalHistory(id) {
+    try {
+        const res = await fetch(`${BIODATA_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(id)}`);
+        const jsonResponse = await res.json();
+        const events = jsonResponse.data || [];
         
-            const feedingEvents = events.filter(e => e[2] === "Feeding");
-            const uniqueFoodTypes = [...new Set(feedingEvents.map(e => e[4]).filter(val => val && val.trim() !== ""))];
-            const uniqueBrands = [...new Set(feedingEvents.map(e => e[5]).filter(val => val && val.trim() !== ""))];
-            
-            const foodListEl = document.getElementById('foodTypeList');
-            const brandListEl = document.getElementById('brandList');
-            if (foodListEl) foodListEl.innerHTML = uniqueFoodTypes.map(ft => `<option value="${ft}">`).join('');
-            if (brandListEl) brandListEl.innerHTML = uniqueBrands.map(b => `<option value="${b}">`).join('');
-
-            const sheddingProcessed = lastShed.map((event, index) => {
-                if (index === 0) {
-                    return { date: event[1], interval: 0 }; 
-                }
-                const prevDate = new Date(lastShed[index - 1][1]);
-                const currDate = new Date(event[1]);
+        const lastFeeding = events.filter(e => e[2] === "Feeding").pop();
+        const lastWeight = events.filter(e => e[2] === "Weighting").pop();
+        const lastLength = events.filter(e => e[2] === "Length").pop();
+        const lastHeight = events.filter(e => e[2] === "Height").pop();
+        const lastShed = events.filter(e => e[2] === "Shedding").sort((a, b) => new Date(a[1]) - new Date(b[1])); 
     
-                const diffTime = Math.abs(currDate - prevDate);
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-    
-                return { date: event[1], interval: diffDays };
-            });
-            
-            const lastShedResult = sheddingProcessed[sheddingProcessed.length - 1];
-            
-            const elShedInterval = document.getElementById('sumSheddingInterval');
-            const elShedDate = document.getElementById('sumSheddingDate');
-            if (lastShedResult && elShedInterval && elShedDate) {
-                elShedInterval.innerHTML = `${lastShedResult.interval}<span> Days</span>`; 
-                elShedDate.innerText = `Last: ${formatDateDisplay(lastShedResult.date)}`;
-            }
-
-            const elFeedingVal = document.getElementById('sumFeedingVal');
-            const elFeedingDate = document.getElementById('sumFeedingDate');
-            if(lastFeeding && elFeedingVal && elFeedingDate) {
-                elFeedingVal.innerHTML = `${lastFeeding[3]}<span> g</span>`;
-                elFeedingDate.innerText = formatDateDisplay(lastFeeding[1]);
-            }
-            
-            const elWeightVal = document.getElementById('sumWeightVal');
-            const elWeightDate = document.getElementById('sumWeightDate');
-            if(lastWeight && elWeightVal && elWeightDate) {
-                elWeightVal.innerHTML = `${lastWeight[3]}<span> g</span>`;
-                elWeightDate.innerText = formatDateDisplay(lastWeight[1]);
-            }
-            
-            const elLengthVal = document.getElementById('sumLengthVal');
-            const elLengthDate = document.getElementById('sumLengthDate');
-            if(lastLength && elLengthVal && elLengthDate) {
-                elLengthVal.innerHTML = `${lastLength[3]}<span> cm</span>`;
-                elLengthDate.innerText = formatDateDisplay(lastLength[1]);
-            }
-            
-            const elHeightVal = document.getElementById('sumHeightVal');
-            const elHeightDate = document.getElementById('sumHeightDate');
-            if(lastHeight && elHeightVal && elHeightDate) {
-                elHeightVal.innerHTML = `${lastHeight[3]}<span> cm</span>`;
-                elHeightDate.innerText = formatDateDisplay(lastHeight[1]);
-            }
+        const feedingEvents = events.filter(e => e[2] === "Feeding");
+        const uniqueFoodTypes = [...new Set(feedingEvents.map(e => e[4]).filter(val => val && String(val).trim() !== ""))];
+        const uniqueBrands = [...new Set(feedingEvents.map(e => e[5]).filter(val => val && String(val).trim() !== ""))];
         
-            const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+        const foodListEl = document.getElementById('foodTypeList');
+        const brandListEl = document.getElementById('brandList');
+        if (foodListEl) foodListEl.innerHTML = uniqueFoodTypes.map(ft => `<option value="${ft}">`).join('');
+        if (brandListEl) brandListEl.innerHTML = uniqueBrands.map(b => `<option value="${b}">`).join('');
 
-            renderFeeding(events, accentColor);
-            renderWeight(events, accentColor);
-            renderShedding(sheddingProcessed, '#a3b18a'); 
-            renderLength(events, accentColor);
-            renderHeigth(events, accentColor);
-        } catch (e) { console.error("Bio-Summary Error:", e); }
-    }
+        const sheddingProcessed = lastShed.map((event, index) => {
+            if (index === 0) {
+                return { date: event[1], interval: 0 }; 
+            }
+            const prevDate = new Date(lastShed[index - 1][1]);
+            const currDate = new Date(event[1]);
 
-    function getGradient(ctx, color) {
-        const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-        gradient.addColorStop(0, color + '33'); 
-        gradient.addColorStop(1, color + '00'); 
-        return gradient;
-    }
+            const diffTime = Math.abs(currDate - prevDate);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+
+            return { date: event[1], interval: diffDays };
+        });
+        
+        const lastShedResult = sheddingProcessed[sheddingProcessed.length - 1];
+        
+        const elShedInterval = document.getElementById('sumSheddingInterval');
+        const elShedDate = document.getElementById('sumSheddingDate');
+        if (lastShedResult && elShedInterval && elShedDate) {
+            elShedInterval.innerHTML = `${lastShedResult.interval}<span> Days</span>`; 
+            elShedDate.innerText = `Last: ${formatDateDisplay(lastShedResult.date)}`;
+        }
+
+        const elFeedingVal = document.getElementById('sumFeedingVal');
+        const elFeedingDate = document.getElementById('sumFeedingDate');
+        if(lastFeeding && elFeedingVal && elFeedingDate) {
+            elFeedingVal.innerHTML = `${lastFeeding[3]}<span> g</span>`;
+            elFeedingDate.innerText = formatDateDisplay(lastFeeding[1]);
+        }
+        
+        const elWeightVal = document.getElementById('sumWeightVal');
+        const elWeightDate = document.getElementById('sumWeightDate');
+        if(lastWeight && elWeightVal && elWeightDate) {
+            elWeightVal.innerHTML = `${lastWeight[3]}<span> g</span>`;
+            elWeightDate.innerText = formatDateDisplay(lastWeight[1]);
+        }
+        
+        const elLengthVal = document.getElementById('sumLengthVal');
+        const elLengthDate = document.getElementById('sumLengthDate');
+        if(lastLength && elLengthVal && elLengthDate) {
+            elLengthVal.innerHTML = `${lastLength[3]}<span> cm</span>`;
+            elLengthDate.innerText = formatDateDisplay(lastLength[1]);
+        }
+        
+        const elHeightVal = document.getElementById('sumHeightVal');
+        const elHeightDate = document.getElementById('sumHeightDate');
+        if(lastHeight && elHeightVal && elHeightDate) {
+            elHeightVal.innerHTML = `${lastHeight[3]}<span> cm</span>`;
+            elHeightDate.innerText = formatDateDisplay(lastHeight[1]);
+        }
+    
+        const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+
+        renderFeeding(events, accentColor);
+        renderWeight(events, accentColor);
+        renderShedding(sheddingProcessed, '#a3b18a'); 
+        renderLength(events, accentColor);
+        renderHeigth(events, accentColor);
+    } catch (e) { console.error("Bio-Summary Error:", e); }
+}
+
+function getGradient(ctx, color) {
+    const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+    gradient.addColorStop(0, color + '33'); 
+    gradient.addColorStop(1, color + '00'); 
+    return gradient;
+}
 
 function generateForecast(dataArray, numPredictions = 2) {
     if (dataArray.length < 3) return { values: [], type: 'Insufficient Data' };
@@ -1144,8 +1178,8 @@ function renderFeeding(events, color) {
     const config = buildForecastChartConfig('Feeding (g)', data, color, ctx);
     
     const combos = data.map(e => {
-        const ft = (e[4] && e[4].trim() !== "") ? e[4].trim() : 'N/A';
-        const br = (e[5] && e[5].trim() !== "") ? e[5].trim() : 'N/A';
+        const ft = (e[4] && String(e[4]).trim() !== "") ? String(e[4]).trim() : 'N/A';
+        const br = (e[5] && String(e[5]).trim() !== "") ? String(e[5]).trim() : 'N/A';
         return `${ft} | ${br}`;
     });
     
@@ -1268,7 +1302,7 @@ function buildForecastChartConfig(labelString, dataArray, color, ctx) {
     };
 }
 
-    function commonOptions() {
+function commonOptions() {
     return {
         responsive: true,
         maintainAspectRatio: false,
@@ -1332,67 +1366,66 @@ function buildForecastChartConfig(labelString, dataArray, color, ctx) {
     }
 };
 
-    async function sendToCloud(type, elementId) {
-        const inputElement = document.getElementById(elementId);
-        const inputValue = inputElement.value;
-        if (!inputValue) return;
+async function sendToCloud(type, elementId) {
+    const inputElement = document.getElementById(elementId);
+    const inputValue = inputElement.value;
+    if (!inputValue) return;
 
-        const today = new Date();
-        const dateStr = (today.getMonth() + 1) + "/" + today.getDate() + "/" + today.getFullYear();
-        
-        let finalUrl = `${BIODATA_SCRIPT_URL}?pageId=${encodeURIComponent(currentPageId)}&date=${encodeURIComponent(dateStr)}&registerType=${encodeURIComponent(type)}&value=${encodeURIComponent(inputValue)}`;
-
-        if (type === 'Feeding') {
-            const inFoodType = document.getElementById('inFoodType');
-            const inBrand = document.getElementById('inBrand');
-            const ftVal = inFoodType ? inFoodType.value : "";
-            const brVal = inBrand ? inBrand.value : "";
-            finalUrl += `&foodType=${encodeURIComponent(ftVal)}&brand=${encodeURIComponent(brVal)}`;
-        }
-
-        try {
-            await fetch(finalUrl, { method: 'GET', mode: 'no-cors' });
-            alert(`Success: ${type} registered!`);
-            inputElement.value = "";
-            
-            if (type === 'Feeding') {
-                if (document.getElementById('inFoodType')) document.getElementById('inFoodType').value = "";
-                if (document.getElementById('inBrand')) document.getElementById('inBrand').value = "";
-            }
-
-            if (typeof loadBiologicalHistory === "function") {
-                setTimeout(() => loadBiologicalHistory(currentPageId), 1000);
-            }
-        } catch (e) {
-            alert("Technical error sending to Database.");
-        }
-    }
-
-    loadData();
-
-    const editButton = document.getElementById('editLink');
+    const today = new Date();
+    const dateStr = (today.getMonth() + 1) + "/" + today.getDate() + "/" + today.getFullYear();
     
-    if (currentPageId && editButton) {
-        editButton.href = `register_ambient.html?pageID=${currentPageId}`;
-        editButton.style.display = 'inline-flex'; 
-        console.log("Botão de edição ativado para o ID:", currentPageId);
-    } else if (editButton) {
-        editButton.style.display = 'none'; 
+    let finalUrl = `${BIODATA_SCRIPT_URL}?pageId=${encodeURIComponent(currentPageId)}&date=${encodeURIComponent(dateStr)}&registerType=${encodeURIComponent(type)}&value=${encodeURIComponent(inputValue)}`;
+
+    if (type === 'Feeding') {
+        const inFoodType = document.getElementById('inFoodType');
+        const inBrand = document.getElementById('inBrand');
+        const ftVal = inFoodType ? inFoodType.value : "";
+        const brVal = inBrand ? inBrand.value : "";
+        finalUrl += `&foodType=${encodeURIComponent(ftVal)}&brand=${encodeURIComponent(brVal)}`;
     }
 
+    try {
+        await fetch(finalUrl, { method: 'GET', mode: 'no-cors' });
+        alert(`Success: ${type} registered!`);
+        inputElement.value = "";
+        
+        if (type === 'Feeding') {
+            if (document.getElementById('inFoodType')) document.getElementById('inFoodType').value = "";
+            if (document.getElementById('inBrand')) document.getElementById('inBrand').value = "";
+        }
 
-    function showCamOverlay() {
-        document.getElementById('cameraOverlay').style.opacity = "1";
-        document.getElementById('camStatusText').innerText = "Status: Signal Lost";
-        document.getElementById('camStatusText').style.color = "#ff5f5f";
+        if (typeof loadBiologicalHistory === "function") {
+            setTimeout(() => loadBiologicalHistory(currentPageId), 1000);
+        }
+    } catch (e) {
+        alert("Technical error sending to Data Center.");
     }
+}
 
-    function hideCamOverlay() {
-        document.getElementById('cameraOverlay').style.opacity = "0";
-        document.getElementById('camStatusText').innerText = "Status: Online | Secure Link";
-        document.getElementById('camStatusText').style.color = "#a3b18a";
-    }
+loadData();
 
+const editButton = document.getElementById('editLink');
+
+if (currentPageId && editButton) {
+    editButton.href = `register_ambient.html?pageID=${currentPageId}`;
+    editButton.style.display = 'inline-flex'; 
+} else if (editButton) {
+    editButton.style.display = 'none'; 
+}
+
+function showCamOverlay() {
+    document.getElementById('cameraOverlay').style.opacity = "1";
+    document.getElementById('camStatusText').innerText = "Status: Signal Lost";
+    document.getElementById('camStatusText').style.color = "#ff5f5f";
+}
+
+function hideCamOverlay() {
+    document.getElementById('cameraOverlay').style.opacity = "0";
+    document.getElementById('camStatusText').innerText = "Status: Online | Secure Link";
+    document.getElementById('camStatusText').style.color = "#a3b18a";
+}
+
+// FUNÇÃO PARA BUSCAR GPS NO THINGSPEAK
 async function fetchLatestGPS() {
     if (!gpsChannelId || !gpsReadKey) return null;
     try {
@@ -1457,8 +1490,8 @@ async function loadVetVisits(id) {
                 `;
 
                 const loc = v[14];
-                if (loc && loc.trim() !== "" && !vetLocations.includes(loc.trim())) {
-                    vetLocations.push(loc.trim());
+                if (loc && String(loc).trim() !== "" && !vetLocations.includes(String(loc).trim())) {
+                    vetLocations.push(String(loc).trim());
                 }
             });
         } else {
@@ -1562,8 +1595,6 @@ async function updateVetMap(vetLocationsArray, gpsData = null) {
     }
 }
     
-    
-
 async function openChart(fieldId, label) {
     let targetID = (fieldId >= 6) ? r1ChannelId : mainChannelId;
     let targetKey = (fieldId >= 6) ? r1ReadKey : mainReadKey;
@@ -1638,36 +1669,32 @@ async function openChart(fieldId, label) {
     } catch (e) { console.error("Chart error:", e); }
 }
     
-    function closeChart() {
+function closeChart() {
     const modal = document.getElementById('chartModal');
-    
     modal.style.display = 'none';
-
     if (myChart) {
         myChart.destroy();
         myChart = null; 
     }
-    
-    console.log("Sistema de telemetria em standby.");
 }
     
-    document.addEventListener('DOMContentLoaded', () => {
-        applyUserTheme();
-        loadData();
+document.addEventListener('DOMContentLoaded', () => {
+    applyUserTheme();
+    loadData();
 
-        const editButton = document.getElementById('editLink');
-        if (currentPageId && editButton) {
-            editButton.href = `register_ambient.html?pageID=${currentPageId}`;
-            editButton.style.display = 'inline-flex';
-        }
-        const addVetButton = document.getElementById('addVetLink');
-        if (currentPageId && addVetButton) {
-            addVetButton.href = `vet_registry.html?pageID=${currentPageId}`;
-            addVetButton.style.display = 'inline-flex';
-        }
-    });
+    const editButton = document.getElementById('editLink');
+    if (currentPageId && editButton) {
+        editButton.href = `register_ambient.html?pageID=${currentPageId}`;
+        editButton.style.display = 'inline-flex';
+    }
+    const addVetButton = document.getElementById('addVetLink');
+    if (currentPageId && addVetButton) {
+        addVetButton.href = `vet_registry.html?pageID=${currentPageId}`;
+        addVetButton.style.display = 'inline-flex';
+    }
+});
 
-    async function generateAIInsight() {
+async function generateAIInsight() {
     const btn = document.getElementById('btnAi');
     const textBox = document.getElementById('aiInsightText');
     
@@ -1679,7 +1706,6 @@ async function openChart(fieldId, label) {
         const animalType = document.getElementById('dynAnimal').innerText;
         const scientificName = document.getElementById('dynScientific').innerText; 
         const sex = document.getElementById('dynSex').innerText;
-        const birthDate = document.getElementById('dynBirth').innerText;
         const currentLocation = document.getElementById('dynLoc').innerText; 
         const currTemp = document.getElementById('valField1').innerText;
         const currHum = document.getElementById('valField2').innerText;
@@ -1697,43 +1723,43 @@ async function openChart(fieldId, label) {
         const vetJson = await resVet.json();
         const vetHistory = (vetJson.data || []).map(r => `Data: ${r[1]} | Tipo de exame: ${r[3]} | Resultados: ${r[6] || 'Nenhum'} | Observações: ${r[7] || 'Nenhuma'}`).join('\n');
         
-                let tsHistory = "No telemetry data available.";
-                if (mainChannelId && mainReadKey) {
-                    try {
-                        const tsUrl = `https://api.thingspeak.com/channels/${mainChannelId}/feeds.json?api_key=${mainReadKey}&results=100`;
-                        const tsRes = await fetch(tsUrl);
-                        const tsJson = await tsRes.json();
-                        
-                        if (tsJson.feeds && tsJson.feeds.length > 0) {
-                            tsHistory = tsJson.feeds.map(f => {
-                                const date = new Date(f.created_at).toLocaleString('en-US');
-                                return `[${date}] Air Temperature of Main sensor: ${f.field1 || '--'}°C | Air Humidity of Main sensor: ${f.field2 || '--'}% | CO2: ${f.field3 || '--'}ppm | Ground Humidity of Main sensor: ${f.field4 || '--'}% | Light intensity of Main sensor: ${f.field7 || '--'}lx`;
-                            }).join('\n');
-                        }
-                    } catch(e) {
-                        console.warn("Failed to fetch ThingSpeak history for AI", e);
-                        tsHistory = "Error retrieving telemetry.";
-                    }
-                }
+        let tsHistory = "No telemetry data available.";
+        if (mainChannelId && mainReadKey) {
+            try {
+                const tsUrl = `https://api.thingspeak.com/channels/${mainChannelId}/feeds.json?api_key=${mainReadKey}&results=100`;
+                const tsRes = await fetch(tsUrl);
+                const tsJson = await tsRes.json();
                 
-                let rsHistory = "No telemetry data available for Remote Sensor.";
-                if (r1ChannelId && r1ReadKey) {
-                    try {
-                        const rsUrl = `https://api.thingspeak.com/channels/${r1ChannelId}/feeds.json?api_key=${r1ReadKey}&results=100`;
-                        const rsRes = await fetch(rsUrl);
-                        const rsJson = await rsRes.json();
-                        
-                        if (rsJson.feeds && rsJson.feeds.length > 0) {
-                            rsHistory = rsJson.feeds.map(f => {
-                                const date = new Date(f.created_at).toLocaleString('en-US');
-                                return `[${date}] Air Temperature of Remote sensor: ${f.field1 || '--'}°C | Air Humidity of Remote sensor: ${f.field2 || '--'}% | Ground Humidity of remote sensor: ${f.field3 || '--'}%`;
-                            }).join('\n');
-                        }
-                    } catch(e) {
-                        console.warn("Failed to fetch Remote ThingSpeak history for AI", e);
-                        rsHistory = "Error retrieving remote telemetry.";
-                    }
+                if (tsJson.feeds && tsJson.feeds.length > 0) {
+                    tsHistory = tsJson.feeds.map(f => {
+                        const date = new Date(f.created_at).toLocaleString('en-US');
+                        return `[${date}] Air Temperature of Main sensor: ${f.field1 || '--'}°C | Air Humidity of Main sensor: ${f.field2 || '--'}% | CO2: ${f.field3 || '--'}ppm | Ground Humidity of Main sensor: ${f.field4 || '--'}% | Light intensity of Main sensor: ${f.field7 || '--'}lx`;
+                    }).join('\n');
                 }
+            } catch(e) {
+                console.warn("Failed to fetch ThingSpeak history for AI", e);
+                tsHistory = "Error retrieving telemetry.";
+            }
+        }
+        
+        let rsHistory = "No telemetry data available for Remote Sensor.";
+        if (r1ChannelId && r1ReadKey) {
+            try {
+                const rsUrl = `https://api.thingspeak.com/channels/${r1ChannelId}/feeds.json?api_key=${r1ReadKey}&results=100`;
+                const rsRes = await fetch(rsUrl);
+                const rsJson = await rsRes.json();
+                
+                if (rsJson.feeds && rsJson.feeds.length > 0) {
+                    rsHistory = rsJson.feeds.map(f => {
+                        const date = new Date(f.created_at).toLocaleString('en-US');
+                        return `[${date}] Air Temperature of Remote sensor: ${f.field1 || '--'}°C | Air Humidity of Remote sensor: ${f.field2 || '--'}% | Ground Humidity of remote sensor: ${f.field3 || '--'}%`;
+                    }).join('\n');
+                }
+            } catch(e) {
+                console.warn("Failed to fetch Remote ThingSpeak history for AI", e);
+                rsHistory = "Error retrieving remote telemetry.";
+            }
+        }
 
         const superPrompt = `
 [STRICT SYSTEM INSTRUCTION: YOUR ENTIRE RESPONSE MUST BE EXCLUSIVELY IN ENGLISH. Do not output any word in Portuguese or any other language. If the provided context data is in another language, you must translate the insights internally and provide the final output ONLY in English.]
