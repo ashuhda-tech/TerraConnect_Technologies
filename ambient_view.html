@@ -8,17 +8,6 @@
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/TERRACONNECT_LOGO.png">
     <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/TERRACONNECT_LOGO.png">
 
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="TerraConnect Technologies">
-    <meta property="og:description" content="Environmental Animal IOT Monitoring Center">
-    <meta property="og:url" content="https://ashuhda-tech.github.io/TerraConnect_Technologies/">
-
-    <meta property="og:image" content="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/TERRACONNECT_LOGOBRAND.png">
-
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="TerraConnect Technologies">
-    <meta name="twitter:image" content="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/TERRACONNECT_LOGOBRAND.png">
-
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -31,11 +20,9 @@
     
     <style>
         /* --- PAGE LOADER SPLASH SCREEN --- */
-    #page-loader {position: fixed;top: 0;left: 0;width: 100vw;height: 100vh;background-color: var(--bg-dark); /* Uses your active theme's background */
+    #page-loader {position: fixed;top: 0;left: 0;width: 100vw;height: 100vh;background-color: var(--bg-dark); 
         z-index: 99999;display: flex;flex-direction: column;justify-content: center;align-items: center;transition: opacity 0.8s ease-out, visibility 0.8s ease-out;}
-    .loader-visual {width: 100vw; /* Modificado para tela cheia */
-        height: 100vh; object-fit: cover;
-    }
+    .loader-visual {width: 100vw; height: 100vh; object-fit: cover;}
         
     /* DEFINIÇÃO DE TODOS OS TEMAS COM BASE NAS PALETAS DAS IMAGENS */
     :root {--bg-dark: #070b14; --sidebar-bg: #0d1117; --accent: #d1b38b; --text-light: #f4e9d8; --gray-panel: #1e1e1e; --border: #2d3139;}
@@ -67,13 +54,10 @@
 
     /* --- SIDEBAR LAYOUT --- */
     .sidebar { width: 320px; background-color: var(--sidebar-bg); border-right: 1px solid var(--border); padding: 25px; display: flex; flex-direction: column; justify-content: space-between; z-index: 10; transition: background-color 0.5s, border-color 0.5s;
-    /* --- NOVA CONFIGURAÇÃO PARA OCULTAR A BARRA DE ROLAGEM --- */
-    overflow: auto;          /* Permite a rolagem interna se os elementos passarem da tela */
-    scrollbar-width: none;     /* Oculta a barra no Firefox */
-    -ms-overflow-style: none;  /* Oculta a barra no IE e Edge */
+    overflow: auto;          
+    scrollbar-width: none;     
+    -ms-overflow-style: none;  
 }
-
-/* Oculta a barra de rolagem no Chrome, Safari e Opera */
     .sidebar::-webkit-scrollbar { display: none; }
 
     .btn-back { text-decoration: none; color: var(--accent); border: 1px solid var(--accent); padding: 8px 15px; border-radius: 5px; font-size: 0.8rem; transition: 0.3s; display: inline-block; margin-bottom: 30px; text-align: center; }
@@ -98,7 +82,6 @@
     .camera-stream { width: 100%; height: 100%; object-fit: cover; z-index: 1; }
     .cam-status-bar { position: absolute; bottom: 0; width: 100%; padding: 10px 20px; background: rgba(0,0,0,0.6); display: flex; justify-content: space-between; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;z-index: 3;}
 
-    /* Ajuste no estilo do nome do animal na sidebar */
     .dyn-name {font-family: 'Cinzel', serif; letter-spacing: 2px; font-size: 2.5rem; letter-spacing: 2px;margin: 15px 0 0 0; color: var(--accent);}
     /* --- MAIN CONTENT LAYOUT --- */
     .main-content { flex: 1; padding: 40px; overflow-y: auto; background: transparent !important; transition: 0.5s; }
@@ -107,7 +90,6 @@
     .main-header p { color: var(--text-muted); margin: 5px 0 0; }
     .management-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-bottom: 30px; }
 
-        /* NOVO LAYOUT PARA O CONTROL CENTER (MASONRY) */
     .masonry-grid {column-width: 260px;column-gap: 12px;width: 100%;margin-bottom: 30px;}
     .masonry-grid > .input-card {break-inside: avoid;page-break-inside: avoid;-webkit-column-break-inside: avoid;margin-bottom: 12px;display: flex; width: 100%;box-sizing: border-box;}
     
@@ -144,8 +126,6 @@
     .chart-card { height: 320px; }
     .chart-card h3 { margin: 0 0 15px 0; font-size: 0.9rem; color: var(--accent); text-transform: uppercase; }
 
-
-        /* Estilo do Modal de Gráfico Fullscreen */
     .chart-modal {display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(7, 11, 20, 0.95); backdrop-filter: blur(15px); z-index: 9999; flex-direction: column; align-items: center; justify-content: center;}
     .chart-modal-header { width: 90%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
     .chart-modal-header h2 { color: var(--accent); margin: 0; }
@@ -164,10 +144,6 @@
     }
 </style>
 
-
-
-
-    
 </head>
 <body>
     <div id="page-loader">
@@ -179,7 +155,6 @@
     <video autoplay muted loop playsinline id="bgVideo" class="background-video">
     <source src="" type="video/mp4">
 </video>
-
 
     
     <aside class="sidebar">
@@ -221,16 +196,12 @@
             <div id="qr-section" style="text-align: center; padding-bottom: 20px;">
                 <h4 style="font-size: 0.9em; color: var(--text-light); margin-bottom: 10px;">Ambient Configuration Sync</h4>
                 <div id="qrcode" style="display: flex; justify-content: center;"></div>
-                <p style="font-size: 0.7em; color: var(--text-muted); margin-top: 10px;">Scan the QR code for device configuration with this environment</p>
+                <p style="font-size: 0.7em; color: var(--text-muted); margin-top: 10px;">Scan the QR code for device configuration with this environment.</p>
+                <!-- Aviso de Segurança adicionado -->
+                <p style="font-size: 0.6em; color: #ff5f5f; margin-top: 5px;"><i class="fas fa-shield-alt"></i> Local network credentials are generated in-memory and protected.</p>
             </div>
         </div>
     </aside>
-
-
-
-
-
-
 
     
     <main class="main-content">
@@ -448,7 +419,6 @@
         </div>
 
         <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-bottom: 15px;">Control Center</h3>
-        <!-- TROCAMOS PARA masonry-grid AQUI -->
         <div class="masonry-grid">
             <div class="input-card" style="gap: 8px;">
                 <div class="input-header"><i class="fas fa-utensils"></i> Add Feeding (g)</div>
@@ -527,7 +497,7 @@
 
             <div class="cam-status-bar">
                 <span id="camStatusText" style="color: #ff5f5f;">Status: Offline</span>
-                <span style="color: var(--text-muted);">Enc: Internal_Main_01</span>
+                <span style="color: var(--text-muted);">Enc: Local_Stream</span>
             </div>
         </div>
 
@@ -584,7 +554,6 @@
                 </div>
             </div>
         </div>
-
 
         
         <div id="vet-section">
@@ -654,27 +623,17 @@
 const loggedUser = checkSecurity();
 
     
-    // URLs do Backend
-
-    const SIGNUP_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTLog7uhFw___9q5ossjzRuKZq6VkC3HqgsD52RAd1y5FigIwCqmEyFeLc-_qgS1RAwtlcIhr_zK-nn/pub?gid=0&single=true&output=csv';
+    // URLs do Backend Seguras (Substituímos todos os CSVs públicos por JSON autenticado)
     const SIGNUP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzFT1YQSMLpJ2zLJQ-bD1JOUzaUJJsRcmCBkpseXd87iGvJXm5Ig7p1gYJf-PmHVwQ/exec';
-
-    const FLAGS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTtzrewlPNn5k-Jsmc-tKMkEgBIkMiyKAoH5ysSWI9iCral0cwWkQCUkpK7VzQIVWD4NAYHh7hI0b7n/pub?gid=0&single=true&output=csv';
     const FLAGS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyZaoQyRiQDaTP9IkbOK89A2l9DtH6tOtwL6TFn38x5N_gYiiQc2Os-NZ1dvEsZMZKF/exec"; 
     
-    const PAGEID_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTeBz5FwvcmPue3hJ6TKwmrNZeMrz2_Su7co-mPuzKj1ZJv--5BBvPjlszF3yyEHOVuEeGT9mmwZqOp/pub?gid=0&single=true&output=csv';
+    // Page ID - Usado para pegar o ambiente principal
     const PAGEID_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw3LbOYDqljAxQ8joYW8yDhwe6lsi7AdFCAoi4HG1iRdglS0k9-fI1Oj2eA12ePc6g/exec";
-
-    const THEME_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQxrbVDyA-y5qOfbXcmpyCppyTDtGxOAYzGj_QR6uA27gVY3KWeT3Ka6IYvKDUM3QiU6iK0aNq3O6wr/pub?gid=0&single=true&output=csv';
     const THEME_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzPCMbwa8NXy253hSbR4ewodPAiN_20qUlwvcFl8Uexo9SOZRUp5vxDPFlksh8NyNnD/exec";
     
-    const BIODATA_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS0Ra5VUE1xSCkCJCXaAObs1wBlUlrhH1YnnQ6e91S4fLT4sh_Nt7ECxaW15EMgS4_yjVcEs0OQECta/pub?gid=0&single=true&output=csv';
+    // Novas URLs substituídas (Requerem alteração no backend do Apps Script)
     const BIODATA_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxnOcWSHRutBkHc_45tSLOFjowJXMeplk333TmaddrvfWgETljbZZ6shOuwYTIG4AkD/exec";
-    
-    const ENVIRONMENT_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRbjH7deMzP_-oUSROzLYUxU3o2UvBar6ODVwLKpLQ6xaacQKON5xlzV3KA2Tswsc0WfSGQu7LVKBvs/pub?gid=0&single=true&output=csv';
     const ENVIRONMENT_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzG2YVem9qG7sEK20lVuRm2Bhjo10dfXRF98mibREbUZnM5obTrb0QrQDJIGi0wFoE/exec";
-
-    const VETDATA_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQQ4vxhQzvVzYHZBJ8-Jc1VCnPBi9RcgqS7BYruNUgbbwBMcVVO1GOj3wq6PY3fbebz1BqqCDlv_AWR/pub?gid=0&single=true&output=csv'; 
     const VETDATA_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxxnlxSflhGHaX8IMcQj9y7H99bu4G9V-UM9f-E-SLdV2eLcUrBpQWvwh7o6GHLUXca/exec";
 
     const AI_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxign7YvIXmCiAggKU9XKlveWHQ_hQzYL65MEP3yEFe1lj1ewPjHuNzbbi_S8JMTPE/exec";
@@ -684,7 +643,7 @@ const loggedUser = checkSecurity();
     let currentUUID = ""; 
     let mainChannelId = "", mainReadKey = "";
     let r1ChannelId = "", r1ReadKey = "";
-    let gpsChannelId = "", gpsReadKey = ""; // NEW: Variáveis para o GPS
+    let gpsChannelId = "", gpsReadKey = "";
     let myChart; 
     let vetMap = null;
     let homeLat = 0;
@@ -733,7 +692,6 @@ const loggedUser = checkSecurity();
                     let element = document.getElementById(flag.element);
                     if (!element) return;
 
-                    // Se o ID referenciado for um input, queremos ocultar o cartão inteiro (pai)
                     if (element.tagName === 'INPUT') {
                         const parentCard = element.closest('.input-card');
                         if (parentCard) element = parentCard;
@@ -742,15 +700,13 @@ const loggedUser = checkSecurity();
                     const minPlan = parseInt(flag.minPlan) || 1;
                     const allowedAnimals = flag.allowedAnimals;
 
-                    // Verifica as condições cruzadas da planilha
                     const planOk = userPlan >= minPlan;
                     const animalOk = allowedAnimals.includes('ALL') || allowedAnimals.includes(animalType);
 
-                    // Aplica o display baseado na avaliação
                     if (!planOk || !animalOk) {
                         element.style.display = 'none';
                     } else {
-                        element.style.display = ''; // Reseta para o CSS padrão
+                        element.style.display = ''; 
                     }
                 });
                 console.log("Regras de Feature Flags aplicadas com sucesso.");
@@ -782,7 +738,13 @@ async function loadData() {
                 document.getElementById('dynBirth').innerText = `${ageString}${formattedDate}`;
             } else {document.getElementById('dynBirth').innerText = "---"; }
             
-            document.getElementById('dynReg').innerText = data[7] || "---";
+            // --- VALIDADOR SISPASS/SISFAUNA ---
+            const regValue = data[7] && data[7].trim() !== "" ? data[7] : "---";
+            let regHtml = regValue;
+            // Presume-se que o usuário digita os dados. Como não verificamos o governo:
+            regHtml += ` <i class="fas fa-exclamation-triangle" style="color: #ff5f5f; font-size: 0.85em; margin-left: 5px; cursor: help;" title="Unverified SISPASS/SISFAUNA / Not Legally Authenticated by TerraConnect"></i>`;
+            document.getElementById('dynReg').innerHTML = regHtml;
+
             const lat = data[8];
             const lon = data[9];
             homeLat = parseFloat(lat);
@@ -796,16 +758,13 @@ async function loadData() {
             } else {locElement.innerText = "---";}
             document.getElementById('dynAmbient').innerText = (data[2] || "Ambient").toUpperCase();
             
-            // --- CAPTURA E APLICAÇÃO DINÂMICA DA ESPÉCIE E REGRAS DA PLANILHA ---
             const animalTypeRaw = data[22] || "DEFAULT";
             document.getElementById('dynAnimal').innerText = animalTypeRaw.toUpperCase();
             
-            // NOVO: Busca o plano REAL validado com a data no momento em que a página carrega
-            document.getElementById('dynStatus').innerText = "Validando credenciais do plano..."; // Opcional: Feedback pro usuário
+            document.getElementById('dynStatus').innerText = "Validando credenciais do plano..."; 
             const liveUserPlan = await getLiveUserPlan(loggedUser.id);
-            document.getElementById('dynStatus').innerText = "On-time Environmental Monitoring"; // Restaura o texto
+            document.getElementById('dynStatus').innerText = "On-time Environmental Monitoring";
             
-            // Aplica as regras cruzando Espécie VS Plano Validado
             await applyVisibilityRules(animalTypeRaw, liveUserPlan);
 
             const videoElement = document.getElementById('bgVideo');
@@ -829,8 +788,8 @@ async function loadData() {
             mainReadKey = data[12];
             r1ChannelId = data[13];
             r1ReadKey = data[15];
-            gpsChannelId = data[25]; // Mapeado do JSON Backend
-            gpsReadKey = data[27];   // Mapeado do JSON Backend
+            gpsChannelId = data[25]; 
+            gpsReadKey = data[27];   
             document.getElementById('dynChannel').innerText = mainChannelId || "---";
 
             const photoURL = data[19];
@@ -841,6 +800,7 @@ async function loadData() {
 
             let camSource = data[17];
             if (camSource) {
+                // Apenas exibe no src, nunca no texto da tela.
                 let finalUrl = camSource.includes('://') ? camSource : `http://${camSource}/stream`;
                 document.getElementById('cameraStream').src = finalUrl;
             } else {
@@ -854,8 +814,7 @@ async function loadData() {
             setInterval(updateSensors, 20000);
             
             if (typeof loadExistingConfig === "function") loadExistingConfig();
-            // --- NEW: FADE OUT LOADER ---
-            // We use a slight timeout (800ms) to ensure Chart.js has finished drawing the canvases smoothly
+            
             setTimeout(() => {
                 const loader = document.getElementById('page-loader');
                 if (loader) {loader.style.opacity = '0';loader.style.visibility = 'hidden';}}, 800);
@@ -957,22 +916,19 @@ function updateFieldUI(id, val) {
     async function loadExistingConfig() {
         if (!currentPageId) return;
         try {
-            console.log("Fetching current limits for ID:", currentPageId);
-            const response = await fetch(`${ENVIRONMENT_CSV_URL}&t=${new Date().getTime()}`);
-            const csvText = await response.text();
-            const rows = parseCSV(csvText);
+            const response = await fetch(`${ENVIRONMENT_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(currentPageId)}`);
+            const jsonResponse = await response.json();
             
-            const config = rows.find(r => r[0] && r[0].trim() === currentPageId);
-            if (config) {
+            if (jsonResponse.status === "success") {
+                const config = jsonResponse.data;
                 document.getElementById('cfgTempMax').value = config[1];
                 document.getElementById('cfgTempMin').value = config[2];
                 document.getElementById('cfgHumMax').value = config[3];
                 document.getElementById('cfgHumMin').value = config[4];
                 document.getElementById('cfgFeedInterval').value = config[5];
                 document.getElementById('cfgFeedAmount').value = config[6];
-                console.log("Config limits loaded successfully.");
             }
-        } catch (e) { console.error("Error loading setup CSV:", e); }
+        } catch (e) { console.error("Error loading JSON setup:", e); }
     }
 
 async function sendDeviceConfig() {
@@ -1005,6 +961,7 @@ async function sendDeviceConfig() {
     const accentColor = getComputedStyle(document.documentElement)
                         .getPropertyValue('--accent').trim() || "#2c3e50"; 
 
+    // Oculta e protege a senha dentro do payload local, mas NUNCA a exibe
     const configPayload = {
         pgid: data[1] || "",
         ssid: data[20] || "",
@@ -1023,41 +980,6 @@ async function sendDeviceConfig() {
     });
 }
 
-    function parseCSV(str) {
-        const arr = [];
-        let quote = false;
-        let col = 0, row = 0;
-
-        for (let c = 0; c < str.length; c++) {
-            let cc = str[c], nc = str[c+1];
-            arr[row] = arr[row] || [];
-            arr[row][col] = arr[row][col] || '';
-
-            if (cc === '"' && quote && nc === '"') {
-                arr[row][col] += cc; 
-                ++c; 
-                continue;
-            }
-            if (cc === '"') {
-                quote = !quote; 
-                continue;
-            }
-            if (cc === ',' && !quote) {
-                ++col; 
-                continue;
-            }
-            if (cc === '\r' && nc === '\n' && !quote) {
-                ++row; col = 0; ++c; continue;
-            }
-            if ((cc === '\n' || cc === '\r') && !quote) {
-                ++row; col = 0; continue;
-            }
-            
-            arr[row][col] += cc;
-        }
-        
-        return arr.map(row => row.map(cell => cell.trim()));
-    }
 
     function formatDateDisplay(dateStr) {
         if (!dateStr || dateStr === "---") return "--- / --- / ----";
@@ -1068,13 +990,12 @@ async function sendDeviceConfig() {
     }
 
 
-    // --- HISTÓRICO BIOLÓGICO E GRÁFICOS ---
+    // --- HISTÓRICO BIOLÓGICO E GRÁFICOS (MIGRADOS PARA JSON) ---
     async function loadBiologicalHistory(id) {
         try {
-            const res = await fetch(BIODATA_CSV_URL);
-            const text = await res.text();
-            const rows = parseCSV(text);
-            const events = rows.filter(r => r[0] && r[0].toLowerCase() === id.toLowerCase());
+            const res = await fetch(`${BIODATA_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(id)}`);
+            const jsonResponse = await res.json();
+            const events = jsonResponse.data || [];
             
             const lastFeeding = events.filter(e => e[2] === "Feeding").pop();
             const lastWeight = events.filter(e => e[2] === "Weighting").pop();
@@ -1443,7 +1364,7 @@ function buildForecastChartConfig(labelString, dataArray, color, ctx) {
                 setTimeout(() => loadBiologicalHistory(currentPageId), 1000);
             }
         } catch (e) {
-            alert("Technical error sending to Excel.");
+            alert("Technical error sending to Database.");
         }
     }
 
@@ -1472,7 +1393,6 @@ function buildForecastChartConfig(labelString, dataArray, color, ctx) {
         document.getElementById('camStatusText').style.color = "#a3b18a";
     }
 
-// FUNÇÃO PARA BUSCAR GPS NO THINGSPEAK
 async function fetchLatestGPS() {
     if (!gpsChannelId || !gpsReadKey) return null;
     try {
@@ -1499,11 +1419,10 @@ async function fetchLatestGPS() {
 
 async function loadVetVisits(id) {
     try {
-        const res = await fetch(VETDATA_CSV_URL);
-        const text = await res.text();
-        const rows = parseCSV(text);
+        const res = await fetch(`${VETDATA_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(id)}`);
+        const jsonResponse = await res.json();
+        const visits = jsonResponse.data || [];
         
-        const visits = rows.filter(r => r[0] && r[0].toLowerCase() === id.toLowerCase());
         const tbody = document.getElementById('vetTableBody');
         tbody.innerHTML = '';
 
@@ -1765,17 +1684,18 @@ async function openChart(fieldId, label) {
         const currTemp = document.getElementById('valField1').innerText;
         const currHum = document.getElementById('valField2').innerText;
 
-        const resBio = await fetch(BIODATA_CSV_URL);
-        const bioRows = parseCSV(await resBio.text()).filter(r => r[0].toLowerCase() === currentPageId.toLowerCase());
-        const bioHistory = bioRows.map(r => `Data: ${r[1]} | Evento: ${r[2]} | Valor: ${r[3]}`).join('\n');
+        const resBio = await fetch(`${BIODATA_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(currentPageId)}`);
+        const bioJson = await resBio.json();
+        const bioHistory = (bioJson.data || []).map(r => `Data: ${r[1]} | Evento: ${r[2]} | Valor: ${r[3]}`).join('\n');
 
-        const resEnv = await fetch(ENVIRONMENT_CSV_URL);
-        const envRow = parseCSV(await resEnv.text()).find(r => r[0].toLowerCase() === currentPageId.toLowerCase());
+        const resEnv = await fetch(`${ENVIRONMENT_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(currentPageId)}`);
+        const envJson = await resEnv.json();
+        const envRow = envJson.data;
         const envConfig = envRow ? `Temp Alvo: Min ${envRow[2]}°C / Max ${envRow[1]}°C | Umidade Alvo: Min ${envRow[4]}% / Max ${envRow[3]}%` : "Não configurado.";
 
-        const resVet = await fetch(VETDATA_CSV_URL);
-        const vetRows = parseCSV(await resVet.text()).filter(r => r[0].toLowerCase() === currentPageId.toLowerCase());
-        const vetHistory = vetRows.map(r => `Data: ${r[1]} | Tipo de exame: ${r[3]} | Resultados: ${r[6] || 'Nenhum'} | Observações: ${r[7] || 'Nenhuma'}`).join('\n');
+        const resVet = await fetch(`${VETDATA_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(currentPageId)}`);
+        const vetJson = await resVet.json();
+        const vetHistory = (vetJson.data || []).map(r => `Data: ${r[1]} | Tipo de exame: ${r[3]} | Resultados: ${r[6] || 'Nenhum'} | Observações: ${r[7] || 'Nenhuma'}`).join('\n');
         
                 let tsHistory = "No telemetry data available.";
                 if (mainChannelId && mainReadKey) {
@@ -1977,7 +1897,6 @@ Reference the environmental data with the biological and veterinary data. Is the
     
     let audioCtx;
 
-    // Initializes the Web Audio API context safely upon user interaction
     function initAudio() {
         if (!audioCtx) {
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -1987,7 +1906,6 @@ Reference the environmental data with the biological and veterinary data. Is the
         }
     }
 
-    // Generates a sharp "click" sound simulating a professional clicker
     function playClickSound(timeOffset) {
         initAudio();
         const osc = audioCtx.createOscillator();
@@ -1996,11 +1914,9 @@ Reference the environmental data with the biological and veterinary data. Is the
         osc.connect(gainNode);
         gainNode.connect(audioCtx.destination);
 
-        // A sharp square wave resembles a mechanical click
         osc.type = 'square';
         osc.frequency.setValueAtTime(600, audioCtx.currentTime + timeOffset);
 
-        // Amplitude envelope to make it extremely brief and percussive
         gainNode.gain.setValueAtTime(0, audioCtx.currentTime + timeOffset);
         gainNode.gain.linearRampToValueAtTime(0.5, audioCtx.currentTime + timeOffset + 0.01);
         gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + timeOffset + 0.08);
@@ -2009,7 +1925,6 @@ Reference the environmental data with the biological and veterinary data. Is the
         osc.stop(audioCtx.currentTime + timeOffset + 0.1);
     }
 
-    // Fires the speech synthesis after a specific delay
     function speakCommand(word, delayMs, pitch = 1.0) {
         setTimeout(() => {
             window.speechSynthesis.cancel();
@@ -2021,7 +1936,6 @@ Reference the environmental data with the biological and veterinary data. Is the
         }, delayMs);
     }
 
-    // Command Logic Engine for Dogs
     function playDogCommand(cmd) {
         initAudio();
         window.speechSynthesis.cancel();
@@ -2034,21 +1948,18 @@ Reference the environmental data with the biological and veterinary data. Is the
             speakCommand("Down", 300);
         } else if (cmd === 'follow') {
             playClickSound(0);
-            playClickSound(0.2); // Second click 200ms later
+            playClickSound(0.2); 
             speakCommand("Come", 500);
         } else if (cmd === 'cross') {
-            // Rapid continuous clicks imitating an accessibility traffic light
             for (let i = 0; i < 6; i++) {
-                playClickSound(i * 0.15); // 150ms gap between each click
+                playClickSound(i * 0.15); 
             }
-            speakCommand("Cross", 1000); // Wait for sequence to finish before speaking
+            speakCommand("Cross", 1000); 
         }
     }
 
-    // Command Logic Engine for Birds
     function playBirdCommand(cmd) {
         window.speechSynthesis.cancel();
-        // Give birds a slightly higher pitch (1.2) to simulate an avian-friendly tone
         speakCommand(cmd, 0, 1.2); 
     }
 </script>
