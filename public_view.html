@@ -28,7 +28,7 @@
         z-index: 99999;display: flex;flex-direction: column;justify-content: center;align-items: center;transition: opacity 0.8s ease-out, visibility 0.8s ease-out;}
     .loader-visual {width: 100vw; height: 100vh; object-fit: cover;}
 
-    /* DEFINIÇÃO DE TODOS OS TEMAS COM BASE NAS PALETAS DAS IMAGENS */
+    /* DEFINIÇÃO DE TODOS OS TEMAS */
     :root {--bg-dark: #070b14; --sidebar-bg: #0d1117; --accent: #d1b38b; --text-light: #f4e9d8; --gray-panel: #1e1e1e; --border: #2d3139;}
     /* TECH SAVVY & FUTURISTIC */
     [data-theme="tech1"] {--bg-dark: #0B1021; --sidebar-bg: #334155; --accent: #87CEFA; --text-light: #CFFAFE; --gray-panel: #E2E8F0; --border: #334155;}
@@ -54,19 +54,12 @@
     /* --- APP VERSION FLAG --- */
     .app-version-flag {position: fixed;bottom: 10px;left: 10px;background: rgba(0, 0, 0, 0.6);color: rgba(255, 255, 255, 0.3);padding: 4px 8px;border-radius: 4px;font-size: 0.55rem;font-family: 'Inter', monospace;z-index: 99999;pointer-events: none;border: 1px solid rgba(255, 255, 255, 0.1);backdrop-filter: blur(2px);transition: opacity 0.5s;}
 
-    /* Estilo para o Vídeo de Fundo */
     .background-video { position: fixed; right: 0; bottom: 0; min-width: 100%; min-height: 100%; z-index: -1; object-fit: cover; filter: brightness(0.4); }
     .a70-font { font-family: 'Cinzel', serif; letter-spacing: 2px; }
     .animal-photo { flex-shrink: 0; width: 55%; max-width: 180px; aspect-ratio: 1 / 1; height: auto; object-fit: cover; border-radius: 10px; background: rgba(0,0,0,0.3); border: 2px solid var(--border); margin: 0 auto; }
 
     /* --- SIDEBAR LAYOUT --- */
-    .sidebar { width: 320px; background-color: var(--sidebar-bg); border-right: 1px solid var(--border); padding: 25px; display: flex; flex-direction: column; justify-content: space-between; z-index: 10; transition: background-color 0.5s, border-color 0.5s;
-    overflow: auto;          /* Permite a rolagem interna se os elementos passarem da tela */
-    scrollbar-width: none;     /* Oculta a barra no Firefox */
-    -ms-overflow-style: none;  /* Oculta a barra no IE e Edge */
-}
-
-/* Oculta a barra de rolagem no Chrome, Safari e Opera */
+    .sidebar { width: 320px; background-color: var(--sidebar-bg); border-right: 1px solid var(--border); padding: 25px; display: flex; flex-direction: column; justify-content: space-between; z-index: 10; transition: background-color 0.5s, border-color 0.5s; overflow: auto; scrollbar-width: none; -ms-overflow-style: none;}
     .sidebar::-webkit-scrollbar { display: none; }
 
     .btn-back { text-decoration: none; color: var(--accent); border: 1px solid var(--accent); padding: 8px 15px; border-radius: 5px; font-size: 0.8rem; transition: 0.3s; display: inline-block; margin-bottom: 30px; text-align: center; }
@@ -81,14 +74,10 @@
 
     /* CAMERA MONITORING CARD */
     .camera-card { background: #000; border: 1px solid var(--border); border-radius: 15px; margin-top: 20px; position: relative; overflow: hidden; aspect-ratio: 16 / 9; display: flex; align-items: center; justify-content: center; }
-    
     .camera-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(7, 11, 20, 0.85); z-index: 2; transition: opacity 0.5s; overflow: hidden;}
-
     .signal-lost-gif { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.3; z-index: -1; }
     .camera-stream { width: 100%; height: 100%; object-fit: cover; z-index: 1; }
-    
     .cam-status-bar { position: absolute; bottom: 0; width: 100%; padding: 10px 20px; background: rgba(0,0,0,0.6); display: flex; justify-content: space-between; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;z-index: 3;}
-
     .dyn-name {font-family: 'Cinzel', serif; letter-spacing: 2px; font-size: 2.5rem; letter-spacing: 2px;margin: 15px 0 0 0; color: var(--accent);}
     
     /* --- MAIN CONTENT LAYOUT --- */
@@ -99,7 +88,6 @@
     .main-header p { color: var(--text-muted); margin: 5px 0 0; }
 
     .sensor-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 25px; }
-
     .summary-section { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin-bottom: 30px; }
     
     .summary-title { color: var(--accent); font-size: 0.7rem; text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
@@ -107,16 +95,11 @@
     .summary-sub-val { font-size: 0.85rem; color: var(--text-muted); }
     .summary-sub-val b { color: var(--accent); font-weight: 400; }
     
-    /* CARDS TRANSPARENTES COM BLUR */
     .sensor-card, .summary-card, .chart-card {background: rgba(30, 30, 30, 0.7) !important; backdrop-filter: blur(10px);border: 1px solid var(--border);border-radius: 15px;padding: 20px;transition: 0.3s;}
-
     .sensor-card { display: flex; align-items: center; gap: 12px; }
     .sensor-card:hover { border-color: var(--accent); }
-
-    .sensor-card-rs {background: rgba(70, 70, 70, 0.7) !important; backdrop-filter: blur(10px);border: 1px solid var(--border);border-radius: 15px;padding: 20px;transition: 0.3s;}
-    .sensor-card-rs { display: flex; align-items: center; gap: 12px; }
+    .sensor-card-rs {background: rgba(70, 70, 70, 0.7) !important; backdrop-filter: blur(10px);border: 1px solid var(--border);border-radius: 15px;padding: 20px;transition: 0.3s; display: flex; align-items: center; gap: 12px;}
     .sensor-card-rs:hover { border-color: var(--accent); background: rgba(70, 70, 70, 0.9) !important;}
-        
     .summary-card { display: flex; flex-direction: column; justify-content: center; border-bottom: 3px solid var(--accent); }
 
     .sensor-icon { font-size: 1.5rem; width: 35px; text-align: center; }
@@ -129,7 +112,7 @@
     .chart-card { height: 320px; }
     .chart-card h3 { margin: 0 0 15px 0; font-size: 0.9rem; color: var(--accent); text-transform: uppercase; }
 
-        /* Estilo do Modal de Gráfico Fullscreen */
+    /* Estilo do Modal de Gráfico Fullscreen */
     .chart-modal {display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(7, 11, 20, 0.95); backdrop-filter: blur(15px); z-index: 9999; flex-direction: column; align-items: center; justify-content: center;}
     .chart-modal-header { width: 90%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
     .chart-modal-header h2 { color: var(--accent); margin: 0; }
@@ -162,7 +145,7 @@
         <div class="sidebar-top">
             <div class="bio-section">
                 <img id="dynPhoto" src="" alt="Animal Photo" class="animal-photo">
-                <h2 id="dynName" class="dyn-name" style="margin: 15px 0 0 0; color: var(--accent);">---</h2>
+                <h2 id="dynName" class="dyn-name">---</h2>
             </div>
 
             <div class="bio-info-list">
@@ -197,26 +180,29 @@
             <p id="dynStatus">On-time Environmental Monitoring</p>
         </header>
 
-        <h3 class="a70-font" style="font-size: 0.9rem; color: #a3b18a; margin: 30px 0 15px 0; display: flex; align-items: center; justify-content: space-between; width: 100%;">
-            <span><i class="fas fa-brain"></i> AI Insights</span>
-            <button id="btnListenAI" onclick="toggleSpeakAI()" style="background: transparent; border: 1px solid #a3b18a; color: #a3b18a; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; display: none; align-items: center; gap: 6px; font-family: 'Inter', sans-serif;">
-                <i id="speakIcon" class="fas fa-volume-up"></i> Listen
-            </button>
-        </h3>
-        <div class="sensor-card" style="flex-direction: column; align-items: flex-start; background: rgba(10, 20, 15, 0.8) !important; border-left: 4px solid #a3b18a;">
-            <p id="aiInsightText" style="font-size: 0.85rem; line-height: 1.6; color: var(--text-light); margin: 0 0 15px 0; font-style: italic;">
-                Click to generate AI Insight.
-            </p>
-            <button class="btn-send" onclick="generateAIInsight()" id="btnAi" style="width: 100%; border-color: #a3b18a; color: #a3b18a;">
-                <i class="fas fa-magic"></i> ANALYZE CURRENT DATA
-            </button>
+        <!-- AI SECTION WRAPPER -->
+        <div id="aiSection">
+            <h3 class="a70-font" style="font-size: 0.9rem; color: #a3b18a; margin: 30px 0 15px 0; display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                <span><i class="fas fa-brain"></i> AI Insights</span>
+                <button id="btnListenAI" onclick="toggleSpeakAI()" style="background: transparent; border: 1px solid #a3b18a; color: #a3b18a; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; display: none; align-items: center; gap: 6px; font-family: 'Inter', sans-serif;">
+                    <i id="speakIcon" class="fas fa-volume-up"></i> Listen
+                </button>
+            </h3>
+            <div class="sensor-card" style="flex-direction: column; align-items: flex-start; background: rgba(10, 20, 15, 0.8) !important; border-left: 4px solid #a3b18a;">
+                <p id="aiInsightText" style="font-size: 0.85rem; line-height: 1.6; color: var(--text-light); margin: 0 0 15px 0; font-style: italic;">
+                    Click to generate AI Insight.
+                </p>
+                <button class="btn-send" onclick="generateAIInsight()" id="btnAi" style="width: 100%; border-color: #a3b18a; color: #a3b18a;">
+                    <i class="fas fa-magic"></i> ANALYZE CURRENT DATA
+                </button>
+            </div>
         </div>
         
         <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-top: 20px; margin-bottom: 15px;">
             <i class="fas fa-broadcast-tower"></i> Main Sensor Unit
         </h3>
         
-       <div class="sensor-grid">
+       <div class="sensor-grid" id="mainSensorsGrid">
             <div class="sensor-card" onclick="openChart(3, 'CO2 Concentration')" style="cursor: pointer;">
                 <i class="fas fa-cloud sensor-icon" style="color: #a3b18a;"></i>
                 <div class="sensor-data">
@@ -275,11 +261,11 @@
             </div>
         </div>
             
-        <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-top: 20px; margin-bottom: 15px;">
+        <h3 id="remoteSensorsTitle" class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-top: 20px; margin-bottom: 15px;">
             <i class="fas fa-broadcast-tower"></i> Remote Sensor Unit
         </h3>
 
-       <div class="sensor-grid">
+       <div class="sensor-grid" id="remoteSensorsGrid">
             <div class="sensor-card-rs" onclick="openChart(21, ' Remote Sensor | Air Temperature')" style="cursor: pointer;">
                 <i class="fas fa-thermometer-half sensor-icon" style="color: #ff5f5f;"></i>
                 <div class="sensor-data">
@@ -348,69 +334,75 @@
         </div>
 
         <div class="charts-section">
-            <div class="chart-card">
+            <div class="chart-card" id="cardFeedingChart">
                 <h3 class="a70-font">Feeding History (g)</h3>
                 <canvas id="feedingChart"></canvas>
             </div>
-            <div class="chart-card" data-hide-for="FISH">
+            <div class="chart-card" id="cardWeightChart" data-hide-for="FISH">
                 <h3 class="a70-font">Weight Evolution (g)</h3>
                 <canvas id="weightChart"></canvas>
             </div>
-            <div class="chart-card" data-show-for="SNAKE, LIZARD">
+            <div class="chart-card" id="cardSheddingChart" data-show-for="SNAKE, LIZARD">
                 <h3 class="a70-font">Shedding Intervals (Days)</h3>
                 <canvas id="sheddingChart"></canvas>
             </div>
-            <div class="chart-card" data-hide-for="FISH">
+            <div class="chart-card" id="cardLengthChart" data-hide-for="FISH">
                 <h3 class="a70-font">Length Measurement (cm)</h3>
                 <canvas id="lengthChart"></canvas>
             </div>
-            <div class="chart-card" data-hide-for="FISH,SNAKE">
+            <div class="chart-card" id="cardHeightChart" data-hide-for="FISH,SNAKE">
                 <h3 class="a70-font">Height Measurement (cm)</h3>
                 <canvas id="heightChart"></canvas>
             </div>
         </div>
 
-        <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin: 30px 0 15px 0;">Live Monitoring | Camera</h3>
-        <div class="camera-card">
-            <div id="cameraOverlay" class="camera-overlay">
-                <img src="https://i.pinimg.com/originals/17/ec/4d/17ec4d0b9d0f6aae55cca07095a10e48.gif" class="signal-lost-gif" alt="Signal Lost Animation">
-                
-                <i class="fas fa-wifi" style="font-size: 2rem; color: var(--accent); margin-bottom: 10px; opacity: 0.8;"></i>
-                <p class="a70-font" style="font-size: 0.8rem; color: var(--accent); text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">SIGNAL LOST - RECONNECTING...</p>
-            </div>
+        <!-- CAMERA SECTION WRAPPER -->
+        <div id="cameraSection">
+            <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin: 30px 0 15px 0;">Live Monitoring | Camera</h3>
+            <div class="camera-card" id="cardCamera">
+                <div id="cameraOverlay" class="camera-overlay">
+                    <img src="https://i.pinimg.com/originals/17/ec/4d/17ec4d0b9d0f6aae55cca07095a10e48.gif" class="signal-lost-gif" alt="Signal Lost Animation">
+                    
+                    <i class="fas fa-wifi" style="font-size: 2rem; color: var(--accent); margin-bottom: 10px; opacity: 0.8;"></i>
+                    <p class="a70-font" style="font-size: 0.8rem; color: var(--accent); text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">SIGNAL LOST - RECONNECTING...</p>
+                </div>
+        
+                <img id="cameraStream" class="camera-stream" src="" onload="hideCamOverlay()" onerror="showCamOverlay()">
     
-            <img id="cameraStream" class="camera-stream" src="" onload="hideCamOverlay()" onerror="showCamOverlay()">
-
-            <div class="cam-status-bar">
-                <span id="camStatusText" style="color: #ff5f5f;">Status: Offline</span>
-                <span style="color: var(--text-muted);">Enc: Internal_Main_01</span>
+                <div class="cam-status-bar">
+                    <span id="camStatusText" style="color: #ff5f5f;">Status: Offline</span>
+                    <span style="color: var(--text-muted);">Enc: Internal_Main_01</span>
+                </div>
             </div>
         </div>
 
-        <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin: 30px 0 15px 0;"><i class="fas fa-notes-medical"></i> Vet Visit </h3>
-    <div class="sensor-card" style="flex-direction: column; align-items: stretch; margin-bottom: 20px;">
-            <div id="vetMapContainer" style="width: 100%; height: 300px; border-radius: 10px; overflow: hidden; margin-bottom: 15px;">
+        <!-- VET SECTION WRAPPER -->
+        <div id="vetSection">
+            <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin: 30px 0 15px 0;"><i class="fas fa-notes-medical"></i> Vet Visit </h3>
+            <div class="sensor-card" id="cardVet" style="flex-direction: column; align-items: stretch; margin-bottom: 20px;">
+                <div id="vetMapContainer" style="width: 100%; height: 300px; border-radius: 10px; overflow: hidden; margin-bottom: 15px;">
+                </div>
+        
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; color: var(--text-light); font-size: 0.8rem;">
+                        <thead>
+                            <tr style="border-bottom: 1px solid var(--border); color: var(--accent);">
+                                <th style="padding: 10px; text-align: left;">Date</th>
+                                <th style="padding: 10px; text-align: left;">Type</th>
+                                <th style="padding: 10px; text-align: left;">Result</th>
+                                <th style="padding: 10px; text-align: left;">Observation</th>
+                                <th style="padding: 10px; text-align: left;">File Link</th>
+                                <th style="padding: 10px; text-align: left;">Doctor</th>
+                                <th style="padding: 10px; text-align: left;">Clinic</th>
+                                <th style="padding: 10px; text-align: left;">WEB</th>
+                            </tr>
+                        </thead>
+                        <tbody id="vetTableBody">
+                        </tbody>
+                    </table>
+                </div>
             </div>
-    
-        <div style="overflow-x: auto;">
-            <table style="width: 100%; border-collapse: collapse; color: var(--text-light); font-size: 0.8rem;">
-                <thead>
-                    <tr style="border-bottom: 1px solid var(--border); color: var(--accent);">
-                        <th style="padding: 10px; text-align: left;">Date</th>
-                        <th style="padding: 10px; text-align: left;">Type</th>
-                        <th style="padding: 10px; text-align: left;">Result</th>
-                        <th style="padding: 10px; text-align: left;">Observation</th>
-                        <th style="padding: 10px; text-align: left;">File Link</th>
-                        <th style="padding: 10px; text-align: left;">Doctor</th>
-                        <th style="padding: 10px; text-align: left;">Clinic</th>
-                        <th style="padding: 10px; text-align: left;">WEB</th>
-                    </tr>
-                </thead>
-                <tbody id="vetTableBody">
-                </tbody>
-            </table>
         </div>
-    </div>
     </main>
 
     <div id="chartModal" class="chart-modal">
@@ -429,12 +421,16 @@
     const urlParams = new URLSearchParams(window.location.search);
     const currentPageId = urlParams.get('id');
 
-    // URLs and API Endpoints (MANTENDO O ACESSO DIRETO VIA CSV PARA A PÁGINA PÚBLICA)
+    // URLs and API Endpoints
     const PAGEID_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTeBz5FwvcmPue3hJ6TKwmrNZeMrz2_Su7co-mPuzKj1ZJv--5BBvPjlszF3yyEHOVuEeGT9mmwZqOp/pub?gid=0&single=true&output=csv';
     const BIODATA_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS0Ra5VUE1xSCkCJCXaAObs1wBlUlrhH1YnnQ6e91S4fLT4sh_Nt7ECxaW15EMgS4_yjVcEs0OQECta/pub?gid=0&single=true&output=csv';
     const ENVIRONMENT_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRbjH7deMzP_-oUSROzLYUxU3o2UvBar6ODVwLKpLQ6xaacQKON5xlzV3KA2Tswsc0WfSGQu7LVKBvs/pub?gid=0&single=true&output=csv';
     const VETDATA_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQQ4vxhQzvVzYHZBJ8-Jc1VCnPBi9RcgqS7BYruNUgbbwBMcVVO1GOj3wq6PY3fbebz1BqqCDlv_AWR/pub?gid=0&single=true&output=csv'; 
     const AI_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxign7YvIXmCiAggKU9XKlveWHQ_hQzYL65MEP3yEFe1lj1ewPjHuNzbbi_S8JMTPE/exec";
+    
+    // FEATURE FLAGS PRIVACY INTEGRATION
+    const FEATURE_FLAGS_API = 'https://script.google.com/macros/s/AKfycbyZaoQyRiQDaTP9IkbOK89A2l9DtH6tOtwL6TFn38x5N_gYiiQc2Os-NZ1dvEsZMZKF/exec';
+    const CURRENT_PLAN_LEVEL = 2; // Locked strictly to Level 2 for public view
    
     let feedingChart, weightChart, sheddingChart, lengthChart, heightChart;
     let tsReadURL = "";
@@ -446,7 +442,6 @@
     let homeLat = 0;
     let homeLon = 0;
     
-    // Default theme for public view or local storage fallback if preferred
     function applyUserTheme() {
         document.documentElement.setAttribute('data-theme', 'default');
     }
@@ -462,20 +457,54 @@ function removeLoader() {
     }, 800);
 }
 
+// --- FEATURE FLAGS PROCESSOR ---
+async function applyFeatureFlags(animalType) {
+    try {
+        const response = await fetch(FEATURE_FLAGS_API);
+        const result = await response.json();
+        
+        if (result.status === "success") {
+            const flags = result.data;
+            flags.forEach(flag => {
+                const el = document.getElementById(flag.element);
+                if (!el) return; // Skip if the target element doesn't exist in DOM
+
+                let shouldShow = true;
+
+                // Rule 1: Check Plan Level vs Flag Level
+                if (CURRENT_PLAN_LEVEL < flag.minPlan) {
+                    shouldShow = false;
+                }
+
+                // Rule 2: Check Animal Type whitelist
+                if (shouldShow && flag.allowedAnimals && flag.allowedAnimals.length > 0) {
+                    if (!flag.allowedAnimals.includes('ALL') && !flag.allowedAnimals.includes(animalType.toUpperCase())) {
+                        shouldShow = false;
+                    }
+                }
+
+                // Apply restriction
+                if (!shouldShow) {
+                    el.style.display = 'none';
+                }
+            });
+        }
+    } catch (e) {
+        console.error("Feature Flags Sync Error:", e);
+    }
+}
+
 async function loadData() {
     if (!currentPageId) return;
         
     try {
-        // Lemos os dados diretamente do CSV publicado em vez do script seguro
         const response = await fetch(PAGEID_CSV_URL);
         const text = await response.text();
         const rows = parseCSV(text);
-
-        // Procura a linha que pertence ao ID dessa página (Index 1 é a coluna do ID)
         const data = rows.find(r => r[1] && r[1].trim() === currentPageId);
 
         if (data) {
-            // Bio Info Básica
+            // Bio Info Basics
             document.getElementById('dynName').innerText = data[3] || "---";
             document.getElementById('dynSex').innerText = data[4] || "---";
             document.getElementById('dynScientific').innerText = data[5] || "---";
@@ -487,7 +516,6 @@ async function loadData() {
                 document.getElementById('dynBirth').innerText = `${ageString}${formattedDate}`;
             } else {document.getElementById('dynBirth').innerText = "---"; }
             
-            // --- SEGURANÇA E CONFORMIDADE: SISPASS / SISFAUNA BANNER ---
             const regValue = String(data[7] || "---");
             const regElement = document.getElementById('dynReg');
             const legalWarning = document.getElementById('legal-warning');
@@ -513,12 +541,14 @@ async function loadData() {
             } else {locElement.innerText = "---";}
             document.getElementById('dynAmbient').innerText = String(data[2] || "Ambient").toUpperCase();
             
-            // Tipo de Animal
+            // Layout Filtering and Feature Flags Processing
             const animalTypeRaw = String(data[22] || "DEFAULT");
             document.getElementById('dynAnimal').innerText = animalTypeRaw.toUpperCase();
-            filterLayoutByAnimal(animalTypeRaw);
+            
+            filterLayoutByAnimal(animalTypeRaw); // Static DOM fallback
+            await applyFeatureFlags(animalTypeRaw.toUpperCase()); // Dynamic Script API Enforcement
 
-            // Lógica de Vídeo
+            // Video Logic
             const videoElement = document.getElementById('bgVideo');
             if (videoElement) {
                 const videoSource = videoElement.querySelector('source');
@@ -536,21 +566,18 @@ async function loadData() {
                 });
             }
 
-            // IDs e Chaves do ThingSpeak
             mainChannelId = data[10];
             mainReadKey = data[12];
             r1ChannelId = data[13];
             r1ReadKey = data[15];
             document.getElementById('dynChannel').innerText = mainChannelId || "---";
 
-            // Fotos
             const photoURL = data[19];
             const photoBase = data[16];
             const imgEl = document.getElementById('dynPhoto');
             if (photoURL && photoURL.startsWith('http')) imgEl.src = photoURL;
             else if (photoBase && photoBase.length > 100) imgEl.src = photoBase;
 
-            // Câmera
             let camSource = data[17];
             if (camSource) {
                 let finalUrl = camSource.includes('://') ? camSource : `http://${camSource}/stream`;
@@ -559,7 +586,6 @@ async function loadData() {
                 showCamOverlay();
             }
 
-            // Inicialização Pública
             updateSensors();
             loadBiologicalHistory(currentPageId);
             loadVetVisits(currentPageId);
@@ -582,30 +608,18 @@ async function loadData() {
         if (!dateStr || dateStr === "---") return "";
         const b = new Date(dateStr);
         if (isNaN(b.getTime())) return "";
-
         const today = new Date();
         let years = today.getFullYear() - b.getFullYear();
         let months = today.getMonth() - b.getMonth();
-
-        if (today.getDate() < b.getDate()) {
-            months--;
-        }
-
-        if (months < 0) {
-            years--;
-            months += 12;
-        }
-
+        if (today.getDate() < b.getDate()) months--;
+        if (months < 0) { years--; months += 12; }
         if (years < 0) return ""; 
-
         let ageStr = "";
         if (years > 0) ageStr += `${years} yrs `;
         if (months > 0 || years === 0) ageStr += `${months} mos `;
-        
         return ageStr ? ageStr.trim() + " | " : "";
     }
     
-    // --- REVERSE GEOCODING ---
     async function getGeocodedLocation(lat, lon) {
     try {
         const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10&addressdetails=1`);
@@ -627,20 +641,15 @@ async function loadData() {
     const type = animalType.toUpperCase().trim();
     document.querySelectorAll('[data-hide-for]').forEach(el => {
         const excludedTypes = el.getAttribute('data-hide-for').toUpperCase().split(',');
-        if (excludedTypes.includes(type)) {
-            el.remove();
-        }
+        if (excludedTypes.includes(type)) el.remove();
     });
     document.querySelectorAll('[data-show-for]').forEach(el => {
         const allowedTypes = el.getAttribute('data-show-for').toUpperCase().split(',');
-        if (!allowedTypes.includes(type)) {
-            el.remove();
-        }
+        if (!allowedTypes.includes(type)) el.remove();
     });
 }
     
 async function updateSensors() {
-    // 1. Atualiza Sensores Principais (Fields 1-5)
     if (mainChannelId && mainReadKey) {
         try {
             const url = `https://api.thingspeak.com/channels/${mainChannelId}/feeds.json?api_key=${mainReadKey}&results=1`;
@@ -648,14 +657,11 @@ async function updateSensors() {
             const json = await res.json();
             const last = json.feeds[0];
             if (last) {
-                for (let i = 1; i <= 8; i++) {
-                    updateFieldUI(i, last[`field${i}`]);
-                }
+                for (let i = 1; i <= 8; i++) updateFieldUI(i, last[`field${i}`]);
             }
         } catch (e) { console.warn("Main sensor update failed."); }
     }
 
-    // 2. Atualiza Sensores Remotos (Fields 6-8)
     if (r1ChannelId && r1ReadKey) {
         try {
             const url = `https://api.thingspeak.com/channels/${r1ChannelId}/feeds.json?api_key=${r1ReadKey}&results=1`;
@@ -691,29 +697,14 @@ function updateFieldUI(id, val) {
             arr[row] = arr[row] || [];
             arr[row][col] = arr[row][col] || '';
 
-            if (cc === '"' && quote && nc === '"') {
-                arr[row][col] += cc; 
-                ++c; 
-                continue;
-            }
-            if (cc === '"') {
-                quote = !quote; 
-                continue;
-            }
-            if (cc === ',' && !quote) {
-                ++col; 
-                continue;
-            }
-            if (cc === '\r' && nc === '\n' && !quote) {
-                ++row; col = 0; ++c; continue;
-            }
-            if ((cc === '\n' || cc === '\r') && !quote) {
-                ++row; col = 0; continue;
-            }
+            if (cc === '"' && quote && nc === '"') { arr[row][col] += cc; ++c; continue; }
+            if (cc === '"') { quote = !quote; continue; }
+            if (cc === ',' && !quote) { ++col; continue; }
+            if (cc === '\r' && nc === '\n' && !quote) { ++row; col = 0; ++c; continue; }
+            if ((cc === '\n' || cc === '\r') && !quote) { ++row; col = 0; continue; }
             
             arr[row][col] += cc;
         }
-        
         return arr.map(row => row.map(cell => cell.trim()));
     }
 
@@ -725,8 +716,7 @@ function updateFieldUI(id, val) {
         return `${String(d.getDate()).padStart(2, '0')} / ${months[d.getMonth()]} / ${d.getFullYear()}`;
     }
 
-
-    // --- HISTÓRICO BIOLÓGICO E GRÁFICOS ---
+    // --- BIOLOGICAL HISTORY ---
     async function loadBiologicalHistory(id) {
         try {
             const res = await fetch(BIODATA_CSV_URL);
@@ -741,15 +731,11 @@ function updateFieldUI(id, val) {
             const lastShed = events.filter(e => e[2] === "Shedding").sort((a, b) => new Date(a[1]) - new Date(b[1])); 
         
             const sheddingProcessed = lastShed.map((event, index) => {
-                if (index === 0) {
-                    return { date: event[1], interval: 0 }; 
-                }
+                if (index === 0) return { date: event[1], interval: 0 }; 
                 const prevDate = new Date(lastShed[index - 1][1]);
                 const currDate = new Date(event[1]);
-    
                 const diffTime = Math.abs(currDate - prevDate);
                 const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-    
                 return { date: event[1], interval: diffDays };
             });
             
@@ -807,7 +793,6 @@ function updateFieldUI(id, val) {
         return gradient;
     }
 
-    // --- PREDICTIVE FORECASTING ENGINE ---
 function generateForecast(dataArray, numPredictions = 2) {
     if (dataArray.length < 3) return { values: [], type: 'Insufficient Data' };
 
@@ -815,10 +800,7 @@ function generateForecast(dataArray, numPredictions = 2) {
     let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
     
     for (let i = 0; i < n; i++) {
-        sumX += i;
-        sumY += dataArray[i];
-        sumXY += i * dataArray[i];
-        sumX2 += i * i;
+        sumX += i; sumY += dataArray[i]; sumXY += i * dataArray[i]; sumX2 += i * i;
     }
 
     const m = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
@@ -839,31 +821,21 @@ function generateForecast(dataArray, numPredictions = 2) {
 
     if (rSquared > 0.65 && Math.abs(m) > 0.05) {
         method = 'Trend (Linear)';
-        for (let i = 0; i < numPredictions; i++) {
-            predictions.push(+(m * (n + i) + b).toFixed(1));
-        }
+        for (let i = 0; i < numPredictions; i++) predictions.push(+(m * (n + i) + b).toFixed(1));
     } else if (variance < (meanY * 0.05)) {
         method = 'Stable (Average)';
-        for (let i = 0; i < numPredictions; i++) {
-            predictions.push(+(meanY).toFixed(1));
-        }
+        for (let i = 0; i < numPredictions; i++) predictions.push(+(meanY).toFixed(1));
     } else {
         method = 'Volatile (EMA)';
         let st = dataArray[0];
         const alpha = 0.6;
-        for (let i = 1; i < n; i++) {
-            st = alpha * dataArray[i] + (1 - alpha) * st;
-        }
-        for (let i = 0; i < numPredictions; i++) {
-            predictions.push(+(st).toFixed(1)); 
-        }
+        for (let i = 1; i < n; i++) st = alpha * dataArray[i] + (1 - alpha) * st;
+        for (let i = 0; i < numPredictions; i++) predictions.push(+(st).toFixed(1)); 
     }
 
     return { values: predictions, method: method };
 }
     
-// --- UPDATED CHART RENDERERS WITH FORECASTING ---
-
 function renderFeeding(events, color) { 
     const canvas = document.getElementById('feedingChart');
     if(!canvas) return;
@@ -873,24 +845,14 @@ function renderFeeding(events, color) {
     if(feedingChart) feedingChart.destroy();
     
     const config = buildForecastChartConfig('Feeding (g)', data, color, ctx);
-    
-    const combos = data.map(e => {
-        const ft = (e[4] && e[4].trim() !== "") ? e[4].trim() : 'N/A';
-        const br = (e[5] && e[5].trim() !== "") ? e[5].trim() : 'N/A';
-        return `${ft} | ${br}`;
-    });
-    
+    const combos = data.map(e => `${(e[4] && e[4].trim() !== "") ? e[4].trim() : 'N/A'} | ${(e[5] && e[5].trim() !== "") ? e[5].trim() : 'N/A'}`);
     const uniqueCombos = [...new Set(combos)];
     
     const palette = ['#a3b18a', '#ff9ff3', '#feca57', '#ff6b6b', '#48dbfb', '#1dd1a1', '#5f27cd'];
     const comboColorMap = {};
-    uniqueCombos.forEach((combo, index) => {
-        comboColorMap[combo] = palette[index % palette.length];
-    });
+    uniqueCombos.forEach((combo, index) => { comboColorMap[combo] = palette[index % palette.length]; });
     
-    const pointColors = combos.map(combo => comboColorMap[combo]);
-    
-    config.data.datasets[0].pointBackgroundColor = pointColors;
+    config.data.datasets[0].pointBackgroundColor = combos.map(combo => comboColorMap[combo]);
     config.data.datasets[0].pointBorderColor = '#ffffff';
     config.data.datasets[0].pointBorderWidth = 1.5;
     config.data.datasets[0].pointRadius = 5;
@@ -898,12 +860,9 @@ function renderFeeding(events, color) {
     
     config.options.plugins.tooltip = config.options.plugins.tooltip || { callbacks: {} };
     config.options.plugins.tooltip.callbacks.afterLabel = function(context) {
-        if (context.datasetIndex === 0 && combos[context.dataIndex]) {
-            return `Specs: ${combos[context.dataIndex]}`;
-        }
+        if (context.datasetIndex === 0 && combos[context.dataIndex]) return `Specs: ${combos[context.dataIndex]}`;
         return null;
     };
-    
     feedingChart = new Chart(ctx, config);
 }
 
@@ -934,7 +893,6 @@ function renderLength(events, color) {
     if(!canvas) return;
     const ctx = canvas.getContext('2d');
     const data = events.filter(e => e[2] === "Length");
-    
     if(lengthChart) lengthChart.destroy();
     lengthChart = new Chart(ctx, buildForecastChartConfig('Length (cm)', data, color, ctx));
 }
@@ -944,24 +902,18 @@ function renderHeigth(events, color) {
     if(!canvas) return;
     const ctx = canvas.getContext('2d');
     const data = events.filter(e => e[2] === "Height");
-    
     if(heightChart) heightChart.destroy();
     heightChart = new Chart(ctx, buildForecastChartConfig('Height (cm)', data, color, ctx));
 }
 
-// --- UNIVERSAL CHART CONFIG BUILDER ---
 function buildForecastChartConfig(labelString, dataArray, color, ctx) {
     const labels = dataArray.map(e => e[1]);
     const realValues = dataArray.map(e => parseFloat(e[3]));
-    
     const forecast = generateForecast(realValues, 2);
     
     const paddedRealValues = [...realValues];
     const forecastValues = new Array(realValues.length - 1).fill(null);
-    
-    if (realValues.length > 0) {
-        forecastValues.push(realValues[realValues.length - 1]); 
-    }
+    if (realValues.length > 0) forecastValues.push(realValues[realValues.length - 1]); 
     
     if (forecast.values.length > 0) {
         labels.push(`Predict 1`);
@@ -977,23 +929,8 @@ function buildForecastChartConfig(labelString, dataArray, color, ctx) {
         data: {
             labels: labels,
             datasets: [
-                {
-                    label: dynamicLabel,
-                    data: paddedRealValues,
-                    borderColor: color,
-                    fill: true,
-                    backgroundColor: getGradient(ctx, color),
-                    tension: 0.4
-                },
-                {
-                    label: 'Forecast',
-                    data: forecastValues,
-                    borderColor: '#ff5f5f', 
-                    borderDash: [5, 5], 
-                    fill: false,
-                    tension: 0.4,
-                    pointBackgroundColor: '#ff5f5f' 
-                }
+                { label: dynamicLabel, data: paddedRealValues, borderColor: color, fill: true, backgroundColor: getGradient(ctx, color), tension: 0.4 },
+                { label: 'Forecast', data: forecastValues, borderColor: '#ff5f5f', borderDash: [5, 5], fill: false, tension: 0.4, pointBackgroundColor: '#ff5f5f' }
             ]
         },
         options: commonOptions() 
@@ -1004,11 +941,7 @@ function buildForecastChartConfig(labelString, dataArray, color, ctx) {
     return {
         responsive: true,
         maintainAspectRatio: false,
-        layout: {
-            padding: {
-                bottom: 15 
-            }
-        },
+        layout: { padding: { bottom: 15 } },
         plugins: {
             legend: { display: false },
             tooltip: {
@@ -1016,47 +949,30 @@ function buildForecastChartConfig(labelString, dataArray, color, ctx) {
                     title: function(context) {
                         const rawDate = context[0].label;
                         const d = new Date(rawDate);
-                        
                         if (isNaN(d)) return rawDate;
-
                         const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
                         const day = String(d.getDate()).padStart(2, '0');
                         const month = months[d.getMonth()];
                         const year = d.getFullYear();
-                        
                         return `${day}/${month}/${year}`;
                     }
                 }
             }
         },
         scales: {
-            y: { 
-                beginAtZero: true, 
-                grid: { color: 'rgba(31, 41, 55, 0.5)' }, 
-                ticks: { color: '#9ca3af' } 
-            },
+            y: { beginAtZero: true, grid: { color: 'rgba(31, 41, 55, 0.5)' }, ticks: { color: '#9ca3af' } },
             x: { 
                 ticks: { 
-                    color: '#9ca3af',
-                    font: {
-                        size: 10
-                    },
-                    maxRotation: 0,
-                    minRotation: 0,
-                    autoSkip: true,
-                    maxTicksLimit: 4, 
+                    color: '#9ca3af', font: { size: 10 }, maxRotation: 0, minRotation: 0, autoSkip: true, maxTicksLimit: 4, 
                     callback: function(val, index) {
                         const rawDate = this.getLabelForValue(val);
                         const d = new Date(rawDate);
-                        
-                    if (isNaN(d.getTime())) return ""; 
-
-                    const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-                    const day = String(d.getDate()).padStart(2, '0');
-                    const month = months[d.getMonth()];
-                    const year = d.getFullYear();
-                    
-                    return `${day}/${month}/${year}`;
+                        if (isNaN(d.getTime())) return ""; 
+                        const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+                        const day = String(d.getDate()).padStart(2, '0');
+                        const month = months[d.getMonth()];
+                        const year = d.getFullYear();
+                        return `${day}/${month}/${year}`;
                     }
                 } 
             }
@@ -1139,12 +1055,9 @@ async function loadVetVisits(id) {
 async function updateVetMap(vetLocationsArray) {
     const mapContainer = document.getElementById('vetMapContainer');
 
-    if (typeof vetMap !== 'undefined' && vetMap !== null) {
-        vetMap.remove();
-    }
+    if (typeof vetMap !== 'undefined' && vetMap !== null) vetMap.remove();
     
     mapContainer.innerHTML = "<div id='actualLeafletMap' style='width: 100%; height: 100%; min-height: 300px; border-radius: 10px; z-index: 1;'></div>";
-
     vetMap = L.map('actualLeafletMap');
 
     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
@@ -1153,14 +1066,9 @@ async function updateVetMap(vetLocationsArray) {
 
     let bounds = [];
 
-    // PRIVACIDADE / CONFORMIDADE LEI: MAPA FUZZY
-    // Utilizando um raio aproximado de 1.5km invés de um marcador preciso para resguardar a residência no Link Público.
     if (typeof homeLat !== 'undefined' && typeof homeLon !== 'undefined' && !isNaN(homeLat) && homeLat !== 0) {
         L.circle([homeLat, homeLon], {
-            color: '#a3b18a',
-            fillColor: '#a3b18a',
-            fillOpacity: 0.3,
-            radius: 1500 // 1.5km raio de ofuscação
+            color: '#a3b18a', fillColor: '#a3b18a', fillOpacity: 0.3, radius: 1500 
         })
         .addTo(vetMap)
         .bindPopup('<b>Approximate Location</b><br>Secure Zone (1.5km radius)');
@@ -1177,10 +1085,8 @@ async function updateVetMap(vetLocationsArray) {
 
     for (let i = 0; i < vetLocationsArray.length; i++) {
         let coordsString = vetLocationsArray[i];
-        
         try {
             const parts = coordsString.split(',');
-            
             if (parts.length === 2) {
                 const vLat = parseFloat(parts[0].trim());
                 const vLon = parseFloat(parts[1].trim());
@@ -1189,27 +1095,19 @@ async function updateVetMap(vetLocationsArray) {
                     L.marker([vLat, vLon], { icon: vetIcon })
                      .addTo(vetMap)
                      .bindPopup(`<b>Vet Clinic</b><br>Lat: ${vLat}<br>Lon: ${vLon}`);
-                    
                     bounds.push([vLat, vLon]);
                 }
             }
-        } catch(e) {
-            console.warn("Failed to plot Vet Coordinates for:", coordsString);
-        }
+        } catch(e) { console.warn("Failed to plot Vet Coordinates for:", coordsString); }
     }
 
-    if (bounds.length > 0) {
-        vetMap.fitBounds(bounds, { padding: [30, 30], maxZoom: 14 });
-    } else {
-        vetMap.setView([-23.5505, -46.6333], 10); 
-    }
+    if (bounds.length > 0) vetMap.fitBounds(bounds, { padding: [30, 30], maxZoom: 14 });
+    else vetMap.setView([-23.5505, -46.6333], 10); 
 }
     
-    // --- MODAL DE GRÁFICOS DETALHADOS ---
 async function openChart(fieldId, label) {
     let targetID = (fieldId >= 6) ? r1ChannelId : mainChannelId;
     let targetKey = (fieldId >= 6) ? r1ReadKey : mainReadKey;
-    
     let actualField = (fieldId >= 6) ? (fieldId - 5) : fieldId;
 
     if (!targetID) return alert("Sensor channel not configured.");
@@ -1264,8 +1162,7 @@ async function openChart(fieldId, label) {
                     x: { 
                         grid: { display: false }, 
                         ticks: { 
-                            color: '#fff', 
-                            maxTicksLimit: 6,
+                            color: '#fff', maxTicksLimit: 6,
                             callback: function(val) {
                                 const d = new Date(this.getLabelForValue(val));
                                 if (isNaN(d.getTime())) return "";
@@ -1292,7 +1189,6 @@ async function openChart(fieldId, label) {
     
     document.addEventListener('DOMContentLoaded', () => {
         applyUserTheme();
-        // loadData is already being called globally above
     });
 
     async function generateAIInsight() {
@@ -1456,13 +1352,10 @@ Reference the environmental data with the biological and veterinary data. Is the
         sentences.forEach((sentence, index) => {
             const chunkText = sentence.trim();
             if (chunkText === "") return;
-
             const utterance = new SpeechSynthesisUtterance(chunkText);
-            
             utterance.lang = 'en-US'; 
             utterance.rate = 1.0;  
             utterance.pitch = 1.0; 
-
             window.aiSpeechUtterances.push(utterance);
 
             if (index === sentences.length - 1) {
@@ -1484,14 +1377,10 @@ Reference the environmental data with the biological and veterinary data. Is the
         });
     }
 
-    // ==========================================
-    // --- GITHUB AUTO VERSION TRACKER ---
-    // ==========================================
     async function fetchGitHubVersion() {
         const flagElement = document.getElementById('gh-version-flag');
         if (!flagElement) return;
 
-        // URL da API pública do GitHub apontando para os commits do repositório
         const repoUrl = 'https://api.github.com/repos/ashuhda-tech/TerraConnect_Technologies/commits?per_page=1';
 
         try {
@@ -1500,14 +1389,9 @@ Reference the environmental data with the biological and veterinary data. Is the
             if (response.ok) {
                 const data = await response.json();
                 const latestCommit = data[0];
-                
-                // Pega os 7 primeiros caracteres do hash do commit (Padrão de versão)
                 const shortSha = latestCommit.sha.substring(0, 7);
-                
-                // Pega a data e formata
                 const commitDate = new Date(latestCommit.commit.author.date);
                 const formattedDate = `${String(commitDate.getDate()).padStart(2, '0')}/${String(commitDate.getMonth() + 1).padStart(2, '0')}/${commitDate.getFullYear()}`;
-
                 flagElement.innerHTML = `<i class="fas fa-code-branch"></i> Build ${shortSha} (${formattedDate})`;
             } else {
                 flagElement.innerHTML = `<i class="fas fa-code-branch"></i> Live Build`;
@@ -1520,7 +1404,6 @@ Reference the environmental data with the biological and veterinary data. Is the
     document.addEventListener('DOMContentLoaded', fetchGitHubVersion);
 </script>
 
-<!-- VERSION FLAG -->
 <div id="gh-version-flag" class="app-version-flag">
     <i class="fas fa-spinner fa-spin"></i> Fetching Build...
 </div>
