@@ -44,9 +44,9 @@
         input:focus { outline: none; border-color: var(--accent); }
         .info-box { background: rgba(0, 0, 0, 0.2); padding: 10px; border-radius: 4px; font-size: 0.7rem; margin-bottom: 25px; border: 1px dashed var(--border); color: var(--text-light); }
         
-        /* Banner de Segurança */
-        .security-banner { background: rgba(163, 177, 138, 0.1); border-left: 4px solid #a3b18a; padding: 15px; margin-bottom: 25px; border-radius: 5px; color: var(--text-light); text-align: left; font-size: 0.8rem; line-height: 1.5; }
-        .security-banner i { color: #a3b18a; margin-right: 8px; }
+        /* Banner de Segurança Amigável */
+        .security-banner { background: rgba(0, 242, 255, 0.1); border-left: 4px solid cyan; padding: 15px; margin-bottom: 25px; border-radius: 5px; color: var(--text-light); text-align: left; font-size: 0.8rem; line-height: 1.5; }
+        .security-banner i { color: cyan; margin-right: 8px; }
 
         .btn-save { background: var(--accent); color: var(--bg-dark); border: none; width: 100%; padding: 15px; font-weight: bold; cursor: pointer; border-radius: 4px; transition: 0.3s; margin-top: 20px; }
         .btn-save:hover { filter: brightness(1.2); transform: translateY(-2px); } 
@@ -72,6 +72,7 @@
         </div>
 
         <div class="grid-2">
+            <!-- BIOLOGICAL & ENVIRONMENTAL SECTION -->
             <div class="input-group">
                 <label class="a70-font">AMBIENT NAME</label>
                 <input type="text" id="ambientName" placeholder="Ex: Hela Smarthome">
@@ -120,31 +121,32 @@
                 <canvas id="resizeCanvas" style="display:none;"></canvas>
             </div>
 
-            <div class="info-box grid-full">MAIN SENSOR | THINGSPEAK</div>
+            <!-- INFRASTRUCTURE & IOT SECTION (CYAN STYLING) -->
+            <div class="info-box grid-full" style="border-color: cyan; color: cyan;">MAIN SENSOR | THINGSPEAK</div>
             <div class="input-group">
-                <label class="a70-font">MAIN CHANNEL ID</label>
+                <label class="a70-font" style="color: cyan;">MAIN CHANNEL ID</label>
                 <input type="text" id="mainChannelId">
             </div>
             <div class="input-group">
-                <label class="a70-font">MAIN WRITE API KEY</label>
+                <label class="a70-font" style="color: cyan;">MAIN WRITE API KEY</label>
                 <input type="text" id="mainTsWrite">
             </div>
             <div class="input-group grid-full">
-                <label class="a70-font">MAIN READ API KEY</label>
+                <label class="a70-font" style="color: cyan;">MAIN READ API KEY</label>
                 <input type="text" id="mainTsRead">
             </div>
 
-            <div class="info-box grid-full">REMOTE SENSOR | THINGSPEAK</div>
+            <div class="info-box grid-full" style="border-color: cyan; color: cyan;">REMOTE SENSOR | THINGSPEAK</div>
             <div class="input-group">
-                <label class="a70-font">REMOTE CHANNEL ID</label>
+                <label class="a70-font" style="color: cyan;">REMOTE CHANNEL ID</label>
                 <input type="text" id="r1ChannelId">
             </div>
             <div class="input-group">
-                <label class="a70-font">REMOTE WRITE API KEY</label>
+                <label class="a70-font" style="color: cyan;">REMOTE WRITE API KEY</label>
                 <input type="text" id="r1TsWrite">
             </div>
             <div class="input-group grid-full">
-                <label class="a70-font">REMOTE READ API KEY</label>
+                <label class="a70-font" style="color: cyan;">REMOTE READ API KEY</label>
                 <input type="text" id="r1TsRead">
             </div>
 
@@ -161,10 +163,36 @@
                 <label class="a70-font" style="color: cyan;">GPS READ API KEY</label>
                 <input type="text" id="gpsTsRead">
             </div>
+            
+            <div class="info-box grid-full" style="border-color: cyan; color: cyan;">CAMERA STREAMING IP</div>
+            <div class="input-group grid-full">
+                <label class="a70-font" style="color: cyan;">CAMERA IP / STREAM URL</label>
+                <input type="text" id="cameraIp" placeholder="Ex: 192.168.1.50">
+            </div>
+            
+            <div class="info-box grid-full" style="border-color: cyan; color: cyan;">DEVICE WIFI CONFIGURATOR</div>
+            <div class="input-group">
+                <label class="a70-font" style="color: cyan;">WIFI SSID</label>
+                <input type="text" id="wifiSsid" placeholder="Main Network Name">
+            </div>
+            <div class="input-group">
+                <label class="a70-font" style="color: cyan;">WIFI PASSWORD</label>
+                <input type="text" id="wifiPassword" placeholder="Main Password">
+            </div>
+            
+            <div class="info-box grid-full" style="border-color: cyan; color: cyan;">PUBLIC WIFI (BACKUP / HOTSPOT)</div>
+            <div class="input-group">
+                <label class="a70-font" style="color: cyan;">PUBLIC WIFI SSID</label>
+                <input type="text" id="publicWifiSsid" placeholder="Backup Network Name">
+            </div>
+            <div class="input-group">
+                <label class="a70-font" style="color: cyan;">PUBLIC WIFI PASSWORD</label>
+                <input type="text" id="publicWifiPassword" placeholder="Backup Password">
+            </div>
 
             <div class="security-banner grid-full">
-                <strong><i class="fas fa-shield-alt"></i> ZERO CLEARTEXT ARCHITECTURE</strong><br>
-                For your security, Wi-Fi passwords and Camera IPs are no longer stored or transmitted to the TerraConnect Cloud. Please configure these settings locally on your monitoring dashboard.
+                <strong><i class="fas fa-shield-alt"></i> PRIVATE CONNECTION DATA</strong><br>
+                We request your Wi-Fi details solely to allow your smart enclosure to automatically reconnect to backup networks (like your phone's hotspot) if the main signal drops. This information is kept strictly private and will never be shared publicly.
             </div>
         </div>
 
@@ -207,7 +235,7 @@
             }      
         });
 
-        // REESCRITO: Agora busca via API JSON (PAGEID_SCRIPT_URL) ao invés do CSV
+        // Agora busca via API JSON (PAGEID_SCRIPT_URL)
         async function setupEditMode() {
             document.getElementById('mainTitle').innerText = "EDIT REGISTRATION";
             document.getElementById('btnAction').innerText = "UPDATE REGISTRATION";
@@ -233,12 +261,14 @@
                     document.getElementById('r1TsWrite').value = targetRow[14] || "";
                     document.getElementById('r1TsRead').value = targetRow[15] || "";
                     currentPhotoBase64 = targetRow[16] || ""; 
-                    // index 17 (camera IP) não é mais populado
-                    // index 18 (theme)
+                    document.getElementById('cameraIp').value = targetRow[17] || ""; // RESTAURADO
+                    // index 18 is Theme
                     document.getElementById('photoURL').value = targetRow[19] || ""; 
-                    // index 20/21 (Wi-Fi) e 23/24 (Public Wi-Fi) não são mais populados
+                    document.getElementById('wifiSsid').value = targetRow[20] || ""; // RESTAURADO
+                    document.getElementById('wifiPassword').value = targetRow[21] || ""; // RESTAURADO
                     document.getElementById('animalType').value = targetRow[22] || "";
-                    
+                    document.getElementById('publicWifiSsid').value = targetRow[23] || ""; // RESTAURADO
+                    document.getElementById('publicWifiPassword').value = targetRow[24] || ""; // RESTAURADO
                     document.getElementById('gpsChannelId').value = targetRow[25] || "";
                     document.getElementById('gpsTsWrite').value = targetRow[26] || "";
                     document.getElementById('gpsTsRead').value = targetRow[27] || "";
@@ -271,8 +301,8 @@
             const fileInput = document.getElementById('animalPhoto');
             if (fileInput.files[0]) photoData = await resizeImage(fileInput.files[0]);
 
-            // OBJETO PAYLOAD: As credenciais de câmera e wi-fi são enviadas VAZIAS 
-            // para garantir que a planilha limpe qualquer texto plano lá existente.
+            // OBJETO PAYLOAD: Credenciais de câmera e wi-fi são passadas ao banco de dados 
+            // de forma funcional para que o ESP32 possa utiliza-las em caso de queda de conexão.
             const payload = {
                 action: isEditMode ? "update" : "create",
                 userID: user.id,
@@ -292,14 +322,14 @@
                 r1TsWrite: document.getElementById('r1TsWrite').value,
                 r1TsRead: document.getElementById('r1TsRead').value,
                 photoBase64: photoData,
-                cameraIp: "", // Security Clean
+                cameraIp: document.getElementById('cameraIp').value,
                 theme: localStorage.getItem(`theme_${user.id}`) || "default",
                 photoURL: document.getElementById('photoURL').value,
-                wifiSsid: "", // Security Clean
-                wifiPassword: "", // Security Clean
+                wifiSsid: document.getElementById('wifiSsid').value,
+                wifiPassword: document.getElementById('wifiPassword').value,
                 animalType: document.getElementById('animalType').value,
-                publicWifiSsid: "", // Security Clean
-                publicWifiPassword: "", // Security Clean
+                publicWifiSsid: document.getElementById('publicWifiSsid').value,
+                publicWifiPassword: document.getElementById('publicWifiPassword').value,
                 gpsChannelID: document.getElementById('gpsChannelId').value,
                 gpsTsWrite: document.getElementById('gpsTsWrite').value,
                 gpsTsRead: document.getElementById('gpsTsRead').value,
