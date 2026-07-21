@@ -59,8 +59,8 @@
         
         .nav-section {flex-grow: 1; display: flex; flex-direction: column; gap: 10px; overflow-y: auto;}
         /* --- APP VERSION FLAG --- */
-        .app-version-flag {position: fixed;bottom: 10px;left: 10px;background: rgba(0, 0, 0, 0.6);color: rgba(255, 255, 255, 0.3);padding: 4px 8px;border-radius: 4px;font-size: 0.55rem;font-family: 'Inter', monospace;z-index: 99999;pointer-events: none; /* Permite clicar nos elementos que estiverem atrás dele */
-        border: 1px solid rgba(255, 255, 255, 0.1);backdrop-filter: blur(2px);}
+        .app-version-flag {position: fixed;bottom: 10px;left: 10px;background: rgba(0, 0, 0, 0.6);color: rgba(255, 255, 255, 0.3);padding: 4px 8px;border-radius: 4px;font-size: 0.55rem;font-family: 'Inter', monospace;z-index: 99999;pointer-events: none;border: 1px solid rgba(255, 255, 255, 0.1);backdrop-filter: blur(2px);transition: opacity 0.5s; /* Transição suave ao carregar */
+        }
 
         /* Cards de Ambiente */
         .ambient-card {background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); padding: 12px 15px; border-radius: 4px; display: flex; align-items: center; gap: 15px; cursor: pointer; transition: all 0.3s; text-decoration: none; color: var(--text-light); font-size: 0.85rem;}
@@ -304,10 +304,51 @@
             localStorage.removeItem('currentUser');
             window.location.href = 'index.html';
         }
+
+
+
+
+    // ==========================================
+    // --- GITHUB AUTO VERSION TRACKER ---
+    // ==========================================
+    async function fetchGitHubVersion() {
+        const flagElement = document.getElementById('gh-version-flag');
+        if (!flagElement) return;
+
+        // URL da API pública do GitHub apontando para os commits do seu repositório
+        const repoUrl = 'https://api.github.com/repos/ashuhda-tech/TerraConnect_Technologies/commits?per_page=1';
+
+        try {
+            const response = await fetch(repoUrl);
+            
+            if (response.ok) {
+                const data = await response.json();
+                const latestCommit = data[0];
+                
+                // Pega os 7 primeiros caracteres do hash do commit (Padrão de versão)
+                const shortSha = latestCommit.sha.substring(0, 7);
+                
+                // Pega a data e formata
+                const commitDate = new Date(latestCommit.commit.author.date);
+                const formattedDate = `${String(commitDate.getDate()).padStart(2, '0')}/${String(commitDate.getMonth() + 1).padStart(2, '0')}/${commitDate.getFullYear()}`;
+
+                flagElement.innerHTML = `<i class="fas fa-code-branch"></i> Build ${shortSha} (${formattedDate})`;
+            } else {
+                // Se o GitHub limitar as requisições (Rate Limit)
+                flagElement.innerHTML = `<i class="fas fa-code-branch"></i> Live Build`;
+            }
+        } catch (error) {
+            // Se houver erro de rede
+            flagElement.innerHTML = `<i class="fas fa-code-branch"></i> Local Build`;
+        }
+    }
+
+    // Chama a função assim que a página carrega
+    document.addEventListener('DOMContentLoaded', fetchGitHubVersion);
     </script>
 <!-- VERSION FLAG -->
-    <div class="app-version-flag">
-        <i class="fas fa-code-branch"></i> Build 2.1.0
+    <div id="gh-version-flag" class="app-version-flag">
+        <i class="fas fa-spinner fa-spin"></i> Fetching Build...
     </div>
 </body>
 </html>
