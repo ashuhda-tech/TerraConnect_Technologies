@@ -25,8 +25,8 @@
         :root {--bg-color: #1a1c20;--card-bg: #070b14;--accent: #d1b38b;--text: #f4e9d8; }
         body {background-color: var(--bg-color);color: var(--text);font-family: 'Segoe UI', sans-serif;display: flex;justify-content: center;align-items: center;min-height: 100vh; margin: 0;}
         /* --- APP VERSION FLAG --- */
-        .app-version-flag {position: fixed;bottom: 10px;left: 10px;background: rgba(0, 0, 0, 0.6);color: rgba(255, 255, 255, 0.3);padding: 4px 8px;border-radius: 4px;font-size: 0.55rem;font-family: 'Inter', monospace;z-index: 99999;pointer-events: none; /* Permite clicar nos elementos que estiverem atrás dele */
-        border: 1px solid rgba(255, 255, 255, 0.1);backdrop-filter: blur(2px);}
+        .app-version-flag {position: fixed;bottom: 10px;left: 10px;background: rgba(0, 0, 0, 0.6);color: rgba(255, 255, 255, 0.3);padding: 4px 8px;border-radius: 4px;font-size: 0.55rem;font-family: 'Inter', monospace;z-index: 99999;pointer-events: none;border: 1px solid rgba(255, 255, 255, 0.1);backdrop-filter: blur(2px);transition: opacity 0.5s; /* Transição suave ao carregar */
+        }
         .dashboard-card {background-color: var(--card-bg);padding: 40px;border-radius: 12px;border: 1px solid #1f2937;text-align: center;max-width: 500px;width: 90%;}
         h1 { color: var(--accent); margin-bottom: 10px; }
         .user-id { font-family: monospace; background: #111827; padding: 10px; border-radius: 5px; font-size: 0.8rem; margin: 20px 0; display: block; border: 1px solid #2d3139; }
@@ -118,10 +118,51 @@
         localStorage.removeItem('currentUser');
         window.location.href = 'index.html';
     }
-</script>
+
+
+
+
+    // ==========================================
+    // --- GITHUB AUTO VERSION TRACKER ---
+    // ==========================================
+    async function fetchGitHubVersion() {
+        const flagElement = document.getElementById('gh-version-flag');
+        if (!flagElement) return;
+
+        // URL da API pública do GitHub apontando para os commits do seu repositório
+        const repoUrl = 'https://api.github.com/repos/ashuhda-tech/TerraConnect_Technologies/commits?per_page=1';
+
+        try {
+            const response = await fetch(repoUrl);
+            
+            if (response.ok) {
+                const data = await response.json();
+                const latestCommit = data[0];
+                
+                // Pega os 7 primeiros caracteres do hash do commit (Padrão de versão)
+                const shortSha = latestCommit.sha.substring(0, 7);
+                
+                // Pega a data e formata
+                const commitDate = new Date(latestCommit.commit.author.date);
+                const formattedDate = `${String(commitDate.getDate()).padStart(2, '0')}/${String(commitDate.getMonth() + 1).padStart(2, '0')}/${commitDate.getFullYear()}`;
+
+                flagElement.innerHTML = `<i class="fas fa-code-branch"></i> Build ${shortSha} (${formattedDate})`;
+            } else {
+                // Se o GitHub limitar as requisições (Rate Limit)
+                flagElement.innerHTML = `<i class="fas fa-code-branch"></i> Live Build`;
+            }
+        } catch (error) {
+            // Se houver erro de rede
+            flagElement.innerHTML = `<i class="fas fa-code-branch"></i> Local Build`;
+        }
+    }
+
+    // Chama a função assim que a página carrega
+    document.addEventListener('DOMContentLoaded', fetchGitHubVersion);
+    </script>
 <!-- VERSION FLAG -->
-    <div class="app-version-flag">
-        <i class="fas fa-code-branch"></i> Build 2.1.0
+    <div id="gh-version-flag" class="app-version-flag">
+        <i class="fas fa-spinner fa-spin"></i> Fetching Build...
     </div>
 </body>
 </html>
