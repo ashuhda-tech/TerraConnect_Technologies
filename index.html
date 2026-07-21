@@ -28,8 +28,8 @@
         #intro-overlay {position: fixed;top: 0;left: 0;width: 100%;height: 100%;background-color: #000;z-index: 9999;display: flex;justify-content: center;align-items: center;transition: opacity 1s ease-out;}
         #intro-overlay video {width: 100%;height: 100%;object-fit: cover;}
         /* --- APP VERSION FLAG --- */
-        .app-version-flag {position: fixed;bottom: 10px;left: 10px;background: rgba(0, 0, 0, 0.6);color: rgba(255, 255, 255, 0.3);padding: 4px 8px;border-radius: 4px;font-size: 0.55rem;font-family: 'Inter', monospace;z-index: 99999;pointer-events: none; /* Permite clicar nos elementos que estiverem atrás dele */
-        border: 1px solid rgba(255, 255, 255, 0.1);backdrop-filter: blur(2px);}
+        .app-version-flag {position: fixed;bottom: 10px;left: 10px;background: rgba(0, 0, 0, 0.6);color: rgba(255, 255, 255, 0.3);padding: 4px 8px;border-radius: 4px;font-size: 0.55rem;font-family: 'Inter', monospace;z-index: 99999;pointer-events: none;border: 1px solid rgba(255, 255, 255, 0.1);backdrop-filter: blur(2px);transition: opacity 0.5s; /* Transição suave ao carregar */
+        }
         .skip-btn { position: absolute; bottom: 40px; right: 40px; background: rgba(0, 0, 0, 0.4); color: rgba(255, 255, 255, 0.6); border: 1px solid rgba(255, 255, 255, 0.3); padding: 8px 16px; border-radius: 6px; cursor: pointer; z-index: 10000; font-family: var(--font-standard); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; backdrop-filter: blur(5px); }
         .skip-btn:hover { background: rgba(255, 255, 255, 0.1); color: #fff; border-color: #fff;}
         .video-bg-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; overflow: hidden; }
@@ -320,11 +320,50 @@
         document.getElementById('login-section').classList.toggle('hidden');
         document.getElementById('signup-section').classList.toggle('hidden');
     }
-</script>
 
+
+    
+    // ==========================================
+    // --- GITHUB AUTO VERSION TRACKER ---
+    // ==========================================
+    async function fetchGitHubVersion() {
+        const flagElement = document.getElementById('gh-version-flag');
+        if (!flagElement) return;
+
+        // URL da API pública do GitHub apontando para os commits do seu repositório
+        const repoUrl = 'https://api.github.com/repos/ashuhda-tech/TerraConnect_Technologies/commits?per_page=1';
+
+        try {
+            const response = await fetch(repoUrl);
+            
+            if (response.ok) {
+                const data = await response.json();
+                const latestCommit = data[0];
+                
+                // Pega os 7 primeiros caracteres do hash do commit (Padrão de versão)
+                const shortSha = latestCommit.sha.substring(0, 7);
+                
+                // Pega a data e formata
+                const commitDate = new Date(latestCommit.commit.author.date);
+                const formattedDate = `${String(commitDate.getDate()).padStart(2, '0')}/${String(commitDate.getMonth() + 1).padStart(2, '0')}/${commitDate.getFullYear()}`;
+
+                flagElement.innerHTML = `<i class="fas fa-code-branch"></i> Build ${shortSha} (${formattedDate})`;
+            } else {
+                // Se o GitHub limitar as requisições (Rate Limit)
+                flagElement.innerHTML = `<i class="fas fa-code-branch"></i> Live Build`;
+            }
+        } catch (error) {
+            // Se houver erro de rede
+            flagElement.innerHTML = `<i class="fas fa-code-branch"></i> Local Build`;
+        }
+    }
+
+    // Chama a função assim que a página carrega
+    document.addEventListener('DOMContentLoaded', fetchGitHubVersion);
+    </script>
 <!-- VERSION FLAG -->
-    <div class="app-version-flag">
-        <i class="fas fa-code-branch"></i> Build 2.1.0
+    <div id="gh-version-flag" class="app-version-flag">
+        <i class="fas fa-spinner fa-spin"></i> Fetching Build...
     </div>
 </body>
 </html>
