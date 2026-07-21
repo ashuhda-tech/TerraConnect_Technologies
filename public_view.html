@@ -23,6 +23,11 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <style>
+    /* --- PAGE LOADER SPLASH SCREEN --- */
+    #page-loader {position: fixed;top: 0;left: 0;width: 100vw;height: 100vh;background-color: var(--bg-dark);
+        z-index: 99999;display: flex;flex-direction: column;justify-content: center;align-items: center;transition: opacity 0.8s ease-out, visibility 0.8s ease-out;}
+    .loader-visual {width: 100vw; height: 100vh; object-fit: cover;}
+
     /* DEFINIÇÃO DE TODOS OS TEMAS COM BASE NAS PALETAS DAS IMAGENS */
     :root {--bg-dark: #070b14; --sidebar-bg: #0d1117; --accent: #d1b38b; --text-light: #f4e9d8; --gray-panel: #1e1e1e; --border: #2d3139;}
     /* TECH SAVVY & FUTURISTIC */
@@ -45,6 +50,9 @@
     * { box-sizing: border-box; }
 
     body {   background-color: var(--bg-dark); color: var(--text-light); font-family: 'Inter', sans-serif;   margin: 0;   display: flex; height: 100vh; overflow: hidden; transition: background 0.5s, color 0.5s;}
+
+    /* --- APP VERSION FLAG --- */
+    .app-version-flag {position: fixed;bottom: 10px;left: 10px;background: rgba(0, 0, 0, 0.6);color: rgba(255, 255, 255, 0.3);padding: 4px 8px;border-radius: 4px;font-size: 0.55rem;font-family: 'Inter', monospace;z-index: 99999;pointer-events: none;border: 1px solid rgba(255, 255, 255, 0.1);backdrop-filter: blur(2px);transition: opacity 0.5s;}
 
     /* Estilo para o Vídeo de Fundo */
     .background-video { position: fixed; right: 0; bottom: 0; min-width: 100%; min-height: 100%; z-index: -1; object-fit: cover; filter: brightness(0.4); }
@@ -140,6 +148,12 @@
 </head>
 <body>
 
+    <div id="page-loader">
+        <video autoplay muted loop playsinline class="loader-visual">
+            <source src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/VIDEO/LOADING.mp4" type="video/mp4">
+        </video>
+    </div>
+
     <video autoplay muted loop playsinline id="bgVideo" class="background-video">
     <source src="" type="video/mp4">
     </video>
@@ -172,6 +186,12 @@
     </aside>
 
     <main class="main-content">
+        <!-- SISPASS/SISFAUNA Legal Warning Banner -->
+        <div id="legal-warning" style="display:none; background: rgba(255,95,95,0.1); border-left: 4px solid #ff5f5f; padding: 15px; margin-bottom: 30px; border-radius: 5px; color: var(--text-light);">
+            <h4 style="color: #ff5f5f; margin: 0 0 5px 0;"><i class="fas fa-balance-scale"></i> TERMS OF USE & COMPLIANCE WARNING</h4>
+            <p style="margin: 0; font-size: 0.85rem;">The SISPASS / SISFAUNA registration data for this animal is missing or unverified. <b>The legal guardian is solely responsible for ensuring the legality of keeping this animal under state and federal environmental laws.</b> TerraConnect acts strictly as an IoT telemetry provider and disclaims any liability for illegal possession.</p>
+        </div>
+
         <header class="main-header">
             <h1 id="dynAmbient" class="a70-font">LOADING...</h1>
             <p id="dynStatus">On-time Environmental Monitoring</p>
@@ -300,25 +320,30 @@
         <hr style="border: 0.5px solid #eee; margin: 20px 0;">
 
         <div class="summary-section">
-            <div class="summary-card">
+            <div class="summary-card" id="sumFeeding">
                 <div class="summary-title a70-font"><i class="fas fa-utensils"></i> Last Feeding</div>
                 <div class="summary-main-val" id="sumFeedingVal">--<span>g</span></div>
                 <div class="summary-sub-val" id="sumFeedingDate">--- / --- / ----</div>
             </div>
-            <div class="summary-card">
+            <div class="summary-card" id="sumWeight">
                 <div class="summary-title a70-font"><i class="fas fa-weight"></i> Body Weight</div>
                 <div class="summary-main-val" id="sumWeightVal">--<span>g</span></div>
                 <div class="summary-sub-val" id="sumWeightDate">--- / --- / ----</div>
             </div>
-            <div class="summary-card">
+            <div class="summary-card" id="sumShedding">
                 <div class="summary-title a70-font"><i class="fas fa-snake"></i> Shedding Status</div>
                 <div class="summary-main-val" id="sumSheddingInterval">--<span> Days</span></div>
                 <div class="summary-sub-val" id="sumSheddingDate">Last: --- / --- / ----</div>
             </div>
-            <div class="summary-card">
+            <div class="summary-card" id="sumLength">
                 <div class="summary-title a70-font"><i class="fas fa-ruler-combined"></i> Body Lenght</div>
                 <div class="summary-main-val" id="sumLengthVal">--<span>cm</span></div>
                 <div class="summary-sub-val" id="sumLengthDate">--- / --- / ----</div>
+            </div>
+            <div class="summary-card" id="sumHeight">
+                <div class="summary-title a70-font"><i class="fas fa-ruler-vertical"></i> Body Height</div>
+                <div class="summary-main-val" id="sumHeightVal">--<span>cm</span></div>
+                <div class="summary-sub-val" id="sumHeightDate">--- / --- / ----</div>
             </div>
         </div>
 
@@ -336,7 +361,7 @@
                 <canvas id="sheddingChart"></canvas>
             </div>
             <div class="chart-card" data-hide-for="FISH">
-                <h3 class="a70-font">Lengh Measurement (cm)</h3>
+                <h3 class="a70-font">Length Measurement (cm)</h3>
                 <canvas id="lengthChart"></canvas>
             </div>
             <div class="chart-card" data-hide-for="FISH,SNAKE">
@@ -404,8 +429,7 @@
     const urlParams = new URLSearchParams(window.location.search);
     const currentPageId = urlParams.get('id');
 
-    // URLs and API Endpoints
-    // Adicionamos o acesso direto via CSV para a página principal (ignora o login)
+    // URLs and API Endpoints (MANTENDO O ACESSO DIRETO VIA CSV PARA A PÁGINA PÚBLICA)
     const PAGEID_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTeBz5FwvcmPue3hJ6TKwmrNZeMrz2_Su7co-mPuzKj1ZJv--5BBvPjlszF3yyEHOVuEeGT9mmwZqOp/pub?gid=0&single=true&output=csv';
     const BIODATA_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS0Ra5VUE1xSCkCJCXaAObs1wBlUlrhH1YnnQ6e91S4fLT4sh_Nt7ECxaW15EMgS4_yjVcEs0OQECta/pub?gid=0&single=true&output=csv';
     const ENVIRONMENT_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRbjH7deMzP_-oUSROzLYUxU3o2UvBar6ODVwLKpLQ6xaacQKON5xlzV3KA2Tswsc0WfSGQu7LVKBvs/pub?gid=0&single=true&output=csv';
@@ -426,6 +450,17 @@
     function applyUserTheme() {
         document.documentElement.setAttribute('data-theme', 'default');
     }
+
+function removeLoader() {
+    setTimeout(() => {
+        const loader = document.getElementById('page-loader');
+        if (loader) {
+            loader.style.opacity = '0';
+            loader.style.visibility = 'hidden';
+            setTimeout(() => loader.style.display = 'none', 800);
+        }
+    }, 800);
+}
 
 async function loadData() {
     if (!currentPageId) return;
@@ -452,7 +487,19 @@ async function loadData() {
                 document.getElementById('dynBirth').innerText = `${ageString}${formattedDate}`;
             } else {document.getElementById('dynBirth').innerText = "---"; }
             
-            document.getElementById('dynReg').innerText = data[7] || "---";
+            // --- SEGURANÇA E CONFORMIDADE: SISPASS / SISFAUNA BANNER ---
+            const regValue = String(data[7] || "---");
+            const regElement = document.getElementById('dynReg');
+            const legalWarning = document.getElementById('legal-warning');
+
+            if (regValue === "---" || regValue.trim() === "" || regValue.toUpperCase().includes("PENDING")) {
+                regElement.innerHTML = `<span style="color:#ff5f5f"><i class="fas fa-exclamation-triangle"></i> Unverified</span>`;
+                if(legalWarning) legalWarning.style.display = 'block'; 
+            } else {
+                regElement.innerHTML = `${regValue} <i class="fas fa-check-circle" style="color:#a3b18a" title="Verified Data"></i>`;
+                if(legalWarning) legalWarning.style.display = 'none'; 
+            }
+            
             const lat = data[8];
             const lon = data[9];
             homeLat = parseFloat(lat);
@@ -464,10 +511,10 @@ async function loadData() {
                 getGeocodedLocation(lat, lon).then(locationString => {
                     locElement.innerText = locationString;});
             } else {locElement.innerText = "---";}
-            document.getElementById('dynAmbient').innerText = (data[2] || "Ambient").toUpperCase();
+            document.getElementById('dynAmbient').innerText = String(data[2] || "Ambient").toUpperCase();
             
             // Tipo de Animal
-            const animalTypeRaw = data[22] || "DEFAULT";
+            const animalTypeRaw = String(data[22] || "DEFAULT");
             document.getElementById('dynAnimal').innerText = animalTypeRaw.toUpperCase();
             filterLayoutByAnimal(animalTypeRaw);
 
@@ -518,13 +565,16 @@ async function loadData() {
             loadVetVisits(currentPageId);
             setInterval(updateSensors, 20000);
             
+            removeLoader();
         } else {
+            removeLoader();
             document.getElementById('dynAmbient').innerText = "AMBIENTE NÃO ENCONTRADO";
             alert("Aviso: O ID fornecido não foi encontrado ou está incorreto.");
         }
     } catch (e) { 
         console.error("Database connection error:", e); 
         document.getElementById('dynAmbient').innerText = "ERRO DE CONEXÃO";
+        removeLoader();
     }
 }
 
@@ -687,6 +737,7 @@ function updateFieldUI(id, val) {
             const lastFeeding = events.filter(e => e[2] === "Feeding").pop();
             const lastWeight = events.filter(e => e[2] === "Weighting").pop();
             const lastLength = events.filter(e => e[2] === "Length").pop();
+            const lastHeight = events.filter(e => e[2] === "Height").pop();
             const lastShed = events.filter(e => e[2] === "Shedding").sort((a, b) => new Date(a[1]) - new Date(b[1])); 
         
             const sheddingProcessed = lastShed.map((event, index) => {
@@ -703,22 +754,40 @@ function updateFieldUI(id, val) {
             });
             
             const lastShedResult = sheddingProcessed[sheddingProcessed.length - 1];
-            if (lastShedResult) {
-                document.getElementById('sumSheddingInterval').innerHTML = `${lastShedResult.interval}<span> Days</span>`; 
-                document.getElementById('sumSheddingDate').innerText = `Last: ${formatDateDisplay(lastShedResult.date)}`;
+            
+            const elShedInterval = document.getElementById('sumSheddingInterval');
+            const elShedDate = document.getElementById('sumSheddingDate');
+            if (lastShedResult && elShedInterval && elShedDate) {
+                elShedInterval.innerHTML = `${lastShedResult.interval}<span> Days</span>`; 
+                elShedDate.innerText = `Last: ${formatDateDisplay(lastShedResult.date)}`;
             }
 
-            if(lastFeeding) {
-                document.getElementById('sumFeedingVal').innerHTML = `${lastFeeding[3]}<span> g</span>`;
-                document.getElementById('sumFeedingDate').innerText = formatDateDisplay(lastFeeding[1]);
+            const elFeedingVal = document.getElementById('sumFeedingVal');
+            const elFeedingDate = document.getElementById('sumFeedingDate');
+            if(lastFeeding && elFeedingVal && elFeedingDate) {
+                elFeedingVal.innerHTML = `${lastFeeding[3]}<span> g</span>`;
+                elFeedingDate.innerText = formatDateDisplay(lastFeeding[1]);
             }
-            if(lastWeight) {
-                document.getElementById('sumWeightVal').innerHTML = `${lastWeight[3]}<span> g</span>`;
-                document.getElementById('sumWeightDate').innerText = formatDateDisplay(lastWeight[1]);
+            
+            const elWeightVal = document.getElementById('sumWeightVal');
+            const elWeightDate = document.getElementById('sumWeightDate');
+            if(lastWeight && elWeightVal && elWeightDate) {
+                elWeightVal.innerHTML = `${lastWeight[3]}<span> g</span>`;
+                elWeightDate.innerText = formatDateDisplay(lastWeight[1]);
             }
-            if(lastLength) {
-                document.getElementById('sumLengthVal').innerHTML = `${lastLength[3]}<span> cm</span>`;
-                document.getElementById('sumLengthDate').innerText = formatDateDisplay(lastLength[1]);
+            
+            const elLengthVal = document.getElementById('sumLengthVal');
+            const elLengthDate = document.getElementById('sumLengthDate');
+            if(lastLength && elLengthVal && elLengthDate) {
+                elLengthVal.innerHTML = `${lastLength[3]}<span> cm</span>`;
+                elLengthDate.innerText = formatDateDisplay(lastLength[1]);
+            }
+            
+            const elHeightVal = document.getElementById('sumHeightVal');
+            const elHeightDate = document.getElementById('sumHeightDate');
+            if(lastHeight && elHeightVal && elHeightDate) {
+                elHeightVal.innerHTML = `${lastHeight[3]}<span> cm</span>`;
+                elHeightDate.innerText = formatDateDisplay(lastHeight[1]);
             }
         
             const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
@@ -727,6 +796,7 @@ function updateFieldUI(id, val) {
             renderWeight(events, accentColor);
             renderShedding(sheddingProcessed, '#a3b18a'); 
             renderLength(events, accentColor);
+            renderHeigth(events, accentColor);
         } catch (e) { console.error("Bio-Summary Error:", e); }
     }
 
@@ -801,7 +871,40 @@ function renderFeeding(events, color) {
     const data = events.filter(e => e[2] === "Feeding");
     
     if(feedingChart) feedingChart.destroy();
-    feedingChart = new Chart(ctx, buildForecastChartConfig('Feeding (g)', data, color, ctx));
+    
+    const config = buildForecastChartConfig('Feeding (g)', data, color, ctx);
+    
+    const combos = data.map(e => {
+        const ft = (e[4] && e[4].trim() !== "") ? e[4].trim() : 'N/A';
+        const br = (e[5] && e[5].trim() !== "") ? e[5].trim() : 'N/A';
+        return `${ft} | ${br}`;
+    });
+    
+    const uniqueCombos = [...new Set(combos)];
+    
+    const palette = ['#a3b18a', '#ff9ff3', '#feca57', '#ff6b6b', '#48dbfb', '#1dd1a1', '#5f27cd'];
+    const comboColorMap = {};
+    uniqueCombos.forEach((combo, index) => {
+        comboColorMap[combo] = palette[index % palette.length];
+    });
+    
+    const pointColors = combos.map(combo => comboColorMap[combo]);
+    
+    config.data.datasets[0].pointBackgroundColor = pointColors;
+    config.data.datasets[0].pointBorderColor = '#ffffff';
+    config.data.datasets[0].pointBorderWidth = 1.5;
+    config.data.datasets[0].pointRadius = 5;
+    config.data.datasets[0].pointHoverRadius = 8;
+    
+    config.options.plugins.tooltip = config.options.plugins.tooltip || { callbacks: {} };
+    config.options.plugins.tooltip.callbacks.afterLabel = function(context) {
+        if (context.datasetIndex === 0 && combos[context.dataIndex]) {
+            return `Specs: ${combos[context.dataIndex]}`;
+        }
+        return null;
+    };
+    
+    feedingChart = new Chart(ctx, config);
 }
 
 function renderWeight(events, color) {
@@ -1050,18 +1153,20 @@ async function updateVetMap(vetLocationsArray) {
 
     let bounds = [];
 
+    // PRIVACIDADE / CONFORMIDADE LEI: MAPA FUZZY
+    // Utilizando um raio aproximado de 1.5km invés de um marcador preciso para resguardar a residência no Link Público.
     if (typeof homeLat !== 'undefined' && typeof homeLon !== 'undefined' && !isNaN(homeLat) && homeLat !== 0) {
-        const homeIcon = L.icon({
-            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
-            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-            iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
-        });
-
-        L.marker([homeLat, homeLon], { icon: homeIcon })
-         .addTo(vetMap)
-         .bindPopup('<b>Home Base</b><br>Terrarium Location');
+        L.circle([homeLat, homeLon], {
+            color: '#a3b18a',
+            fillColor: '#a3b18a',
+            fillOpacity: 0.3,
+            radius: 1500 // 1.5km raio de ofuscação
+        })
+        .addTo(vetMap)
+        .bindPopup('<b>Approximate Location</b><br>Secure Zone (1.5km radius)');
         
-        bounds.push([homeLat, homeLon]);
+        bounds.push([homeLat + 0.015, homeLon + 0.015]);
+        bounds.push([homeLat - 0.015, homeLon - 0.015]);
     }
 
     const vetIcon = L.icon({
@@ -1094,7 +1199,7 @@ async function updateVetMap(vetLocationsArray) {
     }
 
     if (bounds.length > 0) {
-        vetMap.fitBounds(bounds, { padding: [30, 30], maxZoom: 15 });
+        vetMap.fitBounds(bounds, { padding: [30, 30], maxZoom: 14 });
     } else {
         vetMap.setView([-23.5505, -46.6333], 10); 
     }
@@ -1378,7 +1483,46 @@ Reference the environmental data with the biological and veterinary data. Is the
             window.speechSynthesis.speak(utterance);
         });
     }
+
+    // ==========================================
+    // --- GITHUB AUTO VERSION TRACKER ---
+    // ==========================================
+    async function fetchGitHubVersion() {
+        const flagElement = document.getElementById('gh-version-flag');
+        if (!flagElement) return;
+
+        // URL da API pública do GitHub apontando para os commits do repositório
+        const repoUrl = 'https://api.github.com/repos/ashuhda-tech/TerraConnect_Technologies/commits?per_page=1';
+
+        try {
+            const response = await fetch(repoUrl);
+            
+            if (response.ok) {
+                const data = await response.json();
+                const latestCommit = data[0];
+                
+                // Pega os 7 primeiros caracteres do hash do commit (Padrão de versão)
+                const shortSha = latestCommit.sha.substring(0, 7);
+                
+                // Pega a data e formata
+                const commitDate = new Date(latestCommit.commit.author.date);
+                const formattedDate = `${String(commitDate.getDate()).padStart(2, '0')}/${String(commitDate.getMonth() + 1).padStart(2, '0')}/${commitDate.getFullYear()}`;
+
+                flagElement.innerHTML = `<i class="fas fa-code-branch"></i> Build ${shortSha} (${formattedDate})`;
+            } else {
+                flagElement.innerHTML = `<i class="fas fa-code-branch"></i> Live Build`;
+            }
+        } catch (error) {
+            flagElement.innerHTML = `<i class="fas fa-code-branch"></i> Local Build`;
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', fetchGitHubVersion);
 </script>
 
+<!-- VERSION FLAG -->
+<div id="gh-version-flag" class="app-version-flag">
+    <i class="fas fa-spinner fa-spin"></i> Fetching Build...
+</div>
 </body>
 </html>
