@@ -735,6 +735,18 @@ const loggedUser = checkSecurity();
         }
     }
 
+// Função Fail-Safe para remover a tela de loading
+function removeLoader() {
+    setTimeout(() => {
+        const loader = document.getElementById('page-loader');
+        if (loader) {
+            loader.style.opacity = '0';
+            loader.style.visibility = 'hidden';
+            setTimeout(() => loader.style.display = 'none', 800);
+        }
+    }, 800);
+}
+
 async function loadData() {
     if (!currentPageId || !loggedUser || !loggedUser.id) return;
         
@@ -757,17 +769,17 @@ async function loadData() {
                 document.getElementById('dynBirth').innerText = `${ageString}${formattedDate}`;
             } else {document.getElementById('dynBirth').innerText = "---"; }
             
-            // SISPASS / LEGAL REGISTRATION VERIFICATION CHECK
-            const regValue = data[7] || "---";
+            // CORREÇÃO: Força a variável a ser String para impedir o crash do .trim() e .toUpperCase()
+            const regValue = String(data[7] || "---");
             const regElement = document.getElementById('dynReg');
             const legalWarning = document.getElementById('legal-warning');
 
             if (regValue === "---" || regValue.trim() === "" || regValue.toUpperCase().includes("PENDING")) {
                 regElement.innerHTML = `<span style="color:#ff5f5f"><i class="fas fa-exclamation-triangle"></i> Unverified</span>`;
-                legalWarning.style.display = 'block'; // Mostra aviso legal se não tiver registro valido
+                legalWarning.style.display = 'block'; 
             } else {
                 regElement.innerHTML = `${regValue} <i class="fas fa-check-circle" style="color:#a3b18a" title="Verified Data"></i>`;
-                legalWarning.style.display = 'none'; // Tudo legal, sem avisos.
+                legalWarning.style.display = 'none'; 
             }
 
             const lat = data[8];
@@ -781,9 +793,9 @@ async function loadData() {
                 getGeocodedLocation(lat, lon).then(locationString => {
                     locElement.innerText = locationString;});
             } else {locElement.innerText = "---";}
-            document.getElementById('dynAmbient').innerText = (data[2] || "Ambient").toUpperCase();
+            document.getElementById('dynAmbient').innerText = String(data[2] || "Ambient").toUpperCase();
             
-            const animalTypeRaw = data[22] || "DEFAULT";
+            const animalTypeRaw = String(data[22] || "DEFAULT");
             document.getElementById('dynAnimal').innerText = animalTypeRaw.toUpperCase();
             
             document.getElementById('dynStatus').innerText = "Validando credenciais do plano..."; 
@@ -822,7 +834,6 @@ async function loadData() {
             if (photoURL && photoURL.startsWith('http')) imgEl.src = photoURL;
             else if (photoBase && photoBase.length > 100) imgEl.src = photoBase;
 
-            // CAMERA IP AGORA CARREGA DE LOCAL STORAGE PARA EVITAR EXPOSIÇÃO
             let localCam = localStorage.getItem('camIP_' + currentPageId);
             if (localCam) {
                 document.getElementById('cameraStream').src = `http://${localCam}/stream`;
@@ -831,15 +842,20 @@ async function loadData() {
             }
 
             updateSensors();
+            
+            // As duas funções abaixo agora estão protegidas internamente no código anterior
             loadBiologicalHistory(currentPageId);
             loadVetVisits(currentPageId);
             setInterval(updateSensors, 20000);
             
             if (typeof loadExistingConfig === "function") loadExistingConfig();
-            setTimeout(() => {
-                const loader = document.getElementById('page-loader');
-                if (loader) {loader.style.opacity = '0';loader.style.visibility = 'hidden';}}, 800);
+            
+            // Remove loader se tudo deu certo
+            removeLoader();
+            
         } else {
+            // Remove loader mesmo se o login falhar
+            removeLoader();
             document.getElementById('dynAmbient').innerText = "ACESSO NEGADO";
             alert("Aviso de Segurança: " + jsonResponse.message);
             window.location.href = "maindashboard.html"; 
@@ -847,8 +863,11 @@ async function loadData() {
     } catch (e) { 
         console.error("Database connection error:", e); 
         document.getElementById('dynAmbient').innerText = "ERRO DE CONEXÃO";
+        // FAIL-SAFE: Remove o loader mesmo se houver erro crítico na rede
+        removeLoader();
     }
 }
+    
 
     function getAgeString(dateStr) {
         if (!dateStr || dateStr === "---") return "";
