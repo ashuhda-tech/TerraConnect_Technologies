@@ -4,10 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TerraConnect | Registration</title>
+    
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/TERRACONNECT_LOGO.png">
     <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/TERRACONNECT_LOGO.png">
+    
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
         /* DEFINIÇÃO DE TODOS OS TEMAS */
         :root {--bg-dark: #070b14; --sidebar-bg: #0d1117; --accent: #d1b38b; --text-light: #f4e9d8; --gray-panel: #1e1e1e; --border: #2d3139;}
@@ -27,6 +30,7 @@
         [data-theme="nature1"] {--bg-dark: #2b2d24; --sidebar-bg: #3e3e3e; --accent: #cd853f; --text-light: #dad7cd; --gray-panel: #344e41; --border: #588157;}
         [data-theme="nature2"] {--bg-dark: #322D29; --sidebar-bg: #72383D; --accent: #AC9C8D; --text-light: #EFE9E1; --gray-panel: #D1C7BD; --border: #D9D9D9;}
         [data-theme="nature3"] {--bg-dark: #3b4d7b; --sidebar-bg: #1a2a4d; --accent: #c0c0e0; --text-light: #fef9e7; --gray-panel: #804040; --border: #e6b0aa;}
+        
         body { background-color: var(--bg-dark); color: var(--text-light); font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
         .video-bg-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; overflow: hidden; }
         .video-bg-container video { min-width: 100%; min-height: 100%; width: auto; height: auto; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); object-fit: cover; }
@@ -39,6 +43,11 @@
         input { width: 100%; padding: 12px; background: var(--bg-dark); border: 1px solid var(--border); color: var(--text-light); border-radius: 4px; box-sizing: border-box; font-size: 0.85rem; }
         input:focus { outline: none; border-color: var(--accent); }
         .info-box { background: rgba(0, 0, 0, 0.2); padding: 10px; border-radius: 4px; font-size: 0.7rem; margin-bottom: 25px; border: 1px dashed var(--border); color: var(--text-light); }
+        
+        /* Banner de Segurança */
+        .security-banner { background: rgba(163, 177, 138, 0.1); border-left: 4px solid #a3b18a; padding: 15px; margin-bottom: 25px; border-radius: 5px; color: var(--text-light); text-align: left; font-size: 0.8rem; line-height: 1.5; }
+        .security-banner i { color: #a3b18a; margin-right: 8px; }
+
         .btn-save { background: var(--accent); color: var(--bg-dark); border: none; width: 100%; padding: 15px; font-weight: bold; cursor: pointer; border-radius: 4px; transition: 0.3s; margin-top: 20px; }
         .btn-save:hover { filter: brightness(1.2); transform: translateY(-2px); } 
         .btn-back { display: block; margin-top: 15px; color: var(--text-light); text-decoration: none; font-size: 0.8rem; opacity: 0.7; }
@@ -53,12 +62,15 @@
         </video>
     </div>
     <div class="video-overlay"></div>
+    
     <div class="register-container">
         <h1 class="a70-font" id="mainTitle">REGISTRATION</h1>
+        
         <div class="info-box">
             <span style="font-size: 0.6rem;">LINKED TO ID:</span>
             <strong id="displayUserId" style="font-size: 0.6rem;">---</strong>
         </div>
+
         <div class="grid-2">
             <div class="input-group">
                 <label class="a70-font">AMBIENT NAME</label>
@@ -86,7 +98,7 @@
             </div>
             <div class="input-group grid-full">
                 <label class="a70-font">REGULATORY REGISTRATION Nº</label>
-                <input type="text" id="regNumber" placeholder="IBAMA / CITES">
+                <input type="text" id="regNumber" placeholder="IBAMA / CITES / SISPASS">
             </div>
             <div class="input-group grid-full">
                 <label class="a70-font">LOCATION (LAT, LONG)</label>
@@ -97,10 +109,7 @@
                     </button>
                 </div>
             </div>
-            <div class="input-group grid-full">
-                <label class="a70-font">CAMERA IP / STREAM URL</label>
-                <input type="text" id="cameraIp" placeholder="Ex: 192.168.1.50">
-            </div>
+
             <div class="input-group grid-full">
                 <label class="a70-font">PHOTO URL</label>
                 <input type="text" id="photoURL" placeholder="https://exemplo.com/foto.jpg">
@@ -110,6 +119,7 @@
                 <input type="file" id="animalPhoto" accept="image/*">
                 <canvas id="resizeCanvas" style="display:none;"></canvas>
             </div>
+
             <div class="info-box grid-full">MAIN SENSOR | THINGSPEAK</div>
             <div class="input-group">
                 <label class="a70-font">MAIN CHANNEL ID</label>
@@ -123,6 +133,7 @@
                 <label class="a70-font">MAIN READ API KEY</label>
                 <input type="text" id="mainTsRead">
             </div>
+
             <div class="info-box grid-full">REMOTE SENSOR | THINGSPEAK</div>
             <div class="input-group">
                 <label class="a70-font">REMOTE CHANNEL ID</label>
@@ -136,83 +147,78 @@
                 <label class="a70-font">REMOTE READ API KEY</label>
                 <input type="text" id="r1TsRead">
             </div>
-            <div class="info-box grid-full">DEVICE WIFI CONFIGURATOR</div>
+
+            <div class="info-box grid-full" style="border-color: cyan; color: cyan;">GPS TRACKER | THINGSPEAK</div>
             <div class="input-group">
-                <label class="a70-font">WIFI SSID</label>
-                <input type="text" id="wifiSsid">
+                <label class="a70-font" style="color: cyan;">GPS CHANNEL ID</label>
+                <input type="text" id="gpsChannelId">
             </div>
             <div class="input-group">
-                <label class="a70-font">WIFI PASSWORD</label>
-                <input type="text" id="wifiPassword">
+                <label class="a70-font" style="color: cyan;">GPS WRITE API KEY</label>
+                <input type="text" id="gpsTsWrite">
             </div>
-            
-            <div class="info-box grid-full">PUBLIC WIFI (GUEST VIEW)</div>
-            <div class="input-group">
-                <label class="a70-font">PUBLIC WIFI SSID</label>
-                <input type="text" id="publicWifiSsid" placeholder="Guest Network Name">
+            <div class="input-group grid-full">
+                <label class="a70-font" style="color: cyan;">GPS READ API KEY</label>
+                <input type="text" id="gpsTsRead">
             </div>
-            <div class="input-group">
-                <label class="a70-font">PUBLIC WIFI PASSWORD</label>
-                <input type="text" id="publicWifiPassword" placeholder="Guest Password">
+
+            <div class="security-banner grid-full">
+                <strong><i class="fas fa-shield-alt"></i> ZERO CLEARTEXT ARCHITECTURE</strong><br>
+                For your security, Wi-Fi passwords and Camera IPs are no longer stored or transmitted to the TerraConnect Cloud. Please configure these settings locally on your monitoring dashboard.
             </div>
         </div>
+
         <button class="btn-save a70-font" id="btnAction" onclick="processRegistration()">COMPLETE REGISTRATION</button>
         <a href="maindashboard.html" class="btn-back">CANCEL AND BACK</a>
     </div>
+
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbw3LbOYDqljAxQ8joYW8yDhwe6lsi7AdFCAoi4HG1iRdglS0k9-fI1Oj2eA12ePc6g/exec';
-        const csvReadURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTeBz5FwvcmPue3hJ6TKwmrNZeMrz2_Su7co-mPuzKj1ZJv--5BBvPjlszF3yyEHOVuEeGT9mmwZqOp/pub?gid=0&single=true&output=csv';
+        // URLs do Backend - UNIFICADAS COMO SOLICITADO
+        const SIGNUP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzFT1YQSMLpJ2zLJQ-bD1JOUzaUJJsRcmCBkpseXd87iGvJXm5Ig7p1gYJf-PmHVwQ/exec';
+        const FLAGS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyZaoQyRiQDaTP9IkbOK89A2l9DtH6tOtwL6TFn38x5N_gYiiQc2Os-NZ1dvEsZMZKF/exec"; 
+        const PAGEID_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw3LbOYDqljAxQ8joYW8yDhwe6lsi7AdFCAoi4HG1iRdglS0k9-fI1Oj2eA12ePc6g/exec";
+        const THEME_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzPCMbwa8NXy253hSbR4ewodPAiN_20qUlwvcFl8Uexo9SOZRUp5vxDPFlksh8NyNnD/exec";
+        const BIODATA_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxnOcWSHRutBkHc_45tSLOFjowJXMeplk333TmaddrvfWgETljbZZ6shOuwYTIG4AkD/exec";
+        const ENVIRONMENT_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzG2YVem9qG7sEK20lVuRm2Bhjo10dfXRF98mibREbUZnM5obTrb0QrQDJIGi0wFoE/exec";
+        const VETDATA_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxxnlxSflhGHaX8IMcQj9y7H99bu4G9V-UM9f-E-SLdV2eLcUrBpQWvwh7o6GHLUXca/exec";
+        const AI_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxign7YvIXmCiAggKU9XKlveWHQ_hQzYL65MEP3yEFe1lj1ewPjHuNzbbi_S8JMTPE/exec";
+
         let isEditMode = false;
         let editingPageID = null;
+        let currentPhotoBase64 = "";
+
         document.addEventListener('DOMContentLoaded', () => {
             const userData = localStorage.getItem('currentUser');
             if (!userData) { window.location.href = 'index.html'; return; }
+            
             const user = JSON.parse(userData);
             document.getElementById('displayUserId').innerText = user.id;
             window.currentUser = user; 
+            
             const savedTheme = localStorage.getItem(`theme_${user.id}`) || 'default';
             document.documentElement.setAttribute('data-theme', savedTheme);
+            
             const urlParams = new URLSearchParams(window.location.search);
             editingPageID = urlParams.get('pageID');
+            
             if (editingPageID) {
                 isEditMode = true;
                 setupEditMode();
-            }     
+            }      
         });
-        function parseCSVRow(str) {
-            let arr = [];
-            let quote = false;
-            let col = '';
-            for (let i = 0; i < str.length; i++) {
-                let cc = str[i], nc = str[i+1];
-                if (cc === '"' && quote && nc === '"') { col += cc; i++; continue; }
-                if (cc === '"') { quote = !quote; continue; }
-                if (cc === ',' && !quote) { arr.push(col.trim()); col = ''; continue; }
-                col += cc;
-            }
-            arr.push(col.trim());
-            return arr;
-        }
+
+        // REESCRITO: Agora busca via API JSON (PAGEID_SCRIPT_URL) ao invés do CSV
         async function setupEditMode() {
             document.getElementById('mainTitle').innerText = "EDIT REGISTRATION";
             document.getElementById('btnAction').innerText = "UPDATE REGISTRATION";
             document.getElementById('displayUserId').innerText = `EDITING: ${editingPageID}`;
             
             try {
-                const response = await fetch(csvReadURL);
-                const csvText = await response.text();
-                const rows = csvText.split('\n');
+                const response = await fetch(`${PAGEID_SCRIPT_URL}?userID=${encodeURIComponent(window.currentUser.id)}&pageID=${encodeURIComponent(editingPageID)}`);
+                const json = await response.json();
                 
-                let targetRow = null;
-                for (let i = 1; i < rows.length; i++) {
-                    const columns = parseCSVRow(rows[i]);
-                    if (columns[1] === editingPageID) { 
-                        targetRow = columns;
-                        break;
-                    }
-                }
-
-                if (targetRow) {
+                if (json.status === "success" && json.data) {
+                    const targetRow = json.data;
                     document.getElementById('ambientName').value = targetRow[2] || "";
                     document.getElementById('animalName').value = targetRow[3] || "";
                     document.getElementById('animalSex').value = targetRow[4] || "";
@@ -227,18 +233,21 @@
                     document.getElementById('r1TsWrite').value = targetRow[14] || "";
                     document.getElementById('r1TsRead').value = targetRow[15] || "";
                     currentPhotoBase64 = targetRow[16] || ""; 
-                    document.getElementById('cameraIp').value = targetRow[17] || "";
-                    // Index 18 is Theme, but since there is no UI input for it, we skip trying to map it to the DOM!
+                    // index 17 (camera IP) não é mais populado
+                    // index 18 (theme)
                     document.getElementById('photoURL').value = targetRow[19] || ""; 
-                    document.getElementById('wifiSsid').value = targetRow[20] || "";
-                    document.getElementById('wifiPassword').value = targetRow[21] || "";
+                    // index 20/21 (Wi-Fi) e 23/24 (Public Wi-Fi) não são mais populados
                     document.getElementById('animalType').value = targetRow[22] || "";
-                    document.getElementById('publicWifiSsid').value = targetRow[23] || "";
-                    document.getElementById('publicWifiPassword').value = targetRow[24] || "";
+                    
+                    document.getElementById('gpsChannelId').value = targetRow[25] || "";
+                    document.getElementById('gpsTsWrite').value = targetRow[26] || "";
+                    document.getElementById('gpsTsRead').value = targetRow[27] || "";
+                } else {
+                    console.error("Data fetch error:", json.message);
+                    alert("Acesso negado aos dados ou erro de rede.");
                 }
-            } catch (e) { console.error("Error loading CSV:", e); }
+            } catch (e) { console.error("Error connecting to API:", e); }
         }
-        
         
         function getLocation() {
             if (navigator.geolocation) {
@@ -247,17 +256,23 @@
                 });
             }
         }
+
         async function processRegistration() {
             const user = window.currentUser;
             const ambientName = document.getElementById('ambientName').value;
             const animalName = document.getElementById('animalName').value;
             const loc = document.getElementById('location').value.split(',');
+            
             if (!ambientName || !animalName) return alert("Fill essential names.");
+            
             const pageId = isEditMode ? editingPageID : 'PG-' + Math.random().toString(36).substr(2, 6).toUpperCase();
-            let photoData = "";
+            let photoData = isEditMode ? currentPhotoBase64 : "";
+            
             const fileInput = document.getElementById('animalPhoto');
             if (fileInput.files[0]) photoData = await resizeImage(fileInput.files[0]);
-            // OBJETO PAYLOAD: Deve conter exatamente as chaves que o AppScript vai ler
+
+            // OBJETO PAYLOAD: As credenciais de câmera e wi-fi são enviadas VAZIAS 
+            // para garantir que a planilha limpe qualquer texto plano lá existente.
             const payload = {
                 action: isEditMode ? "update" : "create",
                 userID: user.id,
@@ -277,26 +292,31 @@
                 r1TsWrite: document.getElementById('r1TsWrite').value,
                 r1TsRead: document.getElementById('r1TsRead').value,
                 photoBase64: photoData,
-                cameraIp: document.getElementById('cameraIp').value,
+                cameraIp: "", // Security Clean
                 theme: localStorage.getItem(`theme_${user.id}`) || "default",
                 photoURL: document.getElementById('photoURL').value,
-                wifiSsid: document.getElementById('wifiSsid').value,
-                wifiPassword: document.getElementById('wifiPassword').value,
+                wifiSsid: "", // Security Clean
+                wifiPassword: "", // Security Clean
                 animalType: document.getElementById('animalType').value,
-                publicWifiSsid: document.getElementById('publicWifiSsid').value,
-                publicWifiPassword: document.getElementById('publicWifiPassword').value,
+                publicWifiSsid: "", // Security Clean
+                publicWifiPassword: "", // Security Clean
+                gpsChannelID: document.getElementById('gpsChannelId').value,
+                gpsTsWrite: document.getElementById('gpsTsWrite').value,
+                gpsTsRead: document.getElementById('gpsTsRead').value,
                 timestamp: new Date().toLocaleString('pt-BR')
             };
+
             try {
-                await fetch(scriptURL, {
+                await fetch(PAGEID_SCRIPT_URL, {
                     method: 'POST',
                     mode: 'no-cors',
                     body: JSON.stringify(payload)
                 });
-                alert("Success! Data sent.");
+                alert("Success! Data sent securely.");
                 window.location.href = 'maindashboard.html';
             } catch (e) { alert("Error connecting to DB."); }
         }
+
         function resizeImage(file) {
             return new Promise((resolve) => {
                 const reader = new FileReader();
