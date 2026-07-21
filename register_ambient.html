@@ -180,7 +180,7 @@
                 <input type="text" id="wifiPassword" placeholder="Main Password">
             </div>
             
-            <div class="info-box grid-full" style="border-color: cyan; color: cyan;">PUBLIC WIFI (BACKUP / HOTSPOT)</div>
+            <div class="info-box grid-full" style="border-color: cyan; color: cyan;">PUBLIC WIFI (BACKUP)</div>
             <div class="input-group">
                 <label class="a70-font" style="color: cyan;">PUBLIC WIFI SSID</label>
                 <input type="text" id="publicWifiSsid" placeholder="Backup Network Name">
@@ -188,6 +188,16 @@
             <div class="input-group">
                 <label class="a70-font" style="color: cyan;">PUBLIC WIFI PASSWORD</label>
                 <input type="text" id="publicWifiPassword" placeholder="Backup Password">
+            </div>
+
+            <div class="info-box grid-full" style="border-color: cyan; color: cyan;">PERSONAL HOTSPOT (MOBILE BACKUP)</div>
+            <div class="input-group">
+                <label class="a70-font" style="color: cyan;">HOTSPOT SSID</label>
+                <input type="text" id="personalHotspotWifiSsid" placeholder="Mobile Network Name">
+            </div>
+            <div class="input-group">
+                <label class="a70-font" style="color: cyan;">HOTSPOT PASSWORD</label>
+                <input type="text" id="personalHotspotPassword" placeholder="Mobile Password">
             </div>
 
             <div class="security-banner grid-full">
@@ -201,7 +211,7 @@
     </div>
 
     <script>
-        // URLs do Backend - UNIFICADAS COMO SOLICITADO
+        // URLs do Backend
         const SIGNUP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzFT1YQSMLpJ2zLJQ-bD1JOUzaUJJsRcmCBkpseXd87iGvJXm5Ig7p1gYJf-PmHVwQ/exec';
         const FLAGS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyZaoQyRiQDaTP9IkbOK89A2l9DtH6tOtwL6TFn38x5N_gYiiQc2Os-NZ1dvEsZMZKF/exec"; 
         const PAGEID_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw3LbOYDqljAxQ8joYW8yDhwe6lsi7AdFCAoi4HG1iRdglS0k9-fI1Oj2eA12ePc6g/exec";
@@ -261,17 +271,19 @@
                     document.getElementById('r1TsWrite').value = targetRow[14] || "";
                     document.getElementById('r1TsRead').value = targetRow[15] || "";
                     currentPhotoBase64 = targetRow[16] || ""; 
-                    document.getElementById('cameraIp').value = targetRow[17] || ""; // RESTAURADO
+                    document.getElementById('cameraIp').value = targetRow[17] || "";
                     // index 18 is Theme
                     document.getElementById('photoURL').value = targetRow[19] || ""; 
-                    document.getElementById('wifiSsid').value = targetRow[20] || ""; // RESTAURADO
-                    document.getElementById('wifiPassword').value = targetRow[21] || ""; // RESTAURADO
+                    document.getElementById('wifiSsid').value = targetRow[20] || "";
+                    document.getElementById('wifiPassword').value = targetRow[21] || "";
                     document.getElementById('animalType').value = targetRow[22] || "";
-                    document.getElementById('publicWifiSsid').value = targetRow[23] || ""; // RESTAURADO
-                    document.getElementById('publicWifiPassword').value = targetRow[24] || ""; // RESTAURADO
+                    document.getElementById('publicWifiSsid').value = targetRow[23] || "";
+                    document.getElementById('publicWifiPassword').value = targetRow[24] || "";
                     document.getElementById('gpsChannelId').value = targetRow[25] || "";
                     document.getElementById('gpsTsWrite').value = targetRow[26] || "";
                     document.getElementById('gpsTsRead').value = targetRow[27] || "";
+                    document.getElementById('personalHotspotWifiSsid').value = targetRow[28] || "";
+                    document.getElementById('personalHotspotPassword').value = targetRow[29] || "";
                 } else {
                     console.error("Data fetch error:", json.message);
                     alert("Acesso negado aos dados ou erro de rede.");
@@ -301,8 +313,6 @@
             const fileInput = document.getElementById('animalPhoto');
             if (fileInput.files[0]) photoData = await resizeImage(fileInput.files[0]);
 
-            // OBJETO PAYLOAD: Credenciais de câmera e wi-fi são passadas ao banco de dados 
-            // de forma funcional para que o ESP32 possa utiliza-las em caso de queda de conexão.
             const payload = {
                 action: isEditMode ? "update" : "create",
                 userID: user.id,
@@ -333,6 +343,8 @@
                 gpsChannelID: document.getElementById('gpsChannelId').value,
                 gpsTsWrite: document.getElementById('gpsTsWrite').value,
                 gpsTsRead: document.getElementById('gpsTsRead').value,
+                personalHotspotWifiSsid: document.getElementById('personalHotspotWifiSsid').value,
+                personalHotspotPassword: document.getElementById('personalHotspotPassword').value,
                 timestamp: new Date().toLocaleString('pt-BR')
             };
 
