@@ -28,119 +28,134 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
+    
     <style>
         /* --- PAGE LOADER SPLASH SCREEN --- */
-        #page-loader {position: fixed;top: 0;left: 0;width: 100vw;height: 100vh;background-color: var(--bg-dark);
-            z-index: 99999;display: flex;flex-direction: column;justify-content: center;align-items: center;transition: opacity 0.8s ease-out, visibility 0.8s ease-out;}
-        .loader-visual {width: 100vw; height: 100vh; object-fit: cover;}
-            
-        :root {--bg-dark: #070b14; --sidebar-bg: #0d1117; --accent: #d1b38b; --text-light: #f4e9d8; --gray-panel: #1e1e1e; --border: #2d3139;}
+    #page-loader {position: fixed;top: 0;left: 0;width: 100vw;height: 100vh;background-color: var(--bg-dark);
+        z-index: 99999;display: flex;flex-direction: column;justify-content: center;align-items: center;transition: opacity 0.8s ease-out, visibility 0.8s ease-out;}
+    .loader-visual {width: 100vw; height: 100vh; object-fit: cover;}
         
-        [data-theme="tech1"] {--bg-dark: #0B1021; --sidebar-bg: #334155; --accent: #87CEFA; --text-light: #CFFAFE; --gray-panel: #E2E8F0; --border: #334155;}
-        [data-theme="tech2"] {--bg-dark: #1a1a1d; --sidebar-bg: #4e4e50; --accent: #ffff00; --text-light: #f5f5f5; --gray-panel: #2e2e2e; --border: #95a5a6;}
-        [data-theme="tech3"] {--bg-dark: #56886C; --sidebar-bg: #56887D; --accent: #FFE0FF; --text-light: #FFE9FF; --gray-panel: #56887D; --border: #56886C;}
-        
-        [data-theme="playful1"] {--bg-dark: #040B11; --sidebar-bg: #2D322C; --accent: #CEE056; --text-light: #F3F3F2; --gray-panel: #2D322C; --border: #EBC61D;}
-        [data-theme="playful2"] {--bg-dark: #846B5A; --sidebar-bg: #CAB8A9; --accent: #D4CAC1; --text-light: #FEFCFB; --gray-panel: #FBF8F5; --border: #CAB8A9;}
-        [data-theme="playful3"] {--bg-dark: #136a7a; --sidebar-bg: #408d99; --accent: #8dc6bf; --text-light: #d1e8e4; --gray-panel: #f1f7f6; --border: #408d99;}
-        
-        [data-theme="minimalist1"] {--bg-dark: #000000; --sidebar-bg: #1a1a1a; --accent: #d7ccc8; --text-light: #f5f5f5; --gray-panel: #6d4c41; --border: #e1e8ed;}
-        [data-theme="minimalist2"] {--bg-dark: #333333; --sidebar-bg: #4f4f4f; --accent: #bdb76b; --text-light: #dcdcdc; --gray-panel: #262626; --border: #e6e6fa;}
-        [data-theme="minimalist3"] {--bg-dark: #212121; --sidebar-bg: #404040; --accent: #bdc3c7; --text-light: #ffffff; --gray-panel: #616161; --border: #ff5252;}
-        
-        [data-theme="nature1"] {--bg-dark: #2b2d24; --sidebar-bg: #3e3e3e; --accent: #cd853f; --text-light: #dad7cd; --gray-panel: #344e41; --border: #588157;}
-        [data-theme="nature2"] {--bg-dark: #322D29; --sidebar-bg: #72383D; --accent: #AC9C8D; --text-light: #EFE9E1; --gray-panel: #D1C7BD; --border: #D9D9D9;}
-        [data-theme="nature3"] {--bg-dark: #3b4d7b; --sidebar-bg: #1a2a4d; --accent: #c0c0e0; --text-light: #fef9e7; --gray-panel: #804040; --border: #e6b0aa;}
+    /* DEFINIÇÃO DE TODOS OS TEMAS COM BASE NAS PALETAS DAS IMAGENS */
+    :root {--bg-dark: #070b14; --sidebar-bg: #0d1117; --accent: #d1b38b; --text-light: #f4e9d8; --gray-panel: #1e1e1e; --border: #2d3139;}
+    /* TECH SAVVY & FUTURISTIC */
+    [data-theme="tech1"] {--bg-dark: #0B1021; --sidebar-bg: #334155; --accent: #87CEFA; --text-light: #CFFAFE; --gray-panel: #E2E8F0; --border: #334155;}
+    [data-theme="tech2"] {--bg-dark: #1a1a1d; --sidebar-bg: #4e4e50; --accent: #ffff00; --text-light: #f5f5f5; --gray-panel: #2e2e2e; --border: #95a5a6;}
+    [data-theme="tech3"] {--bg-dark: #56886C; --sidebar-bg: #56887D; --accent: #FFE0FF; --text-light: #FFE9FF; --gray-panel: #56887D; --border: #56886C;}
+    /* PLAYFUL & VIBRANT */
+    [data-theme="playful1"] {--bg-dark: #040B11; --sidebar-bg: #2D322C; --accent: #CEE056; --text-light: #F3F3F2; --gray-panel: #2D322C; --border: #EBC61D;}
+    [data-theme="playful2"] {--bg-dark: #846B5A; --sidebar-bg: #CAB8A9; --accent: #D4CAC1; --text-light: #FEFCFB; --gray-panel: #FBF8F5; --border: #CAB8A9;}
+    [data-theme="playful3"] {--bg-dark: #136a7a; --sidebar-bg: #408d99; --accent: #8dc6bf; --text-light: #d1e8e4; --gray-panel: #f1f7f6; --border: #408d99;}
+    /* MINIMALISTIC & ELEGANT */
+    [data-theme="minimalist1"] {--bg-dark: #000000; --sidebar-bg: #1a1a1a; --accent: #d7ccc8; --text-light: #f5f5f5; --gray-panel: #6d4c41; --border: #e1e8ed;}
+    [data-theme="minimalist2"] {--bg-dark: #333333; --sidebar-bg: #4f4f4f; --accent: #bdb76b; --text-light: #dcdcdc; --gray-panel: #262626; --border: #e6e6fa;}
+    [data-theme="minimalist3"] {--bg-dark: #212121; --sidebar-bg: #404040; --accent: #bdc3c7; --text-light: #ffffff; --gray-panel: #616161; --border: #ff5252;}
+    /* NATURE-INSPIRED */
+    [data-theme="nature1"] {--bg-dark: #2b2d24; --sidebar-bg: #3e3e3e; --accent: #cd853f; --text-light: #dad7cd; --gray-panel: #344e41; --border: #588157;}
+    [data-theme="nature2"] {--bg-dark: #322D29; --sidebar-bg: #72383D; --accent: #AC9C8D; --text-light: #EFE9E1; --gray-panel: #D1C7BD; --border: #D9D9D9;}
+    [data-theme="nature3"] {--bg-dark: #3b4d7b; --sidebar-bg: #1a2a4d; --accent: #c0c0e0; --text-light: #fef9e7; --gray-panel: #804040; --border: #e6b0aa;}
 
-        * { box-sizing: border-box; }
-        body { background-color: var(--bg-dark); color: var(--text-light); font-family: 'Inter', sans-serif; margin: 0; display: flex; height: 100vh; overflow: hidden; transition: background 0.5s, color 0.5s;}
+    * { box-sizing: border-box; }
 
-        .background-video { position: fixed; right: 0; bottom: 0; min-width: 100%; min-height: 100%; z-index: -1; object-fit: cover; filter: brightness(0.4); }
-        .a70-font { font-family: 'Cinzel', serif; letter-spacing: 2px; }
-        .animal-photo { flex-shrink: 0; width: 55%; max-width: 180px; aspect-ratio: 1 / 1; height: auto; object-fit: cover; border-radius: 10px; background: rgba(0,0,0,0.3); border: 2px solid var(--border); margin: 0 auto; }
+    body {   background-color: var(--bg-dark); color: var(--text-light); font-family: 'Inter', sans-serif;   margin: 0;   display: flex; height: 100vh; overflow: hidden; transition: background 0.5s, color 0.5s;}
 
-        .sidebar { width: 320px; background-color: var(--sidebar-bg); border-right: 1px solid var(--border); padding: 25px; display: flex; flex-direction: column; justify-content: space-between; z-index: 10; transition: background-color 0.5s, border-color 0.5s; overflow: auto; scrollbar-width: none; -ms-overflow-style: none;}
-        .sidebar::-webkit-scrollbar { display: none; }
+    /* Estilo para o Vídeo de Fundo */
+    .background-video { position: fixed; right: 0; bottom: 0; min-width: 100%; min-height: 100%; z-index: -1; object-fit: cover; filter: brightness(0.4); }
+    .a70-font { font-family: 'Cinzel', serif; letter-spacing: 2px; }
+    .animal-photo { flex-shrink: 0; width: 55%; max-width: 180px; aspect-ratio: 1 / 1; height: auto; object-fit: cover; border-radius: 10px; background: rgba(0,0,0,0.3); border: 2px solid var(--border); margin: 0 auto; }
 
-        .btn-back { text-decoration: none; color: var(--accent); border: 1px solid var(--accent); padding: 8px 15px; border-radius: 5px; font-size: 0.8rem; transition: 0.3s; display: inline-block; margin-bottom: 30px; text-align: center; }
-        .btn-back:hover { background: var(--accent); color: var(--bg-dark); }
-        .btn-send { background: transparent; border: 1px solid var(--accent); color: var(--accent); border-radius: 5px; padding: 8px 12px; cursor: pointer; transition: 0.3s; flex-shrink: 0; display: flex; align-items: center; justify-content: center; height: 35px;}
-        .btn-send:hover { background: var(--accent); color: var(--bg-dark); }
-        .btn-edit {display: none;align-items: center;justify-content: center;gap: 8px;margin-top: 15px;padding: 10px;width: 100%;background: transparent;border: 1px solid var(--accent);color: var(--accent);text-decoration: none;border-radius: 5px;font-size: 0.8rem;font-family: 'Cinzel', serif;transition: 0.3s;cursor: pointer;}
-        .btn-edit:hover {background: var(--accent);color: var(--bg-dark);}
-        .btn-share {display: flex;align-items: center;justify-content: center;gap: 8px;margin-top: 0;padding: 10px;width: 100%;background: transparent;border: 1px solid var(--accent);color: var(--accent);text-decoration: none;border-radius: 5px;font-size: 0.8rem;font-family: 'Cinzel', serif;transition: 0.3s;cursor: pointer;}
-        .btn-share:hover {background: var(--accent);color: var(--bg-dark);}
-        
-        .bio-section { display: flex; flex-direction: column; align-items: center; text-align: center; margin-bottom: 30px; }
-        .bio-info-list { display: grid; grid-template-columns: 1fr; gap: 15px; text-align: left; width: 100%; }
-        .bio-item b { color: var(--accent); display: block; font-size: 0.75rem; text-transform: uppercase; margin-bottom: 4px; }
-        .bio-item span { font-size: 0.9rem; color: var(--text-light); }
+    /* --- SIDEBAR LAYOUT --- */
+    .sidebar { width: 320px; background-color: var(--sidebar-bg); border-right: 1px solid var(--border); padding: 25px; display: flex; flex-direction: column; justify-content: space-between; z-index: 10; transition: background-color 0.5s, border-color 0.5s;
+    overflow: auto;          /* Permite a rolagem interna se os elementos passarem da tela */
+    scrollbar-width: none;     /* Oculta a barra no Firefox */
+    -ms-overflow-style: none;  /* Oculta a barra no IE e Edge */
+}
 
-        .camera-card { background: #000; border: 1px solid var(--border); border-radius: 15px; margin-top: 20px; position: relative; overflow: hidden; aspect-ratio: 16 / 9; display: flex; align-items: center; justify-content: center; }
-        .camera-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(7, 11, 20, 0.85); z-index: 2; transition: opacity 0.5s; overflow: hidden;}
-        .signal-lost-gif { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.3; z-index: -1; }
-        .camera-stream { width: 100%; height: 100%; object-fit: cover; z-index: 1; }
-        .cam-status-bar { position: absolute; bottom: 0; width: 100%; padding: 10px 20px; background: rgba(0,0,0,0.6); display: flex; justify-content: space-between; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;z-index: 3;}
+/* Oculta a barra de rolagem no Chrome, Safari e Opera */
+    .sidebar::-webkit-scrollbar { display: none; }
 
-        .dyn-name {font-family: 'Cinzel', serif; letter-spacing: 2px; font-size: 2.5rem; margin: 15px 0 0 0; color: var(--accent);}
-        .main-content { flex: 1; padding: 40px; overflow-y: auto; background: transparent !important; transition: 0.5s; }
-        .main-header { margin-bottom: 40px; }
-        .main-header h1 { font-size: 2.5rem; margin: 0; color: var(--accent); }
-        .main-header p { color: var(--text-muted); margin: 5px 0 0; }
-        .management-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-bottom: 30px; }
+    .btn-back { text-decoration: none; color: var(--accent); border: 1px solid var(--accent); padding: 8px 15px; border-radius: 5px; font-size: 0.8rem; transition: 0.3s; display: inline-block; margin-bottom: 30px; text-align: center; }
+    .btn-back:hover { background: var(--accent); color: var(--bg-dark); }
+    .btn-send { background: transparent; border: 1px solid var(--accent); color: var(--accent); border-radius: 5px; padding: 8px 12px; cursor: pointer; transition: 0.3s; flex-shrink: 0; display: flex; align-items: center; justify-content: center; height: 35px;}
+    .btn-send:hover { background: var(--accent); color: var(--bg-dark); }
+    .btn-edit {display: none;align-items: center;justify-content: center;gap: 8px;margin-top: 15px;padding: 10px;width: 100%;background: transparent;border: 1px solid var(--accent);color: var(--accent);text-decoration: none;border-radius: 5px;font-size: 0.8rem;font-family: 'Cinzel', serif;transition: 0.3s;cursor: pointer;}
+    .btn-edit:hover {background: var(--accent);color: var(--bg-dark);}
 
-        .masonry-grid {column-width: 260px;column-gap: 12px;width: 100%;margin-bottom: 30px;}
-        .masonry-grid > .input-card {break-inside: avoid;page-break-inside: avoid;-webkit-column-break-inside: avoid;margin-bottom: 12px;display: flex; width: 100%;box-sizing: border-box;}
-        
-        .sensor-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 25px; }
-        .summary-section { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin-bottom: 30px; }
-        .summary-title { color: var(--accent); font-size: 0.7rem; text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
-        .summary-main-val { font-size: 1.6rem; font-weight: 700; color: var(--text-light); margin-bottom: 5px; }
-        .summary-sub-val { font-size: 0.85rem; color: var(--text-muted); }
-        .summary-sub-val b { color: var(--accent); font-weight: 400; }
-        
-        .sensor-card, .summary-card, .chart-card, .input-card {background: rgba(30, 30, 30, 0.7) !important; backdrop-filter: blur(10px);border: 1px solid var(--border);border-radius: 15px;padding: 20px;transition: 0.3s;}
-        .sensor-card { display: flex; align-items: center; gap: 12px; }
-        .sensor-card:hover { border-color: var(--accent); }
-        .sensor-card-rs {background: rgba(70, 70, 70, 0.7) !important; backdrop-filter: blur(10px);border: 1px solid var(--border);border-radius: 15px;padding: 20px;transition: 0.3s;display: flex; align-items: center; gap: 12px;}
-        .sensor-card-rs:hover { border-color: var(--accent); background: rgba(70, 70, 70, 0.9) !important;}
-        
-        .grid-divider {grid-column: 1 / -1;display: flex;align-items: center;gap: 15px;margin: 20px 0 10px 5px;color: var(--accent);font-size: 0.75rem;text-transform: uppercase;letter-spacing: 2px;opacity: 0.8;}
-        .grid-divider::after {content: "";height: 1px;flex: 1;background: linear-gradient(90deg, var(--border), transparent);}  
-        .summary-card { display: flex; flex-direction: column; justify-content: center; border-bottom: 3px solid var(--accent); }
-        .input-card { border-radius: 12px; padding: 15px; display: flex; flex-direction: column; gap: 10px; min-width: 0; overflow: hidden; }
-        .input-header { display: flex; align-items: center; gap: 8px; color: var(--accent); font-size: 0.7rem; text-transform: uppercase; }
-        .input-group { display: flex; gap: 8px; width: 100%; align-items: center; flex-shrink: 0; white-space: nowrap; padding: 8px 15px; height: 38px;}
-        .input-field { background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 5px; color: var(--text-light); padding: 8px; flex: 1; min-width: 0; font-size: 0.9rem; outline: none; }
-        .input-field:focus { border-color: var(--accent); }
+    .btn-share {display: flex;align-items: center;justify-content: center;gap: 8px;margin-top: 0;padding: 10px;width: 100%;background: transparent;border: 1px solid var(--accent);color: var(--accent);text-decoration: none;border-radius: 5px;font-size: 0.8rem;font-family: 'Cinzel', serif;transition: 0.3s;cursor: pointer;}
+    .btn-share:hover {background: var(--accent);color: var(--bg-dark);}
+    
+    .bio-section { display: flex; flex-direction: column; align-items: center; text-align: center; margin-bottom: 30px; }
+    .bio-info-list { display: grid; grid-template-columns: 1fr; gap: 15px; text-align: left; width: 100%; }
+    .bio-item b { color: var(--accent); display: block; font-size: 0.75rem; text-transform: uppercase; margin-bottom: 4px; }
+    .bio-item span { font-size: 0.9rem; color: var(--text-light); }
 
-        .sensor-icon { font-size: 1.5rem; width: 35px; text-align: center; }
-        .sensor-data { display: flex; flex-direction: column; }
-        .sensor-label { color: var(--text-muted); font-size: 0.65rem; text-transform: uppercase; font-weight: 600; }
-        .sensor-val { font-size: 1.4rem; font-weight: 700; color: var(--text-light); line-height: 1.2; }
-        .sensor-val span { font-size: 0.75rem; margin-left: 3px; color: var(--text-muted); }
+    /* CAMERA MONITORING CARD */
+    .camera-card { background: #000; border: 1px solid var(--border); border-radius: 15px; margin-top: 20px; position: relative; overflow: hidden; aspect-ratio: 16 / 9; display: flex; align-items: center; justify-content: center; }
+    .camera-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(7, 11, 20, 0.85); z-index: 2; transition: opacity 0.5s; overflow: hidden;}
+    .signal-lost-gif { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.3; z-index: -1; }
+    .camera-stream { width: 100%; height: 100%; object-fit: cover; z-index: 1; }
+    .cam-status-bar { position: absolute; bottom: 0; width: 100%; padding: 10px 20px; background: rgba(0,0,0,0.6); display: flex; justify-content: space-between; align-items: center; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;z-index: 3;}
 
-        .charts-section { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; margin-top: 20px; }
-        .chart-card { height: 320px; }
-        .chart-card h3 { margin: 0 0 15px 0; font-size: 0.9rem; color: var(--accent); text-transform: uppercase; }
+    .dyn-name {font-family: 'Cinzel', serif; letter-spacing: 2px; font-size: 2.5rem; letter-spacing: 2px;margin: 15px 0 0 0; color: var(--accent);}
+    
+    /* --- MAIN CONTENT LAYOUT --- */
+    .main-content { flex: 1; padding: 40px; overflow-y: auto; background: transparent !important; transition: 0.5s; }
+    .main-header { margin-bottom: 40px; }
+    .main-header h1 { font-size: 2.5rem; margin: 0; color: var(--accent); }
+    .main-header p { color: var(--text-muted); margin: 5px 0 0; }
+    .management-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-bottom: 30px; }
 
-        .chart-modal {display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(7, 11, 20, 0.95); backdrop-filter: blur(15px); z-index: 9999; flex-direction: column; align-items: center; justify-content: center;}
-        .chart-modal-header { width: 90%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .chart-modal-header h2 { color: var(--accent); margin: 0; }
-        .btn-close-modal { background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 1.2rem; transition: 0.3s; display: flex; align-items: center; justify-content: center; font-family: 'Cinzel', serif; }
-        .btn-close-modal:hover {background: var(--accent);color: var(--bg-dark);}
-        .custom-gps-marker { background: none; border: none; }
+    .masonry-grid {column-width: 260px;column-gap: 12px;width: 100%;margin-bottom: 30px;}
+    .masonry-grid > .input-card {break-inside: avoid;page-break-inside: avoid;-webkit-column-break-inside: avoid;margin-bottom: 12px;display: flex; width: 100%;box-sizing: border-box;}
+    
+    .sensor-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 25px; }
+    .summary-section { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin-bottom: 30px; }
+    .summary-title { color: var(--accent); font-size: 0.7rem; text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+    .summary-main-val { font-size: 1.6rem; font-weight: 700; color: var(--text-light); margin-bottom: 5px; }
+    .summary-sub-val { font-size: 0.85rem; color: var(--text-muted); }
+    .summary-sub-val b { color: var(--accent); font-weight: 400; }
+    
+    .sensor-card, .summary-card, .chart-card, .input-card {background: rgba(30, 30, 30, 0.7) !important; backdrop-filter: blur(10px);border: 1px solid var(--border);border-radius: 15px;padding: 20px;transition: 0.3s;}
+    .sensor-card { display: flex; align-items: center; gap: 12px; }
+    .sensor-card:hover { border-color: var(--accent); }
+    .sensor-card-rs {background: rgba(70, 70, 70, 0.7) !important; backdrop-filter: blur(10px);border: 1px solid var(--border);border-radius: 15px;padding: 20px;transition: 0.3s;}
+    .sensor-card-rs { display: flex; align-items: center; gap: 12px; }
+    .sensor-card-rs:hover { border-color: var(--accent); background: rgba(70, 70, 70, 0.9) !important;}
+    .summary-card { display: flex; flex-direction: column; justify-content: center; border-bottom: 3px solid var(--accent); }
+    .input-card { border-radius: 12px; padding: 15px; display: flex; flex-direction: column; gap: 10px; min-width: 0; overflow: hidden; }
+    .input-header { display: flex; align-items: center; gap: 8px; color: var(--accent); font-size: 0.7rem; text-transform: uppercase; }
+    .input-group { display: flex; gap: 8px; width: 100%; align-items: center; flex-shrink: 0; white-space: nowrap; padding: 8px 15px; height: 38px;}
+    .input-field { background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 5px; color: var(--text-light); padding: 8px; flex: 1; min-width: 0; font-size: 0.9rem; outline: none; }
+    .input-field:focus { border-color: var(--accent); }
 
-        /* Estilo customizado para Alertas de Documentação */
-        .sispass-warning { display: block; background: rgba(255, 95, 95, 0.15); border: 1px dashed #ff5f5f; color: #ff8787; padding: 6px; border-radius: 5px; font-size: 0.75rem; margin-top: 4px; font-weight: bold; }
+    .sensor-icon { font-size: 1.5rem; width: 35px; text-align: center; }
+    .sensor-data { display: flex; flex-direction: column; }
+    .sensor-label { color: var(--text-muted); font-size: 0.65rem; text-transform: uppercase; font-weight: 600; }
+    .sensor-val { font-size: 1.4rem; font-weight: 700; color: var(--text-light); line-height: 1.2; }
+    .sensor-val span { font-size: 0.75rem; margin-left: 3px; color: var(--text-muted); }
 
-        @media (max-width: 900px) {
-            body { flex-direction: column; overflow: auto; height: auto; }
-            .sidebar { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
-            .bio-info-list { grid-template-columns: 1fr 1fr; }
-            .main-content { padding: 20px; }
-        }
-    </style>
+    .charts-section { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; margin-top: 20px; }
+    .chart-card { height: 320px; }
+    .chart-card h3 { margin: 0 0 15px 0; font-size: 0.9rem; color: var(--accent); text-transform: uppercase; }
+
+
+    .chart-modal {display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(7, 11, 20, 0.95); backdrop-filter: blur(15px); z-index: 9999; flex-direction: column; align-items: center; justify-content: center;}
+    .chart-modal-header { width: 90%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .chart-modal-header h2 { color: var(--accent); margin: 0; }
+    .btn-close-modal { background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 1.2rem; transition: 0.3s; display: flex; align-items: center; justify-content: center; font-family: 'Cinzel', serif; }
+    .btn-close-modal:hover {background: var(--accent);color: var(--bg-dark);}
+    .chart-iframe-container { width: 90%; height: 80%; border: 1px solid var(--border); border-radius: 15px; overflow: hidden; background: #000; }
+    .chart-iframe-container iframe { width: 100%; height: 100%; border: none;}
+
+    .custom-gps-marker { background: none; border: none; }
+
+    @media (max-width: 900px) {
+        body { flex-direction: column; overflow: auto; height: auto; }
+        .sidebar { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
+        .bio-info-list { grid-template-columns: 1fr 1fr; }
+        .main-content { padding: 20px; }
+    }
+</style>
+
 </head>
 <body>
     <div id="page-loader">
@@ -150,14 +165,15 @@
     </div>
 
     <video autoplay muted loop playsinline id="bgVideo" class="background-video">
-        <source src="" type="video/mp4">
-    </video>
+    <source src="" type="video/mp4">
+</video>
+
     
     <aside class="sidebar">
         <div class="sidebar-top">
             <div class="bio-section">
                 <img id="dynPhoto" src="" alt="Animal Photo" class="animal-photo">
-                <h2 id="dynName" class="dyn-name">---</h2>
+                <h2 id="dynName" class="dyn-name" style="margin: 15px 0 0 0; color: var(--accent);">---</h2>
             </div>
 
             <div class="bio-info-list">
@@ -165,20 +181,24 @@
                 <div class="bio-item"><b>Scientific Name</b> <span id="dynScientific">---</span></div>
                 <div class="bio-item"><b>Sex</b> <span id="dynSex">---</span></div>
                 <div class="bio-item"><b>Birth Date</b> <span id="dynBirth">---</span></div>
-                <div class="bio-item"><b>Registration</b> <div id="dynReg">---</div></div>
+                <!-- Legal Check included here -->
+                <div class="bio-item"><b>Registration</b> <span id="dynReg">---</span></div>
                 <div class="bio-item"><b>Location</b> <span id="dynLoc">---</span></div>
                 <div class="bio-item"><b>Channel ID</b> <span id="dynChannel">---</span></div>
             </div>
         </div>
 
         <div class="sidebar-bottom">
+            
             <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 30px;">
                 <a href="#" id="editLink" class="btn-edit" style="margin-top: 0;">
                     <i class="fa fa-edit"></i> Edit Registry Data
                 </a>
+                
                 <button onclick="sharePublicLink()" class="btn-share">
                     <i class="fas fa-link"></i> Share Public View
                 </button>
+                
                 <a href="maindashboard.html" class="btn-back a70-font" style="margin-bottom: 0; width: 100%; box-sizing: border-box; display: flex; justify-content: center; align-items: center; gap: 8px;">
                     <i class="fas fa-arrow-left"></i> BACK TO DASHBOARD
                 </a>
@@ -187,14 +207,30 @@
             <hr style="border: 0.5px solid var(--border); margin: 20px 0;">
             
             <div id="qr-section" style="text-align: center; padding-bottom: 20px;">
-                <h4 style="font-size: 0.9em; color: var(--text-light); margin-bottom: 10px;">Ambient Configuration Sync</h4>
+                <h4 style="font-size: 0.9em; color: var(--text-light); margin-bottom: 10px;">Local Device Sync</h4>
+                <p style="font-size: 0.7em; color: var(--text-muted); margin-top: 10px; margin-bottom:15px;">We do not store your local network credentials in our cloud. Configure them locally to generate the Sync QR Code.</p>
+                
+                <input type="text" id="localSsid" class="input-field" placeholder="Wi-Fi SSID (Network Name)" style="width: 100%; margin-bottom: 8px;">
+                <input type="password" id="localPass" class="input-field" placeholder="Wi-Fi Password" style="width: 100%; margin-bottom: 15px;">
+                
+                <button onclick="generateLocalQR()" class="btn-send" style="width: 100%; margin-bottom: 15px;">
+                    <i class="fas fa-qrcode"></i> Generate QR Code
+                </button>
+
                 <div id="qrcode" style="display: flex; justify-content: center;"></div>
-                <p style="font-size: 0.7em; color: var(--text-muted); margin-top: 10px;">Scan the QR code for device configuration with this environment</p>
             </div>
         </div>
     </aside>
+
     
     <main class="main-content">
+        
+        <!-- SISPASS/SISFAUNA Legal Warning Banner -->
+        <div id="legal-warning" style="display:none; background: rgba(255,95,95,0.1); border-left: 4px solid #ff5f5f; padding: 15px; margin-bottom: 30px; border-radius: 5px; color: var(--text-light);">
+            <h4 style="color: #ff5f5f; margin: 0 0 5px 0;"><i class="fas fa-balance-scale"></i> TERMS OF USE & COMPLIANCE WARNING</h4>
+            <p style="margin: 0; font-size: 0.85rem;">The SISPASS / SISFAUNA registration data for this animal is missing or unverified. <b>The legal guardian is solely responsible for ensuring the legality of keeping this animal under state and federal environmental laws.</b> TerraConnect acts strictly as an IoT telemetry provider and disclaims any liability for illegal possession.</p>
+        </div>
+
         <header class="main-header">
             <h1 id="dynAmbient" class="a70-font">LOADING...</h1>
             <p id="dynStatus">On-time Environmental Monitoring</p>
@@ -215,11 +251,12 @@
             </button>
         </div>
         
-        <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-top: 20px; margin-bottom: 15px;">
-            <i class="fas fa-broadcast-tower"></i> Main Sensor Unit
-        </h3>
         
-        <div class="sensor-grid" id="sensor-grid-main">
+        <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-top: 20px; margin-bottom: 15px;">
+                <i class="fas fa-broadcast-tower"></i> Main Sensor Unit
+            </h3>
+        
+       <div class="sensor-grid" id="sensor-grid-main">
             <div class="sensor-card" onclick="openChart(3, 'CO2 Concentration')" style="cursor: pointer;">
                 <i class="fas fa-cloud sensor-icon" style="color: #a3b18a;"></i>
                 <div class="sensor-data">
@@ -269,7 +306,7 @@
                     <div class="sensor-val" id="valField7">--<span>lx</span></div>
                 </div>
             </div>
-            <div class="sensor-card" onclick="openChart(8, 'Comunication Signal')" style="cursor: pointer;">
+           <div class="sensor-card" onclick="openChart(8, 'Comunication Signal')" style="cursor: pointer;">
                 <i class="fas fa-signal sensor-icon" style="color: #00f2ff;"></i>
                 <div class="sensor-data">
                     <span class="sensor-label">RSSI</span>
@@ -278,11 +315,14 @@
             </div>
         </div>
 
-        <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-top: 20px; margin-bottom: 15px;">
-            <i class="fas fa-broadcast-tower"></i> Remote Sensor Unit
-        </h3>
+            
+            <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-top: 20px; margin-bottom: 15px;">
+                <i class="fas fa-broadcast-tower"></i> Remote Sensor Unit
+            </h3>
 
-        <div class="sensor-grid" id="sensor-grid-remote">
+            
+        
+       <div class="sensor-grid" id="sensor-grid-remote">
             <div class="sensor-card-rs" onclick="openChart(21, ' Remote Sensor | Air Temperature')" style="cursor: pointer;">
                 <i class="fas fa-thermometer-half sensor-icon" style="color: #ff5f5f;"></i>
                 <div class="sensor-data">
@@ -304,21 +344,22 @@
                     <div class="sensor-val" id="valField23">--<span>%</span></div>
                 </div>
             </div>
-            <div class="sensor-card-rs" onclick="openChart(24, 'Remote Sensor | Battery State of Charge')" style="cursor: pointer;">
+           <div class="sensor-card-rs" onclick="openChart(24, 'Remote Sensor | Battery State of Charge')" style="cursor: pointer;">
                 <i class="fas fa-battery-full sensor-icon" style="color: #6ecc87;"></i>
                 <div class="sensor-data">
                     <span class="sensor-label">RS | Battery SOC</span>
                     <div class="sensor-val" id="valField24">--<span>%</span></div>
                 </div>
             </div>
-            <div class="sensor-card-rs" onclick="openChart(25, 'Remote Sensor | Comunication Signal')" style="cursor: pointer;">
+           <div class="sensor-card-rs" onclick="openChart(25, 'Remote Sensor | Comunication Signal')" style="cursor: pointer;">
                 <i class="fas fa-signal sensor-icon" style="color: #00f2ff;"></i>
                 <div class="sensor-data">
                     <span class="sensor-label">RS | RSSI</span>
-                    <div class="sensor-val" id="valField25_rs">--<span>dBm</span></div>
+                    <div class="sensor-val" id="valField25">--<span>dBm</span></div>
                 </div>
             </div>
         </div>
+
 
         <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-top: 20px; margin-bottom: 15px;">
             <i class="fas fa-sliders-h"></i> Environment Active Configuration
@@ -331,30 +372,35 @@
                     <input type="number" id="cfgTempMax" class="input-field" placeholder="0.0">
                 </div>
             </div>
+
             <div class="input-card">
                 <div class="input-header"><i class="fas fa-temperature-low" style="color: #00f2ff"></i> Min Temp (ºC)</div>
                 <div class="input-group">
                     <input type="number" id="cfgTempMin" class="input-field" placeholder="0.0">
                 </div>
             </div>
+
             <div class="input-card">
                 <div class="input-header"><i class="fas fa-droplet" style="color: #ff5f5f"></i> Max Humidity (%)</div>
                 <div class="input-group">
                     <input type="number" id="cfgHumMax" class="input-field" placeholder="0">
                 </div>
             </div>
+
             <div class="input-card">
                 <div class="input-header"><i class="fas fa-droplet" style="color: #00f2ff"></i> Min Humidity (%)</div>
                 <div class="input-group">
                     <input type="number" id="cfgHumMin" class="input-field" placeholder="0">
                 </div>
             </div>
+
             <div class="input-card">
                 <div class="input-header"><i class="fas fa-clock" style="color: #a3b18a"></i> Feed Interval (h)</div>
                 <div class="input-group">
                     <input type="number" id="cfgFeedInterval" class="input-field" placeholder="12">
                 </div>
             </div>
+
             <div class="input-card">
                 <div class="input-header"><i class="fas fa-utensils" style="color: #d4a373"></i> Feed Amount (g)</div>
                 <div class="input-group">
@@ -363,11 +409,13 @@
             </div>
         </div>
         
-        <button class="btn-send" onclick="sendDeviceConfig()" style="width: 100%; margin-top: 15px; height: 40px; display: flex; align-items: center; justify-content: center; gap: 10px; font-family: inherit; font-weight: bold;">
+        <button class="btn-send" onclick="sendDeviceConfig()" 
+            style="width: 100%; margin-top: 15px; height: 40px; display: flex; align-items: center; justify-content: center; gap: 10px; font-family: inherit; font-weight: bold;">
             <i class="fas fa-sync-alt"></i> SAVE AND SYNC DEVICE
         </button>
         <hr style="border: 0.5px solid #eee; margin: 20px 0;">
 
+        
         <div class="summary-section">
             <div class="summary-card" id="sumFeeding">
                 <div class="summary-title a70-font"><i class="fas fa-utensils"></i> Last Feeding</div>
@@ -466,20 +514,27 @@
         <div class="camera-card" id="camera-card">
             <div id="cameraOverlay" class="camera-overlay">
                 <img src="https://i.pinimg.com/originals/17/ec/4d/17ec4d0b9d0f6aae55cca07095a10e48.gif" class="signal-lost-gif" alt="Signal Lost Animation">
+                
                 <i class="fas fa-wifi" style="font-size: 2rem; color: var(--accent); margin-bottom: 10px; opacity: 0.8;"></i>
                 <p class="a70-font" style="font-size: 0.8rem; color: var(--accent); text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">SIGNAL LOST - RECONNECTING...</p>
             </div>
+    
             <img id="cameraStream" class="camera-stream" src="" onload="hideCamOverlay()" onerror="showCamOverlay()">
+
             <div class="cam-status-bar">
                 <span id="camStatusText" style="color: #ff5f5f;">Status: Offline</span>
-                <span style="color: var(--text-muted);">Enc: Internal_Main_01</span>
+                <div>
+                    <button onclick="setLocalCameraIP()" style="background:transparent; color:var(--text-light); border:1px solid var(--accent); border-radius:3px; font-size:0.6rem; cursor:pointer; padding:3px 6px;">Set Local IP</button>
+                </div>
             </div>
         </div>
 
+        <!-- --- EDUCATIONAL PET SECTION --- -->
         <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-top: 30px; margin-bottom: 15px;">
             <i class="fas fa-graduation-cap"></i> Educational Pet | Training
         </h3>
 
+        <!-- Dog Educational Panel -->
         <div id="edu-clicker-section" style="display: none; margin-bottom: 20px;">
             <h4 style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0; margin-bottom: 10px;">Dog Commands (Audio & Voice)</h4>
             <div class="management-grid">
@@ -506,6 +561,7 @@
             </div>
         </div>
 
+        <!-- Bird Educational Panel -->
         <div id="edu-voice-section" style="display: none; margin-bottom: 20px;">
             <h4 style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0; margin-bottom: 10px;">Bird Vocal Learning</h4>
             <div class="management-grid">
@@ -527,10 +583,12 @@
             </div>
         </div>
 
+        
         <div id="vet-section">
             <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin: 30px 0 15px 0;"><i class="fas fa-notes-medical"></i> Vet Visit & GPS Tracker </h3>
             <div class="sensor-card" style="flex-direction: column; align-items: stretch; margin-bottom: 20px;">
-                <div id="vetMapContainer" style="width: 100%; height: 300px; border-radius: 10px; overflow: hidden; margin-bottom: 15px;"></div>
+                    <div id="vetMapContainer" style="width: 100%; height: 300px; border-radius: 10px; overflow: hidden; margin-bottom: 15px;">
+                    </div>
             
                 <div style="overflow-x: auto;">
                     <table style="width: 100%; border-collapse: collapse; color: var(--text-light); font-size: 0.8rem;">
@@ -546,45 +604,54 @@
                                 <th style="padding: 10px; text-align: left;">WEB</th>
                             </tr>
                         </thead>
-                        <tbody id="vetTableBody"></tbody>
+                        <tbody id="vetTableBody">
+                        </tbody>
                     </table>
                 </div>
                 <a href="#" id="addVetLink" class="btn-edit" style="margin-top: 20px;">
-                    <i class="fas fa-plus-circle"></i> Add Vet Visit Record
+                        <i class="fas fa-plus-circle"></i> Add Vet Visit Record
                 </a>
             </div>
         </div>
+        
     </main>
 
+    
     <div id="chartModal" class="chart-modal">
-        <div class="chart-modal-header">
-            <h2 id="modalChartTitle" class="a70-font">SENSOR CHART</h2>
-            <button class="btn-close-modal" onclick="closeChart()">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
+    <div class="chart-modal-header">
+        <h2 id="modalChartTitle" class="a70-font">SENSOR CHART</h2>
+        <button class="btn-close-modal" onclick="closeChart()" >
+        <i class="fas fa-times"></i>
+        </button>
+    </div>
         <div class="chart-container" style="position: relative; height:60vh; width:100%">
             <canvas id="customChart"></canvas>
         </div>
-    </div>
+</div>
 
 <script>
     const urlParams = new URLSearchParams(window.location.search);
     const currentPageId = urlParams.get('id');
 
+// 2. SISTEMA DE SEGURANÇA FRONTEND (Verificação de Login)
     function checkSecurity() {
-        const userString = localStorage.getItem('currentUser');
-        if (!userString) {
-            alert("Acesso Negado: Por favor, faça login.");
-            window.location.href = "https://ashuhda-tech.github.io/TerraConnect_Technologies/"; 
-            return null;
-        }
-        return JSON.parse(userString);
+    const userString = localStorage.getItem('currentUser');
+    
+    // Se não tiver ninguém logado, chuta para a página de login
+    if (!userString) {
+        alert("Acesso Negado: Por favor, faça login.");
+        window.location.href = "https://ashuhda-tech.github.io/TerraConnect_Technologies/"; 
+        return null;}
+
+     const currentUser = JSON.parse(userString);
+     return currentUser;
     }
 
-    const loggedUser = checkSecurity();
+// Roda a verificação imediatamente
+const loggedUser = checkSecurity();
 
-    // --- ARQUITETURA API JSON SEGURO (Substituição de todos os links de CSV Públicos) ---
+    
+    // URLs do Backend - CSVs REMOVIDOS COMPLETAMENTE E SUBSTITUÍDOS PELAS APIS
     const SIGNUP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzFT1YQSMLpJ2zLJQ-bD1JOUzaUJJsRcmCBkpseXd87iGvJXm5Ig7p1gYJf-PmHVwQ/exec';
     const FLAGS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyZaoQyRiQDaTP9IkbOK89A2l9DtH6tOtwL6TFn38x5N_gYiiQc2Os-NZ1dvEsZMZKF/exec"; 
     const PAGEID_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw3LbOYDqljAxQ8joYW8yDhwe6lsi7AdFCAoi4HG1iRdglS0k9-fI1Oj2eA12ePc6g/exec";
@@ -595,16 +662,20 @@
     const AI_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxign7YvIXmCiAggKU9XKlveWHQ_hQzYL65MEP3yEFe1lj1ewPjHuNzbbi_S8JMTPE/exec";
    
     let feedingChart, weightChart, sheddingChart, lengthChart, heightChart;
+    let tsReadURL = "";
+    let currentUUID = ""; 
     let mainChannelId = "", mainReadKey = "";
     let r1ChannelId = "", r1ReadKey = "";
-    let gpsChannelId = "", gpsReadKey = ""; 
+    let gpsChannelId = "", gpsReadKey = "";
     let myChart; 
     let vetMap = null;
-    let homeLat = 0, homeLon = 0;
+    let homeLat = 0;
+    let homeLon = 0;
     
     function applyUserTheme() {
-        if (loggedUser) {
-            const savedTheme = localStorage.getItem(`theme_${loggedUser.id}`) || 'default';
+        const user = JSON.parse(localStorage.getItem('currentUser'));
+        if (user) {
+            const savedTheme = localStorage.getItem(`theme_${user.id}`) || 'default';
             document.documentElement.setAttribute('data-theme', savedTheme);
         }
     }
@@ -613,22 +684,32 @@
         try {
             const response = await fetch(`${SIGNUP_SCRIPT_URL}?action=get_plan&userId=${encodeURIComponent(userId)}`);
             const result = await response.json();
-            if (result.status === "success") return result.plan;
-        } catch (e) { console.error("Erro ao validar plano:", e); }
-        return 0;
+            
+            if (result.status === "success") {
+                return result.plan;
+            }
+        } catch (e) {
+            console.error("Erro ao validar plano com o servidor:", e);
+        }
+        return 0; // Se houver erro de rede, assume plano 0 por segurança
     }
     
+    // --- NOVO MOTOR DINÂMICO DE VISIBILIDADE (FEATURE FLAGS) ---
     async function applyVisibilityRules(animalTypeRaw, userPlan) {
-        if (!FLAGS_SCRIPT_URL) return;
+        if (!FLAGS_SCRIPT_URL || FLAGS_SCRIPT_URL === "SUA_URL_DO_APPS_SCRIPT_DE_FLAGS_AQUI") {
+            return;
+        }
+
         try {
-            const response = await fetch(`${FLAGS_SCRIPT_URL}?action=read`);
+            const response = await fetch(FLAGS_SCRIPT_URL);
             const jsonResponse = await response.json();
             
-            if (Array.isArray(jsonResponse)) {
+            if (jsonResponse.status === "success") {
+                const flags = jsonResponse.data;
                 const animalType = animalTypeRaw.toUpperCase().trim();
-                jsonResponse.forEach((flag, index) => {
-                    if(index === 0) return; // Ignora cabeçalho
-                    let element = document.getElementById(flag[0]); // Mapeia coluna Element ID
+
+                flags.forEach(flag => {
+                    let element = document.getElementById(flag.element);
                     if (!element) return;
 
                     if (element.tagName === 'INPUT') {
@@ -636,8 +717,8 @@
                         if (parentCard) element = parentCard;
                     }
 
-                    const minPlan = parseInt(flag[1]) || 1; 
-                    const allowedAnimals = flag[2] || "ALL";
+                    const minPlan = parseInt(flag.minPlan) || 1;
+                    const allowedAnimals = flag.allowedAnimals;
 
                     const planOk = userPlan >= minPlan;
                     const animalOk = allowedAnimals.includes('ALL') || allowedAnimals.includes(animalType);
@@ -645,43 +726,48 @@
                     if (!planOk || !animalOk) {
                         element.style.display = 'none';
                     } else {
-                        element.style.display = ''; 
+                        element.style.display = '';
                     }
                 });
             }
-        } catch (e) { console.error("Erro ao aplicar regras de feature flags:", e); }
+        } catch (e) {
+            console.error("Erro ao aplicar regras de visibilidade:", e);
+        }
     }
 
 async function loadData() {
     if (!currentPageId || !loggedUser || !loggedUser.id) return;
         
     try {
-        const secureUrl = `${PAGEID_SCRIPT_URL}?action=read`;
+        const secureUrl = `${PAGEID_SCRIPT_URL}?userID=${encodeURIComponent(loggedUser.id)}&pageID=${encodeURIComponent(currentPageId)}`;
         const response = await fetch(secureUrl);
-        const matrix = await response.json();
-        
-        // Encontra o registro correspondente ao ID da página ativa
-        const data = matrix.find(row => row[1] && row[1].toString().trim() === currentPageId.trim());
+        const jsonResponse = await response.json();
 
-        if (data) {
+        if (jsonResponse.status === "success") {
+            const data = jsonResponse.data;
+
             document.getElementById('dynName').innerText = data[3] || "---";
             document.getElementById('dynSex').innerText = data[4] || "---";
             document.getElementById('dynScientific').innerText = data[5] || "---";
-            
             const rawBirthDate = data[6];
-            if (rawBirthDate && rawBirthDate !== "---") {
-                document.getElementById('dynBirth').innerText = `${getAgeString(rawBirthDate)}${formatDateDisplay(rawBirthDate)}`;
-            } else { 
-                document.getElementById('dynBirth').innerText = "---"; 
-            }
             
-            // --- TAREFA 4: VERIFICADOR DE DOCUMENTAÇÃO LEGAL SISPASS/SISFAUNA ---
-            const registrationCode = data[7] || "---";
+            if (rawBirthDate && rawBirthDate !== "---") {
+                const ageString = getAgeString(rawBirthDate);
+                const formattedDate = formatDateDisplay(rawBirthDate);
+                document.getElementById('dynBirth').innerText = `${ageString}${formattedDate}`;
+            } else {document.getElementById('dynBirth').innerText = "---"; }
+            
+            // SISPASS / LEGAL REGISTRATION VERIFICATION CHECK
+            const regValue = data[7] || "---";
             const regElement = document.getElementById('dynReg');
-            if (registrationCode.toUpperCase().includes("VERIFIED") || registrationCode.toUpperCase().includes("VALIDO")) {
-                regElement.innerHTML = `<span style="color: #6ecc87;"><i class="fas fa-check-circle"></i> ${registrationCode}</span>`;
+            const legalWarning = document.getElementById('legal-warning');
+
+            if (regValue === "---" || regValue.trim() === "" || regValue.toUpperCase().includes("PENDING")) {
+                regElement.innerHTML = `<span style="color:#ff5f5f"><i class="fas fa-exclamation-triangle"></i> Unverified</span>`;
+                legalWarning.style.display = 'block'; // Mostra aviso legal se não tiver registro valido
             } else {
-                regElement.innerHTML = `<span>${registrationCode}</span><span class="sispass-warning"><i class="fas fa-exclamation-triangle"></i> SISPASS/SISFAUNA NÃO VERIFICADO</span>`;
+                regElement.innerHTML = `${regValue} <i class="fas fa-check-circle" style="color:#a3b18a" title="Verified Data"></i>`;
+                legalWarning.style.display = 'none'; // Tudo legal, sem avisos.
             }
 
             const lat = data[8];
@@ -692,15 +778,18 @@ async function loadData() {
             
             if (lat && lon && lat !== "---" && lon !== "---") {
                 locElement.innerText = "Locating..."; 
-                getGeocodedLocation(lat, lon).then(locationString => { locElement.innerText = locationString; });
-            } else { locElement.innerText = "---"; }
-            
+                getGeocodedLocation(lat, lon).then(locationString => {
+                    locElement.innerText = locationString;});
+            } else {locElement.innerText = "---";}
             document.getElementById('dynAmbient').innerText = (data[2] || "Ambient").toUpperCase();
             
             const animalTypeRaw = data[22] || "DEFAULT";
             document.getElementById('dynAnimal').innerText = animalTypeRaw.toUpperCase();
             
+            document.getElementById('dynStatus').innerText = "Validando credenciais do plano..."; 
             const liveUserPlan = await getLiveUserPlan(loggedUser.id);
+            document.getElementById('dynStatus').innerText = "On-time Environmental Monitoring"; 
+            
             await applyVisibilityRules(animalTypeRaw, liveUserPlan);
 
             const videoElement = document.getElementById('bgVideo');
@@ -711,7 +800,8 @@ async function loadData() {
 
                 videoSource.src = `${videoBaseURL}${videoFileName}`;
                 videoElement.load();
-                videoElement.play().catch(() => {
+                
+                videoElement.play().catch(e => {
                     videoSource.src = `${videoBaseURL}RIVER_MAINDASHBOARD.mp4`;
                     videoElement.load();
                     videoElement.play();
@@ -722,8 +812,8 @@ async function loadData() {
             mainReadKey = data[12];
             r1ChannelId = data[13];
             r1ReadKey = data[15];
-            gpsChannelId = data[25]; 
-            gpsReadKey = data[27];   
+            gpsChannelId = data[25];
+            gpsReadKey = data[27];
             document.getElementById('dynChannel').innerText = mainChannelId || "---";
 
             const photoURL = data[19];
@@ -732,33 +822,30 @@ async function loadData() {
             if (photoURL && photoURL.startsWith('http')) imgEl.src = photoURL;
             else if (photoBase && photoBase.length > 100) imgEl.src = photoBase;
 
-            // Transmissão Privada de Câmera (Mitigado runtime binding seguro)
-            let camSource = data[17];
-            if (camSource) {
-                document.getElementById('cameraStream').src = camSource.includes('://') ? camSource : `http://${camSource}/stream`;
+            // CAMERA IP AGORA CARREGA DE LOCAL STORAGE PARA EVITAR EXPOSIÇÃO
+            let localCam = localStorage.getItem('camIP_' + currentPageId);
+            if (localCam) {
+                document.getElementById('cameraStream').src = `http://${localCam}/stream`;
             } else {
                 showCamOverlay();
             }
 
-            generateConfigQR(data);
             updateSensors();
             loadBiologicalHistory(currentPageId);
             loadVetVisits(currentPageId);
             setInterval(updateSensors, 20000);
             
             if (typeof loadExistingConfig === "function") loadExistingConfig();
-            
             setTimeout(() => {
                 const loader = document.getElementById('page-loader');
-                if (loader) { loader.style.opacity = '0'; loader.style.visibility = 'hidden'; }
-            }, 800);
+                if (loader) {loader.style.opacity = '0';loader.style.visibility = 'hidden';}}, 800);
         } else {
             document.getElementById('dynAmbient').innerText = "ACESSO NEGADO";
-            alert("Ambiente não localizado ou credenciais inválidas.");
+            alert("Aviso de Segurança: " + jsonResponse.message);
             window.location.href = "maindashboard.html"; 
         }
     } catch (e) { 
-        console.error("Database error:", e); 
+        console.error("Database connection error:", e); 
         document.getElementById('dynAmbient').innerText = "ERRO DE CONEXÃO";
     }
 }
@@ -767,31 +854,45 @@ async function loadData() {
         if (!dateStr || dateStr === "---") return "";
         const b = new Date(dateStr);
         if (isNaN(b.getTime())) return "";
+
         const today = new Date();
         let years = today.getFullYear() - b.getFullYear();
         let months = today.getMonth() - b.getMonth();
-        if (today.getDate() < b.getDate()) months--;
-        if (months < 0) { years--; months += 12; }
+
+        if (today.getDate() < b.getDate()) {
+            months--;
+        }
+
+        if (months < 0) {
+            years--;
+            months += 12;
+        }
+
         if (years < 0) return ""; 
+
         let ageStr = "";
         if (years > 0) ageStr += `${years} yrs `;
         if (months > 0 || years === 0) ageStr += `${months} mos `;
+        
         return ageStr ? ageStr.trim() + " | " : "";
     }
     
     async function getGeocodedLocation(lat, lon) {
-        try {
-            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10&addressdetails=1`);
-            const data = await response.json();
-            if (data && data.address) {
-                const city = data.address.city || data.address.town || data.address.municipality || "Unknown";
-                const state = data.address.state || "Unknown";
-                const country = data.address.country || "Unknown";
-                return `${city}, ${state} - ${country}`;
-            }
-        } catch (error) { console.warn("Geocoding mismatch fallback.", error); }
-        return `${lat}, ${lon}`; 
+    try {
+        const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10&addressdetails=1`);
+        const data = await response.json();
+        
+        if (data && data.address) {
+            const city = data.address.city || data.address.town || data.address.municipality || "Unknown City";
+            const state = data.address.state || "Unknown State";
+            const country = data.address.country || "Unknown Country";
+            return `${city}, ${state} - ${country}`;
+        }
+    } catch (error) {
+        console.warn("Geocoding failed, falling back to raw coordinates.", error);
     }
+    return `${lat}, ${lon}`; 
+}
     
 async function updateSensors() {
     if (mainChannelId && mainReadKey) {
@@ -801,9 +902,11 @@ async function updateSensors() {
             const json = await res.json();
             const last = json.feeds[0];
             if (last) {
-                for (let i = 1; i <= 8; i++) { updateFieldUI(i, last[`field${i}`]); }
+                for (let i = 1; i <= 8; i++) {
+                    updateFieldUI(i, last[`field${i}`]);
+                }
             }
-        } catch (e) { console.warn("Main telemetry failed."); }
+        } catch (e) { console.warn("Main sensor update failed."); }
     }
 
     if (r1ChannelId && r1ReadKey) {
@@ -817,13 +920,9 @@ async function updateSensors() {
                 updateFieldUI(22, last.field2); 
                 updateFieldUI(23, last.field3); 
                 updateFieldUI(24, last.field4); 
-                
-                const rsRssiEl = document.getElementById('valField25_rs');
-                if (rsRssiEl && last.field5 !== undefined) {
-                    rsRssiEl.innerHTML = `${parseFloat(last.field5).toFixed(1)}<span>dBm</span>`;
-                }
+                updateFieldUI(25, last.field5); 
             }
-        } catch (e) { console.warn("Remote telemetry failed."); }
+        } catch (e) { console.warn("Remote sensor update failed."); }
     }
 }
 
@@ -835,13 +934,15 @@ function updateFieldUI(id, val) {
     }
 }
 
+    // AGORA USA API EM VEZ DE CSV
     async function loadExistingConfig() {
         if (!currentPageId) return;
         try {
-            const response = await fetch(`${ENVIRONMENT_SCRIPT_URL}?action=read`);
-            const rows = await response.json();
-            const config = rows.find(r => r[0] && r[0].toString().trim() === currentPageId.toString().trim());
-            if (config) {
+            const response = await fetch(`${ENVIRONMENT_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(currentPageId)}`);
+            const json = await response.json();
+            
+            if (json.status === "success" && json.data) {
+                const config = json.data;
                 document.getElementById('cfgTempMax').value = config[1];
                 document.getElementById('cfgTempMin').value = config[2];
                 document.getElementById('cfgHumMax').value = config[3];
@@ -849,7 +950,7 @@ function updateFieldUI(id, val) {
                 document.getElementById('cfgFeedInterval').value = config[5];
                 document.getElementById('cfgFeedAmount').value = config[6];
             }
-        } catch (e) { console.error("Error loading secure target metrics:", e); }
+        } catch (e) { console.error("Error loading setup Data:", e); }
     }
 
 async function sendDeviceConfig() {
@@ -863,52 +964,64 @@ async function sendDeviceConfig() {
         feedInterval: document.getElementById('cfgFeedInterval').value,
         feedAmount: document.getElementById('cfgFeedAmount').value
     });
+
     try {
         await fetch(`${ENVIRONMENT_SCRIPT_URL}?${params.toString()}`, { method: 'GET', mode: 'no-cors' });
-        alert("Configuração sincronizada com a nuvem!");
-    } catch (e) { alert("Falha ao salvar parâmetros."); }
+        alert("Configuração enviada com sucesso!");
+    } catch (e) {
+        alert("Erro na sincronização.");
+    }
 }
 
-    // TAREFA 2: CONTROLE DO PAYLOAD DO QR CODE DE AUTENTICAÇÃO (Isolamento de Credenciais Locais)
-    function generateConfigQR(data) {
-        const qrContainer = document.getElementById("qrcode");
-        if (!qrContainer) return; 
-        qrContainer.innerHTML = ""; 
+    // ZERO CLEARTEXT: O QR CODE AGORA DEPENDE DOS INPUTS LOCAIS NA TELA.
+    function generateLocalQR() {
+    const qrContainer = document.getElementById("qrcode");
+    const ssid = document.getElementById("localSsid").value.trim();
+    const pass = document.getElementById("localPass").value;
 
-        const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || "#2c3e50"; 
-        
-        // Os dados confidenciais (Wi-Fi local) continuam estruturados apenas no escopo imediato da sessão logada.
-        const configPayload = {
-            pgid: data[1] || "",
-            ssid: data[20] || "PROTECTED_NET",
-            pass: data[21] || "ENCRYPTED_SESSION",
-            chid: data[10] || "",
-            tswk: data[11] || ""
-        };
-
-        new QRCode(qrContainer, {
-            text: JSON.stringify(configPayload),
-            width: 150,
-            height: 150,
-            colorDark : accentColor,
-            colorLight : "transparent", 
-            correctLevel : QRCode.CorrectLevel.M
-        });
+    if (!ssid || !pass) {
+        alert("Please enter the Wi-Fi credentials to generate the sync QR Code. These are never uploaded to the cloud.");
+        return;
     }
+
+    if (!qrContainer) return; 
+    qrContainer.innerHTML = ""; 
+
+    const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || "#2c3e50"; 
+
+    const configPayload = {
+        pgid: currentPageId,
+        ssid: ssid,
+        pass: pass,
+        chid: mainChannelId,
+        tswk: mainReadKey
+    };
+
+    new QRCode(qrContainer, {
+        text: JSON.stringify(configPayload),
+        width: 150,
+        height: 150,
+        colorDark : accentColor,
+        colorLight : "transparent", 
+        correctLevel : QRCode.CorrectLevel.M
+    });
+}
 
     function formatDateDisplay(dateStr) {
         if (!dateStr || dateStr === "---") return "--- / --- / ----";
         const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
         const d = new Date(dateStr);
-        if (isNaN(d.getTime())) return dateStr;
+        if (isNaN(d)) return dateStr;
         return `${String(d.getDate()).padStart(2, '0')} / ${months[d.getMonth()]} / ${d.getFullYear()}`;
     }
 
+
+    // AGORA USA API JSON EM VEZ DE CSV. (Assume script backend com action=read&pageId=...)
     async function loadBiologicalHistory(id) {
         try {
-            const res = await fetch(`${BIODATA_SCRIPT_URL}?action=read`);
-            const rows = await res.json();
-            const events = rows.filter(r => r[0] && r[0].toString().toLowerCase() === id.toLowerCase());
+            const res = await fetch(`${BIODATA_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(id)}`);
+            const json = await res.json();
+            const events = json.data || [];
             
             const lastFeeding = events.filter(e => e[2] === "Feeding").pop();
             const lastWeight = events.filter(e => e[2] === "Weighting").pop();
@@ -926,14 +1039,20 @@ async function sendDeviceConfig() {
             if (brandListEl) brandListEl.innerHTML = uniqueBrands.map(b => `<option value="${b}">`).join('');
 
             const sheddingProcessed = lastShed.map((event, index) => {
-                if (index === 0) return { date: event[1], interval: 0 };
+                if (index === 0) {
+                    return { date: event[1], interval: 0 }; 
+                }
                 const prevDate = new Date(lastShed[index - 1][1]);
                 const currDate = new Date(event[1]);
+    
                 const diffTime = Math.abs(currDate - prevDate);
-                return { date: event[1], interval: Math.ceil(diffTime / (1000 * 60 * 60 * 24)) };
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+    
+                return { date: event[1], interval: diffDays };
             });
             
             const lastShedResult = sheddingProcessed[sheddingProcessed.length - 1];
+            
             const elShedInterval = document.getElementById('sumSheddingInterval');
             const elShedDate = document.getElementById('sumSheddingDate');
             if (lastShedResult && elShedInterval && elShedDate) {
@@ -970,12 +1089,13 @@ async function sendDeviceConfig() {
             }
         
             const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+
             renderFeeding(events, accentColor);
             renderWeight(events, accentColor);
             renderShedding(sheddingProcessed, '#a3b18a'); 
             renderLength(events, accentColor);
             renderHeigth(events, accentColor);
-        } catch (e) { console.error("Bio secure analytics exception:", e); }
+        } catch (e) { console.error("Bio-Summary Error:", e); }
     }
 
     function getGradient(ctx, color) {
@@ -987,15 +1107,21 @@ async function sendDeviceConfig() {
 
 function generateForecast(dataArray, numPredictions = 2) {
     if (dataArray.length < 3) return { values: [], type: 'Insufficient Data' };
+
     const n = dataArray.length;
     let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
+    
     for (let i = 0; i < n; i++) {
-        sumX += i; sumY += dataArray[i];
-        sumXY += i * dataArray[i]; sumX2 += i * i;
+        sumX += i;
+        sumY += dataArray[i];
+        sumXY += i * dataArray[i];
+        sumX2 += i * i;
     }
+
     const m = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
     const b = (sumY - m * sumX) / n;
     const meanY = sumY / n;
+
     let sse = 0, sst = 0;
     for (let i = 0; i < n; i++) {
         const yPred = m * i + b;
@@ -1004,21 +1130,32 @@ function generateForecast(dataArray, numPredictions = 2) {
     }
     const rSquared = sst === 0 ? 1 : 1 - (sse / sst);
     const variance = sst / n;
+
     let predictions = [];
     let method = '';
 
     if (rSquared > 0.65 && Math.abs(m) > 0.05) {
         method = 'Trend (Linear)';
-        for (let i = 0; i < numPredictions; i++) predictions.push(+(m * (n + i) + b).toFixed(1));
+        for (let i = 0; i < numPredictions; i++) {
+            predictions.push(+(m * (n + i) + b).toFixed(1));
+        }
     } else if (variance < (meanY * 0.05)) {
         method = 'Stable (Average)';
-        for (let i = 0; i < numPredictions; i++) predictions.push(+(meanY).toFixed(1));
+        for (let i = 0; i < numPredictions; i++) {
+            predictions.push(+(meanY).toFixed(1));
+        }
     } else {
         method = 'Volatile (EMA)';
-        let st = dataArray[0]; const alpha = 0.6;
-        for (let i = 1; i < n; i++) st = alpha * dataArray[i] + (1 - alpha) * st;
-        for (let i = 0; i < numPredictions; i++) predictions.push(+(st).toFixed(1)); 
+        let st = dataArray[0];
+        const alpha = 0.6;
+        for (let i = 1; i < n; i++) {
+            st = alpha * dataArray[i] + (1 - alpha) * st;
+        }
+        for (let i = 0; i < numPredictions; i++) {
+            predictions.push(+(st).toFixed(1)); 
+        }
     }
+
     return { values: predictions, method: method };
 }
     
@@ -1027,20 +1164,41 @@ function renderFeeding(events, color) {
     if(!canvas) return;
     const ctx = canvas.getContext('2d');
     const data = events.filter(e => e[2] === "Feeding");
+    
     if(feedingChart) feedingChart.destroy();
     
     const config = buildForecastChartConfig('Feeding (g)', data, color, ctx);
-    const combos = data.map(e => `${e[4] || 'N/A'} | ${e[5] || 'N/A'}`);
     
-    config.data.datasets[0].pointBackgroundColor = '#a3b18a';
+    const combos = data.map(e => {
+        const ft = (e[4] && e[4].trim() !== "") ? e[4].trim() : 'N/A';
+        const br = (e[5] && e[5].trim() !== "") ? e[5].trim() : 'N/A';
+        return `${ft} | ${br}`;
+    });
+    
+    const uniqueCombos = [...new Set(combos)];
+    
+    const palette = ['#a3b18a', '#ff9ff3', '#feca57', '#ff6b6b', '#48dbfb', '#1dd1a1', '#5f27cd'];
+    const comboColorMap = {};
+    uniqueCombos.forEach((combo, index) => {
+        comboColorMap[combo] = palette[index % palette.length];
+    });
+    
+    const pointColors = combos.map(combo => comboColorMap[combo]);
+    
+    config.data.datasets[0].pointBackgroundColor = pointColors;
+    config.data.datasets[0].pointBorderColor = '#ffffff';
+    config.data.datasets[0].pointBorderWidth = 1.5;
     config.data.datasets[0].pointRadius = 5;
-    config.options.plugins.tooltip = {
-        callbacks: {
-            afterLabel: function(context) {
-                return (context.datasetIndex === 0 && combos[context.dataIndex]) ? `Specs: ${combos[context.dataIndex]}` : null;
-            }
+    config.data.datasets[0].pointHoverRadius = 8;
+    
+    config.options.plugins.tooltip = config.options.plugins.tooltip || { callbacks: {} };
+    config.options.plugins.tooltip.callbacks.afterLabel = function(context) {
+        if (context.datasetIndex === 0 && combos[context.dataIndex]) {
+            return `Specs: ${combos[context.dataIndex]}`;
         }
+        return null;
     };
+    
     feedingChart = new Chart(ctx, config);
 }
 
@@ -1049,6 +1207,7 @@ function renderWeight(events, color) {
     if(!canvas) return;
     const ctx = canvas.getContext('2d');
     const data = events.filter(e => e[2] === "Weighting");
+    
     if(weightChart) weightChart.destroy();
     weightChart = new Chart(ctx, buildForecastChartConfig('Body (g)', data, color, ctx));
 }
@@ -1057,8 +1216,10 @@ function renderShedding(processedData, color) {
     const canvas = document.getElementById('sheddingChart');
     if(!canvas) return;
     const ctx = canvas.getContext('2d');
+    
     const displayData = processedData.filter(d => d.interval > 0);
     const formattedData = displayData.map(d => [null, d.date, 'Shedding', d.interval]);
+    
     if(sheddingChart) sheddingChart.destroy();
     sheddingChart = new Chart(ctx, buildForecastChartConfig('Days between Sheds', formattedData, color, ctx));
 }
@@ -1068,6 +1229,7 @@ function renderLength(events, color) {
     if(!canvas) return;
     const ctx = canvas.getContext('2d');
     const data = events.filter(e => e[2] === "Length");
+    
     if(lengthChart) lengthChart.destroy();
     lengthChart = new Chart(ctx, buildForecastChartConfig('Length (cm)', data, color, ctx));
 }
@@ -1077,6 +1239,7 @@ function renderHeigth(events, color) {
     if(!canvas) return;
     const ctx = canvas.getContext('2d');
     const data = events.filter(e => e[2] === "Height");
+    
     if(heightChart) heightChart.destroy();
     heightChart = new Chart(ctx, buildForecastChartConfig('Height (cm)', data, color, ctx));
 }
@@ -1084,23 +1247,47 @@ function renderHeigth(events, color) {
 function buildForecastChartConfig(labelString, dataArray, color, ctx) {
     const labels = dataArray.map(e => e[1]);
     const realValues = dataArray.map(e => parseFloat(e[3]));
+    
     const forecast = generateForecast(realValues, 2); 
+    
     const paddedRealValues = [...realValues];
     const forecastValues = new Array(realValues.length - 1).fill(null);
     
-    if (realValues.length > 0) forecastValues.push(realValues[realValues.length - 1]); 
+    if (realValues.length > 0) {
+        forecastValues.push(realValues[realValues.length - 1]); 
+    }
+    
     if (forecast.values.length > 0) {
-        labels.push(`Predict 1`, `Predict 2`);
+        labels.push(`Predict 1`);
+        labels.push(`Predict 2`);
         forecastValues.push(...forecast.values);
         paddedRealValues.push(null, null); 
     }
+
+    const dynamicLabel = forecast.method ? `${labelString} [AI: ${forecast.method}]` : labelString;
+
     return {
         type: 'line',
         data: {
             labels: labels,
             datasets: [
-                { label: forecast.method ? `${labelString} [AI: ${forecast.method}]` : labelString, data: paddedRealValues, borderColor: color, fill: true, backgroundColor: getGradient(ctx, color), tension: 0.4 },
-                { label: 'Forecast', data: forecastValues, borderColor: '#ff5f5f', borderDash: [5, 5], fill: false, tension: 0.4, pointBackgroundColor: '#ff5f5f' }
+                {
+                    label: dynamicLabel,
+                    data: paddedRealValues,
+                    borderColor: color, 
+                    fill: true,
+                    backgroundColor: getGradient(ctx, color),
+                    tension: 0.4
+                },
+                {
+                    label: 'Forecast',
+                    data: forecastValues,
+                    borderColor: '#ff5f5f', 
+                    borderDash: [5, 5], 
+                    fill: false,
+                    tension: 0.4,
+                    pointBackgroundColor: '#ff5f5f' 
+                }
             ]
         },
         options: commonOptions() 
@@ -1108,25 +1295,68 @@ function buildForecastChartConfig(labelString, dataArray, color, ctx) {
 }
 
     function commonOptions() {
-        return {
-            responsive: true, maintainAspectRatio: false,
-            layout: { padding: { bottom: 15 } },
-            plugins: { legend: { display: false } },
-            scales: {
-                y: { grid: { color: 'rgba(31, 41, 55, 0.5)' }, ticks: { color: '#9ca3af' } },
-                x: { 
-                    ticks: { 
-                        color: '#9ca3af', font: { size: 10 }, maxRotation: 0, autoSkip: true, maxTicksLimit: 4,
-                        callback: function(val) {
-                            const d = new Date(this.getLabelForValue(val));
-                            if (isNaN(d.getTime())) return "";
-                            return `${String(d.getDate()).padStart(2,'0')}/${d.getMonth()+1}/${d.getFullYear()}`;
-                        }
-                    } 
+    return {
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: {
+            padding: {
+                bottom: 15 
+            }
+        },
+        plugins: {
+            legend: { display: false },
+            tooltip: {
+                callbacks: {
+                    title: function(context) {
+                        const rawDate = context[0].label;
+                        const d = new Date(rawDate);
+                        
+                        if (isNaN(d)) return rawDate;
+
+                        const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+                        const day = String(d.getDate()).padStart(2, '0');
+                        const month = months[d.getMonth()];
+                        const year = d.getFullYear();
+                        
+                        return `${day}/${month}/${year}`;
+                    }
                 }
             }
-        };
+        },
+        scales: {
+            y: { 
+                beginAtZero: true, 
+                grid: { color: 'rgba(31, 41, 55, 0.5)' }, 
+                ticks: { color: '#9ca3af' } 
+            },
+            x: { 
+                ticks: { 
+                    color: '#9ca3af',
+                    font: {
+                        size: 10
+                    },
+                    maxRotation: 0,
+                    minRotation: 0,
+                    autoSkip: true,
+                    maxTicksLimit: 4, 
+                    callback: function(val, index) {
+                        const rawDate = this.getLabelForValue(val);
+                        const d = new Date(rawDate);
+                        
+                    if (isNaN(d.getTime())) return ""; 
+
+                    const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+                    const day = String(d.getDate()).padStart(2, '0');
+                    const month = months[d.getMonth()];
+                    const year = d.getFullYear();
+                    
+                    return `${day}/${month}/${year}`;
+                    }
+                } 
+            }
+        }
     }
+};
 
     async function sendToCloud(type, elementId) {
         const inputElement = document.getElementById(elementId);
@@ -1135,36 +1365,68 @@ function buildForecastChartConfig(labelString, dataArray, color, ctx) {
 
         const today = new Date();
         const dateStr = (today.getMonth() + 1) + "/" + today.getDate() + "/" + today.getFullYear();
+        
         let finalUrl = `${BIODATA_SCRIPT_URL}?pageId=${encodeURIComponent(currentPageId)}&date=${encodeURIComponent(dateStr)}&registerType=${encodeURIComponent(type)}&value=${encodeURIComponent(inputValue)}`;
 
         if (type === 'Feeding') {
-            finalUrl += `&foodType=${encodeURIComponent(document.getElementById('inFoodType')?.value || "")}&brand=${encodeURIComponent(document.getElementById('inBrand')?.value || "")}`;
+            const inFoodType = document.getElementById('inFoodType');
+            const inBrand = document.getElementById('inBrand');
+            const ftVal = inFoodType ? inFoodType.value : "";
+            const brVal = inBrand ? inBrand.value : "";
+            finalUrl += `&foodType=${encodeURIComponent(ftVal)}&brand=${encodeURIComponent(brVal)}`;
         }
 
         try {
             await fetch(finalUrl, { method: 'GET', mode: 'no-cors' });
-            alert(`Sucesso: Registro de ${type} adicionado.`);
+            alert(`Success: ${type} registered!`);
             inputElement.value = "";
+            
             if (type === 'Feeding') {
                 if (document.getElementById('inFoodType')) document.getElementById('inFoodType').value = "";
                 if (document.getElementById('inBrand')) document.getElementById('inBrand').value = "";
             }
-            setTimeout(() => loadBiologicalHistory(currentPageId), 1000);
-        } catch (e) { alert("Erro de comunicação com o servidor."); }
+
+            if (typeof loadBiologicalHistory === "function") {
+                setTimeout(() => loadBiologicalHistory(currentPageId), 1000);
+            }
+        } catch (e) {
+            alert("Technical error sending data.");
+        }
     }
+
+    loadData();
+
+    const editButton = document.getElementById('editLink');
+    
+    if (currentPageId && editButton) {
+        editButton.href = `register_ambient.html?pageID=${currentPageId}`;
+        editButton.style.display = 'inline-flex'; 
+    } else if (editButton) {
+        editButton.style.display = 'none'; 
+    }
+
 
     function showCamOverlay() {
         document.getElementById('cameraOverlay').style.opacity = "1";
-        document.getElementById('camStatusText').innerText = "Status: Signal Lost";
+        document.getElementById('camStatusText').innerText = "Status: Offline";
         document.getElementById('camStatusText').style.color = "#ff5f5f";
     }
 
     function hideCamOverlay() {
         document.getElementById('cameraOverlay').style.opacity = "0";
-        document.getElementById('camStatusText').innerText = "Status: Online | Secure Link";
+        document.getElementById('camStatusText').innerText = "Status: Online | Local Sec Link";
         document.getElementById('camStatusText').style.color = "#a3b18a";
     }
 
+    function setLocalCameraIP() {
+        let ip = prompt("Enter local Camera IP (e.g. 192.168.0.100):");
+        if (ip) {
+            localStorage.setItem('camIP_' + currentPageId, ip);
+            document.getElementById('cameraStream').src = `http://${ip}/stream`;
+        }
+    }
+
+// FUNÇÃO PARA BUSCAR GPS NO THINGSPEAK
 async function fetchLatestGPS() {
     if (!gpsChannelId || !gpsReadKey) return null;
     try {
@@ -1172,232 +1434,579 @@ async function fetchLatestGPS() {
         const res = await fetch(url);
         const json = await res.json();
         const last = json.feeds[0];
+        
         if (last && last.field1 && last.field2) {
             return {
-                lat: parseFloat(last.field1), lon: parseFloat(last.field2),
-                alt: last.field3 || '---', sat: last.field4 || '---',
-                signal: last.field5 || '---', dimens: last.field6 || '---'
+                lat: parseFloat(last.field1),
+                lon: parseFloat(last.field2),
+                alt: last.field3 || '---',
+                sat: last.field4 || '---',
+                signal: last.field5 || '---',
+                dimens: last.field6 || '---'
             };
         }
-    } catch (e) { console.warn("Erro ao ler GPS IoT:", e); }
+    } catch (e) {
+        console.warn("Falha ao recuperar os dados de GPS do ThingSpeak:", e);
+    }
     return null;
 }
 
+// AGORA USA API JSON EM VEZ DE CSV
 async function loadVetVisits(id) {
     try {
-        const res = await fetch(`${VETDATA_SCRIPT_URL}?action=read`);
-        const rows = await res.json();
-        const visits = rows.filter(r => r[0] && r[0].toString().toLowerCase() === id.toLowerCase());
+        const res = await fetch(`${VETDATA_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(id)}`);
+        const json = await res.json();
+        const visits = json.data || [];
+        
         const tbody = document.getElementById('vetTableBody');
         tbody.innerHTML = '';
+
         let vetLocations = []; 
 
         if (visits.length > 0) {
             visits.forEach(v => {
-                let vetFile = (v[8] && v[8].trim() !== "") ? `<a href="${v[8].startsWith('http') ? v[8].trim() : 'https://' + v[8].trim()}" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: bold;"><i class="fas fa-link"></i> File</a>` : "---";
-                let webContent = (v[12] && v[12].trim() !== "") ? `<a href="${v[12].startsWith('http') ? v[12].trim() : 'https://' + v[12].trim()}" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: bold;"><i class="fas fa-globe"></i> Site</a>` : "---";
+                let vetFile = "---";
+                if (v[8] && v[8].trim() !== "") { 
+                    let url_link = v[8].trim();
+                    if (!url_link.startsWith("http")) url_link = "https://" + url_link;
+                    vetFile = `<a href="${url_link}" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: bold;"><i class="fas fa-link"></i> File</a>`;
+                }
+                let webContent = "---";
+                if (v[12] && v[12].trim() !== "") {
+                    let url = v[12].trim();
+                    if (!url.startsWith("http")) url = "https://" + url;
+                    webContent = `<a href="${url}" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: bold;"><i class="fas fa-globe"></i> Site</a>`;
+                }
 
                 tbody.innerHTML += `
                     <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                        <td style="padding: 10px;">${v[1]}</td><td style="padding: 10px;">${v[3]}</td>
-                        <td style="padding: 10px;">${v[6]}</td><td style="padding: 10px;">${v[7]}</td>
-                        <td style="padding: 10px;">${vetFile}</td><td style="padding: 10px;">${v[9]}</td>
-                        <td style="padding: 10px;">${v[10]}</td><td style="padding: 10px;">${webContent}</td>
-                    </tr>`;
-                if (v[14] && v[14].trim() !== "" && !vetLocations.includes(v[14].trim())) vetLocations.push(v[14].trim());
+                        <td style="padding: 10px;">${v[1]}</td>
+                        <td style="padding: 10px;">${v[3]}</td>
+                        <td style="padding: 10px;">${v[6]}</td>
+                        <td style="padding: 10px;">${v[7]}</td>
+                        <td style="padding: 10px;">${vetFile}</td>
+                        <td style="padding: 10px;">${v[9]}</td>
+                        <td style="padding: 10px;">${v[10]}</td>
+                        <td style="padding: 10px;">${webContent}</td>
+                    </tr>
+                `;
+
+                const loc = v[14];
+                if (loc && loc.trim() !== "" && !vetLocations.includes(loc.trim())) {
+                    vetLocations.push(loc.trim());
+                }
             });
         } else {
             tbody.innerHTML = '<tr><td colspan="8" style="padding:20px; text-align:center;">No visits registered.</td></tr>';
         }
 
         let gpsData = await fetchLatestGPS();
-        if (vetLocations.length > 0 || (homeLat && homeLon) || gpsData) await updateVetMap(vetLocations, gpsData);
-        else document.getElementById('vetMapContainer').innerHTML = '';
-    } catch (e) { console.error("Vet secure binding failure:", e); }
+
+        if (vetLocations.length > 0 || (homeLat && homeLon) || gpsData) {
+            await updateVetMap(vetLocations, gpsData);
+        } else {
+            document.getElementById('vetMapContainer').innerHTML = ''; 
+        }
+
+    } catch (e) {
+        console.error("Error loading Vet Data:", e);
+    }
 }
 
 async function updateVetMap(vetLocationsArray, gpsData = null) {
     const mapContainer = document.getElementById('vetMapContainer');
-    if (vetMap !== null) vetMap.remove();
+
+    if (typeof vetMap !== 'undefined' && vetMap !== null) {
+        vetMap.remove();
+    }
+    
     mapContainer.innerHTML = "<div id='actualLeafletMap' style='width: 100%; height: 100%; min-height: 300px; border-radius: 10px; z-index: 1;'></div>";
+
     vetMap = L.map('actualLeafletMap');
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { attribution: '&copy; CARTO' }).addTo(vetMap);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap &copy; CARTO'
+    }).addTo(vetMap);
+
     let bounds = [];
 
-    if (!isNaN(homeLat) && homeLat !== 0) {
-        const homeIcon = L.icon({
-            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
-            iconSize: [25, 41], iconAnchor: [12, 41]
-        });
-        L.marker([homeLat, homeLon], { icon: homeIcon }).addTo(vetMap).bindPopup('<b>Home Base</b>');
-        bounds.push([homeLat, homeLon]);
+    // PRIVACIDADE / CONFORMIDADE LEI: MAPA FUZZY
+    // Utilizando um raio aproximado de 1.5km invés de um marcador preciso para resguardar a residência.
+    if (typeof homeLat !== 'undefined' && typeof homeLon !== 'undefined' && !isNaN(homeLat) && homeLat !== 0) {
+        L.circle([homeLat, homeLon], {
+            color: '#a3b18a',
+            fillColor: '#a3b18a',
+            fillOpacity: 0.3,
+            radius: 1500 // 1.5km raio de ofuscação
+        })
+        .addTo(vetMap)
+        .bindPopup('<b>Approximate Location</b><br>Secure Zone (1.5km radius)');
+        
+        bounds.push([homeLat + 0.015, homeLon + 0.015]);
+        bounds.push([homeLat - 0.015, homeLon - 0.015]);
     }
 
+    // O marcador GPS do animal perdido (ThingSpeak) continua exato, pois é caso de emergência e recuperação!
     if (gpsData && !isNaN(gpsData.lat) && !isNaN(gpsData.lon)) {
         const cyanIcon = L.divIcon({
             html: '<i class="fas fa-map-marker-alt" style="color: cyan; font-size: 32px; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);"></i>',
-            iconSize: [20, 32], iconAnchor: [10, 32], popupAnchor: [0, -32], className: 'custom-gps-marker'
+            iconSize: [20, 32],
+            iconAnchor: [10, 32],
+            popupAnchor: [0, -32],
+            className: 'custom-gps-marker'
         });
-        L.marker([gpsData.lat, gpsData.lon], { icon: cyanIcon }).addTo(vetMap).bindPopup(`<b>Latest GPS Location</b>`);
+
+        L.marker([gpsData.lat, gpsData.lon], { icon: cyanIcon })
+         .addTo(vetMap)
+         .bindPopup(`<b>Latest GPS Location</b><br>Lat: ${gpsData.lat.toFixed(6)}<br>Lon: ${gpsData.lon.toFixed(6)}<br>Alt: ${gpsData.alt}m<br>Satellites: ${gpsData.sat}<br>Signal: ${gpsData.signal}%<br>Mode: ${gpsData.dimens}`);
+        
         bounds.push([gpsData.lat, gpsData.lon]);
     }
 
     const vetIcon = L.icon({
         iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-        iconSize: [25, 41], iconAnchor: [12, 41]
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+        iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
     });
 
-    vetLocationsArray.forEach(coordsString => {
-        const parts = coordsString.split(',');
-        if (parts.length === 2) {
-            const vLat = parseFloat(parts[0].trim()), vLon = parseFloat(parts[1].trim());
-            if (!isNaN(vLat) && !isNaN(vLon)) {
-                L.marker([vLat, vLon], { icon: vetIcon }).addTo(vetMap);
-                bounds.push([vLat, vLon]);
+    for (let i = 0; i < vetLocationsArray.length; i++) {
+        let coordsString = vetLocationsArray[i];
+        
+        try {
+            const parts = coordsString.split(',');
+            
+            if (parts.length === 2) {
+                const vLat = parseFloat(parts[0].trim());
+                const vLon = parseFloat(parts[1].trim());
+
+                if (!isNaN(vLat) && !isNaN(vLon)) {
+                    L.marker([vLat, vLon], { icon: vetIcon })
+                     .addTo(vetMap)
+                     .bindPopup(`<b>Vet Clinic</b><br>Lat: ${vLat}<br>Lon: ${vLon}`);
+                    
+                    bounds.push([vLat, vLon]);
+                }
             }
+        } catch(e) {
+            console.warn("Failed to plot Vet Coordinates for:", coordsString);
         }
-    });
+    }
 
-    if (bounds.length > 0) vetMap.fitBounds(bounds, { padding: [30, 30], maxZoom: 15 });
-    else vetMap.setView([-23.5505, -46.6333], 10);
+    if (bounds.length > 0) {
+        vetMap.fitBounds(bounds, { padding: [30, 30], maxZoom: 14 });
+    } else {
+        vetMap.setView([-23.5505, -46.6333], 10); 
+    }
 }
+    
+    
 
 async function openChart(fieldId, label) {
-    let targetID = (fieldId >= 6 && fieldId !== 25) ? r1ChannelId : mainChannelId;
-    let targetKey = (fieldId >= 6 && fieldId !== 25) ? r1ReadKey : mainReadKey;
-    let actualField = (fieldId >= 6 && fieldId !== 25) ? (fieldId - 20) : fieldId;
-    if(fieldId === 25) actualField = 8; // Mapeamento RSSI principal
+    let targetID = (fieldId >= 6) ? r1ChannelId : mainChannelId;
+    let targetKey = (fieldId >= 6) ? r1ReadKey : mainReadKey;
+    
+    let actualField = (fieldId >= 6) ? (fieldId - 5) : fieldId;
 
     if (!targetID) return alert("Sensor channel not configured.");
-    document.getElementById('chartModal').style.display = 'flex';
+
+    const modal = document.getElementById('chartModal');
     document.getElementById('modalChartTitle').innerText = label.toUpperCase();
+    modal.style.display = 'flex';
 
     try {
-        const url = `https://api.thingspeak.com/channels/${targetID}/fields/${actualField}.json?api_key=${targetKey}&results=100`;
+        const url = `https://api.thingspeak.com/channels/${targetID}/fields/${actualField}.json?api_key=${targetKey}&results=800`;
         const response = await fetch(url);
         const data = await response.json();
+
         const labels = data.feeds.map(feed => feed.created_at);
         const values = data.feeds.map(feed => feed[`field${actualField}`]);
+
         const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
-        
         if (myChart) myChart.destroy();
+
         const ctx = document.getElementById('customChart').getContext('2d');
         myChart = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: labels,
-                datasets: [{ data: values, borderColor: accentColor, tension: 0.3, fill: true, backgroundColor: accentColor + '11' }]
+                datasets: [{
+                    label: label,
+                    data: values,
+                    borderColor: accentColor,
+                    backgroundColor: accentColor + '33',
+                    borderWidth: 1,
+                    pointRadius: 1,
+                    tension: 0.3,
+                    fill: true
+                }]
             },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            title: (context) => {
+                                const d = new Date(context[0].label);
+                                return isNaN(d.getTime()) ? context[0].label : d.toLocaleTimeString();
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: { grid: { color: '#333' }, ticks: { color: '#fff' } },
+                    x: { 
+                        grid: { display: false }, 
+                        ticks: { 
+                            color: '#fff', 
+                            maxTicksLimit: 6,
+                            callback: function(val) {
+                                const d = new Date(this.getLabelForValue(val));
+                                if (isNaN(d.getTime())) return "";
+                                const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+                                return `${d.getDate()}/${months[d.getMonth()]}/${d.getFullYear()}`;
+                            }
+                        } 
+                    }
+                }
+            }
         });
-    } catch (e) { console.error("Chart secure load error", e); }
+    } catch (e) { console.error("Chart error:", e); }
 }
     
     function closeChart() {
-        document.getElementById('chartModal').style.display = 'none';
-        if (myChart) { myChart.destroy(); myChart = null; }
+    const modal = document.getElementById('chartModal');
+    
+    modal.style.display = 'none';
+
+    if (myChart) {
+        myChart.destroy();
+        myChart = null; 
     }
+}
     
     document.addEventListener('DOMContentLoaded', () => {
         applyUserTheme();
         loadData();
-        if (currentPageId) {
-            if(document.getElementById('editLink')) document.getElementById('editLink').href = `register_ambient.html?pageID=${currentPageId}`;
-            if(document.getElementById('addVetLink')) document.getElementById('addVetLink').href = `vet_registry.html?pageID=${currentPageId}`;
-            document.querySelectorAll('.btn-edit').forEach(el => el.style.display = 'inline-flex');
+
+        const editButton = document.getElementById('editLink');
+        if (currentPageId && editButton) {
+            editButton.href = `register_ambient.html?pageID=${currentPageId}`;
+            editButton.style.display = 'inline-flex';
+        }
+        const addVetButton = document.getElementById('addVetLink');
+        if (currentPageId && addVetButton) {
+            addVetButton.href = `vet_registry.html?pageID=${currentPageId}`;
+            addVetButton.style.display = 'inline-flex';
         }
     });
 
     async function generateAIInsight() {
-        const btn = document.getElementById('btnAi');
-        const textBox = document.getElementById('aiInsightText');
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> SECURE COUPLING...';
-        
-        try {
-            const superPrompt = `Analyze context for animal profile ID: ${currentPageId}. Evaluate stability across metrics. Output strictly concise top recommendations in English.`;
-            const response = await fetch(AI_SCRIPT_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({ prompt: superPrompt })
-            });
-            const json = await response.json();
-            if(json.status === "success") {
-                textBox.innerHTML = json.insight.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
-                document.getElementById('btnListenAI').style.display = 'inline-flex';
-            }
-        } catch (e) { textBox.innerText = "IA em manutenção temporária."; }
-        finally { btn.innerHTML = '<i class="fas fa-magic"></i> RE-RUN ANALYSIS'; }
-    }
+    const btn = document.getElementById('btnAi');
+    const textBox = document.getElementById('aiInsightText');
+    
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> COMPILING HISTORY...';
+    textBox.innerText = "Coletando toda a série histórica de sensores, biometria e laudos veterinários...";
 
-    window.aiSpeechUtterances = [];
+    try {
+        const animalName = document.getElementById('dynName').innerText;
+        const animalType = document.getElementById('dynAnimal').innerText;
+        const scientificName = document.getElementById('dynScientific').innerText; 
+        const sex = document.getElementById('dynSex').innerText;
+        const birthDate = document.getElementById('dynBirth').innerText;
+        const currentLocation = document.getElementById('dynLoc').innerText; 
+        const currTemp = document.getElementById('valField1').innerText;
+        const currHum = document.getElementById('valField2').innerText;
+
+        // Fetch using the new Script URLs (No CSV)
+        const resBio = await fetch(`${BIODATA_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(currentPageId)}`);
+        const jsonBio = await resBio.json();
+        const bioRows = jsonBio.data || [];
+        const bioHistory = bioRows.map(r => `Data: ${r[1]} | Evento: ${r[2]} | Valor: ${r[3]}`).join('\n');
+
+        const resEnv = await fetch(`${ENVIRONMENT_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(currentPageId)}`);
+        const jsonEnv = await resEnv.json();
+        const envRow = jsonEnv.data;
+        const envConfig = envRow ? `Temp Alvo: Min ${envRow[2]}°C / Max ${envRow[1]}°C | Umidade Alvo: Min ${envRow[4]}% / Max ${envRow[3]}%` : "Não configurado.";
+
+        const resVet = await fetch(`${VETDATA_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(currentPageId)}`);
+        const jsonVet = await resVet.json();
+        const vetRows = jsonVet.data || [];
+        const vetHistory = vetRows.map(r => `Data: ${r[1]} | Tipo de exame: ${r[3]} | Resultados: ${r[6] || 'Nenhum'} | Observações: ${r[7] || 'Nenhuma'}`).join('\n');
+        
+                let tsHistory = "No telemetry data available.";
+                if (mainChannelId && mainReadKey) {
+                    try {
+                        const tsUrl = `https://api.thingspeak.com/channels/${mainChannelId}/feeds.json?api_key=${mainReadKey}&results=100`;
+                        const tsRes = await fetch(tsUrl);
+                        const tsJson = await tsRes.json();
+                        
+                        if (tsJson.feeds && tsJson.feeds.length > 0) {
+                            tsHistory = tsJson.feeds.map(f => {
+                                const date = new Date(f.created_at).toLocaleString('en-US');
+                                return `[${date}] Air Temperature of Main sensor: ${f.field1 || '--'}°C | Air Humidity of Main sensor: ${f.field2 || '--'}% | CO2: ${f.field3 || '--'}ppm | Ground Humidity of Main sensor: ${f.field4 || '--'}% | Light intensity of Main sensor: ${f.field7 || '--'}lx`;
+                            }).join('\n');
+                        }
+                    } catch(e) {
+                        console.warn("Failed to fetch ThingSpeak history for AI", e);
+                        tsHistory = "Error retrieving telemetry.";
+                    }
+                }
+                
+                let rsHistory = "No telemetry data available for Remote Sensor.";
+                if (r1ChannelId && r1ReadKey) {
+                    try {
+                        const rsUrl = `https://api.thingspeak.com/channels/${r1ChannelId}/feeds.json?api_key=${r1ReadKey}&results=100`;
+                        const rsRes = await fetch(rsUrl);
+                        const rsJson = await rsRes.json();
+                        
+                        if (rsJson.feeds && rsJson.feeds.length > 0) {
+                            rsHistory = rsJson.feeds.map(f => {
+                                const date = new Date(f.created_at).toLocaleString('en-US');
+                                return `[${date}] Air Temperature of Remote sensor: ${f.field1 || '--'}°C | Air Humidity of Remote sensor: ${f.field2 || '--'}% | Ground Humidity of remote sensor: ${f.field3 || '--'}%`;
+                            }).join('\n');
+                        }
+                    } catch(e) {
+                        console.warn("Failed to fetch Remote ThingSpeak history for AI", e);
+                        rsHistory = "Error retrieving remote telemetry.";
+                    }
+                }
+
+        const superPrompt = `
+[STRICT SYSTEM INSTRUCTION: YOUR ENTIRE RESPONSE MUST BE EXCLUSIVELY IN ENGLISH. Do not output any word in Portuguese or any other language. If the provided context data is in another language, you must translate the insights internally and provide the final output ONLY in English.]
+
+Please analyze the data correlation for the following animal monitored by the TerraConnect IoT system.
+
+**Profile:**
+- Name: ${animalName} (${animalType} | Scientific Name: ${scientificName} | Sex: ${sex})
+- Enclosure Physical Location: ${currentLocation}
+- Current Terrarium Conditions: Temp ${currTemp} | Humidity ${currHum}
+- Ideal Limits Configuration: ${envConfig}
+
+**Environmental Telemetry History (Last 100 readings from IoT Sensors):**
+${tsHistory}
+
+**Remote Sensor Telemetry History (Warm Zone / Thermal Regulation) - Last 100 readings:**
+${rsHistory}
+
+**Biological History Series (Weight, Feeding, Molting):**
+${bioHistory || "No biological records."}
+
+**Veterinary History Series (Consultations and Examinations):**
+${vetHistory || "No veterinary records."}
+
+**Task:**
+
+Reference the environmental data with the biological and veterinary data. Is there any weight stagnation? Is the feeding frequency correlated with problems described in veterinary visits? Submit 3 topics:
+
+1) General Health Analysis
+2) Identified Correlations (Cause/Effect)
+3) Management Recommendations
+
+[FINAL RULE: REMEMBER TO GENERATE THE ENTIRE RESPONSE IN ENGLISH ONLY. BE EXTREMELY CONCISE. NO INTRODUCTORY OR CONCLUDING REMARKS. SKIP THE SPECIFICATIONS, JUST GIVE ME THE BOTTOM LINE]
+`;
+
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ANALYZING COMPLEX DATA...';
+        textBox.innerText = "Série histórica construída. Enviando para o Google Gemini 1.5 Flash...";
+
+        const response = await fetch(AI_SCRIPT_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ prompt: superPrompt })
+        });
+        
+        const json = await response.json();
+
+        if(json.status === "success") {
+            textBox.innerHTML = json.insight
+                .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
+                .replace(/\*(.*?)\*/g, '<i>$1</i>')
+                .replace(/\n/g, '<br>');
+            document.getElementById('btnListenAI').style.display = 'inline-flex';
+            } 
+        else {
+            textBox.innerText = "Falha na análise: " + json.message;
+        }
+
+    } catch (e) {
+        console.error(e);
+        textBox.innerText = "Erro ao conectar com o Núcleo de IA.";
+    } finally {
+        btn.innerHTML = '<i class="fas fa-magic"></i> RE-RUN ANALYSIS';
+    }
+}
+
+   window.aiSpeechUtterances = [];
+
     function toggleSpeakAI() {
         const textBox = document.getElementById('aiInsightText');
         const icon = document.getElementById('speakIcon');
         const btn = document.getElementById('btnListenAI');
         
-        if (window.speechSynthesis.speaking) {
+        if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
             window.speechSynthesis.cancel();
+            window.aiSpeechUtterances = []; 
             icon.className = "fas fa-volume-up";
+            btn.style.borderColor = "#a3b18a";
+            btn.style.color = "#a3b18a";
             return;
         }
-        const utterance = new SpeechSynthesisUtterance(textBox.innerText);
-        utterance.lang = 'en-US';
+
+        const textToRead = textBox.innerText;
+        if (!textToRead || textToRead.includes("Click to generate")) return;
+
+        window.speechSynthesis.cancel();
+        window.aiSpeechUtterances = [];
+
+        const sentences = textToRead.match(/[^.!?\n]+[.!?\n]*/g) || [textToRead];
+
         icon.className = "fas fa-stop";
-        utterance.onend = () => { icon.className = "fas fa-volume-up"; };
-        window.speechSynthesis.speak(utterance);
+        btn.style.borderColor = "#ff5f5f";
+        btn.style.color = "#ff5f5f";
+
+        sentences.forEach((sentence, index) => {
+            const chunkText = sentence.trim();
+            if (chunkText === "") return;
+
+            const utterance = new SpeechSynthesisUtterance(chunkText);
+            
+            utterance.lang = 'en-US'; 
+            utterance.rate = 1.0;  
+            utterance.pitch = 1.0; 
+
+            window.aiSpeechUtterances.push(utterance);
+
+            if (index === sentences.length - 1) {
+                utterance.onend = function() {
+                    icon.className = "fas fa-volume-up";
+                    btn.style.borderColor = "#a3b18a";
+                    btn.style.color = "#a3b18a";
+                    window.aiSpeechUtterances = []; 
+                };
+            }
+
+            utterance.onerror = function() {
+                icon.className = "fas fa-volume-up";
+                btn.style.borderColor = "#a3b18a";
+                btn.style.color = "#a3b18a";
+            };
+
+            window.speechSynthesis.speak(utterance);
+        });
     }
 
+    // --- SHARE PUBLIC VIEW LOGIC ---
     function sharePublicLink() {
-        const shareUrl = `${window.location.origin}${window.location.pathname.replace('ambient_view.html','public_view.html')}?id=${currentPageId}`;
+        if (!currentPageId) {
+            alert("Error: Environment ID not found.");
+            return;
+        }
+        
+        const shareUrl = `https://ashuhda-tech.github.io/TerraConnect_Technologies/public_view.html?id=${currentPageId}`;
+        
         if (navigator.share) {
-            navigator.share({ title: 'Dashboard', url: shareUrl }).catch(() => copyToClipboardFallback(shareUrl));
-        } else { copyToClipboardFallback(shareUrl); }
+            navigator.share({
+                title: 'TerraConnect Public Dashboard',
+                text: 'Check out this live environmental monitoring dashboard!',
+                url: shareUrl
+            }).catch(err => {
+                console.log("Native share canceled or failed.", err);
+                copyToClipboardFallback(shareUrl);
+            });
+        } else {
+            copyToClipboardFallback(shareUrl);
+        }
     }
 
     function copyToClipboardFallback(text) {
-        navigator.clipboard.writeText(text).then(() => alert("Link de visualização aproximada/pública copiado!"));
+        navigator.clipboard.writeText(text).then(() => {
+            alert("Public link copied to clipboard!\n\n" + text);
+        }).catch(err => {
+            console.error('Could not copy text: ', err);
+            alert("Failed to copy link automatically. Please manually copy this URL:\n\n" + text);
+        });
     }
 
+
+    // ==========================================
+    // --- EDUCATIONAL PET AUDIO ENGINE ---
+    // ==========================================
+    
     let audioCtx;
+
+    // Initializes the Web Audio API context safely upon user interaction
     function initAudio() {
-        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        if (audioCtx.state === 'suspended') audioCtx.resume();
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
     }
 
+    // Generates a sharp "click" sound simulating a professional clicker
     function playClickSound(timeOffset) {
         initAudio();
         const osc = audioCtx.createOscillator();
         const gainNode = audioCtx.createGain();
-        osc.connect(gainNode); gainNode.connect(audioCtx.destination);
-        osc.type = 'square'; osc.frequency.setValueAtTime(600, audioCtx.currentTime + timeOffset);
+
+        osc.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
+        // A sharp square wave resembles a mechanical click
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(600, audioCtx.currentTime + timeOffset);
+
+        // Amplitude envelope to make it extremely brief and percussive
         gainNode.gain.setValueAtTime(0, audioCtx.currentTime + timeOffset);
         gainNode.gain.linearRampToValueAtTime(0.5, audioCtx.currentTime + timeOffset + 0.01);
         gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + timeOffset + 0.08);
-        osc.start(audioCtx.currentTime + timeOffset); osc.stop(audioCtx.currentTime + timeOffset + 0.1);
+
+        osc.start(audioCtx.currentTime + timeOffset);
+        osc.stop(audioCtx.currentTime + timeOffset + 0.1);
     }
 
+    // Fires the speech synthesis after a specific delay
     function speakCommand(word, delayMs, pitch = 1.0) {
         setTimeout(() => {
+            window.speechSynthesis.cancel();
             const utterance = new SpeechSynthesisUtterance(word);
-            utterance.lang = 'en-US'; utterance.pitch = pitch;
+            utterance.lang = 'en-US';
+            utterance.rate = 1.0;
+            utterance.pitch = pitch;
             window.speechSynthesis.speak(utterance);
         }, delayMs);
     }
 
+    // Command Logic Engine for Dogs
     function playDogCommand(cmd) {
+        initAudio();
         window.speechSynthesis.cancel();
-        if (cmd === 'sit') { playClickSound(0); speakCommand("Sit", 300); }
-        else if (cmd === 'laydown') { playClickSound(0); speakCommand("Down", 300); }
-        else if (cmd === 'follow') { playClickSound(0); playClickSound(0.2); speakCommand("Come", 500); }
-        else if (cmd === 'cross') {
-            for (let i = 0; i < 6; i++) { playClickSound(i * 0.15); }
-            speakCommand("Cross", 1000);
+
+        if (cmd === 'sit') {
+            playClickSound(0);
+            speakCommand("Sit", 300);
+        } else if (cmd === 'laydown') {
+            playClickSound(0);
+            speakCommand("Down", 300);
+        } else if (cmd === 'follow') {
+            playClickSound(0);
+            playClickSound(0.2); // Second click 200ms later
+            speakCommand("Come", 500);
+        } else if (cmd === 'cross') {
+            // Rapid continuous clicks imitating an accessibility traffic light
+            for (let i = 0; i < 6; i++) {
+                playClickSound(i * 0.15); // 150ms gap between each click
+            }
+            speakCommand("Cross", 1000); // Wait for sequence to finish before speaking
         }
     }
 
+    // Command Logic Engine for Birds
     function playBirdCommand(cmd) {
         window.speechSynthesis.cancel();
+        // Give birds a slightly higher pitch (1.2) to simulate an avian-friendly tone
         speakCommand(cmd, 0, 1.2); 
     }
 </script>
