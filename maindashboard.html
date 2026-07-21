@@ -58,6 +58,9 @@
 
         
         .nav-section {flex-grow: 1; display: flex; flex-direction: column; gap: 10px; overflow-y: auto;}
+        /* --- APP VERSION FLAG --- */
+        .app-version-flag {position: fixed;bottom: 10px;left: 10px;background: rgba(0, 0, 0, 0.6);color: rgba(255, 255, 255, 0.3);padding: 4px 8px;border-radius: 4px;font-size: 0.55rem;font-family: 'Inter', monospace;z-index: 99999;pointer-events: none; /* Permite clicar nos elementos que estiverem atrás dele */
+        border: 1px solid rgba(255, 255, 255, 0.1);backdrop-filter: blur(2px);}
 
         /* Cards de Ambiente */
         .ambient-card {background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); padding: 12px 15px; border-radius: 4px; display: flex; align-items: center; gap: 15px; cursor: pointer; transition: all 0.3s; text-decoration: none; color: var(--text-light); font-size: 0.85rem;}
@@ -302,5 +305,9 @@
             window.location.href = 'index.html';
         }
     </script>
+<!-- VERSION FLAG -->
+    <div class="app-version-flag">
+        <i class="fas fa-code-branch"></i> Build 2.1.0
+    </div>
 </body>
 </html>
