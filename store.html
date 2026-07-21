@@ -18,255 +18,46 @@
             font-style: normal;
         }
 
-        :root {
-            --bg-color: #0a0c10;          
-            --card-bg: rgba(30, 30, 30, 0.7); 
-            --card-border: rgba(31, 41, 55, 0.5);       
-            --accent: #d1b38b;        
-            --accent-hover: #e5cba7;
-            --text-main: #f4e9d8;          
-            --text-muted: #9ca3af;
-            --border-radius: 15px;
-            --font-standard: 'Inter', sans-serif;
-            --font-title: 'Cinzel', serif;
-        }
-
+        :root {--bg-color: #0a0c10;--card-bg: rgba(30, 30, 30, 0.7);--card-border: rgba(31, 41, 55, 0.5);--accent: #d1b38b;--accent-hover: #e5cba7;--text-main: #f4e9d8;--text-muted: #9ca3af;--border-radius: 15px;--font-standard: 'Inter', sans-serif;--font-title: 'Cinzel', serif;}
         * { box-sizing: border-box; margin: 0; padding: 0; }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: var(--font-standard);
-            min-height: 100vh;
-            overflow-x: hidden;
-            overflow-y: auto;
+        body {background-color: var(--bg-color);color: var(--text-main);font-family: var(--font-standard);min-height: 100vh;overflow-x: hidden;overflow-y: auto;}
+        /* --- APP VERSION FLAG --- */
+        .app-version-flag {position: fixed;bottom: 10px;left: 10px;background: rgba(0, 0, 0, 0.6);color: rgba(255, 255, 255, 0.3);padding: 4px 8px;border-radius: 4px;font-size: 0.55rem;font-family: 'Inter', monospace;z-index: 99999;pointer-events: none;border: 1px solid rgba(255, 255, 255, 0.1);backdrop-filter: blur(2px);transition: opacity 0.5s; /* Transição suave ao carregar */
         }
-
         /* ----- BACKGROUND VIDEO ----- */
-        .video-bg-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -2;
-            overflow: hidden;
-        }
-
-        .video-bg-container video {
-            min-width: 100%;
-            min-height: 100%;
-            width: auto;
-            height: auto;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            object-fit: cover;
-            filter: brightness(0.4);
-        }
-
+        .video-bg-container {position: fixed;top: 0;left: 0;width: 100%;height: 100%;z-index: -2;overflow: hidden;}
+        .video-bg-container video {min-width: 100%;min-height: 100%;width: auto;height: auto;position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);object-fit: cover;filter: brightness(0.4);}
         /* ----- HEADER & NAVIGATION ----- */
-        header {
-            padding: 30px 50px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--card-border);
-            background: rgba(10, 12, 16, 0.8);
-            backdrop-filter: blur(10px);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .logo-area h1 {
-            font-family: var(--font-title);
-            color: var(--accent);
-            font-size: 1.8rem;
-            letter-spacing: 2px;
-        }
-
-        .btn-back {
-            text-decoration: none;
-            color: var(--accent);
-            border: 1px solid var(--accent);
-            padding: 8px 20px;
-            border-radius: 5px;
-            font-size: 0.85rem;
-            transition: 0.3s;
-            font-family: var(--font-title);
-            text-transform: uppercase;
-        }
-
-        .btn-back:hover {
-            background: var(--accent);
-            color: var(--bg-color);
-        }
-
+        header {padding: 30px 50px;display: flex;justify-content: space-between;align-items: center;border-bottom: 1px solid var(--card-border);background: rgba(10, 12, 16, 0.8);backdrop-filter: blur(10px);position: sticky;top: 0;z-index: 100;}
+        .logo-area h1 {font-family: var(--font-title);color: var(--accent);font-size: 1.8rem;letter-spacing: 2px;}
+        .btn-back {text-decoration: none;color: var(--accent);border: 1px solid var(--accent);padding: 8px 20px;border-radius: 5px;font-size: 0.85rem;transition: 0.3s;font-family: var(--font-title);text-transform: uppercase;}
+        .btn-back:hover {background: var(--accent);color: var(--bg-color);}
         /* ----- PAGE CONTAINER ----- */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 50px 20px;
-        }
-
-        .section-title {
-            text-align: center;
-            font-family: var(--font-title);
-            font-size: 2.2rem;
-            color: var(--text-main);
-            margin-bottom: 10px;
-            letter-spacing: 1px;
-        }
-
-        .section-subtitle {
-            text-align: center;
-            color: var(--text-muted);
-            margin-bottom: 50px;
-            font-size: 1rem;
-        }
-
+        .container {max-width: 1200px;margin: 0 auto;padding: 50px 20px;}
+        .section-title {text-align: center;font-family: var(--font-title);font-size: 2.2rem;color: var(--text-main);margin-bottom: 10px;letter-spacing: 1px; }
+        .section-subtitle {text-align: center;color: var(--text-muted);margin-bottom: 50px;font-size: 1rem;}
         /* ----- GRID LAYOUTS ----- */
-        .pricing-grid, .product-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-bottom: 80px;
-        }
-
+        .pricing-grid, .product-grid {display: grid;grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));gap: 30px;margin-bottom: 80px; }
         /* ----- CARDS ----- */
-        .card {
-            background: var(--card-bg);
-            backdrop-filter: blur(15px);
-            border: 1px solid var(--card-border);
-            border-radius: var(--border-radius);
-            padding: 40px 30px;
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.3s ease, border-color 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            border-color: var(--accent);
-        }
-
-        .card-highlight {
-            border-color: var(--accent);
-            box-shadow: 0 0 20px rgba(209, 179, 139, 0.15);
-            position: relative;
-        }
-
-        .badge {
-            position: absolute;
-            top: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--accent);
-            color: var(--bg-color);
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
+        .card {background: var(--card-bg);backdrop-filter: blur(15px);border: 1px solid var(--card-border);border-radius: var(--border-radius);padding: 40px 30px;display: flex;flex-direction: column;transition: transform 0.3s ease, border-color 0.3s ease;}
+        .card:hover {transform: translateY(-5px);border-color: var(--accent);}
+        .card-highlight {border-color: var(--accent);box-shadow: 0 0 20px rgba(209, 179, 139, 0.15);position: relative;}
+        .badge {position: absolute;top: -15px;left: 50%;transform: translateX(-50%);background: var(--accent);color: var(--bg-color);padding: 5px 15px;border-radius: 20px;font-size: 0.75rem;font-weight: 700;text-transform: uppercase;letter-spacing: 1px;}
         /* ----- PRICING SPECIFICS ----- */
-        .plan-name {
-            font-family: var(--font-title);
-            font-size: 1.5rem;
-            color: var(--accent);
-            margin-bottom: 15px;
-        }
-
-        .plan-price {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--text-main);
-            margin-bottom: 25px;
-            border-bottom: 1px solid var(--card-border);
-            padding-bottom: 25px;
-        }
-
-        .plan-price span {
-            font-size: 1rem;
-            color: var(--text-muted);
-            font-weight: 400;
-        }
-
-        .feature-list {
-            list-style: none;
-            margin-bottom: 30px;
-            flex-grow: 1;
-        }
-
-        .feature-list li {
-            margin-bottom: 15px;
-            font-size: 0.9rem;
-            color: rgba(244, 233, 216, 0.85);
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-        }
-
-        .feature-list i {
-            color: var(--accent);
-            margin-top: 3px;
-        }
-
+        .plan-name {font-family: var(--font-title);font-size: 1.5rem;color: var(--accent);margin-bottom: 15px;}
+        .plan-price {font-size: 2.5rem;font-weight: 700;color: var(--text-main);margin-bottom: 25px;border-bottom: 1px solid var(--card-border);padding-bottom: 25px;}
+        .plan-price span {font-size: 1rem;color: var(--text-muted);font-weight: 400;}
+        .feature-list {list-style: none; margin-bottom: 30px;flex-grow: 1;}
+        .feature-list li {margin-bottom: 15px;font-size: 0.9rem;color: rgba(244, 233, 216, 0.85);display: flex;align-items: flex-start;gap: 10px;}
+        .feature-list i {color: var(--accent);margin-top: 3px;}
         /* ----- PRODUCT SPECIFICS ----- */
-        .product-icon {
-            font-size: 3rem;
-            color: var(--accent);
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .product-title {
-            font-family: var(--font-title);
-            font-size: 1.3rem;
-            text-align: center;
-            margin-bottom: 15px;
-        }
-
-        .product-desc {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            text-align: center;
-            line-height: 1.6;
-            margin-bottom: 25px;
-            flex-grow: 1;
-        }
-
-        .product-price {
-            text-align: center;
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-
+        .product-icon {font-size: 3rem;color: var(--accent);text-align: center;margin-bottom: 20px;}
+        .product-title {font-family: var(--font-title);font-size: 1.3rem;text-align: center;margin-bottom: 15px; }
+        .product-desc {font-size: 0.85rem;color: var(--text-muted);text-align: center;line-height: 1.6;margin-bottom: 25px;flex-grow: 1;}
+        .product-price {text-align: center;font-size: 1.5rem;font-weight: bold;margin-bottom: 20px;}
         /* ----- BUTTONS ----- */
-        .btn-action {
-            width: 100%;
-            background: transparent;
-            border: 1px solid var(--accent);
-            color: var(--accent);
-            padding: 12px;
-            border-radius: 5px;
-            font-size: 0.9rem;
-            font-family: var(--font-title);
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-            text-transform: uppercase;
-        }
-
-        .btn-action:hover, .card-highlight .btn-action {
-            background: var(--accent);
-            color: var(--bg-color);
-        }
+        .btn-action {width: 100%;background: transparent;border: 1px solid var(--accent);color: var(--accent);padding: 12px;border-radius: 5px;font-size: 0.9rem;font-family: var(--font-title);font-weight: bold;cursor: pointer;transition: 0.3s;text-transform: uppercase;}
+        .btn-action:hover, .card-highlight .btn-action {background: var(--accent);color: var(--bg-color);}
 
         @media (max-width: 768px) {
             header { padding: 20px; flex-direction: column; gap: 15px; }
@@ -379,5 +170,52 @@
 
 </div>
 
+
+
+
+
+    <script>
+    // ==========================================
+    // --- GITHUB AUTO VERSION TRACKER ---
+    // ==========================================
+    async function fetchGitHubVersion() {
+        const flagElement = document.getElementById('gh-version-flag');
+        if (!flagElement) return;
+
+        // URL da API pública do GitHub apontando para os commits do seu repositório
+        const repoUrl = 'https://api.github.com/repos/ashuhda-tech/TerraConnect_Technologies/commits?per_page=1';
+
+        try {
+            const response = await fetch(repoUrl);
+            
+            if (response.ok) {
+                const data = await response.json();
+                const latestCommit = data[0];
+                
+                // Pega os 7 primeiros caracteres do hash do commit (Padrão de versão)
+                const shortSha = latestCommit.sha.substring(0, 7);
+                
+                // Pega a data e formata
+                const commitDate = new Date(latestCommit.commit.author.date);
+                const formattedDate = `${String(commitDate.getDate()).padStart(2, '0')}/${String(commitDate.getMonth() + 1).padStart(2, '0')}/${commitDate.getFullYear()}`;
+
+                flagElement.innerHTML = `<i class="fas fa-code-branch"></i> Build ${shortSha} (${formattedDate})`;
+            } else {
+                // Se o GitHub limitar as requisições (Rate Limit)
+                flagElement.innerHTML = `<i class="fas fa-code-branch"></i> Live Build`;
+            }
+        } catch (error) {
+            // Se houver erro de rede
+            flagElement.innerHTML = `<i class="fas fa-code-branch"></i> Local Build`;
+        }
+    }
+
+    // Chama a função assim que a página carrega
+    document.addEventListener('DOMContentLoaded', fetchGitHubVersion);
+    </script>
+<!-- VERSION FLAG -->
+    <div id="gh-version-flag" class="app-version-flag">
+        <i class="fas fa-spinner fa-spin"></i> Fetching Build...
+    </div>
 </body>
 </html>
