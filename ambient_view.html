@@ -1635,6 +1635,27 @@ async function openChart(fieldId, label) {
     document.getElementById('modalChartTitle').innerText = label.toUpperCase();
     modal.style.display = 'flex';
 
+    // --- 1. DEFINE SPECIFIC RANGES AND UNITS FOR EACH SENSOR ID ---
+    const sensorConfigMap = {
+        1:  { min: -20,   max: 50,    unit: '°C' },   // Main: Air Temperature
+        2:  { min: 0,   max: 100,   unit: '%' },    // Main: Air Humidity
+        3:  { min: 0,   max: 2000,  unit: 'ppm' },  // Main: CO2 Concentration
+        4:  { min: 0,   max: 100,   unit: '%' },    // Main: Ground Humidity
+        5:  { min: 0,   max: 100,   unit: '%' },    // Main: Water Level
+        6:  { min: 0,   max: 100,   unit: '%' },    // Main: Battery SOC
+        7:  { min: 0,   max: 10000, unit: 'lx' },   // Main: Light Intensity
+        8:  { min: -100,max: 0,     unit: 'dBm' },  // Main: RSSI
+        // Remote Sensors (mapping to IDs 21 through 25)
+        21: { min: -20,   max: 50,    unit: '°C' },   // Remote: Air Temperature
+        22: { min: 0,   max: 100,   unit: '%' },    // Remote: Air Humidity
+        23: { min: 0,   max: 100,   unit: '%' },    // Remote: Ground Humidity
+        24: { min: 0,   max: 100,   unit: '%' },    // Remote: Battery SOC
+        25: { min: -100,max: 0,     unit: 'dBm' }   // Remote: RSSI
+    };
+
+    // Grab configuration for the clicked sensor, fallback to defaults if not found
+    const currentCfg = sensorConfigMap[fieldId] || { min: undefined, max: undefined, unit: '' };
+    
     try {
         const url = `https://api.thingspeak.com/channels/${targetID}/fields/${actualField}.json?api_key=${targetKey}&results=800`;
         const response = await fetch(url);
