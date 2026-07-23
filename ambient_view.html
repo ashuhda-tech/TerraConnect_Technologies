@@ -1624,10 +1624,11 @@ async function updateVetMap(vetLocationsArray, gpsData = null) {
     
 
 async function openChart(fieldId, label) {
-    let targetID = (fieldId >= 6) ? r1ChannelId : mainChannelId;
-    let targetKey = (fieldId >= 6) ? r1ReadKey : mainReadKey;
+    // --- FIX: Targeting Remote sensors properly (IDs 21+) ---
+    let targetID = (fieldId >= 21) ? r1ChannelId : mainChannelId;
+    let targetKey = (fieldId >= 21) ? r1ReadKey : mainReadKey;
     
-    let actualField = (fieldId >= 6) ? (fieldId - 5) : fieldId;
+    let actualField = (fieldId >= 21) ? (fieldId - 20) : fieldId;
 
     if (!targetID) return alert("Sensor channel not configured.");
 
@@ -1660,6 +1661,12 @@ async function openChart(fieldId, label) {
         const url = `https://api.thingspeak.com/channels/${targetID}/fields/${actualField}.json?api_key=${targetKey}&results=800`;
         const response = await fetch(url);
         const data = await response.json();
+        
+        // --- FIX: Prevent crash if API fails or returns no data ---
+        if (!data || !data.feeds) {
+            console.error("No data feeds returned from API");
+            return;
+        }
 
         const labels = data.feeds.map(feed => feed.created_at);
         const values = data.feeds.map(feed => feed[`field${actualField}`]);
@@ -1693,12 +1700,26 @@ async function openChart(fieldId, label) {
                             title: (context) => {
                                 const d = new Date(context[0].label);
                                 return isNaN(d.getTime()) ? context[0].label : d.toLocaleTimeString();
+                            },
+                            label: (context) => {
+                                const val = context.parsed.y !== null ? context.parsed.y : '--';
+                                return `${context.dataset.label}: ${val} ${currentCfg.unit}`;
                             }
                         }
                     }
                 },
                 scales: {
-                    y: { grid: { color: '#333' }, ticks: { color: '#fff' } },
+                    y: { 
+                        grid: { color: '#333' }, 
+                        ticks: { 
+                            color: '#fff',
+                            callback: function(value) {
+                                return value + ' ' + currentCfg.unit;
+                            }
+                        },
+                        min: currentCfg.min,
+                        max: currentCfg.max
+                    },
                     x: { 
                         grid: { display: false }, 
                         ticks: { 
