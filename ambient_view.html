@@ -210,13 +210,9 @@
             <hr style="border: 0.5px solid var(--border); margin: 20px 0;">
             
             <div id="qr-section" style="text-align: center; padding-bottom: 20px;">
-                <h4 style="font-size: 0.9em; color: var(--text-light); margin-bottom: 10px;">Local Device Sync</h4>
-                <p style="font-size: 0.7em; color: var(--text-muted); margin-top: 10px; margin-bottom:15px;">We do not store your local network credentials in our cloud. Configure them locally to generate the Sync QR Code.</p>
-                
-                <input type="text" id="localSsid" class="input-field" placeholder="Wi-Fi SSID (Network Name)" style="width: 100%; margin-bottom: 8px;">
-                <input type="password" id="localPass" class="input-field" placeholder="Wi-Fi Password" style="width: 100%; margin-bottom: 15px;">
-                
-                <button onclick="generateLocalQR()" class="btn-send" style="width: 100%; margin-bottom: 15px;">
+                <h4 style="font-size: 0.9em; color: var(--text-light); margin-bottom: 10px;">Public Dashboard QR</h4>
+                <p style="font-size: 0.7em; color: var(--text-muted); margin-top: 10px; margin-bottom:15px;">Generate a QR Code to easily share the live public view of this environment.</p>
+                <button onclick="generatePublicQR()" class="btn-send" style="width: 100%; margin-bottom: 15px;">
                     <i class="fas fa-qrcode"></i> Generate QR Code
                 </button>
 
@@ -996,31 +992,28 @@ async function sendDeviceConfig() {
 }
 
     // ZERO CLEARTEXT: O QR CODE AGORA DEPENDE DOS INPUTS LOCAIS NA TELA.
-    function generateLocalQR() {
+    function generatePublicQR() {
     const qrContainer = document.getElementById("qrcode");
-    const ssid = document.getElementById("localSsid").value.trim();
-    const pass = document.getElementById("localPass").value;
-
-    if (!ssid || !pass) {
-        alert("Please enter the Wi-Fi credentials to generate the sync QR Code. These are never uploaded to the cloud.");
+    
+    if (!currentPageId) {
+        alert("Error: Environment ID not found.");
         return;
     }
 
     if (!qrContainer) return; 
+    
+    // Clear any existing QR code before generating a new one
     qrContainer.innerHTML = ""; 
 
+    // Inherit the active theme's accent color for the QR code
     const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || "#2c3e50"; 
+    
+    // Construct the public view URL
+    const publicUrl = `https://ashuhda-tech.github.io/TerraConnect_Technologies/public_view.html?id=${currentPageId}`;
 
-    const configPayload = {
-        pgid: currentPageId,
-        ssid: ssid,
-        pass: pass,
-        chid: mainChannelId,
-        tswk: mainReadKey
-    };
-
+    // Render the QR Code
     new QRCode(qrContainer, {
-        text: JSON.stringify(configPayload),
+        text: publicUrl,
         width: 150,
         height: 150,
         colorDark : accentColor,
@@ -1699,7 +1692,7 @@ async function openChart(fieldId, label) {
                         callbacks: {
                             title: (context) => {
                                 const d = new Date(context[0].label);
-                                return isNaN(d.getTime()) ? context[0].label : d.toLocaleTimeString();
+                                return isNaN(d.getTime()) ? context[0].label : `${d.toLocaleDateString()} - ${d.toLocaleTimeString()}`;
                             },
                             label: (context) => {
                                 const val = context.parsed.y !== null ? context.parsed.y : '--';
