@@ -53,6 +53,17 @@
         /* ----- TIER SPECIFICS ----- */
         .tier-level-num {font-family: var(--font-title); font-size: 3rem; color: rgba(209, 179, 139, 0.2); position: absolute; top: 10px; right: 20px; font-weight: bold; pointer-events: none;}
         .tier-card {position: relative; padding: 30px;}
+
+        /* ----- DYNAMIC TIER TABLE ----- */
+        .table-responsive { width: 100%; overflow-x: auto; background: var(--card-bg); backdrop-filter: blur(15px); border: 1px solid var(--card-border); border-radius: var(--border-radius); padding: 20px; }
+        .tier-table { width: 100%; border-collapse: collapse; min-width: 800px; }
+        .tier-table th, .tier-table td { padding: 15px; text-align: center; border-bottom: 1px solid var(--card-border); }
+        .tier-table th { background: rgba(10, 12, 16, 0.5); color: var(--accent); font-family: var(--font-title); font-size: 1.1rem; letter-spacing: 1px; position: sticky; top: 0; }
+        .tier-table td.feature-name { text-align: left; color: var(--text-main); font-size: 0.95rem; width: 40%; }
+        .tier-table .category-row { background: rgba(209, 179, 139, 0.1); color: var(--accent); font-weight: bold; text-align: left; padding-left: 20px; font-family: var(--font-title); letter-spacing: 1px; text-transform: uppercase; font-size: 0.85rem; }
+        .check-icon { color: var(--accent); font-size: 1.2rem; }
+        .minus-icon { color: rgba(255, 255, 255, 0.1); font-size: 1rem; }
+        .tier-table tr:hover td { background: rgba(255, 255, 255, 0.02); }
         
         /* ----- PRICING SPECIFICS ----- */
         .plan-name {font-family: var(--font-title);font-size: 1.5rem;color: var(--accent);margin-bottom: 15px;}
@@ -101,75 +112,17 @@
     <h2 class="section-title">Interface Access Tiers</h2>
     <p class="section-subtitle">Select your feature level. As your tier increases, more advanced dashboard modules are unlocked.</p>
 
-    <div class="tier-grid">
-        <!-- Level 0 -->
-        <div class="card tier-card">
-            <div class="tier-level-num">LVL 0</div>
-            <h3 class="plan-name"><i class="fas fa-seedling"></i> Basic</h3>
-            <ul class="feature-list">
-                <li><i class="fas fa-check"></i> Live Environmental Monitoring</li>
-                <li><i class="fas fa-check"></i> Basic Dashboard Theme</li>
-                <li><i class="fas fa-check"></i> Manual Sync QR Generation</li>
-            </ul>
-        </div>
-
-        <!-- Level 1 -->
-        <div class="card tier-card">
-            <div class="tier-level-num">LVL 1</div>
-            <h3 class="plan-name"><i class="fas fa-leaf"></i> Tracker</h3>
-            <ul class="feature-list">
-                <li><i class="fas fa-check"></i> All Level 0 Features</li>
-                <li><i class="fas fa-check"></i> Biological Control (Feeding/Weight)</li>
-                <li><i class="fas fa-check"></i> Shedding Interval Charts</li>
-            </ul>
-        </div>
-
-        <!-- Level 2 -->
-        <div class="card tier-card">
-            <div class="tier-level-num">LVL 2</div>
-            <h3 class="plan-name"><i class="fas fa-tree"></i> Advanced</h3>
-            <ul class="feature-list">
-                <li><i class="fas fa-check"></i> All Level 1 Features</li>
-                <li><i class="fas fa-check"></i> Remote Sensor Unit Integration</li>
-                <li><i class="fas fa-check"></i> Active Environment Configuration</li>
-            </ul>
-        </div>
-
-        <!-- Level 3 -->
-        <div class="card tier-card">
-            <div class="tier-level-num">LVL 3</div>
-            <h3 class="plan-name"><i class="fas fa-video"></i> Vision</h3>
-            <ul class="feature-list">
-                <li><i class="fas fa-check"></i> All Level 2 Features</li>
-                <li><i class="fas fa-check"></i> Live Local Camera Stream Integration</li>
-                <li><i class="fas fa-check"></i> Extended Hardware Charts</li>
-            </ul>
-        </div>
-
-        <!-- Level 4 -->
-        <div class="card tier-card card-highlight">
-            <div class="badge">Recommended</div>
-            <div class="tier-level-num" style="color: rgba(10, 12, 16, 0.4);">LVL 4</div>
-            <h3 class="plan-name" style="color: var(--text-main);"><i class="fas fa-brain"></i> Intelligence</h3>
-            <ul class="feature-list">
-                <li><i class="fas fa-check"></i> All Level 3 Features</li>
-                <li><i class="fas fa-check"></i> Cloud AI Health & Environment Insights</li>
-                <li><i class="fas fa-check"></i> AI Text-to-Speech Accessibility</li>
-            </ul>
-        </div>
-
-        <!-- Level 5 -->
-        <div class="card tier-card">
-            <div class="tier-level-num">LVL 5</div>
-            <h3 class="plan-name"><i class="fas fa-globe"></i> Ecosystem</h3>
-            <ul class="feature-list">
-                <li><i class="fas fa-check"></i> All Level 4 Features</li>
-                <li><i class="fas fa-check"></i> Educational Pet Training Audio Commands</li>
-                <li><i class="fas fa-check"></i> Veterinary Map & GPS Tracking Module</li>
-            </ul>
+    <!-- DASHBOARD TIER LEVELS -->
+    <h2 class="section-title">Interface Access Tiers</h2>
+    <p class="section-subtitle">Live capability matrix synced directly from our core database.</p>
+    
+    <div id="tierMatrixContainer" class="table-responsive" style="margin-bottom: 80px;">
+        <div style="text-align:center; padding: 60px;">
+            <i class="fas fa-spinner fa-spin fa-3x" style="color: var(--accent);"></i>
+            <p style="margin-top: 20px; color: var(--text-muted); font-family: var(--font-title);">Syncing Live Matrix Data...</p>
         </div>
     </div>
-    
+        
     <hr style="border: 0.5px solid var(--card-border); margin-bottom: 80px;">
 
     <!-- DATABASE SUBSCRIPTION SECTION -->
@@ -291,6 +244,92 @@
 </div>
 
     <script>
+// ==========================================
+// --- DYNAMIC TIER MATRIX GENERATOR ---
+// ==========================================
+async function loadTierMatrix() {
+    const container = document.getElementById('tierMatrixContainer');
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyZaoQyRiQDaTP9IkbOK89A2l9DtH6tOtwL6TFn38x5N_gYiiQc2Os-NZ1dvEsZMZKF/exec';
+
+    try {
+        const response = await fetch(API_URL);
+        const result = await response.json();
+
+        if (result.status === 'success') {
+            const data = result.data;
+            const categories = {};
+
+            // Group by category and deduplicate descriptions (finding lowest minPlan)
+            data.forEach(item => {
+                const cat = item.categoria || "Geral";
+                const desc = item.descricao;
+                const tier = parseInt(item.minPlan) || 1;
+
+                if (!categories[cat]) categories[cat] = {};
+                
+                if (!categories[cat][desc] || tier < categories[cat][desc]) {
+                    categories[cat][desc] = tier;
+                }
+            });
+
+            // Build HTML Table
+            let tableHTML = `
+                <table class="tier-table">
+                    <thead>
+                        <tr>
+                            <th style="text-align: left; padding-left: 20px;">Platform Features</th>
+                            <th>LVL 1</th>
+                            <th>LVL 2</th>
+                            <th>LVL 3</th>
+                            <th>LVL 4</th>
+                            <th>LVL 5</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            for (const [categoryName, features] of Object.entries(categories)) {
+                // Add Category Header Row
+                tableHTML += `
+                    <tr>
+                        <td colspan="6" class="category-row"><i class="fas fa-layer-group" style="margin-right: 8px;"></i> ${categoryName}</td>
+                    </tr>
+                `;
+
+                // Add Feature Rows
+                for (const [featureName, minTier] of Object.entries(features)) {
+                    tableHTML += `<tr><td class="feature-name">${featureName}</td>`;
+                    
+                    // Generate columns for Level 1 to 5
+                    for (let level = 1; level <= 5; level++) {
+                        if (level >= minTier) {
+                            tableHTML += `<td><i class="fas fa-check check-icon"></i></td>`;
+                        } else {
+                            tableHTML += `<td><i class="fas fa-minus minus-icon"></i></td>`;
+                        }
+                    }
+                    tableHTML += `</tr>`;
+                }
+            }
+
+            tableHTML += `</tbody></table>`;
+            container.innerHTML = tableHTML;
+
+        } else {
+            container.innerHTML = `<div style="text-align:center; padding: 40px; color: #ff5f5f;">Failed to load matrix data: ${result.message}</div>`;
+        }
+    } catch (error) {
+        container.innerHTML = `<div style="text-align:center; padding: 40px; color: #ff5f5f;">Connection error trying to reach the database.</div>`;
+        console.error("Matrix Sync Error:", error);
+    }
+}
+
+// Ensure the matrix is loaded as soon as the page is ready
+document.addEventListener('DOMContentLoaded', () => {
+    fetchGitHubVersion();
+    loadTierMatrix(); 
+});
+        
     // ==========================================
     // --- GITHUB AUTO VERSION TRACKER ---
     // ==========================================
