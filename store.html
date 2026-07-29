@@ -21,28 +21,39 @@
         :root {--bg-color: #0a0c10;--card-bg: rgba(30, 30, 30, 0.7);--card-border: rgba(31, 41, 55, 0.5);--accent: #d1b38b;--accent-hover: #e5cba7;--text-main: #f4e9d8;--text-muted: #9ca3af;--border-radius: 15px;--font-standard: 'Inter', sans-serif;--font-title: 'Cinzel', serif;}
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {background-color: var(--bg-color);color: var(--text-main);font-family: var(--font-standard);min-height: 100vh;overflow-x: hidden;overflow-y: auto;}
+        
         /* --- APP VERSION FLAG --- */
-        .app-version-flag {position: fixed;bottom: 10px;left: 10px;background: rgba(0, 0, 0, 0.6);color: rgba(255, 255, 255, 0.3);padding: 4px 8px;border-radius: 4px;font-size: 0.55rem;font-family: 'Inter', monospace;z-index: 99999;pointer-events: none;border: 1px solid rgba(255, 255, 255, 0.1);backdrop-filter: blur(2px);transition: opacity 0.5s; /* Transição suave ao carregar */
-        }
+        .app-version-flag {position: fixed;bottom: 10px;left: 10px;background: rgba(0, 0, 0, 0.6);color: rgba(255, 255, 255, 0.3);padding: 4px 8px;border-radius: 4px;font-size: 0.55rem;font-family: 'Inter', monospace;z-index: 99999;pointer-events: none;border: 1px solid rgba(255, 255, 255, 0.1);backdrop-filter: blur(2px);transition: opacity 0.5s;}
+        
         /* ----- BACKGROUND VIDEO ----- */
         .video-bg-container {position: fixed;top: 0;left: 0;width: 100%;height: 100%;z-index: -2;overflow: hidden;}
         .video-bg-container video {min-width: 100%;min-height: 100%;width: auto;height: auto;position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);object-fit: cover;filter: brightness(0.4);}
+        
         /* ----- HEADER & NAVIGATION ----- */
         header {padding: 30px 50px;display: flex;justify-content: space-between;align-items: center;border-bottom: 1px solid var(--card-border);background: rgba(10, 12, 16, 0.8);backdrop-filter: blur(10px);position: sticky;top: 0;z-index: 100;}
         .logo-area h1 {font-family: var(--font-title);color: var(--accent);font-size: 1.8rem;letter-spacing: 2px;}
         .btn-back {text-decoration: none;color: var(--accent);border: 1px solid var(--accent);padding: 8px 20px;border-radius: 5px;font-size: 0.85rem;transition: 0.3s;font-family: var(--font-title);text-transform: uppercase;}
         .btn-back:hover {background: var(--accent);color: var(--bg-color);}
+        
         /* ----- PAGE CONTAINER ----- */
         .container {max-width: 1200px;margin: 0 auto;padding: 50px 20px;}
         .section-title {text-align: center;font-family: var(--font-title);font-size: 2.2rem;color: var(--text-main);margin-bottom: 10px;letter-spacing: 1px; }
         .section-subtitle {text-align: center;color: var(--text-muted);margin-bottom: 50px;font-size: 1rem;}
+        
         /* ----- GRID LAYOUTS ----- */
         .pricing-grid, .product-grid {display: grid;grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));gap: 30px;margin-bottom: 80px; }
+        .tier-grid {display: grid;grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));gap: 20px;margin-bottom: 80px;}
+        
         /* ----- CARDS ----- */
         .card {background: var(--card-bg);backdrop-filter: blur(15px);border: 1px solid var(--card-border);border-radius: var(--border-radius);padding: 40px 30px;display: flex;flex-direction: column;transition: transform 0.3s ease, border-color 0.3s ease;}
         .card:hover {transform: translateY(-5px);border-color: var(--accent);}
         .card-highlight {border-color: var(--accent);box-shadow: 0 0 20px rgba(209, 179, 139, 0.15);position: relative;}
         .badge {position: absolute;top: -15px;left: 50%;transform: translateX(-50%);background: var(--accent);color: var(--bg-color);padding: 5px 15px;border-radius: 20px;font-size: 0.75rem;font-weight: 700;text-transform: uppercase;letter-spacing: 1px;}
+        
+        /* ----- TIER SPECIFICS ----- */
+        .tier-level-num {font-family: var(--font-title); font-size: 3rem; color: rgba(209, 179, 139, 0.2); position: absolute; top: 10px; right: 20px; font-weight: bold; pointer-events: none;}
+        .tier-card {position: relative; padding: 30px;}
+        
         /* ----- PRICING SPECIFICS ----- */
         .plan-name {font-family: var(--font-title);font-size: 1.5rem;color: var(--accent);margin-bottom: 15px;}
         .plan-price {font-size: 2.5rem;font-weight: 700;color: var(--text-main);margin-bottom: 25px;border-bottom: 1px solid var(--card-border);padding-bottom: 25px;}
@@ -50,18 +61,20 @@
         .feature-list {list-style: none; margin-bottom: 30px;flex-grow: 1;}
         .feature-list li {margin-bottom: 15px;font-size: 0.9rem;color: rgba(244, 233, 216, 0.85);display: flex;align-items: flex-start;gap: 10px;}
         .feature-list i {color: var(--accent);margin-top: 3px;}
+        
         /* ----- PRODUCT SPECIFICS ----- */
         .product-icon {font-size: 3rem;color: var(--accent);text-align: center;margin-bottom: 20px;}
         .product-title {font-family: var(--font-title);font-size: 1.3rem;text-align: center;margin-bottom: 15px; }
         .product-desc {font-size: 0.85rem;color: var(--text-muted);text-align: center;line-height: 1.6;margin-bottom: 25px;flex-grow: 1;}
         .product-price {text-align: center;font-size: 1.5rem;font-weight: bold;margin-bottom: 20px;}
+        
         /* ----- BUTTONS ----- */
         .btn-action {width: 100%;background: transparent;border: 1px solid var(--accent);color: var(--accent);padding: 12px;border-radius: 5px;font-size: 0.9rem;font-family: var(--font-title);font-weight: bold;cursor: pointer;transition: 0.3s;text-transform: uppercase;}
         .btn-action:hover, .card-highlight .btn-action {background: var(--accent);color: var(--bg-color);}
 
         @media (max-width: 768px) {
             header { padding: 20px; flex-direction: column; gap: 15px; }
-            .pricing-grid, .product-grid { grid-template-columns: 1fr; }
+            .pricing-grid, .product-grid, .tier-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -70,7 +83,7 @@
 <!-- Background Video -->
 <div class="video-bg-container">
     <video autoplay loop muted playsinline>
-        <source src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/b1c4c1f080d96ec1c35ff823176f214b761eb6a6/assets/VIDEO/RIVER_MAINDASHBOARD.mp4" type="video/mp4">
+        <source src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/VIDEO/RIVER_MAINDASHBOARD.mp4" type="video/mp4">
     </video>
 </div>
 
@@ -84,21 +97,95 @@
 
 <div class="container">
     
-    <!-- SAAS SUBSCRIPTION SECTION -->
-    <h2 class="section-title">Platform Subscriptions</h2>
-    <p class="section-subtitle">Unlock the full power of our AI Insights and extended telemetry forecasting.</p>
+    <!-- DASHBOARD TIER LEVELS -->
+    <h2 class="section-title">Interface Access Tiers</h2>
+    <p class="section-subtitle">Select your feature level. As your tier increases, more advanced dashboard modules are unlocked.</p>
+
+    <div class="tier-grid">
+        <!-- Level 0 -->
+        <div class="card tier-card">
+            <div class="tier-level-num">LVL 0</div>
+            <h3 class="plan-name"><i class="fas fa-seedling"></i> Basic</h3>
+            <ul class="feature-list">
+                <li><i class="fas fa-check"></i> Live Environmental Monitoring</li>
+                <li><i class="fas fa-check"></i> Basic Dashboard Theme</li>
+                <li><i class="fas fa-check"></i> Manual Sync QR Generation</li>
+            </ul>
+        </div>
+
+        <!-- Level 1 -->
+        <div class="card tier-card">
+            <div class="tier-level-num">LVL 1</div>
+            <h3 class="plan-name"><i class="fas fa-leaf"></i> Tracker</h3>
+            <ul class="feature-list">
+                <li><i class="fas fa-check"></i> All Level 0 Features</li>
+                <li><i class="fas fa-check"></i> Biological Control (Feeding/Weight)</li>
+                <li><i class="fas fa-check"></i> Shedding Interval Charts</li>
+            </ul>
+        </div>
+
+        <!-- Level 2 -->
+        <div class="card tier-card">
+            <div class="tier-level-num">LVL 2</div>
+            <h3 class="plan-name"><i class="fas fa-tree"></i> Advanced</h3>
+            <ul class="feature-list">
+                <li><i class="fas fa-check"></i> All Level 1 Features</li>
+                <li><i class="fas fa-check"></i> Remote Sensor Unit Integration</li>
+                <li><i class="fas fa-check"></i> Active Environment Configuration</li>
+            </ul>
+        </div>
+
+        <!-- Level 3 -->
+        <div class="card tier-card">
+            <div class="tier-level-num">LVL 3</div>
+            <h3 class="plan-name"><i class="fas fa-video"></i> Vision</h3>
+            <ul class="feature-list">
+                <li><i class="fas fa-check"></i> All Level 2 Features</li>
+                <li><i class="fas fa-check"></i> Live Local Camera Stream Integration</li>
+                <li><i class="fas fa-check"></i> Extended Hardware Charts</li>
+            </ul>
+        </div>
+
+        <!-- Level 4 -->
+        <div class="card tier-card card-highlight">
+            <div class="badge">Recommended</div>
+            <div class="tier-level-num" style="color: rgba(10, 12, 16, 0.4);">LVL 4</div>
+            <h3 class="plan-name" style="color: var(--text-main);"><i class="fas fa-brain"></i> Intelligence</h3>
+            <ul class="feature-list">
+                <li><i class="fas fa-check"></i> All Level 3 Features</li>
+                <li><i class="fas fa-check"></i> Cloud AI Health & Environment Insights</li>
+                <li><i class="fas fa-check"></i> AI Text-to-Speech Accessibility</li>
+            </ul>
+        </div>
+
+        <!-- Level 5 -->
+        <div class="card tier-card">
+            <div class="tier-level-num">LVL 5</div>
+            <h3 class="plan-name"><i class="fas fa-globe"></i> Ecosystem</h3>
+            <ul class="feature-list">
+                <li><i class="fas fa-check"></i> All Level 4 Features</li>
+                <li><i class="fas fa-check"></i> Educational Pet Training Audio Commands</li>
+                <li><i class="fas fa-check"></i> Veterinary Map & GPS Tracking Module</li>
+            </ul>
+        </div>
+    </div>
+    
+    <hr style="border: 0.5px solid var(--card-border); margin-bottom: 80px;">
+
+    <!-- DATABASE SUBSCRIPTION SECTION -->
+    <h2 class="section-title">Database Subscriptions</h2>
+    <p class="section-subtitle">Secure cloud storage for your telemetry history. We charge based on data volume and retention.</p>
 
     <div class="pricing-grid">
         <!-- Trial / Basic Plan -->
         <div class="card">
-            <h3 class="plan-name">Explorer</h3>
+            <h3 class="plan-name">Ephemeral</h3>
             <div class="plan-price">$0 <span>/ forever</span></div>
             <ul class="feature-list">
-                <li><i class="fas fa-check"></i> 1 Environment / Terrarium</li>
-                <li><i class="fas fa-check"></i> Basic Telemetry Monitoring</li>
-                <li><i class="fas fa-check"></i> 7-Day Data Retention</li>
-                <li><i class="fas fa-check"></i> Standard AI Health Insights</li>
-                <li><i class="fas fa-check"></i> Veterinary Registry Access</li>
+                <li><i class="fas fa-check"></i> Live Data Pass-through</li>
+                <li><i class="fas fa-check"></i> 7-Day Short Term Retention</li>
+                <li><i class="fas fa-check"></i> Up to 1,000 data points/month</li>
+                <li><i class="fas fa-check"></i> Shared Server Resources</li>
             </ul>
             <button class="btn-action">Current Plan</button>
         </div>
@@ -106,28 +193,26 @@
         <!-- Pro Plan -->
         <div class="card card-highlight">
             <div class="badge">Most Popular</div>
-            <h3 class="plan-name">Herpetologist Pro</h3>
+            <h3 class="plan-name">Archivist</h3>
             <div class="plan-price">$9.99 <span>/ month</span></div>
             <ul class="feature-list">
-                <li><i class="fas fa-check"></i> Up to 5 Environments</li>
                 <li><i class="fas fa-check"></i> 1-Year Cloud Data Retention</li>
-                <li><i class="fas fa-check"></i> Advanced AI Predictive Forecasting</li>
-                <li><i class="fas fa-check"></i> Automated Text-to-Speech Insights</li>
-                <li><i class="fas fa-check"></i> Priority API Routing</li>
+                <li><i class="fas fa-check"></i> Necessary for AI Forecasting</li>
+                <li><i class="fas fa-check"></i> Up to 50,000 data points/month</li>
+                <li><i class="fas fa-check"></i> Export Data to CSV</li>
             </ul>
             <button class="btn-action">Start 14-Day Free Trial</button>
         </div>
 
         <!-- Enterprise / Breeder Plan -->
         <div class="card">
-            <h3 class="plan-name">Commercial Breeder</h3>
+            <h3 class="plan-name">Datacenter</h3>
             <div class="plan-price">$29.99 <span>/ month</span></div>
             <ul class="feature-list">
-                <li><i class="fas fa-check"></i> Unlimited Environments</li>
                 <li><i class="fas fa-check"></i> Lifetime Data Retention</li>
-                <li><i class="fas fa-check"></i> Custom IoT Threshold Alerts</li>
-                <li><i class="fas fa-check"></i> Multi-User Staff Accounts</li>
-                <li><i class="fas fa-check"></i> Dedicated Support Line</li>
+                <li><i class="fas fa-check"></i> High-Frequency API Requests</li>
+                <li><i class="fas fa-check"></i> Unlimited Data Points</li>
+                <li><i class="fas fa-check"></i> Dedicated Priority Server</li>
             </ul>
             <button class="btn-action">Subscribe Now</button>
         </div>
@@ -168,11 +253,42 @@
         </div>
     </div>
 
+    <hr style="border: 0.5px solid var(--card-border); margin-bottom: 80px;">
+
+    <!-- DIY MODULES SECTION -->
+    <h2 class="section-title">Do It Yourself (DIY)</h2>
+    <p class="section-subtitle">Prefer to build it yourself? We are open-source friendly. Access our Bill of Materials, schematics, and code.</p>
+
+    <div class="product-grid">
+        <!-- BOM & Schematics -->
+        <div class="card">
+            <div class="product-icon"><i class="fas fa-cogs"></i></div>
+            <h3 class="product-title">BOM & Schematics</h3>
+            <p class="product-desc">Full part lists for ESP32/Arduino microcontrollers, sensor arrays (DHT22, MH-Z19), and wiring diagrams needed to build the Main Unit.</p>
+            <div class="product-price">Free</div>
+            <button class="btn-action"><i class="fas fa-download"></i> Download PDF</button>
+        </div>
+
+        <!-- Firmware -->
+        <div class="card">
+            <div class="product-icon"><i class="fas fa-file-code"></i></div>
+            <h3 class="product-title">Firmware Repository</h3>
+            <p class="product-desc">Access our GitHub repository to download the official C++ source code. Includes the flashing guide for injecting our API URLs.</p>
+            <div class="product-price">Free</div>
+            <button class="btn-action"><i class="fab fa-github"></i> Go to GitHub</button>
+        </div>
+
+        <!-- 3D Prints -->
+        <div class="card">
+            <div class="product-icon"><i class="fas fa-cube"></i></div>
+            <h3 class="product-title">3D Print STL Files</h3>
+            <p class="product-desc">Print your own physical cases. Includes files for the Main Controller Box, Remote Node casing, and safe terrarium mounting brackets.</p>
+            <div class="product-price">Free</div>
+            <button class="btn-action"><i class="fas fa-download"></i> Download STLs</button>
+        </div>
+    </div>
+
 </div>
-
-
-
-
 
     <script>
     // ==========================================
