@@ -533,32 +533,53 @@
             <i class="fas fa-graduation-cap"></i> Educational Pet | Training
         </h3>
 
-        <!-- Dog Educational Panel -->
-        <div id="edu-clicker-section" style="display: none; margin-bottom: 20px;">
-            <h4 style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0; margin-bottom: 10px;">Dog Commands (Audio & Voice)</h4>
-            <div class="management-grid">
-                <div class="sensor-card" style="flex-direction: column; cursor: pointer; justify-content: center;" onclick="playDogCommand('sit')">
-                    <i class="fas fa-arrow-down fa-dog" style="font-size: 1.5rem; color: #74b9ff; margin-bottom: 10px;"></i>
-                    <div class="sensor-label">Sit</div>
-                    <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 5px; text-transform: none;">1 Click + "Sit"</div>
-                </div>
-                <div class="sensor-card" style="flex-direction: column; cursor: pointer; justify-content: center;" onclick="playDogCommand('laydown')">
-                    <i class="fas fa-hand-point-down fa-arrows-down-to-line fa-dog" style="font-size: 1.5rem; color: #a3b18a; margin-bottom: 10px;"></i>
-                    <div class="sensor-label">Lay Down</div>
-                    <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 5px; text-transform: none;">1 Click + "Down"</div>
-                </div>
-                <div class="sensor-card" style="flex-direction: column; cursor: pointer; justify-content: center;" onclick="playDogCommand('follow')">
-                    <i class="fas fa-dog fa-forward" style="font-size: 1.5rem; color: #d4a373; margin-bottom: 10px;"></i>
-                    <div class="sensor-label">Follow Me</div>
-                    <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 5px; text-transform: none;">2 Clicks + "Come"</div>
-                </div>
-                <div class="sensor-card" style="flex-direction: column; cursor: pointer; justify-content: center;" onclick="playDogCommand('cross')">
-                    <i class="fas fa-dog fa-road fa-forward-fast" style="font-size: 1.5rem; color: #ff5f5f; margin-bottom: 10px;"></i>
-                    <div class="sensor-label">Cross Street</div>
-                    <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 5px; text-transform: none; text-align: center;">Continuous Clicks + "Cross"</div>
-                </div>
+       <!-- Dog Educational Panel -->
+<div id="edu-clicker-section" style="display: none; margin-bottom: 20px;">
+    <h4 style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0; margin-bottom: 10px;">Dog Commands (Audio & Voice)</h4>
+    <div class="management-grid">
+        
+        <!-- Sit -->
+        <div class="sensor-card" style="flex-direction: column; cursor: pointer; justify-content: center;" onclick="playDogCommand('sit')">
+            <div style="display: flex; gap: 10px; font-size: 1.5rem; color: #74b9ff; margin-bottom: 10px;">
+                <i class="fas fa-dog"></i>
+                <i class="fas fa-arrow-down"></i>
             </div>
+            <div class="sensor-label">Sit</div>
+            <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 5px; text-transform: none;">1 Click + "Sit"</div>
         </div>
+        
+        <!-- Lay Down -->
+        <div class="sensor-card" style="flex-direction: column; cursor: pointer; justify-content: center;" onclick="playDogCommand('laydown')">
+            <div style="display: flex; gap: 10px; font-size: 1.5rem; color: #a3b18a; margin-bottom: 10px;">
+                <i class="fas fa-dog"></i>
+                <i class="fas fa-arrows-down-to-line"></i>
+            </div>
+            <div class="sensor-label">Lay Down</div>
+            <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 5px; text-transform: none;">1 Click + "Down"</div>
+        </div>
+        
+        <!-- Follow Me -->
+        <div class="sensor-card" style="flex-direction: column; cursor: pointer; justify-content: center;" onclick="playDogCommand('follow')">
+            <div style="display: flex; gap: 10px; font-size: 1.5rem; color: #d4a373; margin-bottom: 10px;">
+                <i class="fas fa-dog"></i>
+                <i class="fas fa-forward"></i>
+            </div>
+            <div class="sensor-label">Follow Me</div>
+            <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 5px; text-transform: none;">2 Clicks + "Come"</div>
+        </div>
+        
+        <!-- Cross Street -->
+        <div class="sensor-card" style="flex-direction: column; cursor: pointer; justify-content: center;" onclick="playDogCommand('cross')">
+            <div style="display: flex; gap: 10px; font-size: 1.5rem; color: #ff5f5f; margin-bottom: 10px;">
+                <i class="fas fa-dog"></i>
+                <i class="fas fa-road"></i>
+            </div>
+            <div class="sensor-label">Cross Street</div>
+            <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 5px; text-transform: none; text-align: center;">Continuous Clicks + "Cross"</div>
+        </div>
+
+    </div>
+</div>
 
         <!-- Bird Educational Panel -->
         <div id="edu-voice-section" style="display: none; margin-bottom: 20px;">
