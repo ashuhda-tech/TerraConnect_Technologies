@@ -538,22 +538,22 @@
             <h4 style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0; margin-bottom: 10px;">Dog Commands (Audio & Voice)</h4>
             <div class="management-grid">
                 <div class="sensor-card" style="flex-direction: column; cursor: pointer; justify-content: center;" onclick="playDogCommand('sit')">
-                    <i class="fas fa-chair" style="font-size: 1.5rem; color: #74b9ff; margin-bottom: 10px;"></i>
+                    <i class="fas fa-arrow-down fa-dog" style="font-size: 1.5rem; color: #74b9ff; margin-bottom: 10px;"></i>
                     <div class="sensor-label">Sit</div>
                     <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 5px; text-transform: none;">1 Click + "Sit"</div>
                 </div>
                 <div class="sensor-card" style="flex-direction: column; cursor: pointer; justify-content: center;" onclick="playDogCommand('laydown')">
-                    <i class="fas fa-bed" style="font-size: 1.5rem; color: #a3b18a; margin-bottom: 10px;"></i>
+                    <i class="fas fa-hand-point-down fa-arrows-down-to-line fa-dog" style="font-size: 1.5rem; color: #a3b18a; margin-bottom: 10px;"></i>
                     <div class="sensor-label">Lay Down</div>
                     <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 5px; text-transform: none;">1 Click + "Down"</div>
                 </div>
                 <div class="sensor-card" style="flex-direction: column; cursor: pointer; justify-content: center;" onclick="playDogCommand('follow')">
-                    <i class="fas fa-walking" style="font-size: 1.5rem; color: #d4a373; margin-bottom: 10px;"></i>
+                    <i class="fas fa-dog fa-forward" style="font-size: 1.5rem; color: #d4a373; margin-bottom: 10px;"></i>
                     <div class="sensor-label">Follow Me</div>
                     <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 5px; text-transform: none;">2 Clicks + "Come"</div>
                 </div>
                 <div class="sensor-card" style="flex-direction: column; cursor: pointer; justify-content: center;" onclick="playDogCommand('cross')">
-                    <i class="fas fa-road" style="font-size: 1.5rem; color: #ff5f5f; margin-bottom: 10px;"></i>
+                    <i class="fas fa-dog fa-road fa-forward-fast" style="font-size: 1.5rem; color: #ff5f5f; margin-bottom: 10px;"></i>
                     <div class="sensor-label">Cross Street</div>
                     <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 5px; text-transform: none; text-align: center;">Continuous Clicks + "Cross"</div>
                 </div>
@@ -666,6 +666,7 @@ const loggedUser = checkSecurity();
     let mainChannelId = "", mainReadKey = "";
     let r1ChannelId = "", r1ReadKey = "";
     let gpsChannelId = "", gpsReadKey = "";
+    let walkSensorIp = "";
     let myChart; 
     let vetMap = null;
     let homeLat = 0;
@@ -825,6 +826,7 @@ async function loadData() {
             r1ReadKey = data[15];
             gpsChannelId = data[25];
             gpsReadKey = data[27];
+            walkSensorIp = data[32];
             document.getElementById('dynChannel').innerText = mainChannelId || "---";
 
             const photoURL = data[19];
@@ -2041,10 +2043,25 @@ Reference the environmental data with the biological and veterinary data. Is the
         }, delayMs);
     }
 
+    // --- SEND HARDWARE SIGNAL ---
+    function triggerWalkSensorBuzzer(cmd) {
+        if (!walkSensorIp || walkSensorIp === "---" || walkSensorIp.trim() === "") {
+            console.log("No local IP configured for WalkSensor.");
+            return;
+        }
+        
+        // Sends a silent, no-cors background request to the device (e.g., http://192.168.1.50/sit)
+        const url = `http://${walkSensorIp.trim()}/${cmd}`;
+        fetch(url, { method: 'GET', mode: 'no-cors' })
+            .catch(e => console.warn("WalkSensor unreachable on local network.", e));
+    }
+
     // Command Logic Engine for Dogs
     function playDogCommand(cmd) {
         initAudio();
         window.speechSynthesis.cancel();
+        
+        triggerWalkSensorBuzzer(cmd);
 
         if (cmd === 'sit') {
             playClickSound(0);
