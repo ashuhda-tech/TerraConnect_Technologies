@@ -83,6 +83,39 @@
         .btn-action {width: 100%;background: transparent;border: 1px solid var(--accent);color: var(--accent);padding: 12px;border-radius: 5px;font-size: 0.9rem;font-family: var(--font-title);font-weight: bold;cursor: pointer;transition: 0.3s;text-transform: uppercase;}
         .btn-action:hover, .card-highlight .btn-action {background: var(--accent);color: var(--bg-color);}
 
+        /* ----- QR CODE FLOATING WIDGET ----- */
+        #qr-widget {
+            position: fixed;
+            pointer-events: none; /* Prevents the widget from interfering with mouse clicks/hover */
+            z-index: 99999;
+            background: rgba(10, 12, 16, 0.95);
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            padding: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+            opacity: 0;
+            visibility: hidden;
+            transform: translate(15px, 15px); /* Offsets it slightly from the cursor */
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+            text-align: center;
+        }
+        
+        #qr-widget img {
+            width: 160px;
+            height: 160px;
+            border-radius: 8px;
+            display: block;
+        }
+        
+        #qr-widget p {
+            margin-top: 10px;
+            font-size: 0.8rem;
+            color: var(--accent);
+            font-family: var(--font-title);
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
         @media (max-width: 768px) {
             header { padding: 20px; flex-direction: column; gap: 15px; }
             .pricing-grid, .product-grid, .tier-grid { grid-template-columns: 1fr; }
@@ -211,21 +244,22 @@
     <p class="section-subtitle">Would you rather build it yourself? We are open-source friendly. Access our Bill of Materials, schematics, and code.</p>
 
     <div class="product-grid">
-        <!-- Suggetsion and Requests -->
+        <!-- Suggestion and Requests -->
         <div class="card">
-            <div class="product-icon"><i class="fas fa-cube"></i></div>
-            <h3 class="product-title">Suggetsion & Requests</h3>
+            <div class="product-icon"><i class="fas fa-comment-dots"></i></div>
+            <h3 class="product-title">Suggestion & Requests</h3>
             <p class="product-desc">Suggest or request customized changes, creation, additions... We'll happily incorporate them to better suit all customers and make an overall better experience for all.</p>
             <div class="product-price">We buy you a coffee</div>
-            <button class="btn-action"><i class="fas fa-download"></i> Reach Us</button>
+            <button class="btn-action" onclick="window.location.href='feedback.html'"><i class="fas fa-paper-plane"></i> Reach Us</button>
         </div>
+        
         <!-- BOM & Schematics -->
         <div class="card">
             <div class="product-icon"><i class="fas fa-cogs"></i></div>
             <h3 class="product-title">BOM & Schematics</h3>
             <p class="product-desc">Full part lists for Sensor Units and wiring diagrams needed to build all by yourself.</p>
             <div class="product-price">Buy me a coffee</div>
-            <button class="btn-action"><i class="fas fa-download"></i> See BOM & Schematics</button>
+            <button class="btn-action bmc-btn" onclick="window.open('https://buymeacoffee.com/rodrigojuliansantillan', '_blank')"><i class="fas fa-coffee"></i> Buy me a coffee</button>
         </div>
 
         <!-- Firmware -->
@@ -234,7 +268,7 @@
             <h3 class="product-title">Firmware Repository</h3>
             <p class="product-desc">Access our GitHub repository to download the official code.</p>
             <div class="product-price">Buy me a coffee</div>
-            <button class="btn-action"><i class="fab fa-github"></i> Go to GitHub</button>
+            <button class="btn-action bmc-btn" onclick="window.open('https://buymeacoffee.com/rodrigojuliansantillan', '_blank')"><i class="fas fa-coffee"></i> Buy me a coffee</button>
         </div>
 
         <!-- 3D Prints -->
@@ -243,10 +277,21 @@
             <h3 class="product-title">3D Print Files</h3>
             <p class="product-desc">Print your own physical cases. Includes files for the Main Controller Box, Remote Node casing, and safe mounting brackets.</p>
             <div class="product-price">Buy me a coffee</div>
-            <button class="btn-action"><i class="fas fa-download"></i> See Files</button>
+            <button class="btn-action bmc-btn" onclick="window.open('https://buymeacoffee.com/rodrigojuliansantillan', '_blank')"><i class="fas fa-coffee"></i> Buy me a coffee</button>
         </div>
     </div>
 
+</div>
+
+<!-- QR CODE HOVER WIDGET -->
+<div id="qr-widget">
+    <img src="WhatsApp Image 2026-08-05 at 18.09.13.jpeg" alt="Buy Me A Coffee QR Code">
+    <p>SCAN TO DONATE</p>
+</div>
+
+<!-- VERSION FLAG -->
+<div id="gh-version-flag" class="app-version-flag">
+    <i class="fas fa-spinner fa-spin"></i> Fetching Build...
 </div>
 
     <script>
@@ -330,12 +375,6 @@ async function loadTierMatrix() {
     }
 }
 
-// Ensure the matrix is loaded as soon as the page is ready
-document.addEventListener('DOMContentLoaded', () => {
-    fetchGitHubVersion();
-    loadTierMatrix(); 
-});
-        
     // ==========================================
     // --- GITHUB AUTO VERSION TRACKER ---
     // ==========================================
@@ -371,12 +410,42 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Chama a função assim que a página carrega
-    document.addEventListener('DOMContentLoaded', fetchGitHubVersion);
+    // ==========================================
+    // --- BUY ME A COFFEE QR HOVER ENGINE ---
+    // ==========================================
+    function initializeQRWidget() {
+        const qrWidget = document.getElementById('qr-widget');
+        const bmcButtons = document.querySelectorAll('.bmc-btn');
+
+        if (!qrWidget || bmcButtons.length === 0) return;
+
+        bmcButtons.forEach(btn => {
+            // Move the widget to follow the cursor
+            btn.addEventListener('mousemove', (e) => {
+                qrWidget.style.left = e.clientX + 'px';
+                qrWidget.style.top = e.clientY + 'px';
+            });
+            
+            // Show widget when mouse enters button
+            btn.addEventListener('mouseenter', () => {
+                qrWidget.style.opacity = '1';
+                qrWidget.style.visibility = 'visible';
+            });
+            
+            // Hide widget when mouse leaves button
+            btn.addEventListener('mouseleave', () => {
+                qrWidget.style.opacity = '0';
+                qrWidget.style.visibility = 'hidden';
+            });
+        });
+    }
+
+    // Ensure all functions execute as soon as the page is ready
+    document.addEventListener('DOMContentLoaded', () => {
+        fetchGitHubVersion();
+        loadTierMatrix(); 
+        initializeQRWidget();
+    });
     </script>
-<!-- VERSION FLAG -->
-    <div id="gh-version-flag" class="app-version-flag">
-        <i class="fas fa-spinner fa-spin"></i> Fetching Build...
-    </div>
 </body>
 </html>
