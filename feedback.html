@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TerraConnect | Feedback & Suggestions</title>
+    
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/TERRACONNECT_LOGO.png">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #0a0c10;
+            --card-bg: rgba(30, 30, 30, 0.7);
+            --card-border: rgba(31, 41, 55, 0.5);
+            --accent: #d1b38b;
+            --text-main: #f4e9d8;
+            --text-muted: #9ca3af;
+            --border-radius: 15px;
+            --font-standard: 'Inter', sans-serif;
+            --font-title: 'Cinzel', serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background-color: var(--bg-color); color: var(--text-main); font-family: var(--font-standard); min-height: 100vh; overflow-x: hidden; }
+        
+        /* ----- BACKGROUND VIDEO ----- */
+        .video-bg-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; overflow: hidden; }
+        .video-bg-container video { min-width: 100%; min-height: 100%; width: auto; height: auto; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); object-fit: cover; filter: brightness(0.3); }
+        
+        /* ----- HEADER ----- */
+        header { padding: 30px 50px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); background: rgba(10, 12, 16, 0.8); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100; }
+        .logo-area h1 { font-family: var(--font-title); color: var(--accent); font-size: 1.8rem; letter-spacing: 2px; }
+        .btn-back { text-decoration: none; color: var(--accent); border: 1px solid var(--accent); padding: 8px 20px; border-radius: 5px; font-size: 0.85rem; transition: 0.3s; font-family: var(--font-title); text-transform: uppercase; }
+        .btn-back:hover { background: var(--accent); color: var(--bg-color); }
+        
+        /* ----- FORM CONTAINER ----- */
+        .container { max-width: 700px; margin: 60px auto; padding: 0 20px; }
+        .form-card { background: var(--card-bg); backdrop-filter: blur(15px); border: 1px solid var(--card-border); border-radius: var(--border-radius); padding: 50px 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        
+        .section-title { font-family: var(--font-title); font-size: 2rem; color: var(--accent); margin-bottom: 10px; text-align: center; }
+        .section-subtitle { text-align: center; color: var(--text-muted); margin-bottom: 40px; font-size: 0.95rem; line-height: 1.5; }
+        
+        /* ----- FORM INPUTS ----- */
+        .input-group { margin-bottom: 25px; }
+        .input-group label { display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; }
+        .input-field { width: 100%; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); border-radius: 8px; color: var(--text-main); padding: 12px 15px; font-size: 1rem; font-family: var(--font-standard); outline: none; transition: border-color 0.3s; }
+        .input-field:focus { border-color: var(--accent); }
+        
+        textarea.input-field { resize: vertical; min-height: 120px; }
+        
+        select.input-field { appearance: none; -webkit-appearance: none; background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23d1b38b%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right 15px top 50%; background-size: 12px auto; }
+        select.input-field option { background: #1a1a1d; color: var(--text-main); }
+        
+        /* ----- SUBMIT BUTTON ----- */
+        .btn-submit { width: 100%; background: var(--accent); border: none; color: var(--bg-color); padding: 15px; border-radius: 8px; font-size: 1.1rem; font-family: var(--font-title); font-weight: bold; cursor: pointer; transition: 0.3s; text-transform: uppercase; margin-top: 10px; }
+        .btn-submit:hover { background: #e5cba7; transform: translateY(-2px); }
+        
+        /* ----- SUCCESS MESSAGE ----- */
+        #success-message { display: none; text-align: center; padding: 40px 20px; }
+        #success-message i { font-size: 4rem; color: var(--accent); margin-bottom: 20px; }
+        #success-message h3 { font-family: var(--font-title); font-size: 1.8rem; color: var(--text-main); margin-bottom: 15px; }
+        #success-message p { color: var(--text-muted); line-height: 1.6; margin-bottom: 30px; }
+
+        @media (max-width: 768px) {
+            header { padding: 20px; flex-direction: column; gap: 15px; }
+            .container { padding: 0 15px; margin: 30px auto; }
+            .form-card { padding: 30px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Background Video -->
+<div class="video-bg-container">
+    <video autoplay loop muted playsinline>
+        <source src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/VIDEO/RIVER_MAINDASHBOARD.mp4" type="video/mp4">
+    </video>
+</div>
+
+<!-- Header -->
+<header>
+    <div class="logo-area">
+        <h1>TerraConnect</h1>
+    </div>
+    <a href="store.html" class="btn-back"><i class="fas fa-arrow-left"></i> Back to Store</a>
+</header>
+
+<div class="container">
+    <div class="form-card" id="form-container">
+        
+        <!-- Standard Form View -->
+        <div id="form-content">
+            <h2 class="section-title">Community Feedback</h2>
+            <p class="section-subtitle">Have a feature request, found a bug, or want to suggest hardware changes? Let us know below. We build this ecosystem together.</p>
+
+            <!-- TARGET IS SET TO THE HIDDEN IFRAME AT THE BOTTOM -->
+            <!-- ACTION URL UPDATED TO '/formResponse' -->
+            <form action="https://docs.google.com/forms/d/e/1FAIpQLSdE181eF6duf5zB8ndK9vvPZelco8LvwaMpvoq7WdUOp8_EdA/formResponse" method="POST" target="hidden_iframe" id="feedbackForm" onsubmit="handleFormSubmit()">
+                
+                <div class="input-group">
+                    <label>Name / Handle (Optional)</label>
+                    <input type="text" name="entry.981147380" class="input-field" placeholder="How should we call you?">
+                </div>
+                
+                <div class="input-group">
+                    <label>Email Address</label>
+                    <input type="email" name="entry.478258589" class="input-field" required placeholder="For follow-up questions">
+                </div>
+
+                <div class="input-group">
+                    <label>Request Category</label>
+                    <select name="entry.800499595" class="input-field" required>
+                        <option value="" disabled selected>Select an option...</option>
+                        <option value="Dashboard Feature Request">Dashboard Feature Request</option>
+                        <option value="Hardware Suggestion">Hardware Suggestion</option>
+                        <option value="Bug Report">Bug Report</option>
+                        <option value="General Feedback">General Feedback</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>Subject</label>
+                    <input type="text" name="entry.164075571" class="input-field" required placeholder="Brief summary of your request">
+                </div>
+
+                <div class="input-group">
+                    <label>Detailed Description</label>
+                    <textarea name="entry.1148250771" class="input-field" required placeholder="Tell us exactly what you need or what happened..."></textarea>
+                </div>
+
+                <button type="submit" class="btn-submit" id="submitBtn">
+                    <i class="fas fa-paper-plane" style="margin-right: 8px;"></i> Send Feedback
+                </button>
+            </form>
+        </div>
+
+        <!-- Success Message View (Hidden by default) -->
+        <div id="success-message">
+            <i class="fas fa-check-circle"></i>
+            <h3>Message Received</h3>
+            <p>Thank you for your feedback! Your submission has been securely sent to our database. We review all community requests to continuously improve the TerraConnect ecosystem.</p>
+            <button onclick="window.location.href='store.html'" class="btn-submit" style="width: auto; padding: 12px 30px;">Return to Store</button>
+        </div>
+
+    </div>
+</div>
+
+<!-- HIDDEN IFRAME FOR SILENT SUBMISSION -->
+<!-- When the form submits, it targets this iframe. When the iframe finishes loading the Google response, it triggers the success UI -->
+<iframe name="hidden_iframe" id="hidden_iframe" style="display:none;" onload="if(submitted) { showSuccessMessage(); }"></iframe>
+
+<script>
+    let submitted = false;
+
+    // Triggered when the user clicks submit
+    function handleFormSubmit() {
+        submitted = true;
+        const btn = document.getElementById('submitBtn');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+        btn.style.opacity = '0.7';
+        btn.disabled = true;
+    }
+
+    // Triggered automatically when the hidden iframe finishes loading the Google response
+    function showSuccessMessage() {
+        document.getElementById('form-content').style.display = 'none';
+        
+        // Fade in the success message
+        const successDiv = document.getElementById('success-message');
+        successDiv.style.display = 'block';
+        successDiv.style.opacity = '0';
+        
+        setTimeout(() => {
+            successDiv.style.transition = 'opacity 0.5s ease';
+            successDiv.style.opacity = '1';
+        }, 50);
+    }
+</script>
+
+</body>
+</html>
