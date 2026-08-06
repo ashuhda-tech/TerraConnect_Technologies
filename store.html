@@ -10,6 +10,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <!-- QR Code Generator Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
     <style>
         @font-face {
             font-family: 'A760-Roman-Smc';
@@ -83,6 +86,25 @@
         .btn-action {width: 100%;background: transparent;border: 1px solid var(--accent);color: var(--accent);padding: 12px;border-radius: 5px;font-size: 0.9rem;font-family: var(--font-title);font-weight: bold;cursor: pointer;transition: 0.3s;text-transform: uppercase;}
         .btn-action:hover, .card-highlight .btn-action {background: var(--accent);color: var(--bg-color);}
 
+        /* ----- INVERTED CARD (JOIN US) ----- */
+        .card-inverted {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: var(--bg-color);
+        }
+        .card-inverted .product-icon { color: var(--bg-color); }
+        .card-inverted .product-title { color: var(--bg-color); font-weight: 700; }
+        .card-inverted .product-desc { color: rgba(10, 12, 16, 0.85); }
+        .card-inverted .product-price { color: var(--bg-color); }
+        .card-inverted .btn-action {
+            border-color: var(--bg-color);
+            color: var(--bg-color);
+        }
+        .card-inverted .btn-action:hover {
+            background: var(--bg-color);
+            color: var(--accent);
+        }
+
         /* ----- QR CODE FLOATING WIDGET ----- */
         #qr-widget {
             position: fixed;
@@ -98,13 +120,6 @@
             transform: translate(15px, 15px); /* Offsets it slightly from the cursor */
             transition: opacity 0.2s ease, visibility 0.2s ease;
             text-align: center;
-        }
-        
-        #qr-widget img {
-            width: 160px;
-            height: 160px;
-            border-radius: 8px;
-            display: block;
         }
         
         #qr-widget p {
@@ -245,8 +260,8 @@
 
     <div class="product-grid">
         
-        <!-- Join Us (Partnership) -->
-        <div class="card">
+        <!-- Join Us (Partnership) - INVERTED CARD -->
+        <div class="card card-inverted">
             <div class="product-icon"><i class="fas fa-handshake"></i></div>
             <h3 class="product-title">Join Us</h3>
             <p class="product-desc">Become part of the mission. Apply as a volunteer and sign our Non-Disclosure Agreement (NDA) to collaborate directly on our core technological ecosystem projects.</p>
@@ -295,7 +310,7 @@
 
 <!-- QR CODE HOVER WIDGET -->
 <div id="qr-widget">
-    <img src="WhatsApp Image 2026-08-05 at 18.09.13.jpeg" alt="Buy Me A Coffee QR Code">
+    <div id="bmc-qrcode" style="background: white; padding: 10px; border-radius: 8px; display: inline-block;"></div>
     <p>SCAN TO DONATE</p>
 </div>
 
@@ -426,8 +441,20 @@ async function loadTierMatrix() {
     function initializeQRWidget() {
         const qrWidget = document.getElementById('qr-widget');
         const bmcButtons = document.querySelectorAll('.bmc-btn');
+        const qrContainer = document.getElementById('bmc-qrcode');
 
         if (!qrWidget || bmcButtons.length === 0) return;
+
+        // Automatically Generate the QR Code for the specific link
+        qrContainer.innerHTML = "";
+        new QRCode(qrContainer, {
+            text: "https://buymeacoffee.com/rodrigojuliansantillan",
+            width: 140,
+            height: 140,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+        });
 
         bmcButtons.forEach(btn => {
             // Move the widget to follow the cursor
