@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TerraConnect | License & Open-Use Policy</title>
+    
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/TERRACONNECT_LOGO.png">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-color: #0a0c10;
+            --card-bg: rgba(7, 11, 20, 0.85);
+            --card-border: rgba(31, 41, 55, 0.5);
+            --accent-dark: #d1b38b;
+            --accent-light: #f4e9d8;
+            --text-main: #f4e9d8;
+            --text-muted: #9ca3af;
+            --border-radius: 12px;
+            --font-standard: 'Inter', sans-serif;
+            --font-title: 'Cinzel', serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body { background-color: var(--bg-color); color: var(--text-main); font-family: var(--font-standard); display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
+        
+        /* ----- BACKGROUND VIDEO ----- */
+        .video-bg-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; overflow: hidden; }
+        .video-bg-container video { min-width: 100%; min-height: 100%; width: auto; height: auto; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); object-fit: cover; filter: brightness(0.25); }
+        .video-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: -1; }
+        
+        /* ----- HEADER ----- */
+        header { padding: 30px 50px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); background: rgba(10, 12, 16, 0.8); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100; }
+        .logo-area h1 { font-family: var(--font-title); color: var(--accent-dark); font-size: 1.8rem; letter-spacing: 2px; text-transform: uppercase; }
+        .btn-back { text-decoration: none; color: var(--accent-dark); border: 1px solid var(--accent-dark); padding: 8px 20px; border-radius: 5px; font-size: 0.85rem; transition: 0.3s; font-family: var(--font-title); text-transform: uppercase; font-weight: bold; }
+        .btn-back:hover { background: var(--accent-dark); color: var(--bg-color); }
+        
+        /* ----- PRIVACY / LICENSE CARD ----- */
+        .container { width: 100%; max-width: 900px; margin: 50px auto; padding: 0 20px; display: flex; justify-content: center; z-index: 1; flex: 1; }
+        .privacy-card { background-color: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--border-radius); padding: 50px 60px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8); width: 100%; backdrop-filter: blur(15px); }
+        
+        h1.page-title { font-family: var(--font-title); font-size: 2.2rem; text-align: center; margin-bottom: 30px; color: var(--accent-light); text-transform: uppercase; letter-spacing: 2px; border-bottom: 1px solid var(--card-border); padding-bottom: 20px; }
+        
+        .content-body { text-align: left; }
+        h2 { font-size: 1.2rem; color: var(--accent-dark); margin: 35px 0 15px 0; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; font-family: var(--font-title); }
+        p { font-size: 0.95rem; line-height: 1.8; color: rgba(244, 233, 216, 0.85); margin-bottom: 15px; }
+        ul { margin-left: 20px; margin-bottom: 20px; color: rgba(244, 233, 216, 0.85); font-size: 0.95rem; line-height: 1.8; }
+        li { margin-bottom: 10px; }
+        
+        .notice-box { background: rgba(209, 179, 139, 0.08); border-left: 4px solid var(--accent-dark); padding: 20px; margin: 25px 0; border-radius: 0 6px 6px 0; }
+        .notice-box strong { color: var(--accent-light); display: block; margin-bottom: 8px; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; font-family: var(--font-title); }
+        .notice-box p { margin-bottom: 0; font-size: 0.9rem; }
+        
+        /* Specific License Highlights */
+        .highlight-green { color: #a3b18a; font-weight: 600; }
+        .highlight-red { color: #ff5f5f; font-weight: 600; }
+
+        @media (max-width: 600px) {
+            header { padding: 20px; flex-direction: column; gap: 15px; }
+            .privacy-card { padding: 30px 20px; }
+            h1.page-title { font-size: 1.5rem; }
+            h2 { font-size: 1.05rem; }
+            p, ul { font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="video-bg-container">
+    <video autoplay loop muted playsinline poster="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/WALLPAPER_MAINDASHBOARD.png">
+        <source src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/VIDEO/RIVER_MAINDASHBOARD.mp4" type="video/mp4">
+    </video>
+</div>
+<div class="video-overlay"></div>
+
+<header>
+    <div class="logo-area">
+        <h1>TerraConnect</h1>
+    </div>
+    <a href="index.html" class="btn-back"><i class="fas fa-arrow-left"></i> Return Home</a>
+</header>
+
+<div class="container">
+    <div class="privacy-card">
+        <h1 class="page-title">Open-Use & Non-Commercial License</h1>
+        
+        <div class="content-body">
+            <p>TerraConnect Technologies was built on the philosophy that knowledge should be accessible, and innovation should serve the community. We believe in transparency and the freedom to learn, but we stand firmly against the corporate exploitation of independent development.</p>
+            
+            <p>By accessing, downloading, viewing, or interacting with any source code, hardware schematic, or interface design related to TerraConnect Technologies (the "Materials"), you agree to the following binding terms:</p>
+
+            <div class="notice-box">
+                <strong>The Core Philosophy</strong>
+                <p>You are free to learn from this project. You are free to copy it for your own non-profit use. You are <span class="highlight-red">strictly forbidden</span> from using it out of greed to generate profit or claiming that you created it.</p>
+            </div>
+
+            <h2>1. Freedom to Learn and Replicate</h2>
+            <p>You are explicitly granted the right to:</p>
+            <ul>
+                <li><span class="highlight-green">Study and Learn:</span> Read and analyze the code and schematics to understand how the architecture functions.</li>
+                <li><span class="highlight-green">Copy for Non-Profit Use:</span> Download and utilize full or partial copies of the code and hardware designs strictly for personal, non-commercial, and non-profit applications (e.g., monitoring your own terrarium at home).</li>
+            </ul>
+
+            <h2>2. The "Anti-Greed" Clause (Strict Commercial Ban)</h2>
+            <p>Under no circumstances are you permitted to commercialize these Materials. You are explicitly forbidden from:</p>
+            <ul>
+                <li><span class="highlight-red">Selling the Code or Hardware:</span> You may not package, sell, or distribute the software, physical PCB boards, or physical devices based on our designs for financial gain.</li>
+                <li><span class="highlight-red">Profitable Derivative Works:</span> You may not use this repository as a learning base to reverse-engineer and create a competing or modified product intended for commercial sale (i.e., you cannot learn from our Linux to sell your Windows).</li>
+                <li><span class="highlight-red">Paywalling:</span> You may not include our code in a service or product that requires a subscription or entry fee.</li>
+            </ul>
+
+            <h2>3. Mandatory Attribution</h2>
+            <p>If you utilize any part of this code or architecture for an allowed non-profit project, you must give clear, visible, and unambiguous credit to the original creator. Any public repository, website, or documentation utilizing our Materials must explicitly state:</p>
+            <p><em>"Based on the original architecture by TerraConnect Technologies. Copyright &copy; 2026."</em></p>
+
+            <h2>4. Absolute Prohibition on Claiming Ownership</h2>
+            <p>Transparency of origin is non-negotiable. You may not, under any circumstances, remove the original copyright notices from the code files. You may not present yourself as the creator, inventor, or sole owner of any code, UI design, or hardware schematic originating from this project, regardless of how much you may have modified it for your personal use.</p>
+
+            <h2>5. Disclaimer of Liability</h2>
+            <p>The TerraConnect architecture is provided "as is," without any warranty of any kind. The creators assume no liability for any damages, legal repercussions, or hardware failures that occur from utilizing these Materials.</p>
+            
+            <div style="text-align: center; margin-top: 50px;">
+                <p style="font-size: 0.85rem; color: var(--text-muted); font-style: italic;">
+                    Last Updated: August 2026<br>
+                    Copyright &copy; 2026 TerraConnect Technologies. All Rights Reserved.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
