@@ -1,1 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TerraConnect | Partnership NDA</title>
+    
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/TERRACONNECT_LOGO.png">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js for Data Visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+    <style>
+        :root {
+            --bg-color: #0a0c10;
+            --card-bg: rgba(7, 11, 20, 0.85);
+            --card-border: rgba(31, 41, 55, 0.5);
+            --accent: #d1b38b;
+            --text-main: #f4e9d8;
+            --text-muted: #9ca3af;
+            --border-radius: 12px;
+            --font-standard: 'Inter', sans-serif;
+            --font-title: 'Cinzel', serif;
+            
+            /* Status Colors */
+            --status-active: #a3b18a;
+            --status-pending: #f39c12;
+            --status-revoked: #ff5f5f;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background-color: var(--bg-color); color: var(--text-main); font-family: var(--font-standard); min-height: 100vh; overflow-x: hidden; }
+        
+        /* ----- BACKGROUND VIDEO ----- */
+        .video-bg-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; overflow: hidden; }
+        .video-bg-container video { min-width: 100%; min-height: 100%; width: auto; height: auto; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); object-fit: cover; filter: brightness(0.25); }
+        .video-overlay {position: fixed;top: 0;left: 0;width: 100%;height: 100%;background: rgba(0, 0, 0, 0.6); z-index: -1;}
+        
+        /* ----- HEADER ----- */
+        header { padding: 30px 50px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); background: rgba(10, 12, 16, 0.8); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100; }
+        .logo-area h1 { font-family: var(--font-title); color: var(--accent); font-size: 1.8rem; letter-spacing: 2px; text-transform: uppercase; }
+        .btn-back { text-decoration: none; color: var(--accent); border: 1px solid var(--accent); padding: 8px 20px; border-radius: 5px; font-size: 0.85rem; transition: 0.3s; font-family: var(--font-title); text-transform: uppercase; font-weight: bold;}
+        .btn-back:hover { background: var(--accent); color: var(--bg-color); }
+        
+        /* ----- CONTAINERS ----- */
+        .container { max-width: 900px; margin: 50px auto; padding: 0 20px; transition: max-width 0.5s ease; }
+        .container.dashboard-active { max-width: 1200px; }
+        
+        .form-card { background: var(--card-bg); backdrop-filter: blur(15px); border: 1px solid var(--card-border); border-radius: var(--border-radius); padding: 50px 50px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); }
+        
+        .section-title { font-family: var(--font-title); font-size: 2rem; color: var(--accent); margin-bottom: 10px; text-align: center; text-transform: uppercase; letter-spacing: 2px;}
+        .section-subtitle { text-align: center; color: var(--text-muted); margin-bottom: 30px; font-size: 0.95rem; line-height: 1.6; }
+        
+        /* ----- NDA DOCUMENT BOX ----- */
+        .nda-document { background: rgba(0, 0, 0, 0.6); border: 1px solid var(--card-border); border-radius: 8px; padding: 25px; margin-bottom: 30px; max-height: 350px; overflow-y: auto; font-size: 0.85rem; line-height: 1.7; color: rgba(244, 233, 216, 0.9); }
+        .nda-document h3 { color: var(--accent); font-family: var(--font-title); font-size: 1.1rem; margin-bottom: 15px; text-align: center; }
+        .nda-document p { margin-bottom: 15px; }
+        .nda-document ul { margin-left: 20px; margin-bottom: 15px; }
+        .nda-document li { margin-bottom: 10px; }
+        
+        /* Custom Scrollbar for NDA Box */
+        .nda-document::-webkit-scrollbar { width: 8px; }
+        .nda-document::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.2); border-radius: 4px;}
+        .nda-document::-webkit-scrollbar-thumb { background: var(--card-border); border-radius: 4px; }
+        .nda-document::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+        /* ----- FORM INPUTS ----- */
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .input-group { margin-bottom: 20px; }
+        .input-group.full-width { grid-column: 1 / -1; }
+        
+        .input-group label { display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; }
+        .input-field { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--card-border); border-radius: 6px; color: var(--text-main); padding: 12px 15px; font-size: 0.95rem; font-family: var(--font-standard); outline: none; transition: border-color 0.3s; }
+        .input-field:focus { border-color: var(--accent); }
+        
+        select.input-field { appearance: none; background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23d1b38b%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right 15px top 50%; background-size: 12px auto; }
+        select.input-field option { background: #1a1a1d; color: var(--text-main); }
+        
+        .checkbox-group { display: flex; align-items: flex-start; gap: 10px; margin-top: 10px; background: rgba(209, 179, 139, 0.05); padding: 15px; border-left: 3px solid var(--accent); border-radius: 0 6px 6px 0; }
+        .checkbox-group input[type="checkbox"] { margin-top: 3px; accent-color: var(--accent); width: 18px; height: 18px; cursor: pointer; }
+        .checkbox-group label { font-size: 0.85rem; color: var(--text-main); line-height: 1.5; cursor: pointer; text-transform: none; font-weight: 400; letter-spacing: normal;}
+        
+        .btn-submit { width: 100%; background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 16px; border-radius: 6px; font-size: 1rem; font-family: var(--font-title); font-weight: bold; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 2px; margin-top: 20px; }
+        .btn-submit:hover:not(:disabled) { background: var(--accent); color: var(--bg-color); box-shadow: 0 4px 15px rgba(209, 179, 139, 0.2); }
+        .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* ----- DASHBOARD ----- */
+        #dashboard-content { display: none; margin-top: 20px; opacity: 0; transition: opacity 0.8s ease; }
+        
+        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .kpi-card { background: rgba(0,0,0,0.5); border: 1px solid var(--card-border); padding: 25px 20px; border-radius: 10px; text-align: center; }
+        .kpi-card h4 { color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 10px; }
+        .kpi-card .number { font-size: 2.8rem; font-family: var(--font-title); font-weight: bold; }
+        
+        .table-container { overflow-x: auto; background: rgba(0,0,0,0.5); border: 1px solid var(--card-border); border-radius: 10px; padding: 20px; }
+        table { width: 100%; border-collapse: collapse; min-width: 600px; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid var(--card-border); font-size: 0.9rem; }
+        th { color: var(--accent); font-family: var(--font-title); text-transform: uppercase; letter-spacing: 1px; font-size: 0.8rem; }
+        .badge { padding: 5px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; display: inline-block; }
+        
+        .badge.active { background: rgba(163, 177, 138, 0.2); color: var(--status-active); border: 1px solid var(--status-active); }
+        .badge.pending { background: rgba(243, 156, 18, 0.2); color: var(--status-pending); border: 1px solid var(--status-pending); }
+
+        @media (max-width: 768px) {
+            header { padding: 20px; flex-direction: column; gap: 15px; }
+            .form-grid { grid-template-columns: 1fr; }
+            .form-card { padding: 30px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="video-bg-container">
+    <video autoplay loop muted playsinline poster="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/WALLPAPER_MAINDASHBOARD.png">
+        <source src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/VIDEO/RIVER_MAINDASHBOARD.mp4" type="video/mp4">
+    </video>
+</div>
+<div class="video-overlay"></div>
+
+<header>
+    <div class="logo-area">
+        <h1>TerraConnect</h1>
+    </div>
+    <a href="index.html" class="btn-back"><i class="fas fa-arrow-left"></i> Return Home</a>
+</header>
+
+<div class="container" id="main-container">
+    <div class="form-card">
+        
+        <!-- FORM VIEW -->
+        <div id="form-content">
+            <h2 class="section-title">Non-Disclosure Agreement</h2>
+            <p class="section-subtitle">To proceed with our partnership and access proprietary hardware/software architectures, please review and sign the digital agreement below.</p>
+
+            <div class="nda-document">
+                <h3>SECRECY, CONFIDENTIALITY AND ASSIGNMENT OF RIGHTS AGREEMENT</h3>
+                <p>By this agreement, on one side <strong>TERRACONNECT TECHNOLOGIES</strong> ("CONTRACTING PARTY"), and on the other side the party qualified in the form below ("CONTRACTOR"), agree and commit, during the entire validity of the relationship, as well as in the one hundred and twenty months subsequent to its termination, under the terms of Law 9279/1996 (Brazilian Industrial Property Law), to:</p>
+                <ul>
+                    <li><strong>ONE:</strong> Maintain absolute secrecy, whether written or verbal, of any and all scientific, industrial, source code (IoT, Dashboards), and telemetry information regarding all materials obtained with their participation or of which they have knowledge by virtue of their relationship with the Company;</li>
+                    <li><strong>TWO:</strong> Acknowledge that all documents, repositories, databases, 3D modeling, and manuscripts related to research and inventions are the exclusive property of the CONTRACTING PARTY;</li>
+                    <li><strong>THREE:</strong> Acknowledge and agree that all rights to ideas, creations, and utility models (including PCB layouts, automation schematics, and API integrations) developed as a result of knowledge obtained are the exclusive property of the CONTRACTING PARTY;</li>
+                    <li><strong>FOUR:</strong> Acknowledge and agree that all hardware prototypes, sensors, and other materials of any nature obtained due to the provision of services are the exclusive property of the CONTRACTING PARTY;</li>
+                    <li><strong>FIVE:</strong> Not breach any of the clauses, being aware of all applicable civil and criminal effects and sanctions, including the Brazilian Environmental Crimes Law if fauna data is improperly exposed.</li>
+                </ul>
+                <p>This agreement shall be effective upon its digital signature below, retroacting to the beginning of the negotiations between the parties.</p>
+            </div>
+
+            <!-- GOOGLE FORM ACTION URL INTEGRATED -->
+            <form action="https://docs.google.com/forms/d/e/1FAIpQLScbbtQPLvIdc0qaUVPRO4mLJ-yuzdpr8kAdhbodZx1Y3SHocA/formResponse" method="POST" target="hidden_iframe" id="ndaForm" onsubmit="handleFormSubmit()">
+                
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label>Full Name</label>
+                        <input type="text" name="entry.997519676" class="input-field" required placeholder="Name exactly as on document">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Document Type</label>
+                        <select name="entry.1152800731" class="input-field" required>
+                            <option value="" disabled selected>Select Document Type...</option>
+                            <option value="Passport">Passport</option>
+                            <option value="National ID / CPF">National ID / CPF</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Document Number</label>
+                        <input type="text" name="entry.406608032" class="input-field" required placeholder="Document Number">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Corporate / Contact Email</label>
+                        <input type="email" name="entry.1603823908" class="input-field" required placeholder="you@email.com">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Phone / Company</label>
+                        <input type="text" name="entry.1489413293" class="input-field" required placeholder="Contact info or Company Name">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Full Address</label>
+                        <input type="text" name="entry.652127880" class="input-field" required placeholder="Street, Number, Neighborhood, City - State">
+                    </div>
+
+                    <div class="input-group full-width">
+                        <label>Partnership Type</label>
+                        <select name="entry.436600783" class="input-field" required>
+                            <option value="" disabled selected>Select your scope of work...</option>
+                            <option value="Software Developer">Software Developer</option>
+                            <option value="Hardware / PCB Engineering">Hardware / PCB Engineering</option>
+                            <option value="Consulting / Specialist">Consulting / Specialist</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="input-group full-width">
+                    <div class="checkbox-group">
+                        <!-- EXACT VALUE FROM LINK REQUIRED FOR FORMS ACCEPTANCE -->
+                        <input type="checkbox" id="aceite" name="entry.461579451" value="I declare that I have read, understood, and fully agree to the confidentiality terms set forth in the NDA." required>
+                        <label for="aceite">I declare that I have read, understood, and fully agree to the confidentiality terms set forth in the NDA. I acknowledge that this digital signature is legally binding.</label>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit" id="submitBtn">
+                    <i class="fas fa-file-signature" style="margin-right: 8px;"></i> Sign Digital Agreement
+                </button>
+            </form>
+        </div>
+
+        <!-- SUCCESS & DASHBOARD VIEW -->
+        <div id="dashboard-content">
+            <div style="text-align: center; margin-bottom: 40px;">
+                <i class="fas fa-shield-check" style="font-size: 3rem; color: var(--status-active); margin-bottom: 15px;"></i>
+                <h2 class="section-title">Agreement Secured</h2>
+                <p class="section-subtitle">Your digital signature has been recorded securely. Welcome to the TerraConnect partner network.</p>
+            </div>
+
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <h4>Total Active Partners</h4>
+                    <div class="number" id="kpi-total" style="color: var(--text-main);">0</div>
+                </div>
+                <div class="kpi-card">
+                    <h4>Network Security Status</h4>
+                    <div class="number" style="color: var(--status-active); font-size: 1.8rem; margin-top: 15px;">ENCRYPTED</div>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Registry Date</th>
+                            <th>Partnership Scope</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="partner-table-body">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <button onclick="window.location.href='index.html'" class="btn-submit" style="margin-top: 30px;">Return to Portal</button>
+        </div>
+
+    </div>
+</div>
+
+<iframe name="hidden_iframe" id="hidden_iframe" style="display:none;" onload="if(submitted) { showDashboard(); }"></iframe>
+
+<script>
+    // ==========================================
+    // 1. CONFIGURATION: CSV LINK FOR PARTNERS STATUS
+    // ==========================================
+    // WARNING: The spreadsheet linked to this CSV MUST NOT contain the public Name, Document, and Address columns.
+    // Create a separate tab in your Google Sheets (e.g., "Public_View") that pulls only Date, Partnership Type, and Status.
+    const GOOGLE_SHEET_CSV_URL = "PASTE_YOUR_PUBLIC_CSV_LINK_HERE";
+    
+    let submitted = false;
+
+    function handleFormSubmit() {
+        submitted = true;
+        const btn = document.getElementById('submitBtn');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing Signature...';
+        btn.style.opacity = '0.7';
+        btn.disabled = true;
+    }
+
+    function showDashboard() {
+        document.getElementById('form-content').style.display = 'none';
+        document.getElementById('main-container').classList.add('dashboard-active');
+        
+        const dashboard = document.getElementById('dashboard-content');
+        dashboard.style.display = 'block';
+        
+        setTimeout(() => {
+            dashboard.style.opacity = '1';
+        }, 50);
+
+        fetchPartnerData();
+    }
+
+    async function fetchPartnerData() {
+        try {
+            if (GOOGLE_SHEET_CSV_URL.includes("PASTE_YOUR")) {
+                document.getElementById('partner-table-body').innerHTML = `<tr><td colspan="3" style="text-align:center;">Database sync pending configuration...</td></tr>`;
+                return;
+            }
+
+            const response = await fetch(GOOGLE_SHEET_CSV_URL);
+            if (!response.ok) throw new Error("Network response was not ok");
+            const csvText = await response.text();
+            processData(csvText);
+        } catch (error) {
+            console.warn("Could not load public sheet data.");
+            document.getElementById('partner-table-body').innerHTML = `<tr><td colspan="3" style="text-align:center;">Awaiting initial dashboard sync...</td></tr>`;
+        }
+    }
+
+    function processData(csvText) {
+        const rows = csvText.split('\n').slice(1);
+        let totalActive = 0;
+        let tableHTML = '';
+        
+        rows.reverse().forEach(row => {
+            if (!row.trim()) return;
+            
+            const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(col => col.replace(/(^"|"$)/g, '').trim());
+            
+            const dateStr = cols[0] ? cols[0].split(' ')[0] : 'Unknown'; 
+            const category = cols[1] || 'Partner';
+            const statusRaw = cols[2] || 'Pending'; 
+            
+            let statusClass = 'pending';
+            let statusText = 'Pending Approval';
+            
+            if (statusRaw.toLowerCase().includes('active')) { 
+                statusClass = 'active'; 
+                statusText = 'Active NDA'; 
+                totalActive++; 
+            }
+            
+            tableHTML += `
+                <tr>
+                    <td>${dateStr}</td>
+                    <td><strong>${category}</strong></td>
+                    <td><span class="badge ${statusClass}">${statusText}</span></td>
+                </tr>
+            `;
+        });
+
+        document.getElementById('kpi-total').innerText = totalActive;
+        document.getElementById('partner-table-body').innerHTML = tableHTML || `<tr><td colspan="3" style="text-align:center;">No active partners yet.</td></tr>`;
+    }
+</script>
+</body>
+</html>
