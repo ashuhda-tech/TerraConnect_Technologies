@@ -162,6 +162,15 @@
 
     .custom-gps-marker { background: none; border: none; }
 
+    /* ----- GLOBAL FOOTER ----- */
+    footer {width: 100%;text-align: center;padding: 20px;background: rgba(10, 12, 16, 0.8);backdrop-filter: blur(10px);border-top: 1px solid var(--card-border);margin-top: auto; /* Keeps it at the very bottom */
+        position: relative;z-index: 100;}
+    .footer-text {font-size: 0.8rem;color: var(--text-muted);font-family: var(--font-standard);letter-spacing: 0.5px;}
+    .footer-link {color: #d1b38b; /* var(--accent) or var(--accent-dark) */
+        text-decoration: none;font-weight: 600;transition: color 0.3s ease;margin-left: 5px;}
+    .footer-link:hover {color: #f4e9d8; /* var(--text-main) */
+    }
+
     @media (max-width: 900px) {
         body { flex-direction: column; overflow: auto; height: auto; }
         .sidebar { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
@@ -1314,8 +1323,25 @@ function buildForecastChartConfig(labelString, dataArray, color, ctx) {
     }
     
     if (forecast.values.length > 0) {
-        labels.push(`Predict 1`);
-        labels.push(`Predict 2`);
+        // Calculate the average historical interval to project future dates
+        let avgIntervalMs = 0;
+        if (labels.length >= 2) {
+            const firstDate = new Date(labels[0]).getTime();
+            const lastDate = new Date(labels[labels.length - 1]).getTime();
+            avgIntervalMs = (lastDate - firstDate) / (labels.length - 1);
+        } else {
+            avgIntervalMs = 7 * 24 * 60 * 60 * 1000; // Default to 7 days if not enough data
+        }
+
+        const lastKnownDateObj = labels.length > 0 ? new Date(labels[labels.length - 1]) : new Date();
+
+        // Generate mathematical future dates
+        for (let i = 1; i <= forecast.values.length; i++) {
+            const nextDate = new Date(lastKnownDateObj.getTime() + (avgIntervalMs * i));
+            const dateStr = (nextDate.getMonth() + 1) + '/' + nextDate.getDate() + '/' + nextDate.getFullYear();
+            labels.push(dateStr);
+        }
+        
         forecastValues.push(...forecast.values);
         paddedRealValues.push(null, null); 
     }
@@ -1367,7 +1393,8 @@ function buildForecastChartConfig(labelString, dataArray, color, ctx) {
                         const rawDate = context[0].label;
                         const d = new Date(rawDate);
                         
-                        if (isNaN(d)) return rawDate;
+                        // FIX: Better NaN check for Javascript Date Objects
+                        if (isNaN(d.getTime())) return rawDate; 
 
                         const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
                         const day = String(d.getDate()).padStart(2, '0');
@@ -1399,14 +1426,14 @@ function buildForecastChartConfig(labelString, dataArray, color, ctx) {
                         const rawDate = this.getLabelForValue(val);
                         const d = new Date(rawDate);
                         
-                    if (isNaN(d.getTime())) return ""; 
+                        if (isNaN(d.getTime())) return ""; 
 
-                    const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-                    const day = String(d.getDate()).padStart(2, '0');
-                    const month = months[d.getMonth()];
-                    const year = d.getFullYear();
-                    
-                    return `${day}/${month}/${year}`;
+                        const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+                        const day = String(d.getDate()).padStart(2, '0');
+                        const month = months[d.getMonth()];
+                        const year = d.getFullYear();
+                        
+                        return `${day}/${month}/${year}`;
                     }
                 } 
             }
@@ -2189,5 +2216,12 @@ Reference the environmental data with the biological and veterinary data. Is the
     <div id="gh-version-flag" class="app-version-flag">
         <i class="fas fa-spinner fa-spin"></i> Fetching Build...
     </div>
+    <!-- GLOBAL FOOTER -->
+<footer>
+    <div class="footer-text">
+        Copyright &copy; 2026 TerraConnect Technologies. All Rights Reserved. | 
+        <a href="license.html" class="footer-link"><i class="fas fa-balance-scale"></i> Open-Use License</a>
+    </div>
+</footer>
 </body>
 </html>
