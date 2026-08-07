@@ -36,7 +36,7 @@
     .loader-visual {width: 100vw; height: 100vh; object-fit: cover;}
         
     /* DEFINIÇÃO DE TODOS OS TEMAS COM BASE NAS PALETAS DAS IMAGENS */
-    :root {--bg-dark: #070b14; --sidebar-bg: #0d1117; --accent: #d1b38b; --text-light: #f4e9d8; --gray-panel: #1e1e1e; --border: #2d3139;}
+    :root {--bg-dark: #070b14; --sidebar-bg: #0d1117; --accent: #d1b38b; --text-light: #f4e9d8; --gray-panel: #1e1e1e; --border: #2d3139; --text-muted: #9ca3af;}
     /* TECH SAVVY & FUTURISTIC */
     [data-theme="tech1"] {--bg-dark: #0B1021; --sidebar-bg: #334155; --accent: #87CEFA; --text-light: #CFFAFE; --gray-panel: #E2E8F0; --border: #334155;}
     [data-theme="tech2"] {--bg-dark: #1a1a1d; --sidebar-bg: #4e4e50; --accent: #ffff00; --text-light: #f5f5f5; --gray-panel: #2e2e2e; --border: #95a5a6;}
@@ -163,13 +163,10 @@
     .custom-gps-marker { background: none; border: none; }
 
     /* ----- GLOBAL FOOTER ----- */
-    footer {width: 100%;text-align: center;padding: 20px;background: rgba(10, 12, 16, 0.8);backdrop-filter: blur(10px);border-top: 1px solid var(--card-border);margin-top: auto; /* Keeps it at the very bottom */
-        position: relative;z-index: 100;}
-    .footer-text {font-size: 0.8rem;color: var(--text-muted);font-family: var(--font-standard);letter-spacing: 0.5px;}
-    .footer-link {color: #d1b38b; /* var(--accent) or var(--accent-dark) */
-        text-decoration: none;font-weight: 600;transition: color 0.3s ease;margin-left: 5px;}
-    .footer-link:hover {color: #f4e9d8; /* var(--text-main) */
-    }
+    footer {width: 100%;text-align: center;padding: 20px;background: rgba(10, 12, 16, 0.8);backdrop-filter: blur(10px);border-top: 1px solid var(--border);margin-top: 40px; position: relative;z-index: 100; border-radius: 12px;}
+    .footer-text {font-size: 0.8rem;color: var(--text-muted);font-family: 'Inter', sans-serif;letter-spacing: 0.5px;}
+    .footer-link {color: var(--accent); text-decoration: none;font-weight: 600;transition: color 0.3s ease;margin-left: 5px;}
+    .footer-link:hover {color: var(--text-light); }
 
     @media (max-width: 900px) {
         body { flex-direction: column; overflow: auto; height: auto; }
@@ -380,7 +377,7 @@
         </div>
 
 
-        <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-top: 20px; margin-bottom: 15px;">
+        <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-bottom: 15px;">
             <i class="fas fa-sliders-h"></i> Environment Active Configuration
         </h3>
 
@@ -660,6 +657,14 @@
             </div>
         </div>
         
+        <!-- GLOBAL FOOTER -->
+        <footer style="width: 100%; text-align: center; padding: 20px; background: rgba(10, 12, 16, 0.8); backdrop-filter: blur(10px); border-top: 1px solid var(--border); margin-top: 40px; position: relative; z-index: 100; border-radius: 12px; box-sizing: border-box;">
+            <div class="footer-text" style="font-size: 0.8rem; color: var(--text-muted); font-family: 'Inter', sans-serif; letter-spacing: 0.5px;">
+                Copyright &copy; 2026 TerraConnect Technologies. All Rights Reserved. | 
+                <a href="license.html" class="footer-link" style="color: var(--accent); text-decoration: none; font-weight: 600; margin-left: 5px;"><i class="fas fa-balance-scale"></i> Open-Use License</a>
+            </div>
+        </footer>
+
     </main>
 
     
@@ -1325,25 +1330,32 @@ function buildForecastChartConfig(labelString, dataArray, color, ctx) {
     if (forecast.values.length > 0) {
         // Calculate the average historical interval to project future dates
         let avgIntervalMs = 0;
-        if (labels.length >= 2) {
-            const firstDate = new Date(labels[0]).getTime();
-            const lastDate = new Date(labels[labels.length - 1]).getTime();
-            avgIntervalMs = (lastDate - firstDate) / (labels.length - 1);
+        
+        // Parse and sort dates to avoid negative intervals in case of messy data
+        let parsedDates = labels.map(l => new Date(l).getTime()).filter(t => !isNaN(t));
+        
+        if (parsedDates.length >= 2) {
+            parsedDates.sort((a, b) => a - b);
+            const firstDate = parsedDates[0];
+            const lastDate = parsedDates[parsedDates.length - 1];
+            avgIntervalMs = (lastDate - firstDate) / (parsedDates.length - 1);
+            
+            // Force minimum of 1 day (86400000ms) so projected dates don't stack
+            if (avgIntervalMs < 86400000) avgIntervalMs = 86400000;
         } else {
-            avgIntervalMs = 7 * 24 * 60 * 60 * 1000; // Default to 7 days if not enough data
+            avgIntervalMs = 7 * 24 * 60 * 60 * 1000; // Default to 7 days
         }
 
-        const lastKnownDateObj = labels.length > 0 ? new Date(labels[labels.length - 1]) : new Date();
+        const lastKnownDateObj = parsedDates.length > 0 ? new Date(parsedDates[parsedDates.length - 1]) : new Date();
 
-        // Generate mathematical future dates
+        // Generate mathematical future dates explicitly as ISO strings
         for (let i = 1; i <= forecast.values.length; i++) {
             const nextDate = new Date(lastKnownDateObj.getTime() + (avgIntervalMs * i));
-            const dateStr = (nextDate.getMonth() + 1) + '/' + nextDate.getDate() + '/' + nextDate.getFullYear();
-            labels.push(dateStr);
+            labels.push(nextDate.toISOString());
         }
         
         forecastValues.push(...forecast.values);
-        paddedRealValues.push(null, null); 
+        paddedRealValues.push(...new Array(forecast.values.length).fill(null)); 
     }
 
     const dynamicLabel = forecast.method ? `${labelString} [AI: ${forecast.method}]` : labelString;
@@ -2216,12 +2228,5 @@ Reference the environmental data with the biological and veterinary data. Is the
     <div id="gh-version-flag" class="app-version-flag">
         <i class="fas fa-spinner fa-spin"></i> Fetching Build...
     </div>
-    <!-- GLOBAL FOOTER -->
-<footer>
-    <div class="footer-text">
-        Copyright &copy; 2026 TerraConnect Technologies. All Rights Reserved. | 
-        <a href="license.html" class="footer-link"><i class="fas fa-balance-scale"></i> Open-Use License</a>
-    </div>
-</footer>
 </body>
 </html>
