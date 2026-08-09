@@ -23,48 +23,99 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {--bg-color: #1a1c20;--card-bg: #070b14;--accent: #d1b38b;--text: #f4e9d8; }
-        body {background-color: var(--bg-color);color: var(--text);font-family: 'Segoe UI', sans-serif;display: flex;justify-content: center;align-items: center;min-height: 100vh; margin: 0;}
-        /* --- APP VERSION FLAG --- */
-        .app-version-flag {position: fixed;bottom: 10px;left: 10px;background: rgba(0, 0, 0, 0.6);color: rgba(255, 255, 255, 0.3);padding: 4px 8px;border-radius: 4px;font-size: 0.55rem;font-family: 'Inter', monospace;z-index: 99999;pointer-events: none;border: 1px solid rgba(255, 255, 255, 0.1);backdrop-filter: blur(2px);transition: opacity 0.5s; /* Transição suave ao carregar */
+        
+        /* 
+           CORREÇÃO 1: Ajuste do Body
+           Removemos o alinhamento central daqui e adicionamos flex-direction: column 
+           para que os blocos da página se empilhem verticalmente. 
+        */
+        body {
+            background-color: var(--bg-color);
+            color: var(--text);
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            flex-direction: column; /* Empilha o wrapper e o footer verticalmente */
+            min-height: 100vh; 
+            margin: 0;
         }
-        .dashboard-card {background-color: var(--card-bg);padding: 40px;border-radius: 12px;border: 1px solid #1f2937;text-align: center;max-width: 500px;width: 90%;}
+
+        /* 
+           CORREÇÃO 2: Wrapper do Conteúdo
+           O flex-grow: 1 faz essa div preencher todo o espaço vazio da tela,
+           empurrando o footer lá para baixo. Aqui colocamos as regras
+           de centralização para manter o card no meio da tela.
+        */
+        .content-wrapper {
+            flex-grow: 1; /* Ocupa o espaço livre */
+            display: flex;
+            justify-content: center; /* Centraliza o card horizontalmente */
+            align-items: center; /* Centraliza o card verticalmente */
+            padding: 20px; /* Garante que o card não encoste nas bordas em telas muito pequenas */
+            box-sizing: border-box;
+        }
+
+        /* --- APP VERSION FLAG --- */
+        .app-version-flag {position: fixed;bottom: 10px;left: 10px;background: rgba(0, 0, 0, 0.6);color: rgba(255, 255, 255, 0.3);padding: 4px 8px;border-radius: 4px;font-size: 0.55rem;font-family: 'Inter', monospace;z-index: 99999;pointer-events: none;border: 1px solid rgba(255, 255, 255, 0.1);backdrop-filter: blur(2px);transition: opacity 0.5s;}
+        
+        .dashboard-card {background-color: var(--card-bg);padding: 40px;border-radius: 12px;border: 1px solid #1f2937;text-align: center;max-width: 500px;width: 100%;}
         h1 { color: var(--accent); margin-bottom: 10px; }
         .user-id { font-family: monospace; background: #111827; padding: 10px; border-radius: 5px; font-size: 0.8rem; margin: 20px 0; display: block; border: 1px solid #2d3139; }
         .btn-logout {background: transparent;border: 1px solid var(--accent);color: var(--accent); padding: 10px 20px;cursor: pointer;border-radius: 6px;margin-top: 20px; transition: 0.3s;}
         .btn-logout:hover {background: var(--accent); color: var(--card-bg);}
 
-            /* ----- GLOBAL FOOTER ----- */
-        footer {width: 100%;text-align: center;padding: 20px;background: rgba(10, 12, 16, 0.8);backdrop-filter: blur(10px);border-top: 1px solid var(--border);margin-top: 40px; position: relative;z-index: 100; border-radius: 12px;}
-        .footer-text {font-size: 0.8rem;color: var(--text-muted);font-family: 'Inter', sans-serif;letter-spacing: 0.5px;}
+        /* ----- GLOBAL FOOTER ----- */
+        /*
+           CORREÇÃO 3: Ajuste do Footer
+           Removi a margem gigante (margin-top) já que o flex-grow acima 
+           já empurra o footer perfeitamente para o fundo.
+        */
+        footer {
+            width: 100%;
+            text-align: center;
+            padding: 20px;
+            background: rgba(10, 12, 16, 0.8);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid var(--border, #2d3139); /* Usei um fallback color caso a variável não exista aqui */
+            position: relative;
+            z-index: 100; 
+            box-sizing: border-box;
+            flex-shrink: 0; /* Impede o footer de encolher */
+        }
+        .footer-text {font-size: 0.8rem;color: #9ca3af;font-family: 'Inter', sans-serif;letter-spacing: 0.5px;} /* Troquei a variável --text-muted direto pela cor para evitar conflito caso não declarada no :root deste arquivo */
         .footer-link {color: var(--accent); text-decoration: none;font-weight: 600;transition: color 0.3s ease;margin-left: 5px;}
-        .footer-link:hover {color: var(--text-light); }
+        .footer-link:hover {color: var(--text); }
         
     </style>
 </head>
 <body>
 
-<div class="dashboard-card">
-    <i class="fas fa-user-circle fa-4x" style="color: var(--accent); margin-bottom: 20px;"></i>
-    <h1>Welcome, <span id="userName">User</span>!</h1>
-    <p>Your registration on the TerraConnect portal has been located.</p>
-    
-    <div class="user-id">
-        <strong>USER_ID:</strong> <span id="userIdDisplay">Validating data...</span>
-    </div>
-
-    <p id="statusMsg" style="font-size: 0.9rem; color: #9ca3af;">Checking connection to secure servers...</p>
-    
-    <button class="btn-logout" onclick="logout()">Exit the WebPortal</button>
-</div>
-
-    
-    <!-- GLOBAL FOOTER -->
-        <footer style="width: 100%; text-align: center; padding: 20px; background: rgba(10, 12, 16, 0.8); backdrop-filter: blur(10px); border-top: 1px solid var(--border); margin-top: 40px; position: relative; z-index: 100; border-radius: 12px; box-sizing: border-box;">
-            <div class="footer-text" style="font-size: 0.8rem; color: var(--text-muted); font-family: 'Inter', sans-serif; letter-spacing: 0.5px;">
-                Copyright &copy; 2026 TerraConnect Technologies. All Rights Reserved. | 
-                <a href="license.html" class="footer-link" style="color: var(--accent); text-decoration: none; font-weight: 600; margin-left: 5px;"><i class="fas fa-balance-scale"></i> Open-Use License</a>
+    <!-- 
+       CORREÇÃO 4: HTML Structure
+       O dashboard-card agora fica "abraçado" pela div content-wrapper.
+    -->
+    <div class="content-wrapper">
+        <div class="dashboard-card">
+            <i class="fas fa-user-circle fa-4x" style="color: var(--accent); margin-bottom: 20px;"></i>
+            <h1>Welcome, <span id="userName">User</span>!</h1>
+            <p>Your registration on the TerraConnect portal has been located.</p>
+            
+            <div class="user-id">
+                <strong>USER_ID:</strong> <span id="userIdDisplay">Validating data...</span>
             </div>
-        </footer>
+
+            <p id="statusMsg" style="font-size: 0.9rem; color: #9ca3af;">Checking connection to secure servers...</p>
+            
+            <button class="btn-logout" onclick="logout()">Exit the WebPortal</button>
+        </div>
+    </div>
+    
+    <!-- GLOBAL FOOTER (Fica fora do wrapper central) -->
+    <footer>
+        <div class="footer-text">
+            Copyright &copy; 2026 TerraConnect Technologies. All Rights Reserved. | 
+            <a href="license.html" class="footer-link"><i class="fas fa-balance-scale"></i> Open-Use License</a>
+        </div>
+    </footer>
 
 <script>
     // Constants for your Secure Environment Database (NO MORE CSV URLs)
@@ -134,9 +185,6 @@
         localStorage.removeItem('currentUser');
         window.location.href = 'index.html';
     }
-
-
-
 
     // ==========================================
     // --- GITHUB AUTO VERSION TRACKER ---
