@@ -23,7 +23,21 @@
 
         :root {--bg-color: #0a0c10;--card-bg: rgba(30, 30, 30, 0.7);--card-border: rgba(31, 41, 55, 0.5);--accent: #d1b38b;--accent-hover: #e5cba7;--text-main: #f4e9d8;--text-muted: #9ca3af;--border-radius: 15px;--font-standard: 'Inter', sans-serif;--font-title: 'Cinzel', serif;}
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {background-color: var(--bg-color);color: var(--text-main);font-family: var(--font-standard);min-height: 100vh;overflow-x: hidden;overflow-y: auto;}
+        
+        /* 
+           CORREÇÃO 1: Transformando o body em uma coluna flexível 
+           para garantir que o footer grude no rodapé.
+        */
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-standard);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column; 
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
         
         /* --- APP VERSION FLAG --- */
         .app-version-flag {position: fixed;bottom: 10px;left: 10px;background: rgba(0, 0, 0, 0.6);color: rgba(255, 255, 255, 0.3);padding: 4px 8px;border-radius: 4px;font-size: 0.55rem;font-family: 'Inter', monospace;z-index: 99999;pointer-events: none;border: 1px solid rgba(255, 255, 255, 0.1);backdrop-filter: blur(2px);transition: opacity 0.5s;}
@@ -39,7 +53,18 @@
         .btn-back:hover {background: var(--accent);color: var(--bg-color);}
         
         /* ----- PAGE CONTAINER ----- */
-        .container {max-width: 1200px;margin: 0 auto;padding: 50px 20px;}
+        /* 
+           CORREÇÃO 2: Adicionando flex-grow: 1 para empurrar o footer 
+           e width: 100% para respeitar o max-width.
+        */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 50px 20px;
+            flex-grow: 1;
+            width: 100%;
+        }
+        
         .section-title {text-align: center;font-family: var(--font-title);font-size: 2.2rem;color: var(--text-main);margin-bottom: 10px;letter-spacing: 1px; }
         .section-subtitle {text-align: center;color: var(--text-muted);margin-bottom: 50px;font-size: 1rem;}
         
@@ -130,6 +155,25 @@
             font-weight: bold;
             letter-spacing: 1px;
         }
+
+        /* ----- GLOBAL FOOTER ----- */
+        /*
+           CORREÇÃO 3: Adicionando o estilo do footer
+        */
+        footer {
+            width: 100%;
+            text-align: center;
+            padding: 20px;
+            background: rgba(10, 12, 16, 0.8);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid var(--card-border);
+            position: relative;
+            z-index: 100;
+            flex-shrink: 0; /* Garante que o footer não encolha */
+        }
+        .footer-text {font-size: 0.8rem; color: var(--text-muted); font-family: var(--font-standard); letter-spacing: 0.5px;}
+        .footer-link {color: var(--accent); text-decoration: none; font-weight: 600; transition: color 0.3s ease; margin-left: 5px;}
+        .footer-link:hover {color: var(--text-main); }
 
         @media (max-width: 768px) {
             header { padding: 20px; flex-direction: column; gap: 15px; }
@@ -307,6 +351,17 @@
     </div>
 
 </div>
+
+<!-- 
+    CORREÇÃO 4: Inserindo o Global Footer logo após o container principal.
+-->
+<!-- GLOBAL FOOTER -->
+<footer>
+    <div class="footer-text">
+        Copyright &copy; 2026 TerraConnect Technologies. All Rights Reserved. | 
+        <a href="license.html" class="footer-link"><i class="fas fa-balance-scale"></i> Open-Use License</a>
+    </div>
+</footer>
 
 <!-- QR CODE HOVER WIDGET -->
 <div id="qr-widget">
