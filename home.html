@@ -32,6 +32,13 @@
         .user-id { font-family: monospace; background: #111827; padding: 10px; border-radius: 5px; font-size: 0.8rem; margin: 20px 0; display: block; border: 1px solid #2d3139; }
         .btn-logout {background: transparent;border: 1px solid var(--accent);color: var(--accent); padding: 10px 20px;cursor: pointer;border-radius: 6px;margin-top: 20px; transition: 0.3s;}
         .btn-logout:hover {background: var(--accent); color: var(--card-bg);}
+
+            /* ----- GLOBAL FOOTER ----- */
+        footer {width: 100%;text-align: center;padding: 20px;background: rgba(10, 12, 16, 0.8);backdrop-filter: blur(10px);border-top: 1px solid var(--border);margin-top: 40px; position: relative;z-index: 100; border-radius: 12px;}
+        .footer-text {font-size: 0.8rem;color: var(--text-muted);font-family: 'Inter', sans-serif;letter-spacing: 0.5px;}
+        .footer-link {color: var(--accent); text-decoration: none;font-weight: 600;transition: color 0.3s ease;margin-left: 5px;}
+        .footer-link:hover {color: var(--text-light); }
+        
     </style>
 </head>
 <body>
@@ -49,6 +56,15 @@
     
     <button class="btn-logout" onclick="logout()">Exit the WebPortal</button>
 </div>
+
+    
+    <!-- GLOBAL FOOTER -->
+        <footer style="width: 100%; text-align: center; padding: 20px; background: rgba(10, 12, 16, 0.8); backdrop-filter: blur(10px); border-top: 1px solid var(--border); margin-top: 40px; position: relative; z-index: 100; border-radius: 12px; box-sizing: border-box;">
+            <div class="footer-text" style="font-size: 0.8rem; color: var(--text-muted); font-family: 'Inter', sans-serif; letter-spacing: 0.5px;">
+                Copyright &copy; 2026 TerraConnect Technologies. All Rights Reserved. | 
+                <a href="license.html" class="footer-link" style="color: var(--accent); text-decoration: none; font-weight: 600; margin-left: 5px;"><i class="fas fa-balance-scale"></i> Open-Use License</a>
+            </div>
+        </footer>
 
 <script>
     // Constants for your Secure Environment Database (NO MORE CSV URLs)
