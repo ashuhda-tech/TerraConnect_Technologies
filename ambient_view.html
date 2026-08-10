@@ -56,7 +56,7 @@
 
     * { box-sizing: border-box; }
 
-    body {   background-color: var(--bg-dark); color: var(--text-light); font-family: 'Inter', sans-serif;   margin: 0;   display: flex; height: 100vh; overflow: hidden; transition: background 0.5s, color 0.5s;}
+    body {   background-color: var(--bg-dark); color: var(--text-light); font-family: 'Inter', sans-serif;  margin: 0;   display: flex; height: 100vh; overflow: hidden; transition: background 0.5s, color 0.5s;}
 
     /* --- APP VERSION FLAG --- */
         .app-version-flag {position: fixed;bottom: 10px;left: 10px;background: rgba(0, 0, 0, 0.6);color: rgba(255, 255, 255, 0.3);padding: 4px 8px;border-radius: 4px;font-size: 0.55rem;font-family: 'Inter', monospace;z-index: 99999;pointer-events: none;border: 1px solid rgba(255, 255, 255, 0.1);backdrop-filter: blur(2px);transition: opacity 0.5s; /* Transição suave ao carregar */
@@ -331,12 +331,9 @@
             </div>
         </div>
 
-            
             <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-top: 20px; margin-bottom: 15px;">
                 <i class="fas fa-broadcast-tower"></i> Remote Sensor Unit
             </h3>
-
-            
         
        <div class="sensor-grid" id="sensor-grid-remote">
             <div class="sensor-card-rs" onclick="openChart(21, ' Remote Sensor | Air Temperature')" style="cursor: pointer;">
@@ -376,6 +373,55 @@
             </div>
         </div>
 
+        <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-top: 20px; margin-bottom: 15px;">
+            <i class="fas fa-broadcast-tower"></i> Walk Sensor Unit
+        </h3>
+        
+        <div class="sensor-grid" id="sensor-grid-walk">
+            <!-- Note: ID 31 opens chart based on Field 1 (LAT) for history -->
+            <div class="sensor-card" onclick="openChart(31, 'Location History (LAT)')" style="cursor: pointer;">
+                <i class="fas fa-location-dot sensor-icon" style="color: #a3b18a;"></i>
+                <div class="sensor-data">
+                    <span class="sensor-label">Latitude And Longitude</span>
+                    <div class="sensor-val" id="valField31">--<span>°</span></div>
+                </div>
+            </div>
+            <div class="sensor-card" onclick="openChart(33, 'Altitude')" style="cursor: pointer;">
+                <i class="fas fa-mountain sensor-icon" style="color: #a3b18a;"></i>
+                <div class="sensor-data">
+                    <span class="sensor-label">Altitude</span>
+                    <div class="sensor-val" id="valField33">--<span>m</span></div>
+                </div>
+            </div>
+           <div class="sensor-card" onclick="openChart(34, 'Satelites Connected')" style="cursor: pointer;">
+                <i class="fas fa-satellite sensor-icon" style="color: #a3b18a;"></i>
+                <div class="sensor-data">
+                    <span class="sensor-label">Number of Satelites Connected</span>
+                    <div class="sensor-val" id="valField34">--<span> Sats</span></div>
+                </div>
+            </div>
+            <div class="sensor-card" onclick="openChart(35, 'Comunication Signal')" style="cursor: pointer;">
+                <i class="fas fa-signal sensor-icon" style="color: #00f2ff;"></i>
+                <div class="sensor-data">
+                    <span class="sensor-label">RSSI</span>
+                    <div class="sensor-val" id="valField35">--<span>dBm</span></div>
+                </div>
+            </div>
+           <div class="sensor-card" onclick="openChart(36, 'Dimensions')" style="cursor: pointer;">
+                <i class="fas fa-cube sensor-icon" style="color: #a3b18a;"></i>
+                <div class="sensor-data">
+                    <span class="sensor-label">Nº Dimensions</span>
+                    <div class="sensor-val" id="valField36">--<span>D</span></div>
+                </div>
+            </div>
+            <div class="sensor-card" onclick="openChart(37, 'Heart Rate')" style="cursor: pointer;">
+                <i class="fas fa-heart sensor-icon" style="color: #ff5f5f;"></i>
+                <div class="sensor-data">
+                    <span class="sensor-label">Heart Rate</span>
+                    <div class="sensor-val" id="valField37">--<span>BPM</span></div>
+                </div>
+            </div>
+        </div>
 
         <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-bottom: 15px;">
             <i class="fas fa-sliders-h"></i> Environment Active Configuration
@@ -877,8 +923,11 @@ async function loadData() {
             mainReadKey = data[12];
             r1ChannelId = data[13];
             r1ReadKey = data[15];
-            gpsChannelId = data[25];
+            
+            // --- Mapping GPS/Walk Sensor Variables from Google Sheet DB ---
+            gpsChannelId = data[25]; 
             gpsReadKey = data[27];
+            
             walkSensorIp = data[32];
             document.getElementById('dynChannel').innerText = mainChannelId || "---";
 
@@ -897,7 +946,6 @@ async function loadData() {
 
             updateSensors();
             
-            // As duas funções abaixo agora estão protegidas internamente no código anterior
             loadBiologicalHistory(currentPageId);
             loadVetVisits(currentPageId);
             setInterval(updateSensors, 20000);
@@ -996,6 +1044,29 @@ async function updateSensors() {
                 updateFieldUI(25, last.field5); 
             }
         } catch (e) { console.warn("Remote sensor update failed."); }
+    }
+
+    // --- ADDED WALK SENSOR FETCH LOGIC ---
+    if (gpsChannelId && gpsReadKey) {
+        try {
+            const url = `https://api.thingspeak.com/channels/${gpsChannelId}/feeds.json?api_key=${gpsReadKey}&results=1`;
+            const res = await fetch(url);
+            const json = await res.json();
+            const last = json.feeds[0];
+            if (last) {
+                // Handle Field 31 manually to combine LAT and LON gracefully without breaking parseFloat
+                const locEl = document.getElementById('valField31');
+                if (locEl && last.field1 && last.field2) {
+                    locEl.innerHTML = `${parseFloat(last.field1).toFixed(4)}, ${parseFloat(last.field2).toFixed(4)}<span>°</span>`;
+                }
+
+                updateFieldUI(33, last.field3); 
+                updateFieldUI(34, last.field4); 
+                updateFieldUI(35, last.field5); 
+                updateFieldUI(36, last.field6); 
+                updateFieldUI(37, last.field7); 
+            }
+        } catch (e) { console.warn("Walk sensor update failed."); }
     }
 }
 
@@ -1697,11 +1768,12 @@ async function updateVetMap(vetLocationsArray, gpsData = null) {
     
 
 async function openChart(fieldId, label) {
-    // --- FIX: Targeting Remote sensors properly (IDs 21+) ---
-    let targetID = (fieldId >= 21) ? r1ChannelId : mainChannelId;
-    let targetKey = (fieldId >= 21) ? r1ReadKey : mainReadKey;
+    // --- FIX: Targeting Walk Sensor properly (IDs 31+), then Remote sensors (IDs 21+) ---
+    let targetID = (fieldId >= 31) ? gpsChannelId : ((fieldId >= 21) ? r1ChannelId : mainChannelId);
+    let targetKey = (fieldId >= 31) ? gpsReadKey : ((fieldId >= 21) ? r1ReadKey : mainReadKey);
     
-    let actualField = (fieldId >= 21) ? (fieldId - 20) : fieldId;
+    // Convert the UI field ID back to ThingSpeak Field 1-8
+    let actualField = (fieldId >= 31) ? (fieldId - 30) : ((fieldId >= 21) ? (fieldId - 20) : fieldId);
 
     if (!targetID) return alert("Sensor channel not configured.");
 
@@ -1724,7 +1796,15 @@ async function openChart(fieldId, label) {
         22: { min: 0,   max: 100,   unit: '%' },    // Remote: Air Humidity
         23: { min: 0,   max: 100,   unit: '%' },    // Remote: Ground Humidity
         24: { min: 0,   max: 100,   unit: '%' },    // Remote: Battery SOC
-        25: { min: -100,max: 0,     unit: 'dBm' }   // Remote: RSSI
+        25: { min: -100,max: 0,     unit: 'dBm' },  // Remote: RSSI
+        // Walk Sensors (mapping to IDs 31 through 37)
+        31: { min: -90,   max: 90,    unit: '°' },    // Walk: LAT
+        32: { min: -180,  max: 180,   unit: '°' },    // Walk: LON
+        33: { min: 0,     max: 5000,  unit: 'm' },    // Walk: ALT
+        34: { min: 0,     max: 30,    unit: ' Sats' },// Walk: SAT
+        35: { min: -100,  max: 0,     unit: 'dBm' },  // Walk: SIGNAL
+        36: { min: 0,     max: 4,     unit: 'D' },    // Walk: DIMENS
+        37: { min: 0,     max: 300,   unit: 'BPM' }   // Walk: HEART RATE
     };
 
     // Grab configuration for the clicked sensor, fallback to defaults if not found
