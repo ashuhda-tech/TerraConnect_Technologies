@@ -593,80 +593,24 @@
             <i class="fas fa-graduation-cap"></i> Educational Pet | Training
         </h3>
 
-       <!-- Dog Educational Panel -->
-<div id="edu-clicker-section" style="display: none; margin-bottom: 20px;">
-    <h4 style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0; margin-bottom: 10px;">Dog Commands (Audio & Voice)</h4>
-    
-    <button id="sosButton" class="sos-btn" onclick="toggleSOS()">
-        <i class="fas fa-exclamation-triangle"></i> TRIGGER EMERGENCY SOS
-    </button>
-    
-    <div class="management-grid">
-        
-        <!-- Sit -->
-        <div class="sensor-card" style="flex-direction: column; cursor: pointer; justify-content: center;" onclick="playDogCommand('sit')">
-            <div style="display: flex; gap: 10px; font-size: 1.5rem; color: #74b9ff; margin-bottom: 10px;">
-                <i class="fas fa-arrow-down"></i>
-                <i class="fas fa-dog"></i>
-            </div>
-            <div class="sensor-label">Sit</div>
-            <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 5px; text-transform: none;">1 Click + "Sit"</div>
-        </div>
-        
-        <!-- Lay Down -->
-        <div class="sensor-card" style="flex-direction: column; cursor: pointer; justify-content: center;" onclick="playDogCommand('laydown')">
-            <div style="display: flex; gap: 10px; font-size: 1.5rem; color: #a3b18a; margin-bottom: 10px;">
-                <i class="fas fa-dog"></i>
-                <i class="fas fa-arrows-down-to-line"></i>
-            </div>
-            <div class="sensor-label">Lay Down</div>
-            <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 5px; text-transform: none;">1 Click + "Down"</div>
-        </div>
-        
-        <!-- Follow Me -->
-        <div class="sensor-card" style="flex-direction: column; cursor: pointer; justify-content: center;" onclick="playDogCommand('follow')">
-            <div style="display: flex; gap: 10px; font-size: 1.5rem; color: #d4a373; margin-bottom: 10px;">
-                <i class="fas fa-dog"></i>
-                <i class="fas fa-forward"></i>
-            </div>
-            <div class="sensor-label">Follow Me</div>
-            <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 5px; text-transform: none;">2 Clicks + "Come"</div>
-        </div>
-        
-        <!-- Cross Street -->
-        <div class="sensor-card" style="flex-direction: column; cursor: pointer; justify-content: center;" onclick="playDogCommand('cross')">
-            <div style="display: flex; gap: 10px; font-size: 1.5rem; color: #ff5f5f; margin-bottom: 10px;">
-                <i class="fas fa-dog"></i>
-                <i class="fas fa-road"></i>
-                <i class="fa-forward"></i>
-            </div>
-            <div class="sensor-label">Cross Street</div>
-            <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 5px; text-transform: none; text-align: center;">Continuous Clicks + "Cross"</div>
+        <!-- Dog Educational Panel (Dynamic) -->
+        <div id="edu-clicker-section" style="display: none; margin-bottom: 20px;">
+            <h4 style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0; margin-bottom: 10px;">Dog Commands (Audio & Voice)</h4>
+            
+            <button id="sosButton" class="sos-btn" onclick="toggleSOS()">
+                <i class="fas fa-exclamation-triangle"></i> TRIGGER EMERGENCY SOS
+            </button>
+            
+            <!-- Cards will be injected here -->
+            <div class="management-grid" id="dog-commands-grid"></div>
         </div>
 
-    </div>
-</div>
-
-        <!-- Bird Educational Panel -->
+        <!-- Bird Educational Panel (Dynamic) -->
         <div id="edu-voice-section" style="display: none; margin-bottom: 20px;">
             <h4 style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0; margin-bottom: 10px;">Bird Vocal Learning</h4>
-            <div class="management-grid">
-                <div class="sensor-card" style="flex-direction: column; cursor: pointer; justify-content: center;" onclick="playBirdCommand('Hello')">
-                    <i class="fas fa-comment-dots" style="font-size: 1.5rem; color: #00f2ff; margin-bottom: 10px;"></i>
-                    <div class="sensor-label">Say Hello</div>
-                    <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 5px; text-transform: none;">Voice: "Hello!"</div>
-                </div>
-                <div class="sensor-card" style="flex-direction: column; cursor: pointer; justify-content: center;" onclick="playBirdCommand('Food')">
-                    <i class="fas fa-seedling" style="font-size: 1.5rem; color: #6ecc87; margin-bottom: 10px;"></i>
-                    <div class="sensor-label">Request Food</div>
-                    <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 5px; text-transform: none;">Voice: "Food!"</div>
-                </div>
-                <div class="sensor-card" style="flex-direction: column; cursor: pointer; justify-content: center;" onclick="playBirdCommand('Water')">
-                    <i class="fas fa-tint" style="font-size: 1.5rem; color: #74b9ff; margin-bottom: 10px;"></i>
-                    <div class="sensor-label">Request Water</div>
-                    <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 5px; text-transform: none;">Voice: "Water!"</div>
-                </div>
-            </div>
+            
+            <!-- Cards will be injected here -->
+            <div class="management-grid" id="bird-commands-grid"></div>
         </div>
 
         
@@ -754,7 +698,12 @@ const loggedUser = checkSecurity();
     const ENVIRONMENT_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzG2YVem9qG7sEK20lVuRm2Bhjo10dfXRF98mibREbUZnM5obTrb0QrQDJIGi0wFoE/exec";
     const VETDATA_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxxnlxSflhGHaX8IMcQj9y7H99bu4G9V-UM9f-E-SLdV2eLcUrBpQWvwh7o6GHLUXca/exec";
     const AI_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxign7YvIXmCiAggKU9XKlveWHQ_hQzYL65MEP3yEFe1lj1ewPjHuNzbbi_S8JMTPE/exec";
+    const EDU_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxQ1DUzE-nMNhuF9ZxkD4_cP9rjkSE9vF2qQudL-F2-x1pLjtJg-yRCM7AIXf9GETb9/exec";
    
+    let dynamicCommands = [];
+    const commandPalette = ['#74b9ff', '#a3b18a', '#d4a373', '#ff5f5f', '#00f2ff', '#6ecc87', '#feca57'];
+    const commandIcons = ['fa-arrow-down', 'fa-arrows-down-to-line', 'fa-forward', 'fa-road', 'fa-hand-paper', 'fa-sync', 'fa-walking', 'fa-eye', 'fa-comment-dots', 'fa-seedling', 'fa-tint'];
+
     let feedingChart, weightChart, sheddingChart, lengthChart, heightChart;
     let tsReadURL = "";
     let currentUUID = ""; 
@@ -1942,6 +1891,7 @@ async function openChart(fieldId, label) {
     document.addEventListener('DOMContentLoaded', () => {
         applyUserTheme();
         loadData();
+        loadEducationalCommands();
 
         const editButton = document.getElementById('editLink');
         if (currentPageId && editButton) {
@@ -1954,6 +1904,68 @@ async function openChart(fieldId, label) {
             addVetButton.style.display = 'inline-flex';
         }
     });
+
+    // API Calls
+    async function loadEducationalCommands() {
+        try {
+            const res = await fetch(EDU_SCRIPT_URL);
+            const json = await res.json();
+            
+            // Parse 2D Array to Object Array based on Headers (Row 0)
+            let data = json.data || json; 
+            if (data.length > 0 && Array.isArray(data[0])) {
+                const headers = data[0];
+                dynamicCommands = data.slice(1).map(row => {
+                    let obj = {};
+                    headers.forEach((h, i) => obj[h] = row[i]);
+                    return obj;
+                });
+            } else {
+                dynamicCommands = data; // Fallback if API already returns objects
+            }
+            
+            renderEducationalCards();
+        } catch(e) {
+            console.error("Failed to load educational commands:", e);
+        }
+    }
+
+    function renderEducationalCards() {
+        const dogGrid = document.getElementById('dog-commands-grid');
+        const birdGrid = document.getElementById('bird-commands-grid');
+        if(dogGrid) dogGrid.innerHTML = '';
+        if(birdGrid) birdGrid.innerHTML = '';
+
+        dynamicCommands.forEach((cmd, index) => {
+            // Skip empty rows
+            if (!cmd.Command) return; 
+
+            const animal = cmd.AnimalType;
+            const commandName = cmd.Command;
+            const voiceSpeak = cmd.VoiceSpeak || '';
+            const numBeeps = parseInt(cmd.NumberOfBeep) || 0;
+            
+            const color = commandPalette[index % commandPalette.length];
+            const icon = commandIcons[index % commandIcons.length];
+            const animalIcon = animal === 'Dog' ? 'fa-dog' : 'fa-crow';
+
+            const cardHTML = `
+                <div class="sensor-card" style="flex-direction: column; cursor: pointer; justify-content: center;" onclick="executeDynamicCommand(${index})">
+                    <div style="display: flex; gap: 10px; font-size: 1.5rem; color: ${color}; margin-bottom: 10px;">
+                        <i class="fas ${animalIcon}"></i>
+                        <i class="fas ${icon}"></i>
+                    </div>
+                    <div class="sensor-label">${commandName}</div>
+                    <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 5px; text-transform: none; text-align: center;">
+                        ${numBeeps > 0 ? numBeeps + ' Clicks + ' : ''}"${voiceSpeak}"
+                    </div>
+                </div>
+            `;
+
+            if (animal === 'Dog' && dogGrid) dogGrid.innerHTML += cardHTML;
+            if (animal === 'Parrot' && birdGrid) birdGrid.innerHTML += cardHTML;
+        });
+    }
 
     async function generateAIInsight() {
     const btn = document.getElementById('btnAi');
@@ -2198,8 +2210,8 @@ Reference the environmental data with the biological and veterinary data. Is the
         }
     }
 
-    // Generates a sharp "click" sound simulating a professional clicker
-    function playClickSound(timeOffset) {
+    // Updated click generator to handle dynamic durations
+    function playClickSound(timeOffset, durationSec = 0.1) {
         initAudio();
         const osc = audioCtx.createOscillator();
         const gainNode = audioCtx.createGain();
@@ -2207,17 +2219,17 @@ Reference the environmental data with the biological and veterinary data. Is the
         osc.connect(gainNode);
         gainNode.connect(audioCtx.destination);
 
-        // A sharp square wave resembles a mechanical click
         osc.type = 'square';
         osc.frequency.setValueAtTime(600, audioCtx.currentTime + timeOffset);
 
-        // Amplitude envelope to make it extremely brief and percussive
         gainNode.gain.setValueAtTime(0, audioCtx.currentTime + timeOffset);
         gainNode.gain.linearRampToValueAtTime(0.5, audioCtx.currentTime + timeOffset + 0.01);
-        gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + timeOffset + 0.08);
+        
+        // Smooth decay based on requested duration
+        gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + timeOffset + (durationSec * 0.9));
 
         osc.start(audioCtx.currentTime + timeOffset);
-        osc.stop(audioCtx.currentTime + timeOffset + 0.1);
+        osc.stop(audioCtx.currentTime + timeOffset + durationSec);
     }
 
     // Fires the speech synthesis after a specific delay
@@ -2262,40 +2274,47 @@ Reference the environmental data with the biological and veterinary data. Is the
         }
     }
 
-    // Command Logic Engine for Dogs
-    function playDogCommand(cmd) {
+    // Master execution engine replacing playDogCommand / playBirdCommand
+    function executeDynamicCommand(index) {
+        const cmdData = dynamicCommands[index];
+        if(!cmdData) return;
+
         initAudio();
         window.speechSynthesis.cancel();
-        
-        triggerWalkSensorBuzzer(cmd);
 
-        if (cmd === 'sit') {
-            playClickSound(0);
-            speakCommand("Sit", 300);
-        } else if (cmd === 'laydown') {
-            playClickSound(0);
-            speakCommand("Down", 300);
-        } else if (cmd === 'follow') {
-            playClickSound(0);
-            playClickSound(0.2); // Second click 200ms later
-            speakCommand("Come", 500);
-        } else if (cmd === 'cross') {
-            // Rapid continuous clicks imitating an accessibility traffic light
-            for (let i = 0; i < 6; i++) {
-                playClickSound(i * 0.15); // 150ms gap between each click
+        // Sanitize command string for the ESP32 endpoint (e.g., "Lay Down" -> "laydown")
+        const networkCmd = cmdData.Command.toLowerCase().replace(/[^a-z0-9]/g, '');
+        triggerWalkSensorBuzzer(networkCmd);
+
+        const useVoice = cmdData.VoiceCommand === 'T';
+        const useBeep = cmdData.BeepCommand === 'T';
+        
+        const numBeeps = parseInt(cmdData.NumberOfBeep) || 0;
+        const beepDur = parseFloat(cmdData.BeepDuration) || 0.1;
+        const delayBetween = parseFloat(cmdData.DelayBetweenBeep) || 0;
+
+        let totalBeepTime = 0;
+
+        // 1. Process Beeps
+        if (useBeep && numBeeps > 0) {
+            for (let i = 0; i < numBeeps; i++) {
+                // Offset calculation includes the duration of previous beeps + delay
+                let offset = i * (beepDur + delayBetween);
+                playClickSound(offset, beepDur);
+                totalBeepTime = offset + beepDur;
             }
-            speakCommand("Cross", 1000); // Wait for sequence to finish before speaking
+        }
+
+        // 2. Process Voice Synthesis
+        if (useVoice && cmdData.VoiceSpeak) {
+            const pitch = cmdData.AnimalType === 'Parrot' ? 1.2 : 1.0;
+            
+            // Wait for all beeps to finish before speaking, plus a 200ms natural buffer
+            const speechDelayMs = (totalBeepTime > 0) ? (totalBeepTime * 1000) + 200 : 0;
+            
+            speakCommand(cmdData.VoiceSpeak, speechDelayMs, pitch);
         }
     }
-
-    // Command Logic Engine for Birds
-    function playBirdCommand(cmd) {
-        window.speechSynthesis.cancel();
-        // Give birds a slightly higher pitch (1.2) to simulate an avian-friendly tone
-        speakCommand(cmd, 0, 1.2); 
-    }
-
-
     
     // ==========================================
     // --- GITHUB AUTO VERSION TRACKER ---
