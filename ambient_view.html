@@ -2277,4 +2277,67 @@ Reference the environmental data with the biological and veterinary data. Is the
             speakCommand("Down", 300);
         } else if (cmd === 'follow') {
             playClickSound(0);
-            playClickSound(I encountered an error doing what you asked. Could you try again?
+            playClickSound(0.2); // Second click 200ms later
+            speakCommand("Come", 500);
+        } else if (cmd === 'cross') {
+            // Rapid continuous clicks imitating an accessibility traffic light
+            for (let i = 0; i < 6; i++) {
+                playClickSound(i * 0.15); // 150ms gap between each click
+            }
+            speakCommand("Cross", 1000); // Wait for sequence to finish before speaking
+        }
+    }
+
+    // Command Logic Engine for Birds
+    function playBirdCommand(cmd) {
+        window.speechSynthesis.cancel();
+        // Give birds a slightly higher pitch (1.2) to simulate an avian-friendly tone
+        speakCommand(cmd, 0, 1.2); 
+    }
+
+
+    
+    // ==========================================
+    // --- GITHUB AUTO VERSION TRACKER ---
+    // ==========================================
+    async function fetchGitHubVersion() {
+        const flagElement = document.getElementById('gh-version-flag');
+        if (!flagElement) return;
+
+        // URL da API pública do GitHub apontando para os commits do seu repositório
+        const repoUrl = 'https://api.github.com/repos/ashuhda-tech/TerraConnect_Technologies/commits?per_page=1';
+
+        try {
+            const response = await fetch(repoUrl);
+            
+            if (response.ok) {
+                const data = await response.json();
+                const latestCommit = data[0];
+                
+                // Pega os 7 primeiros caracteres do hash do commit (Padrão de versão)
+                const shortSha = latestCommit.sha.substring(0, 7);
+                
+                // Pega a data e formata
+                const commitDate = new Date(latestCommit.commit.author.date);
+                const formattedDate = `${String(commitDate.getDate()).padStart(2, '0')}/${String(commitDate.getMonth() + 1).padStart(2, '0')}/${commitDate.getFullYear()}`;
+
+                flagElement.innerHTML = `<i class="fas fa-code-branch"></i> Build ${shortSha} (${formattedDate})`;
+            } else {
+                // Se o GitHub limitar as requisições (Rate Limit)
+                flagElement.innerHTML = `<i class="fas fa-code-branch"></i> Live Build`;
+            }
+        } catch (error) {
+            // Se houver erro de rede
+            flagElement.innerHTML = `<i class="fas fa-code-branch"></i> Local Build`;
+        }
+    }
+
+    // Chama a função assim que a página carrega
+    document.addEventListener('DOMContentLoaded', fetchGitHubVersion);
+    </script>
+<!-- VERSION FLAG -->
+    <div id="gh-version-flag" class="app-version-flag">
+        <i class="fas fa-spinner fa-spin"></i> Fetching Build...
+    </div>
+</body>
+</html>
