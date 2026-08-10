@@ -1937,17 +1937,20 @@ async function openChart(fieldId, label) {
         if(birdGrid) birdGrid.innerHTML = '';
 
         dynamicCommands.forEach((cmd, index) => {
-            // Skip empty rows
+            // Ignora linhas sem comando
             if (!cmd.Command) return; 
 
-            const animal = cmd.AnimalType;
+            // 1. Padronização vital: remove espaços invisíveis e joga tudo para minúsculo
+            const animal = String(cmd.AnimalType || '').trim().toLowerCase();
             const commandName = cmd.Command;
             const voiceSpeak = cmd.VoiceSpeak || '';
             const numBeeps = parseInt(cmd.NumberOfBeep) || 0;
             
             const color = commandPalette[index % commandPalette.length];
             const icon = commandIcons[index % commandIcons.length];
-            const animalIcon = animal === 'Dog' ? 'fa-dog' : 'fa-crow';
+            
+            // 2. Avalia usando a string limpa
+            const animalIcon = animal === 'dog' ? 'fa-dog' : 'fa-crow';
 
             const cardHTML = `
                 <div class="sensor-card" style="flex-direction: column; cursor: pointer; justify-content: center;" onclick="executeDynamicCommand(${index})">
@@ -1962,11 +1965,12 @@ async function openChart(fieldId, label) {
                 </div>
             `;
 
-            if (animal === 'Dog' && dogGrid) {
+            // 3. Distribuição baseada na string padronizada (aceita 'parrot' ou 'bird')
+            if (animal === 'dog' && dogGrid) {
                 dogGrid.innerHTML += cardHTML;
                 document.getElementById('edu-clicker-section').style.display = 'block';
             }
-            if (animal === 'Parrot' && birdGrid) {
+            if ((animal === 'parrot' || animal === 'bird') && birdGrid) {
                 birdGrid.innerHTML += cardHTML;
                 document.getElementById('edu-voice-section').style.display = 'block';
             }
@@ -2313,7 +2317,8 @@ Reference the environmental data with the biological and veterinary data. Is the
 
         // 2. Process Voice Synthesis
         if (useVoice && cmdData.VoiceSpeak) {
-            const pitch = cmdData.AnimalType === 'Parrot' ? 1.2 : 1.0;
+            const animalStr = String(cmdData.AnimalType || '').trim().toLowerCase();
+            const pitch = (animalStr === 'parrot' || animalStr === 'bird') ? 1.2 : 1.0;
             
             // Wait for all beeps to finish before speaking, plus a 200ms natural buffer
             const speechDelayMs = (totalBeepTime > 0) ? (totalBeepTime * 1000) + 200 : 0;
