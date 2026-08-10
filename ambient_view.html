@@ -268,11 +268,10 @@
         </div>
         
         
-        <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-top: 20px; margin-bottom: 15px;">
-                <i class="fas fa-broadcast-tower"></i> Main Sensor Unit
-            </h3>
-        
-       <div class="sensor-grid" id="sensor-grid-main">
+        <h3 class="a70-font" id="header-main" style="font-size: 0.9rem; color: var(--accent); margin-top: 20px; margin-bottom: 15px;">
+            <i class="fas fa-broadcast-tower"></i> Main Sensor Unit
+        </h3>
+        <div class="sensor-grid" id="sensor-grid-main">
             <div class="sensor-card" onclick="openChart(3, 'CO2 Concentration')" style="cursor: pointer;">
                 <i class="fas fa-cloud sensor-icon" style="color: #a3b18a;"></i>
                 <div class="sensor-data">
@@ -331,11 +330,10 @@
             </div>
         </div>
 
-            <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-top: 20px; margin-bottom: 15px;">
-                <i class="fas fa-broadcast-tower"></i> Remote Sensor Unit
-            </h3>
-        
-       <div class="sensor-grid" id="sensor-grid-remote">
+        <h3 class="a70-font" id="header-remote" style="font-size: 0.9rem; color: var(--accent); margin-top: 20px; margin-bottom: 15px;">
+            <i class="fas fa-broadcast-tower"></i> Remote Sensor Unit
+        </h3>
+        <div class="sensor-grid" id="sensor-grid-remote">
             <div class="sensor-card-rs" onclick="openChart(21, ' Remote Sensor | Air Temperature')" style="cursor: pointer;">
                 <i class="fas fa-thermometer-half sensor-icon" style="color: #ff5f5f;"></i>
                 <div class="sensor-data">
@@ -373,10 +371,9 @@
             </div>
         </div>
 
-        <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-top: 20px; margin-bottom: 15px;">
+        <h3 class="a70-font" id="header-walk" style="font-size: 0.9rem; color: var(--accent); margin-top: 20px; margin-bottom: 15px;">
             <i class="fas fa-broadcast-tower"></i> Walk Sensor Unit
         </h3>
-        
         <div class="sensor-grid" id="sensor-grid-walk">
             <!-- Note: ID 31 opens chart based on Field 1 (LAT) for history -->
             <div class="sensor-card" onclick="openChart(31, 'Location History (LAT)')" style="cursor: pointer;">
@@ -920,13 +917,47 @@ async function loadData() {
             }
 
             mainChannelId = data[10];
+            const mainWriteKey = data[11];
             mainReadKey = data[12];
+            
             r1ChannelId = data[13];
+            const r1WriteKey = data[14];
             r1ReadKey = data[15];
             
             // --- Mapping GPS/Walk Sensor Variables from Google Sheet DB ---
             gpsChannelId = data[25]; 
+            const gpsWriteKey = data[26];
             gpsReadKey = data[27];
+
+            // --- CONDITIONAL VISIBILITY ENGINE ---
+            const isConfigured = (val) => val && String(val).trim() !== "" && String(val).trim() !== "---";
+            
+            // 1. Main Sensor Unit
+            if (isConfigured(mainChannelId) && isConfigured(mainWriteKey) && isConfigured(mainReadKey)) {
+                document.getElementById('header-main').style.display = 'block';
+                document.getElementById('sensor-grid-main').style.display = 'grid';
+            } else {
+                document.getElementById('header-main').style.display = 'none';
+                document.getElementById('sensor-grid-main').style.display = 'none';
+            }
+            
+            // 2. Remote Sensor Unit
+            if (isConfigured(r1ChannelId) && isConfigured(r1WriteKey) && isConfigured(r1ReadKey)) {
+                document.getElementById('header-remote').style.display = 'block';
+                document.getElementById('sensor-grid-remote').style.display = 'grid';
+            } else {
+                document.getElementById('header-remote').style.display = 'none';
+                document.getElementById('sensor-grid-remote').style.display = 'none';
+            }
+            
+            // 3. Walk Sensor Unit
+            if (isConfigured(gpsChannelId) && isConfigured(gpsWriteKey) && isConfigured(gpsReadKey)) {
+                document.getElementById('header-walk').style.display = 'block';
+                document.getElementById('sensor-grid-walk').style.display = 'grid';
+            } else {
+                document.getElementById('header-walk').style.display = 'none';
+                document.getElementById('sensor-grid-walk').style.display = 'none';
+            }
             
             walkSensorIp = data[32];
             document.getElementById('dynChannel').innerText = mainChannelId || "---";
@@ -2246,67 +2277,4 @@ Reference the environmental data with the biological and veterinary data. Is the
             speakCommand("Down", 300);
         } else if (cmd === 'follow') {
             playClickSound(0);
-            playClickSound(0.2); // Second click 200ms later
-            speakCommand("Come", 500);
-        } else if (cmd === 'cross') {
-            // Rapid continuous clicks imitating an accessibility traffic light
-            for (let i = 0; i < 6; i++) {
-                playClickSound(i * 0.15); // 150ms gap between each click
-            }
-            speakCommand("Cross", 1000); // Wait for sequence to finish before speaking
-        }
-    }
-
-    // Command Logic Engine for Birds
-    function playBirdCommand(cmd) {
-        window.speechSynthesis.cancel();
-        // Give birds a slightly higher pitch (1.2) to simulate an avian-friendly tone
-        speakCommand(cmd, 0, 1.2); 
-    }
-
-
-    
-    // ==========================================
-    // --- GITHUB AUTO VERSION TRACKER ---
-    // ==========================================
-    async function fetchGitHubVersion() {
-        const flagElement = document.getElementById('gh-version-flag');
-        if (!flagElement) return;
-
-        // URL da API pública do GitHub apontando para os commits do seu repositório
-        const repoUrl = 'https://api.github.com/repos/ashuhda-tech/TerraConnect_Technologies/commits?per_page=1';
-
-        try {
-            const response = await fetch(repoUrl);
-            
-            if (response.ok) {
-                const data = await response.json();
-                const latestCommit = data[0];
-                
-                // Pega os 7 primeiros caracteres do hash do commit (Padrão de versão)
-                const shortSha = latestCommit.sha.substring(0, 7);
-                
-                // Pega a data e formata
-                const commitDate = new Date(latestCommit.commit.author.date);
-                const formattedDate = `${String(commitDate.getDate()).padStart(2, '0')}/${String(commitDate.getMonth() + 1).padStart(2, '0')}/${commitDate.getFullYear()}`;
-
-                flagElement.innerHTML = `<i class="fas fa-code-branch"></i> Build ${shortSha} (${formattedDate})`;
-            } else {
-                // Se o GitHub limitar as requisições (Rate Limit)
-                flagElement.innerHTML = `<i class="fas fa-code-branch"></i> Live Build`;
-            }
-        } catch (error) {
-            // Se houver erro de rede
-            flagElement.innerHTML = `<i class="fas fa-code-branch"></i> Local Build`;
-        }
-    }
-
-    // Chama a função assim que a página carrega
-    document.addEventListener('DOMContentLoaded', fetchGitHubVersion);
-    </script>
-<!-- VERSION FLAG -->
-    <div id="gh-version-flag" class="app-version-flag">
-        <i class="fas fa-spinner fa-spin"></i> Fetching Build...
-    </div>
-</body>
-</html>
+            playClickSound(I encountered an error doing what you asked. Could you try again?
