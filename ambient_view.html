@@ -846,8 +846,6 @@ async function loadData() {
             document.getElementById('dynStatus').innerText = "Validando credenciais do plano..."; 
             const liveUserPlan = await getLiveUserPlan(loggedUser.id);
             document.getElementById('dynStatus').innerText = "On-time Environmental Monitoring"; 
-            
-            await applyVisibilityRules(animalTypeRaw, liveUserPlan);
 
             const videoElement = document.getElementById('bgVideo');
             if (videoElement) {
@@ -907,6 +905,7 @@ async function loadData() {
                 document.getElementById('header-walk').style.display = 'none';
                 document.getElementById('sensor-grid-walk').style.display = 'none';
             }
+            await applyVisibilityRules(animalTypeRaw, liveUserPlan);
             
             walkSensorIp = data[32];
             document.getElementById('dynChannel').innerText = mainChannelId || "---";
