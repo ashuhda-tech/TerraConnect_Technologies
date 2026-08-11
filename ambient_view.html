@@ -434,7 +434,7 @@
         <!-- --- Environment Active Configuration --- -->    
         <div id="section-env-config">
             <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-bottom: 15px;">
-                <i class="fas fa-database"></i> Environment Active Configuration
+                <i class="fas fa-sliders-h"></i> Environment Active Configuration
             </h3>
 
             <div class="management-grid">
@@ -520,7 +520,7 @@
         <!-- --- Control Center --- -->
         <div id="section-control-center">
             <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-bottom: 15px;">
-                <i class="fas fa-sliders-h"></i> Control Center
+                <i class="fas fa-database"></i> Control Center
             </h3>
                     
             <div class="masonry-grid">
@@ -818,6 +818,33 @@ function removeLoader() {
     }, 800);
 }
 
+// NOVO: Função Global para verificar e ocultar seções sem nenhum conteúdo ativo
+function cleanUpEmptySections() {
+    const sections = document.querySelectorAll('div[id^="section-"], div#vet-section');
+    sections.forEach(section => {
+        // Se a seção já está oculta explicitamente, pula
+        if (section.style.display === 'none') return;
+        
+        // Pega todos os cards de conteúdo desta seção
+        const cards = section.querySelectorAll('.sensor-card, .sensor-card-rs, .input-card, .summary-card, .chart-card, .camera-card');
+        
+        if (cards.length > 0) {
+            let anyVisible = false;
+            cards.forEach(card => {
+                // Checa o estilo inline e o estilo computado
+                if (card.style.display !== 'none' && window.getComputedStyle(card).display !== 'none') {
+                    anyVisible = true;
+                }
+            });
+            
+            // Se nenhum card está visível, oculta a seção inteira (incluindo o header)
+            if (!anyVisible) {
+                section.style.display = 'none';
+            }
+        }
+    });
+}
+
 async function loadData() {
     if (!currentPageId || !loggedUser || !loggedUser.id) return;
         
@@ -905,28 +932,37 @@ async function loadData() {
             // --- CONDITIONAL VISIBILITY ENGINE ---
             const isConfigured = (val) => val && String(val).trim() !== "" && String(val).trim() !== "---";
             
+            // RUN THIS FIRST: Fetch flags and apply plan-based visibility rules
+            await applyVisibilityRules(animalTypeRaw, liveUserPlan);
+
+            // RUN THIS SECOND: Local configuration visibility checks
             // 1. Main Sensor Unit
             if (isConfigured(mainChannelId) && isConfigured(mainWriteKey) && isConfigured(mainReadKey)) {
-                document.getElementById('section-main').style.display = 'block';
+                // Only explicitly show it if it wasn't already hidden by the plan limits
+                if (document.getElementById('section-main').style.display !== 'none') {
+                    document.getElementById('section-main').style.display = 'block';
+                }
             } else {
                 document.getElementById('section-main').style.display = 'none';
             }
             
             // 2. Remote Sensor Unit
             if (isConfigured(r1ChannelId) && isConfigured(r1WriteKey) && isConfigured(r1ReadKey)) {
-                document.getElementById('section-remote').style.display = 'block';
+                if (document.getElementById('section-remote').style.display !== 'none') {
+                    document.getElementById('section-remote').style.display = 'block';
+                }
             } else {
                 document.getElementById('section-remote').style.display = 'none';
             }
             
             // 3. Walk Sensor Unit
             if (isConfigured(gpsChannelId) && isConfigured(gpsWriteKey) && isConfigured(gpsReadKey)) {
-                document.getElementById('section-walk').style.display = 'block';
+                if (document.getElementById('section-walk').style.display !== 'none') {
+                    document.getElementById('section-walk').style.display = 'block';
+                }
             } else {
                 document.getElementById('section-walk').style.display = 'none';
             }
-            
-            await applyVisibilityRules(animalTypeRaw, liveUserPlan);
             
             walkSensorIp = data[32];
             document.getElementById('dynChannel').innerText = mainChannelId || "---";
@@ -951,6 +987,9 @@ async function loadData() {
             setInterval(updateSensors, 20000);
             
             if (typeof loadExistingConfig === "function") loadExistingConfig();
+            
+            // --- NEW: CLEANUP PASS FOR EMPTY SECTIONS ---
+            cleanUpEmptySections();
             
             // Remove loader se tudo deu certo
             removeLoader();
