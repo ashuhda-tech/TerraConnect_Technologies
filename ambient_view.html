@@ -252,230 +252,244 @@
             <p id="dynStatus">On-time Environmental Monitoring</p>
         </header>
 
-        <h3 class="a70-font" style="font-size: 0.9rem; color: #a3b18a; margin: 30px 0 15px 0; display: flex; align-items: center; justify-content: space-between; width: 100%;">
-            <span><i class="fas fa-brain"></i> AI Insights</span>
-            <button id="btnListenAI" onclick="toggleSpeakAI()" style="background: transparent; border: 1px solid #a3b18a; color: #a3b18a; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; display: none; align-items: center; gap: 6px; font-family: 'Inter', sans-serif;">
-                <i id="speakIcon" class="fas fa-volume-up"></i> Listen
+        <!-- --- AI Insights --- -->                  
+        <div id="section-ai">
+            <h3 class="a70-font" style="font-size: 0.9rem; color: #a3b18a; margin: 30px 0 15px 0; display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                <span><i class="fas fa-brain"></i> AI Insights</span>
+                <button id="btnListenAI" onclick="toggleSpeakAI()" style="background: transparent; border: 1px solid #a3b18a; color: #a3b18a; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; display: none; align-items: center; gap: 6px; font-family: 'Inter', sans-serif;">
+                    <i id="speakIcon" class="fas fa-volume-up"></i> Listen
+                </button>
+            </h3>
+            <div class="sensor-card" style="flex-direction: column; align-items: flex-start; background: rgba(10, 20, 15, 0.8) !important; border-left: 4px solid #a3b18a;">
+                <p id="aiInsightText" style="font-size: 0.85rem; line-height: 1.6; color: var(--text-light); margin: 0 0 15px 0; font-style: italic;">
+                    Click to generate AI Insight.
+                </p>
+                <button class="btn-send" onclick="generateAIInsight()" id="btnAi" style="width: 100%; border-color: #a3b18a; color: #a3b18a;">
+                    <i class="fas fa-magic"></i> ANALYZE CURRENT DATA
+                </button>
+            </div>
+        </div>
+
+        <!-- --- Main Sensor Unit --- -->          
+        <div id="section-main">
+            <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-top: 20px; margin-bottom: 15px;">
+                <i class="fas fa-broadcast-tower"></i> Main Sensor Unit
+            </h3>
+            <div class="sensor-grid" id="sensor-grid-main">
+                <div class="sensor-card" onclick="openChart(3, 'CO2 Concentration')" style="cursor: pointer;">
+                    <i class="fas fa-cloud sensor-icon" style="color: #a3b18a;"></i>
+                    <div class="sensor-data">
+                        <span class="sensor-label">CO2 Concentration</span>
+                        <div class="sensor-val" id="valField3">--<span>ppm</span></div>
+                    </div>
+                </div>
+                <div class="sensor-card" onclick="openChart(1, 'Air Temperature')" style="cursor: pointer;">
+                    <i class="fas fa-thermometer-half sensor-icon" style="color: #00f2ff;"></i>
+                    <div class="sensor-data">
+                        <span class="sensor-label">Air Temperature</span>
+                        <div class="sensor-val" id="valField1">--<span>°C</span></div>
+                    </div>
+                </div>
+                <div class="sensor-card" onclick="openChart(2, 'Air Humidity')" style="cursor: pointer;">
+                    <i class="fas fa-wind sensor-icon" style="color: #74b9ff;"></i>
+                    <div class="sensor-data">
+                        <span class="sensor-label">Air Humidity</span>
+                        <div class="sensor-val" id="valField2">--<span>%</span></div>
+                    </div>
+                </div>
+                <div class="sensor-card" onclick="openChart(4, 'Ground Humidity')" style="cursor: pointer;">
+                    <i class="fas fa-mountain sensor-icon" style="color: #d4a373;"></i>
+                    <div class="sensor-data">
+                        <span class="sensor-label">Ground Humidity</span>
+                        <div class="sensor-val" id="valField4">--<span>%</span></div>
+                    </div>
+                </div>
+                <div class="sensor-card" onclick="openChart(5, 'Water Level')" style="cursor: pointer;">
+                    <i class="fas fa-water sensor-icon" style="color: #00f2ff;"></i>
+                    <div class="sensor-data">
+                        <span class="sensor-label">Water Level</span>
+                        <div class="sensor-val" id="valField5">--<span>%</span></div>
+                    </div>
+                </div>
+               <div class="sensor-card" onclick="openChart(7, 'Light Intensity')" style="cursor: pointer;">
+                    <i class="fas fa-sun sensor-icon" style="color: #d4a373;"></i>
+                    <div class="sensor-data">
+                        <span class="sensor-label">Light Intensity</span>
+                        <div class="sensor-val" id="valField7">--<span>lx</span></div>
+                    </div>
+                </div>
+                <div class="sensor-card" onclick="openChart(6, 'Battery State of Charge')" style="cursor: pointer;">
+                    <i class="fas fa-battery-full sensor-icon" style="color: #6ecc87;"></i>
+                    <div class="sensor-data">
+                        <span class="sensor-label">Battery SOC</span>
+                        <div class="sensor-val" id="valField6">--<span>%</span></div>
+                    </div>
+                </div>
+               <div class="sensor-card" onclick="openChart(8, 'Comunication Signal')" style="cursor: pointer;">
+                    <i class="fas fa-signal sensor-icon" style="color: #00f2ff;"></i>
+                    <div class="sensor-data">
+                        <span class="sensor-label">RSSI</span>
+                        <div class="sensor-val" id="valField8">--<span>dBm</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- --- Remote Sensor Unit --- -->                
+        <div id="section-remote">
+            <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-top: 20px; margin-bottom: 15px;">
+                <i class="fas fa-broadcast-tower"></i> Remote Sensor Unit
+            </h3>
+            <div class="sensor-grid" id="sensor-grid-remote">
+                <div class="sensor-card-rs" onclick="openChart(21, ' Remote Sensor | Air Temperature')" style="cursor: pointer;">
+                    <i class="fas fa-thermometer-half sensor-icon" style="color: #ff5f5f;"></i>
+                    <div class="sensor-data">
+                        <span class="sensor-label">RS | Air Temperature</span>
+                        <div class="sensor-val" id="valField21">--<span>°C</span></div>
+                    </div>
+                </div>
+                <div class="sensor-card-rs" onclick="openChart(22, 'Remote Sensor | Air Humidity')" style="cursor: pointer;">
+                    <i class="fas fa-wind sensor-icon" style="color: #74b9ff;"></i>
+                    <div class="sensor-data">
+                        <span class="sensor-label">RS | Air Humidity</span>
+                        <div class="sensor-val" id="valField22">--<span>%</span></div>
+                    </div>
+                </div>
+                <div class="sensor-card-rs" onclick="openChart(23, 'Remote Sensor | Ground Humidity')" style="cursor: pointer;">
+                    <i class="fas fa-mountain sensor-icon" style="color: #d4a373;"></i>
+                    <div class="sensor-data">
+                        <span class="sensor-label">RS | Ground Humidity</span>
+                        <div class="sensor-val" id="valField23">--<span>%</span></div>
+                    </div>
+                </div>
+               <div class="sensor-card-rs" onclick="openChart(24, 'Remote Sensor | Battery State of Charge')" style="cursor: pointer;">
+                    <i class="fas fa-battery-full sensor-icon" style="color: #6ecc87;"></i>
+                    <div class="sensor-data">
+                        <span class="sensor-label">RS | Battery SOC</span>
+                        <div class="sensor-val" id="valField24">--<span>%</span></div>
+                    </div>
+                </div>
+               <div class="sensor-card-rs" onclick="openChart(25, 'Remote Sensor | Comunication Signal')" style="cursor: pointer;">
+                    <i class="fas fa-signal sensor-icon" style="color: #00f2ff;"></i>
+                    <div class="sensor-data">
+                        <span class="sensor-label">RS | RSSI</span>
+                        <div class="sensor-val" id="valField25">--<span>dBm</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- --- Walk Sensor Unit --- -->            
+        <div id="section-walk">
+            <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-top: 20px; margin-bottom: 15px;">
+                <i class="fas fa-broadcast-tower"></i> Walk Sensor Unit
+            </h3>
+            <div class="sensor-grid" id="sensor-grid-walk">
+                <!-- Note: ID 31 opens chart based on Field 1 (LAT) for history -->
+                <div class="sensor-card" onclick="openChart(31, 'Location History (LAT)')" style="cursor: pointer;">
+                    <i class="fas fa-location-dot sensor-icon" style="color: #a3b18a;"></i>
+                    <div class="sensor-data">
+                        <span class="sensor-label">Latitude And Longitude</span>
+                        <div class="sensor-val" id="valField31">--<span>°</span></div>
+                    </div>
+                </div>
+                <div class="sensor-card" onclick="openChart(33, 'Altitude')" style="cursor: pointer;">
+                    <i class="fas fa-mountain sensor-icon" style="color: #a3b18a;"></i>
+                    <div class="sensor-data">
+                        <span class="sensor-label">Altitude</span>
+                        <div class="sensor-val" id="valField33">--<span>m</span></div>
+                    </div>
+                </div>
+               <div class="sensor-card" onclick="openChart(34, 'Satelites Connected')" style="cursor: pointer;">
+                    <i class="fas fa-satellite sensor-icon" style="color: #a3b18a;"></i>
+                    <div class="sensor-data">
+                        <span class="sensor-label">Number of Satelites Connected</span>
+                        <div class="sensor-val" id="valField34">--<span> Sats</span></div>
+                    </div>
+                </div>
+                <div class="sensor-card" onclick="openChart(35, 'Comunication Signal')" style="cursor: pointer;">
+                    <i class="fas fa-signal sensor-icon" style="color: #00f2ff;"></i>
+                    <div class="sensor-data">
+                        <span class="sensor-label">RSSI</span>
+                        <div class="sensor-val" id="valField35">--<span>dBm</span></div>
+                    </div>
+                </div>
+               <div class="sensor-card" onclick="openChart(36, 'Dimensions')" style="cursor: pointer;">
+                    <i class="fas fa-cube sensor-icon" style="color: #a3b18a;"></i>
+                    <div class="sensor-data">
+                        <span class="sensor-label">Nº Dimensions</span>
+                        <div class="sensor-val" id="valField36">--<span>D</span></div>
+                    </div>
+                </div>
+                <div class="sensor-card" onclick="openChart(37, 'Heart Rate')" style="cursor: pointer;">
+                    <i class="fas fa-heart sensor-icon" style="color: #ff5f5f;"></i>
+                    <div class="sensor-data">
+                        <span class="sensor-label">Heart Rate</span>
+                        <div class="sensor-val" id="valField37">--<span>BPM</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- --- Environment Active Configuration --- -->    
+        <div id="section-env-config">
+            <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-bottom: 15px;">
+                <i class="fas fa-database"></i> Environment Active Configuration
+            </h3>
+
+            <div class="management-grid">
+                <div class="input-card">
+                    <div class="input-header"><i class="fas fa-temperature-high" style="color: #ff5f5f"></i> Max Temp (ºC)</div>
+                    <div class="input-group">
+                        <input type="number" id="cfgTempMax" class="input-field" placeholder="0.0">
+                    </div>
+                </div>
+
+                <div class="input-card">
+                    <div class="input-header"><i class="fas fa-temperature-low" style="color: #00f2ff"></i> Min Temp (ºC)</div>
+                    <div class="input-group">
+                        <input type="number" id="cfgTempMin" class="input-field" placeholder="0.0">
+                    </div>
+                </div>
+
+                <div class="input-card">
+                    <div class="input-header"><i class="fas fa-droplet" style="color: #ff5f5f"></i> Max Humidity (%)</div>
+                    <div class="input-group">
+                        <input type="number" id="cfgHumMax" class="input-field" placeholder="0">
+                    </div>
+                </div>
+
+                <div class="input-card">
+                    <div class="input-header"><i class="fas fa-droplet" style="color: #00f2ff"></i> Min Humidity (%)</div>
+                    <div class="input-group">
+                        <input type="number" id="cfgHumMin" class="input-field" placeholder="0">
+                    </div>
+                </div>
+
+                <div class="input-card">
+                    <div class="input-header"><i class="fas fa-clock" style="color: #a3b18a"></i> Feed Interval (h)</div>
+                    <div class="input-group">
+                        <input type="number" id="cfgFeedInterval" class="input-field" placeholder="12">
+                    </div>
+                </div>
+
+                <div class="input-card">
+                    <div class="input-header"><i class="fas fa-utensils" style="color: #d4a373"></i> Feed Amount (g)</div>
+                    <div class="input-group">
+                        <input type="number" id="cfgFeedAmount" class="input-field" placeholder="200">
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn-send" onclick="sendDeviceConfig()" 
+                style="width: 100%; margin-top: 15px; height: 40px; display: flex; align-items: center; justify-content: center; gap: 10px; font-family: inherit; font-weight: bold;">
+                <i class="fas fa-sync-alt"></i> SAVE AND SYNC DEVICE
             </button>
-        </h3>
-        <div class="sensor-card" style="flex-direction: column; align-items: flex-start; background: rgba(10, 20, 15, 0.8) !important; border-left: 4px solid #a3b18a;">
-            <p id="aiInsightText" style="font-size: 0.85rem; line-height: 1.6; color: var(--text-light); margin: 0 0 15px 0; font-style: italic;">
-                Click to generate AI Insight.
-            </p>
-            <button class="btn-send" onclick="generateAIInsight()" id="btnAi" style="width: 100%; border-color: #a3b18a; color: #a3b18a;">
-                <i class="fas fa-magic"></i> ANALYZE CURRENT DATA
-            </button>
-        </div>
-        
-        
-        <h3 class="a70-font" id="header-main" style="font-size: 0.9rem; color: var(--accent); margin-top: 20px; margin-bottom: 15px;">
-            <i class="fas fa-broadcast-tower"></i> Main Sensor Unit
-        </h3>
-        <div class="sensor-grid" id="sensor-grid-main">
-            <div class="sensor-card" onclick="openChart(3, 'CO2 Concentration')" style="cursor: pointer;">
-                <i class="fas fa-cloud sensor-icon" style="color: #a3b18a;"></i>
-                <div class="sensor-data">
-                    <span class="sensor-label">CO2 Concentration</span>
-                    <div class="sensor-val" id="valField3">--<span>ppm</span></div>
-                </div>
-            </div>
-            <div class="sensor-card" onclick="openChart(1, 'Air Temperature')" style="cursor: pointer;">
-                <i class="fas fa-thermometer-half sensor-icon" style="color: #00f2ff;"></i>
-                <div class="sensor-data">
-                    <span class="sensor-label">Air Temperature</span>
-                    <div class="sensor-val" id="valField1">--<span>°C</span></div>
-                </div>
-            </div>
-            <div class="sensor-card" onclick="openChart(2, 'Air Humidity')" style="cursor: pointer;">
-                <i class="fas fa-wind sensor-icon" style="color: #74b9ff;"></i>
-                <div class="sensor-data">
-                    <span class="sensor-label">Air Humidity</span>
-                    <div class="sensor-val" id="valField2">--<span>%</span></div>
-                </div>
-            </div>
-            <div class="sensor-card" onclick="openChart(4, 'Ground Humidity')" style="cursor: pointer;">
-                <i class="fas fa-mountain sensor-icon" style="color: #d4a373;"></i>
-                <div class="sensor-data">
-                    <span class="sensor-label">Ground Humidity</span>
-                    <div class="sensor-val" id="valField4">--<span>%</span></div>
-                </div>
-            </div>
-            <div class="sensor-card" onclick="openChart(5, 'Water Level')" style="cursor: pointer;">
-                <i class="fas fa-water sensor-icon" style="color: #00f2ff;"></i>
-                <div class="sensor-data">
-                    <span class="sensor-label">Water Level</span>
-                    <div class="sensor-val" id="valField5">--<span>%</span></div>
-                </div>
-            </div>
-           <div class="sensor-card" onclick="openChart(7, 'Light Intensity')" style="cursor: pointer;">
-                <i class="fas fa-sun sensor-icon" style="color: #d4a373;"></i>
-                <div class="sensor-data">
-                    <span class="sensor-label">Light Intensity</span>
-                    <div class="sensor-val" id="valField7">--<span>lx</span></div>
-                </div>
-            </div>
-            <div class="sensor-card" onclick="openChart(6, 'Battery State of Charge')" style="cursor: pointer;">
-                <i class="fas fa-battery-full sensor-icon" style="color: #6ecc87;"></i>
-                <div class="sensor-data">
-                    <span class="sensor-label">Battery SOC</span>
-                    <div class="sensor-val" id="valField6">--<span>%</span></div>
-                </div>
-            </div>
-           <div class="sensor-card" onclick="openChart(8, 'Comunication Signal')" style="cursor: pointer;">
-                <i class="fas fa-signal sensor-icon" style="color: #00f2ff;"></i>
-                <div class="sensor-data">
-                    <span class="sensor-label">RSSI</span>
-                    <div class="sensor-val" id="valField8">--<span>dBm</span></div>
-                </div>
-            </div>
+            <hr style="border: 0.5px solid #eee; margin: 20px 0;">
         </div>
 
-        <h3 class="a70-font" id="header-remote" style="font-size: 0.9rem; color: var(--accent); margin-top: 20px; margin-bottom: 15px;">
-            <i class="fas fa-broadcast-tower"></i> Remote Sensor Unit
-        </h3>
-        <div class="sensor-grid" id="sensor-grid-remote">
-            <div class="sensor-card-rs" onclick="openChart(21, ' Remote Sensor | Air Temperature')" style="cursor: pointer;">
-                <i class="fas fa-thermometer-half sensor-icon" style="color: #ff5f5f;"></i>
-                <div class="sensor-data">
-                    <span class="sensor-label">RS | Air Temperature</span>
-                    <div class="sensor-val" id="valField21">--<span>°C</span></div>
-                </div>
-            </div>
-            <div class="sensor-card-rs" onclick="openChart(22, 'Remote Sensor | Air Humidity')" style="cursor: pointer;">
-                <i class="fas fa-wind sensor-icon" style="color: #74b9ff;"></i>
-                <div class="sensor-data">
-                    <span class="sensor-label">RS | Air Humidity</span>
-                    <div class="sensor-val" id="valField22">--<span>%</span></div>
-                </div>
-            </div>
-            <div class="sensor-card-rs" onclick="openChart(23, 'Remote Sensor | Ground Humidity')" style="cursor: pointer;">
-                <i class="fas fa-mountain sensor-icon" style="color: #d4a373;"></i>
-                <div class="sensor-data">
-                    <span class="sensor-label">RS | Ground Humidity</span>
-                    <div class="sensor-val" id="valField23">--<span>%</span></div>
-                </div>
-            </div>
-           <div class="sensor-card-rs" onclick="openChart(24, 'Remote Sensor | Battery State of Charge')" style="cursor: pointer;">
-                <i class="fas fa-battery-full sensor-icon" style="color: #6ecc87;"></i>
-                <div class="sensor-data">
-                    <span class="sensor-label">RS | Battery SOC</span>
-                    <div class="sensor-val" id="valField24">--<span>%</span></div>
-                </div>
-            </div>
-           <div class="sensor-card-rs" onclick="openChart(25, 'Remote Sensor | Comunication Signal')" style="cursor: pointer;">
-                <i class="fas fa-signal sensor-icon" style="color: #00f2ff;"></i>
-                <div class="sensor-data">
-                    <span class="sensor-label">RS | RSSI</span>
-                    <div class="sensor-val" id="valField25">--<span>dBm</span></div>
-                </div>
-            </div>
-        </div>
-
-        <h3 class="a70-font" id="header-walk" style="font-size: 0.9rem; color: var(--accent); margin-top: 20px; margin-bottom: 15px;">
-            <i class="fas fa-broadcast-tower"></i> Walk Sensor Unit
-        </h3>
-        <div class="sensor-grid" id="sensor-grid-walk">
-            <!-- Note: ID 31 opens chart based on Field 1 (LAT) for history -->
-            <div class="sensor-card" onclick="openChart(31, 'Location History (LAT)')" style="cursor: pointer;">
-                <i class="fas fa-location-dot sensor-icon" style="color: #a3b18a;"></i>
-                <div class="sensor-data">
-                    <span class="sensor-label">Latitude And Longitude</span>
-                    <div class="sensor-val" id="valField31">--<span>°</span></div>
-                </div>
-            </div>
-            <div class="sensor-card" onclick="openChart(33, 'Altitude')" style="cursor: pointer;">
-                <i class="fas fa-mountain sensor-icon" style="color: #a3b18a;"></i>
-                <div class="sensor-data">
-                    <span class="sensor-label">Altitude</span>
-                    <div class="sensor-val" id="valField33">--<span>m</span></div>
-                </div>
-            </div>
-           <div class="sensor-card" onclick="openChart(34, 'Satelites Connected')" style="cursor: pointer;">
-                <i class="fas fa-satellite sensor-icon" style="color: #a3b18a;"></i>
-                <div class="sensor-data">
-                    <span class="sensor-label">Number of Satelites Connected</span>
-                    <div class="sensor-val" id="valField34">--<span> Sats</span></div>
-                </div>
-            </div>
-            <div class="sensor-card" onclick="openChart(35, 'Comunication Signal')" style="cursor: pointer;">
-                <i class="fas fa-signal sensor-icon" style="color: #00f2ff;"></i>
-                <div class="sensor-data">
-                    <span class="sensor-label">RSSI</span>
-                    <div class="sensor-val" id="valField35">--<span>dBm</span></div>
-                </div>
-            </div>
-           <div class="sensor-card" onclick="openChart(36, 'Dimensions')" style="cursor: pointer;">
-                <i class="fas fa-cube sensor-icon" style="color: #a3b18a;"></i>
-                <div class="sensor-data">
-                    <span class="sensor-label">Nº Dimensions</span>
-                    <div class="sensor-val" id="valField36">--<span>D</span></div>
-                </div>
-            </div>
-            <div class="sensor-card" onclick="openChart(37, 'Heart Rate')" style="cursor: pointer;">
-                <i class="fas fa-heart sensor-icon" style="color: #ff5f5f;"></i>
-                <div class="sensor-data">
-                    <span class="sensor-label">Heart Rate</span>
-                    <div class="sensor-val" id="valField37">--<span>BPM</span></div>
-                </div>
-            </div>
-        </div>
-
-        <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-bottom: 15px;">
-            <i class="fas fa-sliders-h"></i> Environment Active Configuration
-        </h3>
-
-        <div class="management-grid">
-            <div class="input-card">
-                <div class="input-header"><i class="fas fa-temperature-high" style="color: #ff5f5f"></i> Max Temp (ºC)</div>
-                <div class="input-group">
-                    <input type="number" id="cfgTempMax" class="input-field" placeholder="0.0">
-                </div>
-            </div>
-
-            <div class="input-card">
-                <div class="input-header"><i class="fas fa-temperature-low" style="color: #00f2ff"></i> Min Temp (ºC)</div>
-                <div class="input-group">
-                    <input type="number" id="cfgTempMin" class="input-field" placeholder="0.0">
-                </div>
-            </div>
-
-            <div class="input-card">
-                <div class="input-header"><i class="fas fa-droplet" style="color: #ff5f5f"></i> Max Humidity (%)</div>
-                <div class="input-group">
-                    <input type="number" id="cfgHumMax" class="input-field" placeholder="0">
-                </div>
-            </div>
-
-            <div class="input-card">
-                <div class="input-header"><i class="fas fa-droplet" style="color: #00f2ff"></i> Min Humidity (%)</div>
-                <div class="input-group">
-                    <input type="number" id="cfgHumMin" class="input-field" placeholder="0">
-                </div>
-            </div>
-
-            <div class="input-card">
-                <div class="input-header"><i class="fas fa-clock" style="color: #a3b18a"></i> Feed Interval (h)</div>
-                <div class="input-group">
-                    <input type="number" id="cfgFeedInterval" class="input-field" placeholder="12">
-                </div>
-            </div>
-
-            <div class="input-card">
-                <div class="input-header"><i class="fas fa-utensils" style="color: #d4a373"></i> Feed Amount (g)</div>
-                <div class="input-group">
-                    <input type="number" id="cfgFeedAmount" class="input-field" placeholder="200">
-                </div>
-            </div>
-        </div>
-        
-        <button class="btn-send" onclick="sendDeviceConfig()" 
-            style="width: 100%; margin-top: 15px; height: 40px; display: flex; align-items: center; justify-content: center; gap: 10px; font-family: inherit; font-weight: bold;">
-            <i class="fas fa-sync-alt"></i> SAVE AND SYNC DEVICE
-        </button>
-        <hr style="border: 0.5px solid #eee; margin: 20px 0;">
-
-        
-        <div class="summary-section">
+        <!-- --- SUMMARY CARDS --- -->    
+        <div id="section-summary" class="summary-section">
             <div class="summary-card" id="sumFeeding">
                 <div class="summary-title a70-font"><i class="fas fa-utensils"></i> Last Feeding</div>
                 <div class="summary-main-val" id="sumFeedingVal">--<span>g</span></div>
@@ -503,116 +517,128 @@
             </div>
         </div>
 
-        <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-bottom: 15px;">Control Center</h3>
-        <div class="masonry-grid">
-            <div class="input-card" style="gap: 8px;">
-                <div class="input-header"><i class="fas fa-utensils"></i> Add Feeding (g)</div>
-                <input type="number" id="inFeed" class="input-field" placeholder="Amount (g)">
-                <input list="foodTypeList" id="inFoodType" class="input-field" placeholder="Food Type (e.g. Mouse)">
-                <input list="brandList" id="inBrand" class="input-field" placeholder="Brand (e.g. PetCo)">
-                <datalist id="foodTypeList"></datalist>
-                <datalist id="brandList"></datalist>
-                <button class="btn-send" onclick="sendToCloud('Feeding', 'inFeed')" style="margin-top: 5px; justify-content: center;">
-                    <i class="fas fa-plus"></i> ADD RECORD
-                </button>
-            </div>
-            <div class="input-card">
-                <div class="input-header"><i class="fas fa-snake"></i> Add Shedd (Date)</div>
-                <div class="input-group">
-                    <input type="date" id="inShed" class="input-field">
-                    <button class="btn-send" onclick="sendToCloud('Shedding', 'inShed')"><i class="fas fa-plus"></i></button>
+        <!-- --- Control Center --- -->
+        <div id="section-control-center">
+            <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-bottom: 15px;">
+                <i class="fas fa-sliders-h"></i> Control Center
+            </h3>
+                    
+            <div class="masonry-grid">
+                <div class="input-card" style="gap: 8px;">
+                    <div class="input-header"><i class="fas fa-utensils"></i> Add Feeding (g)</div>
+                    <input type="number" id="inFeed" class="input-field" placeholder="Amount (g)">
+                    <input list="foodTypeList" id="inFoodType" class="input-field" placeholder="Food Type (e.g. Mouse)">
+                    <input list="brandList" id="inBrand" class="input-field" placeholder="Brand (e.g. PetCo)">
+                    <datalist id="foodTypeList"></datalist>
+                    <datalist id="brandList"></datalist>
+                    <button class="btn-send" onclick="sendToCloud('Feeding', 'inFeed')" style="margin-top: 5px; justify-content: center;">
+                        <i class="fas fa-plus"></i> ADD RECORD
+                    </button>
+                </div>
+                <div class="input-card">
+                    <div class="input-header"><i class="fas fa-snake"></i> Add Shedd (Date)</div>
+                    <div class="input-group">
+                        <input type="date" id="inShed" class="input-field">
+                        <button class="btn-send" onclick="sendToCloud('Shedding', 'inShed')"><i class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+                <div class="input-card">
+                    <div class="input-header"><i class="fas fa-weight"></i> Add Weighting (g)</div>
+                    <div class="input-group">
+                        <input type="number" id="inWeight" class="input-field" placeholder="0">
+                        <button class="btn-send" onclick="sendToCloud('Weighting', 'inWeight')"><i class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+                <div class="input-card">
+                    <div class="input-header"><i class="fas fa-ruler-vertical"></i> Add Height (cm)</div>
+                    <div class="input-group">
+                        <input type="number" id="inHeight" class="input-field" placeholder="0">
+                        <button class="btn-send" onclick="sendToCloud('Height', 'inHeight')"><i class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+                <div class="input-card">
+                    <div class="input-header"><i class="fas fa-ruler-horizontal"></i> Add Length (cm)</div>
+                    <div class="input-group">
+                        <input type="number" id="inLength" class="input-field" placeholder="0">
+                        <button class="btn-send" onclick="sendToCloud('Length', 'inLength')"><i class="fas fa-plus"></i></button>
+                    </div>
                 </div>
             </div>
-            <div class="input-card">
-                <div class="input-header"><i class="fas fa-weight"></i> Add Weighting (g)</div>
-                <div class="input-group">
-                    <input type="number" id="inWeight" class="input-field" placeholder="0">
-                    <button class="btn-send" onclick="sendToCloud('Weighting', 'inWeight')"><i class="fas fa-plus"></i></button>
+
+            <div class="charts-section">
+                <div class="chart-card" id="chart-feeding">
+                    <h3 class="a70-font">Feeding History (g)</h3>
+                    <canvas id="feedingChart"></canvas>
                 </div>
-            </div>
-            <div class="input-card">
-                <div class="input-header"><i class="fas fa-ruler-vertical"></i> Add Height (cm)</div>
-                <div class="input-group">
-                    <input type="number" id="inHeight" class="input-field" placeholder="0">
-                    <button class="btn-send" onclick="sendToCloud('Height', 'inHeight')"><i class="fas fa-plus"></i></button>
+                <div class="chart-card" id="chart-weight">
+                    <h3 class="a70-font">Weight Evolution (g)</h3>
+                    <canvas id="weightChart"></canvas>
                 </div>
-            </div>
-            <div class="input-card">
-                <div class="input-header"><i class="fas fa-ruler-horizontal"></i> Add Length (cm)</div>
-                <div class="input-group">
-                    <input type="number" id="inLength" class="input-field" placeholder="0">
-                    <button class="btn-send" onclick="sendToCloud('Length', 'inLength')"><i class="fas fa-plus"></i></button>
+                <div class="chart-card" id="chart-shedding">
+                    <h3 class="a70-font">Shedding Intervals (Days)</h3>
+                    <canvas id="sheddingChart"></canvas>
+                </div>
+                <div class="chart-card" id="chart-length">
+                    <h3 class="a70-font">Length Measurement (cm)</h3>
+                    <canvas id="lengthChart"></canvas>
+                </div>
+                <div class="chart-card" id="chart-height">
+                    <h3 class="a70-font">Height Measurement (cm)</h3>
+                    <canvas id="heightChart"></canvas>
                 </div>
             </div>
         </div>
 
-        <div class="charts-section">
-            <div class="chart-card" id="chart-feeding">
-                <h3 class="a70-font">Feeding History (g)</h3>
-                <canvas id="feedingChart"></canvas>
-            </div>
-            <div class="chart-card" id="chart-weight">
-                <h3 class="a70-font">Weight Evolution (g)</h3>
-                <canvas id="weightChart"></canvas>
-            </div>
-            <div class="chart-card" id="chart-shedding">
-                <h3 class="a70-font">Shedding Intervals (Days)</h3>
-                <canvas id="sheddingChart"></canvas>
-            </div>
-            <div class="chart-card" id="chart-length">
-                <h3 class="a70-font">Length Measurement (cm)</h3>
-                <canvas id="lengthChart"></canvas>
-            </div>
-            <div class="chart-card" id="chart-height">
-                <h3 class="a70-font">Height Measurement (cm)</h3>
-                <canvas id="heightChart"></canvas>
-            </div>
-        </div>
+        <!-- --- Live Monitoring | Camera --- -->
+        <div id="section-camera">
+            <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-bottom: 15px;">
+                <i class="fas fa-video"></i> Live Monitoring | Camera
+            </h3>
+            <div class="camera-card" id="camera-card">
+                <div id="cameraOverlay" class="camera-overlay">
+                    <img src="https://i.pinimg.com/originals/17/ec/4d/17ec4d0b9d0f6aae55cca07095a10e48.gif" class="signal-lost-gif" alt="Signal Lost Animation">
+                    
+                    <i class="fas fa-wifi" style="font-size: 2rem; color: var(--accent); margin-bottom: 10px; opacity: 0.8;"></i>
+                    <p class="a70-font" style="font-size: 0.8rem; color: var(--accent); text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">SIGNAL LOST - RECONNECTING...</p>
+                </div>
+        
+                <img id="cameraStream" class="camera-stream" src="" onload="hideCamOverlay()" onerror="showCamOverlay()">
 
-        <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin: 30px 0 15px 0;">Live Monitoring | Camera</h3>
-        <div class="camera-card" id="camera-card">
-            <div id="cameraOverlay" class="camera-overlay">
-                <img src="https://i.pinimg.com/originals/17/ec/4d/17ec4d0b9d0f6aae55cca07095a10e48.gif" class="signal-lost-gif" alt="Signal Lost Animation">
-                
-                <i class="fas fa-wifi" style="font-size: 2rem; color: var(--accent); margin-bottom: 10px; opacity: 0.8;"></i>
-                <p class="a70-font" style="font-size: 0.8rem; color: var(--accent); text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">SIGNAL LOST - RECONNECTING...</p>
-            </div>
-    
-            <img id="cameraStream" class="camera-stream" src="" onload="hideCamOverlay()" onerror="showCamOverlay()">
-
-            <div class="cam-status-bar">
-                <span id="camStatusText" style="color: #ff5f5f;">Status: Offline</span>
-                <div>
-                    <button onclick="setLocalCameraIP()" style="background:transparent; color:var(--text-light); border:1px solid var(--accent); border-radius:3px; font-size:0.6rem; cursor:pointer; padding:3px 6px;">Set Local IP</button>
+                <div class="cam-status-bar">
+                    <span id="camStatusText" style="color: #ff5f5f;">Status: Offline</span>
+                    <div>
+                        <button onclick="setLocalCameraIP()" style="background:transparent; color:var(--text-light); border:1px solid var(--accent); border-radius:3px; font-size:0.6rem; cursor:pointer; padding:3px 6px;">Set Local IP</button>
+                    </div>
                 </div>
             </div>
         </div>
-
+        
         <!-- --- EDUCATIONAL PET SECTION --- -->
-        <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-top: 30px; margin-bottom: 15px;">
-            <i class="fas fa-graduation-cap"></i> Educational Pet | Training
-        </h3>
+        <div id="section-education" style="display: none;">
+            <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-top: 30px; margin-bottom: 15px;">
+                <i class="fas fa-graduation-cap"></i> Educational Pet | Training
+            </h3>
 
-        <!-- Dog Educational Panel (Dynamic) -->
-        <div id="edu-clicker-section" style="display: none; margin-bottom: 20px;">
-            <h4 style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0; margin-bottom: 10px;">Dog Commands (Audio & Voice)</h4>
-            
-            <button id="sosButton" class="sos-btn" onclick="toggleSOS()">
-                <i class="fas fa-exclamation-triangle"></i> TRIGGER EMERGENCY SOS
-            </button>
-            
-            <!-- Cards will be injected here -->
-            <div class="management-grid" id="dog-commands-grid"></div>
+            <!-- Dog Educational Panel (Dynamic) -->
+            <div id="edu-clicker-section" style="display: none; margin-bottom: 20px;">
+                <h4 style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0; margin-bottom: 10px;">Dog Commands (Audio & Voice)</h4>
+                
+                <button id="sosButton" class="sos-btn" onclick="toggleSOS()">
+                    <i class="fas fa-exclamation-triangle"></i> TRIGGER EMERGENCY SOS
+                </button>
+                
+                <!-- Cards will be injected here -->
+                <div class="management-grid" id="dog-commands-grid"></div>
+            </div>
+
+            <!-- Bird Educational Panel (Dynamic) -->
+            <div id="edu-voice-section" style="display: none; margin-bottom: 20px;">
+                <h4 style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0; margin-bottom: 10px;">Bird Vocal Learning</h4>
+                
+                <!-- Cards will be injected here -->
+                <div class="management-grid" id="bird-commands-grid"></div>
+            </div>
         </div>
-
-        <!-- Bird Educational Panel (Dynamic) -->
-        <div id="edu-voice-section" style="display: none; margin-bottom: 20px;">
-            <h4 style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0; margin-bottom: 10px;">Bird Vocal Learning</h4>
-            
-            <!-- Cards will be injected here -->
-            <div class="management-grid" id="bird-commands-grid"></div>
-        </div>
-
         
         <div id="vet-section">
             <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin: 30px 0 15px 0;"><i class="fas fa-notes-medical"></i> Vet Visit & GPS Tracker </h3>
@@ -881,30 +907,25 @@ async function loadData() {
             
             // 1. Main Sensor Unit
             if (isConfigured(mainChannelId) && isConfigured(mainWriteKey) && isConfigured(mainReadKey)) {
-                document.getElementById('header-main').style.display = 'block';
-                document.getElementById('sensor-grid-main').style.display = 'grid';
+                document.getElementById('section-main').style.display = 'block';
             } else {
-                document.getElementById('header-main').style.display = 'none';
-                document.getElementById('sensor-grid-main').style.display = 'none';
+                document.getElementById('section-main').style.display = 'none';
             }
             
             // 2. Remote Sensor Unit
             if (isConfigured(r1ChannelId) && isConfigured(r1WriteKey) && isConfigured(r1ReadKey)) {
-                document.getElementById('header-remote').style.display = 'block';
-                document.getElementById('sensor-grid-remote').style.display = 'grid';
+                document.getElementById('section-remote').style.display = 'block';
             } else {
-                document.getElementById('header-remote').style.display = 'none';
-                document.getElementById('sensor-grid-remote').style.display = 'none';
+                document.getElementById('section-remote').style.display = 'none';
             }
             
             // 3. Walk Sensor Unit
             if (isConfigured(gpsChannelId) && isConfigured(gpsWriteKey) && isConfigured(gpsReadKey)) {
-                document.getElementById('header-walk').style.display = 'block';
-                document.getElementById('sensor-grid-walk').style.display = 'grid';
+                document.getElementById('section-walk').style.display = 'block';
             } else {
-                document.getElementById('header-walk').style.display = 'none';
-                document.getElementById('sensor-grid-walk').style.display = 'none';
+                document.getElementById('section-walk').style.display = 'none';
             }
+            
             await applyVisibilityRules(animalTypeRaw, liveUserPlan);
             
             walkSensorIp = data[32];
@@ -1932,8 +1953,12 @@ async function openChart(fieldId, label) {
     function renderEducationalCards() {
         const dogGrid = document.getElementById('dog-commands-grid');
         const birdGrid = document.getElementById('bird-commands-grid');
+        const eduSection = document.getElementById('section-education');
+        
         if(dogGrid) dogGrid.innerHTML = '';
         if(birdGrid) birdGrid.innerHTML = '';
+
+        let hasEducationalData = false;
 
         dynamicCommands.forEach((cmd, index) => {
             // Ignora linhas sem comando
@@ -1968,12 +1993,19 @@ async function openChart(fieldId, label) {
             if (animal === 'dog' && dogGrid) {
                 dogGrid.innerHTML += cardHTML;
                 document.getElementById('edu-clicker-section').style.display = 'block';
+                hasEducationalData = true;
             }
             if ((animal === 'parrot' || animal === 'bird') && birdGrid) {
                 birdGrid.innerHTML += cardHTML;
                 document.getElementById('edu-voice-section').style.display = 'block';
+                hasEducationalData = true;
             }
         });
+
+        // Hide or show the entire educational section including its title
+        if (eduSection) {
+            eduSection.style.display = hasEducationalData ? 'block' : 'none';
+        }
     }
 
     async function generateAIInsight() {
