@@ -494,6 +494,9 @@
                 <div class="summary-title a70-font"><i class="fas fa-utensils"></i> Last Feeding</div>
                 <div class="summary-main-val" id="sumFeedingVal">--<span>g</span></div>
                 <div class="summary-sub-val" id="sumFeedingDate">--- / --- / ----</div>
+                <div class="summary-sub-val" id="sumFeedingDaysPassed" style="margin-top: 8px; color: var(--accent); font-weight: 600; font-size: 0.75rem;">
+                    <i class="fas fa-clock"></i> -- Days Ago
+                </div>
             </div>
             <div class="summary-card" id="sumWeight">
                 <div class="summary-title a70-font"><i class="fas fa-weight"></i> Body Weight</div>
@@ -1245,6 +1248,20 @@ async function sendDeviceConfig() {
             if(lastFeeding && elFeedingVal && elFeedingDate) {
                 elFeedingVal.innerHTML = `${lastFeeding[3]}<span> g</span>`;
                 elFeedingDate.innerText = formatDateDisplay(lastFeeding[1]);
+                // New: Calculate Days Passed
+                if (elFeedingDaysPassed) {
+                    const feedDate = new Date(lastFeeding[1]);
+                    const today = new Date();
+                    
+                    // Calculate the difference in milliseconds and convert to days
+                    const diffTime = today.getTime() - feedDate.getTime();
+                    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                    
+                    // Prevent negative days if timezone shifts make today's feed seem slightly in the future
+                    const displayDays = diffDays < 0 ? 0 : diffDays; 
+                    
+                    elFeedingDaysPassed.innerHTML = `<i class="fas fa-clock"></i> ${displayDays} Days Ago`;
+                }
             }
             
             const elWeightVal = document.getElementById('sumWeightVal');
