@@ -1245,9 +1245,12 @@ async function sendDeviceConfig() {
 
             const elFeedingVal = document.getElementById('sumFeedingVal');
             const elFeedingDate = document.getElementById('sumFeedingDate');
+            const elFeedingDaysPassed = document.getElementById('sumFeedingDaysPassed'); // New Element
+            
             if(lastFeeding && elFeedingVal && elFeedingDate) {
                 elFeedingVal.innerHTML = `${lastFeeding[3]}<span> g</span>`;
                 elFeedingDate.innerText = formatDateDisplay(lastFeeding[1]);
+                
                 // New: Calculate Days Passed
                 if (elFeedingDaysPassed) {
                     const feedDate = new Date(lastFeeding[1]);
