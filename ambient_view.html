@@ -99,7 +99,13 @@
     .cam-status-bar { position: absolute; bottom: 0; width: 100%; padding: 10px 20px; background: rgba(0,0,0,0.6); display: flex; justify-content: space-between; align-items: center; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;z-index: 3;}
 
     .dyn-name {font-family: 'Cinzel', serif; letter-spacing: 2px; font-size: 2.5rem; letter-spacing: 2px;margin: 15px 0 0 0; color: var(--accent);}
-    
+
+    /* --- CAREGUIDE REFERENCE STYLES --- */
+    .guide-ref { font-size: 0.7rem; color: var(--accent); opacity: 0.8; margin-top: 8px; font-style: italic; font-weight: normal; }
+    .guide-ref-input { font-size: 0.7rem; color: var(--accent); opacity: 0.7; margin-top: 5px; display: block; text-align: center;}
+    .guide-ref-vet { background: rgba(163, 177, 138, 0.1); border-left: 3px solid #a3b18a; padding: 10px; margin-bottom: 15px; font-size: 0.8rem; color: var(--text-light); border-radius: 4px;}
+
+        
     /* --- MAIN CONTENT LAYOUT --- */
     .main-content { flex: 1; padding: 40px; overflow-y: auto; background: transparent !important; transition: 0.5s; }
     .main-header { margin-bottom: 40px; }
@@ -747,6 +753,7 @@ const loggedUser = checkSecurity();
     let homeLat = 0;
     let homeLon = 0;
     let currentSpeciesData = null;
+    let lastKnownWeight = 0; // Captures the latest weight for Feed calculations
     
     function applyUserTheme() {
         const user = JSON.parse(localStorage.getItem('currentUser'));
@@ -874,6 +881,7 @@ async function loadData() {
             }
             
             const rawBirthDate = data[6];
+            animalBirthDate = rawBirthDate; // SALVA A DATA GLOBALMENTE
             
             if (rawBirthDate && rawBirthDate !== "---") {
                 const ageString = getAgeString(rawBirthDate);
@@ -1063,6 +1071,7 @@ async function loadSpeciesDatabase(scientificName) {
         if (json.status === "success") {
             currentSpeciesData = json.data;
             console.log("✅ Species Data Loaded Successfully:", currentSpeciesData);
+            applySpeciesGuidance();
             
             // Note: In the next step, we will trigger the feeding/age calculations here!
         } else {
@@ -1072,7 +1081,116 @@ async function loadSpeciesDatabase(scientificName) {
         console.error("❌ Error fetching species data:", e);
     }
 }
+
+// ==========================================
+// --- APPLY CAREGUIDE REFERENCE DATA ---
+// ==========================================
+function applySpeciesGuidance() {
+    if (!currentSpeciesData) return;
+
+    // Helpers
+    const updateSummaryRef = (cardId, text) => {
+        const card = document.getElementById(cardId);
+        if (!card) return;
+        let refEl = card.querySelector('.guide-ref');
+        if (!refEl) {
+            refEl = document.createElement('div');
+            refEl.className = 'guide-ref';
+            card.appendChild(refEl);
+        }
+        refEl.innerHTML = `<i class="fas fa-book-open"></i> Ref: ${text}`;
+    };
+
+    const updateInputRef = (inputId, text) => {
+        const inputEl = document.getElementById(inputId);
+        if (!inputEl) return;
+        const parent = inputEl.closest('.input-card');
+        if (!parent) return;
+        let refEl = parent.querySelector('.guide-ref-input');
+        if (!refEl) {
+            refEl = document.createElement('div');
+            refEl.className = 'guide-ref-input';
+            parent.appendChild(refEl);
+        }
+        refEl.innerHTML = `<i class="fas fa-info-circle"></i> Guide: ${text}`;
+    };
+
+    const data = currentSpeciesData; 
+
+    // 1. Calculate Age in Months
+    let ageInMonths = 0;
+    if (animalBirthDate && animalBirthDate !== "---") {
+        const b = new Date(animalBirthDate);
+        const today = new Date();
+        ageInMonths = (today.getFullYear() - b.getFullYear()) * 12 + (today.getMonth() - b.getMonth());
+    }
+
+    // 2. Determine Life Stage
+    let stage = "Adult"; 
+    let feedFreqMin = data[25], feedFreqMax = data[26];
+    let feedWeightMin = data[27], feedWeightMax = data[28];
+
+    const periodBaby = parseFloat(data[29]) || 0;
+    const periodJuv = parseFloat(data[30]) || 0;
+
+    if (ageInMonths <= periodBaby) {
+        stage = "Baby";
+        feedFreqMin = data[17]; feedFreqMax = data[18];
+        feedWeightMin = data[19]; feedWeightMax = data[20];
+    } else if (ageInMonths <= periodJuv) {
+        stage = "Juvenil";
+        feedFreqMin = data[21]; feedFreqMax = data[22];
+        feedWeightMin = data[23]; feedWeightMax = data[24];
+    }
+
+    // 3. Update Summary Cards
+    updateSummaryRef('sumWeight', `Max Adult: ${data[5] || '---'}g`);
+    updateSummaryRef('sumLength', `Max Adult: ${data[3] || '---'}cm`);
+    updateSummaryRef('sumHeight', `Max Adult: ${data[4] || '---'}cm`);
     
+    // Calculate recommended feed amount based on min/max factors
+    let recFeedMin = "---";
+    let recFeedMax = "---";
+    let feedText = "---";
+    
+    if (lastKnownWeight > 0) {
+        if (feedWeightMin) recFeedMin = ((lastKnownWeight * parseFloat(feedWeightMin)) / 100).toFixed(1);
+        if (feedWeightMax) recFeedMax = ((lastKnownWeight * parseFloat(feedWeightMax)) / 100).toFixed(1);
+        
+        if (recFeedMin !== "---" && recFeedMax !== "---") {
+            feedText = `${recFeedMin}g - ${recFeedMax}g`;
+        } else if (recFeedMin !== "---") {
+            feedText = `~${recFeedMin}g`;
+        }
+    }
+
+    updateSummaryRef('sumFeeding', `Ideal (${stage}): ${feedText}`);
+    updateSummaryRef('sumFeedingDaysPassed', `Interval: ${feedFreqMin || '---'} to ${feedFreqMax || '---'} Days`);
+
+    // 4. Update Configuration Cards
+    updateInputRef('cfgTempMin', `${data[6] || '---'}°C`);
+    updateInputRef('cfgTempMax', `${data[7] || '---'}°C`);
+    updateInputRef('cfgHumMin', `${data[9] || '---'}%`);
+    updateInputRef('cfgHumMax', `${data[10] || '---'}%`);
+    updateInputRef('cfgFeedInterval', `${feedFreqMin || '---'} - ${feedFreqMax || '---'} d`);
+    updateInputRef('cfgFeedAmount', `${feedText}`);
+
+    // 5. Vet Section
+    const vetSection = document.getElementById('vet-section');
+    if (vetSection && data[32]) {
+        let vetRefEl = document.getElementById('vetGuideRef');
+        if (!vetRefEl) {
+            vetRefEl = document.createElement('div');
+            vetRefEl.id = 'vetGuideRef';
+            vetRefEl.className = 'guide-ref-vet';
+            const title = vetSection.querySelector('h3');
+            title.insertAdjacentElement('afterend', vetRefEl);
+        }
+        
+        let sourceLink = data[33] ? `<a href="${data[33]}" target="_blank" style="color: var(--accent);"><i class="fas fa-link"></i> Care Guide Manual</a>` : "";
+        vetRefEl.innerHTML = `<b><i class="fas fa-notes-medical"></i> Species Guidance:</b> Max interval without Vet Checkup is ${data[32]} months. ${sourceLink}`;
+    }
+}    
     
     async function getGeocodedLocation(lat, lon) {
     try {
@@ -1306,6 +1424,7 @@ async function sendDeviceConfig() {
             if(lastWeight && elWeightVal && elWeightDate) {
                 elWeightVal.innerHTML = `${lastWeight[3]}<span> g</span>`;
                 elWeightDate.innerText = formatDateDisplay(lastWeight[1]);
+                lastKnownWeight = parseFloat(lastWeight[3]) || 0;
             }
             
             const elLengthVal = document.getElementById('sumLengthVal');
@@ -1329,6 +1448,7 @@ async function sendDeviceConfig() {
             renderShedding(sheddingProcessed, '#a3b18a'); 
             renderLength(events, accentColor);
             renderHeigth(events, accentColor);
+            applySpeciesGuidance();
         } catch (e) { console.error("Bio-Summary Error:", e); }
     }
 
@@ -2171,6 +2291,49 @@ async function openChart(fieldId, label) {
                         rsHistory = "Error retrieving remote telemetry.";
                     }
                 }
+                // --- ASSEMBLE CAREGUIDE BACKGROUND FOR AI ---
+        let ageInMonths = 0;
+        if (animalBirthDate && animalBirthDate !== "---") {
+            const b = new Date(animalBirthDate);
+            const today = new Date();
+            ageInMonths = (today.getFullYear() - b.getFullYear()) * 12 + (today.getMonth() - b.getMonth());
+        }
+
+        let aiCareGuideContext = "No specific species care guide available.";
+        if (currentSpeciesData) {
+            const d = currentSpeciesData;
+            
+            let stage = "Adult"; 
+            let feedFreqMin = d[25], feedFreqMax = d[26];
+            let feedWeightMin = d[27], feedWeightMax = d[28];
+            const periodBaby = parseFloat(d[29]) || 0;
+            const periodJuv = parseFloat(d[30]) || 0;
+
+            if (ageInMonths <= periodBaby) {
+                stage = "Baby";
+                feedFreqMin = d[17]; feedFreqMax = d[18];
+                feedWeightMin = d[19]; feedWeightMax = d[20];
+            } else if (ageInMonths <= periodJuv) {
+                stage = "Juvenil";
+                feedFreqMin = d[21]; feedFreqMax = d[22];
+                feedWeightMin = d[23]; feedWeightMax = d[24];
+            }
+            
+            let recFeedMin = feedWeightMin ? ((lastKnownWeight * parseFloat(feedWeightMin)) / 100).toFixed(1) : "---";
+            let recFeedMax = feedWeightMax ? ((lastKnownWeight * parseFloat(feedWeightMax)) / 100).toFixed(1) : "---";
+
+            aiCareGuideContext = `
+**Species Care Guide (Reference Only - Do not force strict compliance, treat as a baseline):**
+- Life Stage: ${stage} (Based on age of ${ageInMonths} months)
+- Temp Limits: Min ${d[6] || '---'}°C / Max ${d[7] || '---'}°C
+- Hum Limits: Min ${d[9] || '---'}% / Max ${d[10] || '---'}%
+- Feed Interval: Every ${feedFreqMin || '---'} to ${feedFreqMax || '---'} days
+- Target Feed Amount: ${recFeedMin}g to ${recFeedMax}g (based on current weight of ${lastKnownWeight}g and factor for ${stage})
+- Target Adult Max Weight: ${d[5] || '---'}g
+- Target Adult Max Length: ${d[3] || '---'}cm
+- Vet Routine: Max interval checkup is ${d[32] || '---'} months
+            `;
+        }
 
         const superPrompt = `
 [STRICT SYSTEM INSTRUCTION: YOUR ENTIRE RESPONSE MUST BE EXCLUSIVELY IN ENGLISH. Do not output any word in Portuguese or any other language. If the provided context data is in another language, you must translate the insights internally and provide the final output ONLY in English.]
@@ -2182,6 +2345,8 @@ Please analyze the data correlation for the following animal monitored by the Te
 - Enclosure Physical Location: ${currentLocation}
 - Current Terrarium Conditions: Temp ${currTemp} | Humidity ${currHum}
 - Ideal Limits Configuration: ${envConfig}
+
+${aiCareGuideContext}
 
 **Environmental Telemetry History (Last 100 readings from IoT Sensors):**
 ${tsHistory}
