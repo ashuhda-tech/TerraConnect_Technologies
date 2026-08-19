@@ -728,6 +728,7 @@ const loggedUser = checkSecurity();
     const VETDATA_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxxnlxSflhGHaX8IMcQj9y7H99bu4G9V-UM9f-E-SLdV2eLcUrBpQWvwh7o6GHLUXca/exec";
     const AI_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxign7YvIXmCiAggKU9XKlveWHQ_hQzYL65MEP3yEFe1lj1ewPjHuNzbbi_S8JMTPE/exec";
     const EDU_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxQ1DUzE-nMNhuF9ZxkD4_cP9rjkSE9vF2qQudL-F2-x1pLjtJg-yRCM7AIXf9GETb9/exec";
+    const CAREGUIDE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxNASj7ghPpm5XRPA4YvUeP0WOOARyVtunWesUgmV79uLD9eIuB7Nn5yBuLCHw-w3w0/exec";
    
     let dynamicCommands = [];
     const commandPalette = ['#74b9ff', '#a3b18a', '#d4a373', '#ff5f5f', '#00f2ff', '#6ecc87', '#feca57'];
@@ -745,6 +746,7 @@ const loggedUser = checkSecurity();
     let vetMap = null;
     let homeLat = 0;
     let homeLon = 0;
+    let currentSpeciesData = null;
     
     function applyUserTheme() {
         const user = JSON.parse(localStorage.getItem('currentUser'));
@@ -861,7 +863,16 @@ async function loadData() {
 
             document.getElementById('dynName').innerText = data[3] || "---";
             document.getElementById('dynSex').innerText = data[4] || "---";
-            document.getElementById('dynScientific').innerText = data[5] || "---";
+            
+            // MODIFIED CODE HERE: Extract Scientific Name and fetch DB immediately
+            const scientificNameStr = data[5] || "---";
+            document.getElementById('dynScientific').innerText = scientificNameStr;
+            
+            // Wait for the species data to load before continuing rendering biological data
+            if (scientificNameStr !== "---") {
+                await loadSpeciesDatabase(scientificNameStr);
+            }
+            
             const rawBirthDate = data[6];
             
             if (rawBirthDate && rawBirthDate !== "---") {
@@ -1039,6 +1050,29 @@ async function loadData() {
         
         return ageStr ? ageStr.trim() + " | " : "";
     }
+// ==========================================
+// --- FETCH SPECIES THRESHOLDS & DATA ---
+// ==========================================
+async function loadSpeciesDatabase(scientificName) {
+    if (!scientificName || scientificName === "---") return;
+    
+    try {
+        const response = await fetch(`${CAREGUIDE_SCRIPT_URL}?action=get_species_data&scientificName=${encodeURIComponent(scientificName)}`);
+        const json = await response.json();
+
+        if (json.status === "success") {
+            currentSpeciesData = json.data;
+            console.log("✅ Species Data Loaded Successfully:", currentSpeciesData);
+            
+            // Note: In the next step, we will trigger the feeding/age calculations here!
+        } else {
+            console.warn("⚠️ Species data not found in DB for:", scientificName);
+        }
+    } catch (e) {
+        console.error("❌ Error fetching species data:", e);
+    }
+}
+    
     
     async function getGeocodedLocation(lat, lon) {
     try {
