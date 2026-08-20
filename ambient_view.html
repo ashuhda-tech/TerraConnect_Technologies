@@ -1085,8 +1085,11 @@ async function loadSpeciesDatabase(scientificName) {
 // ==========================================
 // --- APPLY CAREGUIDE REFERENCE DATA ---
 // ==========================================
-function applySpeciesGuidance() {
+function applySpeciesGuidance(weightOverride = null) {
     if (!currentSpeciesData) return;
+
+    // Force the function to use the newly passed weight if available, otherwise fallback
+    const activeWeight = weightOverride !== null ? weightOverride : lastKnownWeight;
 
     // Helpers
     const updateSummaryRef = (cardId, text) => {
@@ -1158,9 +1161,10 @@ function applySpeciesGuidance() {
     const hasMinW = !isNaN(minWVal);
     const hasMaxW = !isNaN(maxWVal);
 
-    if (lastKnownWeight > 0) {
-        if (hasMinW) recFeedMin = ((lastKnownWeight * minWVal) / 100).toFixed(1);
-        if (hasMaxW) recFeedMax = ((lastKnownWeight * maxWVal) / 100).toFixed(1);
+    // USING THE ACTIVE WEIGHT HERE
+    if (activeWeight > 0) {
+        if (hasMinW) recFeedMin = ((activeWeight * minWVal) / 100).toFixed(1);
+        if (hasMaxW) recFeedMax = ((activeWeight * maxWVal) / 100).toFixed(1);
         
         if (hasMinW && hasMaxW) {
             feedText = `${recFeedMin}g - ${recFeedMax}g`;
@@ -1204,7 +1208,7 @@ function applySpeciesGuidance() {
         let sourceLink = data[33] ? `<a href="${data[33]}" target="_blank" style="color: var(--accent);"><i class="fas fa-link"></i> Care Guide Manual</a>` : "";
         vetRefEl.innerHTML = `<b><i class="fas fa-notes-medical"></i> Species Guidance:</b> Max interval without Vet Checkup is ${data[32]} months. ${sourceLink}`;
     }
-}    
+}  
     
     async function getGeocodedLocation(lat, lon) {
     try {
@@ -1462,7 +1466,9 @@ async function sendDeviceConfig() {
             renderShedding(sheddingProcessed, '#a3b18a'); 
             renderLength(events, accentColor);
             renderHeigth(events, accentColor);
-            applySpeciesGuidance();
+            
+            applySpeciesGuidance(lastKnownWeight);
+            
         } catch (e) { console.error("Bio-Summary Error:", e); }
     }
 
