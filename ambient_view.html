@@ -755,6 +755,11 @@ const loggedUser = checkSecurity();
     let currentSpeciesData = null;
     let animalBirthDate = ""; // Corrected: Track the birth date globally
     
+    // --- NEW VARIABLES FOR WAITING STOP & AI OPTIMIZATION ---
+    let globalAnimalWeight = 0; 
+    let isBioHistoryLoaded = false; 
+    let globalCareGuideContext = "No specific species care guide available.";
+    
     function applyUserTheme() {
         const user = JSON.parse(localStorage.getItem('currentUser'));
         if (user) {
@@ -1311,6 +1316,9 @@ async function sendDeviceConfig() {
             const elWeightVal = document.getElementById('sumWeightVal');
             const elWeightDate = document.getElementById('sumWeightDate');
             if(lastWeight && elWeightVal && elWeightDate) {
+                // --- CAPTURE WEIGHT GLOBALLY FOR CALCULATIONS ---
+                globalAnimalWeight = parseFloat(lastWeight[3]) || 0;
+
                 elWeightVal.innerHTML = `${lastWeight[3]}<span> g</span>`;
                 elWeightDate.innerText = formatDateDisplay(lastWeight[1]);
             }
@@ -1337,6 +1345,8 @@ async function sendDeviceConfig() {
             renderLength(events, accentColor);
             renderHeigth(events, accentColor);
             
+            // --- RELEASE THE WAITING STOP ---
+            isBioHistoryLoaded = true;
             applySpeciesGuidance();
             
         } catch (e) { console.error("Bio-Summary Error:", e); }
@@ -2117,11 +2127,12 @@ async function openChart(fieldId, label) {
 // --- APPLY CAREGUIDE REFERENCE DATA ---
 // ==========================================
 function applySpeciesGuidance() {
-    if (!currentSpeciesData) return;
+    // --- STRATEGY 2: WAITING STOP ---
+    // Will not run until BOTH the species database AND the bio history are fully loaded
+    if (!currentSpeciesData || !isBioHistoryLoaded) return;
 
-    // Fetch the value directly from the sumWeightVal element as you specified
-    const weightElement = document.getElementById('sumWeightVal');
-    const activeWeight = weightElement ? (parseFloat(weightElement.innerText) || 0) : 0;
+    // Use the raw number variable directly
+    const activeWeight = globalAnimalWeight;
 
     // Helpers
     const updateSummaryRef = (cardId, text) => {
@@ -2240,6 +2251,19 @@ function applySpeciesGuidance() {
         let sourceLink = data[33] ? `<a href="${data[33]}" target="_blank" style="color: var(--accent);"><i class="fas fa-link"></i> Care Guide Manual</a>` : "";
         vetRefEl.innerHTML = `<b><i class="fas fa-notes-medical"></i> Species Guidance:</b> Max interval without Vet Checkup is ${data[32]} months. ${sourceLink}`;
     }
+
+    // --- OPTIMIZATION: GENERATE AI CONTEXT ONCE ---
+    globalCareGuideContext = `
+**Species Care Guide (Reference Only - Do not force strict compliance, treat as a baseline):**
+- Life Stage: ${stage} (Based on age of ${ageInMonths} months)
+- Temp Limits: Min ${data[6] || '---'}°C / Max ${data[7] || '---'}°C
+- Hum Limits: Min ${data[9] || '---'}% / Max ${data[10] || '---'}%
+- Feed Interval: Every ${fMin} to ${fMax} days
+- Target Feed Amount: ${recFeedMin}g to ${recFeedMax}g (based on current weight of ${activeWeight}g and factor for ${stage})
+- Target Adult Max Weight: ${data[5] || '---'}g
+- Target Adult Max Length: ${data[3] || '---'}cm
+- Vet Routine: Max interval checkup is ${data[32] || '---'} months
+    `;
 }
 
 
@@ -2313,52 +2337,9 @@ function applySpeciesGuidance() {
                         rsHistory = "Error retrieving remote telemetry.";
                     }
                 }
-                // --- ASSEMBLE CAREGUIDE BACKGROUND FOR AI ---
-        let ageInMonths = 0;
-        if (animalBirthDate && animalBirthDate !== "---") {
-            const b = new Date(animalBirthDate);
-            const today = new Date();
-            ageInMonths = (today.getFullYear() - b.getFullYear()) * 12 + (today.getMonth() - b.getMonth());
-        }
-
-        let aiCareGuideContext = "No specific species care guide available.";
-        if (currentSpeciesData) {
-            const d = currentSpeciesData;
-            
-            let stage = "Adult"; 
-            let feedFreqMin = d[25], feedFreqMax = d[26];
-            let feedWeightMin = d[27], feedWeightMax = d[28];
-            const periodBaby = parseFloat(d[29]) || 0;
-            const periodJuv = parseFloat(d[30]) || 0;
-
-            if (ageInMonths <= periodBaby) {
-                stage = "Baby";
-                feedFreqMin = d[17]; feedFreqMax = d[18];
-                feedWeightMin = d[19]; feedWeightMax = d[20];
-            } else if (ageInMonths <= periodJuv) {
-                stage = "Juvenil";
-                feedFreqMin = d[21]; feedFreqMax = d[22];
-                feedWeightMin = d[23]; feedWeightMax = d[24];
-            }
-            
-            const weightElement = document.getElementById('sumWeightVal');
-            const activeWeight = weightElement ? (parseFloat(weightElement.innerText) || 0) : 0;
-
-            let recFeedMin = feedWeightMin ? ((activeWeight * parseFloat(feedWeightMin)) / 100).toFixed(1) : "---";
-            let recFeedMax = feedWeightMax ? ((activeWeight * parseFloat(feedWeightMax)) / 100).toFixed(1) : "---";
-
-            aiCareGuideContext = `
-**Species Care Guide (Reference Only - Do not force strict compliance, treat as a baseline):**
-- Life Stage: ${stage} (Based on age of ${ageInMonths} months)
-- Temp Limits: Min ${d[6] || '---'}°C / Max ${d[7] || '---'}°C
-- Hum Limits: Min ${d[9] || '---'}% / Max ${d[10] || '---'}%
-- Feed Interval: Every ${feedFreqMin || '---'} to ${feedFreqMax || '---'} days
-- Target Feed Amount: ${recFeedMin}g to ${recFeedMax}g (based on current weight of ${activeWeight}g and factor for ${stage})
-- Target Adult Max Weight: ${d[5] || '---'}g
-- Target Adult Max Length: ${d[3] || '---'}cm
-- Vet Routine: Max interval checkup is ${d[32] || '---'} months
-            `;
-        }
+                
+        // --- OPTIMIZATION: USE THE GLOBAL CONTEXT GENERATED IN applySpeciesGuidance ---
+        const aiCareGuideContext = globalCareGuideContext;
 
         const superPrompt = `
 [STRICT SYSTEM INSTRUCTION: YOUR ENTIRE RESPONSE MUST BE EXCLUSIVELY IN ENGLISH. Do not output any word in Portuguese or any other language. If the provided context data is in another language, you must translate the insights internally and provide the final output ONLY in English.]
