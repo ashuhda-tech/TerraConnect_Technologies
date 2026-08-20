@@ -1074,9 +1074,21 @@ async function loadSpeciesDatabase(scientificName) {
         const json = await response.json();
 
         if (json.status === "success") {
-            currentSpeciesData = json.data;
-            console.log("✅ Species Data Loaded Successfully:", currentSpeciesData);
-            applySpeciesGuidance();
+            const fetchedData = json.data;
+            
+            // Extract Column 35 (Array Index 34) and normalize to uppercase to avoid case-sensitivity bugs
+            const qualityFlag = fetchedData[34] ? String(fetchedData[34]).trim().toUpperCase() : "";
+
+            // Gatekeeper: Only allow data flagged as 'T' or 'TRUE'
+            if (qualityFlag === 'T' || qualityFlag === 'TRUE') {
+                currentSpeciesData = fetchedData;
+                console.log("✅ Species Data Loaded & Verified Successfully:", currentSpeciesData);
+                applySpeciesGuidance();
+            } else {
+                console.warn(`⚠️ Species data for ${scientificName} is NOT verified (Flag: ${qualityFlag}). Skipping analytics & AI integration.`);
+                // Force null so applySpeciesGuidance and the AI context ignore this scraped row
+                currentSpeciesData = null; 
+            }
             
         } else {
             console.warn("⚠️ Species data not found in DB for:", scientificName);
