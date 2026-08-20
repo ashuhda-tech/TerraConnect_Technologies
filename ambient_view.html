@@ -59,7 +59,7 @@
     body {   background-color: var(--bg-dark); color: var(--text-light); font-family: 'Inter', sans-serif;  margin: 0;   display: flex; height: 100vh; overflow: hidden; transition: background 0.5s, color 0.5s;}
 
     /* --- APP VERSION FLAG --- */
-        .app-version-flag {position: fixed;bottom: 10px;left: 10px;background: rgba(0, 0, 0, 0.6);color: rgba(255, 255, 255, 0.3);padding: 4px 8px;border-radius: 4px;font-size: 0.55rem;font-family: 'Inter', monospace;z-index: 99999;pointer-events: none;border: 1px solid rgba(255, 255, 255, 0.1);backdrop-filter: blur(2px);transition: opacity 0.5s; /* Transição suave ao carregar */
+        .app-version-flag {position: fixed;bottom: 10px;left: 10px;background: rgba(0, 0, 0, 0.6);color: rgba(255, 255, 255, 0.3);padding: 4px 8px;border-radius: 4px;font-size: 0.55rem;font-family: 'Inter', monospace;z-index: 99999;pointer-events: none;border: 1px solid rgba(255, 255, 255, 0.1);backdrop-filter: blur(2px);transition: opacity 0.5s;
         }
     /* Estilo para o Vídeo de Fundo */
     .background-video { position: fixed; right: 0; bottom: 0; min-width: 100%; min-height: 100%; z-index: -1; object-fit: cover; filter: brightness(0.4); }
@@ -258,7 +258,7 @@
             <p id="dynStatus">On-time Environmental Monitoring</p>
         </header>
 
-        <!-- --- AI Insights --- -->                  
+        <!-- --- AI Insights --- -->                
         <div id="section-ai">
             <h3 class="a70-font" style="font-size: 0.9rem; color: #a3b18a; margin: 30px 0 15px 0; display: flex; align-items: center; justify-content: space-between; width: 100%;">
                 <span><i class="fas fa-brain"></i> AI Insights</span>
@@ -385,7 +385,7 @@
             </div>
         </div>
 
-        <!-- --- Walk Sensor Unit --- -->            
+        <!-- --- Walk Sensor Unit --- -->          
         <div id="section-walk">
             <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-top: 20px; margin-bottom: 15px;">
                 <i class="fas fa-broadcast-tower"></i> Walk Sensor Unit
@@ -652,8 +652,8 @@
         <div id="vet-section">
             <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin: 30px 0 15px 0;"><i class="fas fa-notes-medical"></i> Vet Visit & GPS Tracker </h3>
             <div class="sensor-card" style="flex-direction: column; align-items: stretch; margin-bottom: 20px;">
-                    <div id="vetMapContainer" style="width: 100%; height: 300px; border-radius: 10px; overflow: hidden; margin-bottom: 15px;">
-                    </div>
+                <div id="vetMapContainer" style="width: 100%; height: 300px; border-radius: 10px; overflow: hidden; margin-bottom: 15px;">
+                </div>
             
                 <div style="overflow-x: auto;">
                     <table style="width: 100%; border-collapse: collapse; color: var(--text-light); font-size: 0.8rem;">
@@ -1074,7 +1074,6 @@ async function loadSpeciesDatabase(scientificName) {
             console.log("✅ Species Data Loaded Successfully:", currentSpeciesData);
             applySpeciesGuidance();
             
-            // Note: In the next step, we will trigger the feeding/age calculations here!
         } else {
             console.warn("⚠️ Species data not found in DB for:", scientificName);
         }
@@ -1149,30 +1148,30 @@ function applySpeciesGuidance() {
     updateSummaryRef('sumLength', `Max Adult: ${data[3] || '---'}cm`);
     updateSummaryRef('sumHeight', `Max Adult: ${data[4] || '---'}cm`);
     
-    // Calculate recommended feed amount based on min/max factors
+    // Calculate recommended feed amount based on separate min/max columns
     let recFeedMin = "---";
     let recFeedMax = "---";
     let feedText = "---";
     
-    const hasMinW = feedWeightMin && !isNaN(parseFloat(feedWeightMin));
-    const hasMaxW = feedWeightMax && !isNaN(parseFloat(feedWeightMax));
+    const minWVal = parseFloat(feedWeightMin);
+    const maxWVal = parseFloat(feedWeightMax);
+    const hasMinW = !isNaN(minWVal);
+    const hasMaxW = !isNaN(maxWVal);
 
     if (lastKnownWeight > 0) {
-        if (hasMinW) recFeedMin = ((lastKnownWeight * parseFloat(feedWeightMin)) / 100).toFixed(1);
-        if (hasMaxW) recFeedMax = ((lastKnownWeight * parseFloat(feedWeightMax)) / 100).toFixed(1);
+        if (hasMinW) recFeedMin = ((lastKnownWeight * minWVal) / 100).toFixed(1);
+        if (hasMaxW) recFeedMax = ((lastKnownWeight * maxWVal) / 100).toFixed(1);
         
-        if (recFeedMin !== "---" && recFeedMax !== "---") {
+        if (hasMinW && hasMaxW) {
             feedText = `${recFeedMin}g - ${recFeedMax}g`;
-        } else if (recFeedMin !== "---") {
-            feedText = `~${recFeedMin}g`;
         } else if (hasMinW) {
-            feedText = `${feedWeightMin}% of Body Wgt`;
+            feedText = `~${recFeedMin}g`;
         }
     } else {
         if (hasMinW && hasMaxW) {
-            feedText = `${parseFloat(feedWeightMin)}% - ${parseFloat(feedWeightMax)}% of Body Wgt`;
+            feedText = `${minWVal}% - ${maxWVal}% of Body Wgt`;
         } else if (hasMinW) {
-            feedText = `~${parseFloat(feedWeightMin)}% of Body Wgt`;
+            feedText = `~${minWVal}% of Body Wgt`;
         }
     }
 
@@ -2383,7 +2382,7 @@ Reference the environmental data with the biological and veterinary data. Is the
 2) Identified Correlations (Cause/Effect)
 3) Management Recommendations
 
-[FINAL RULE: REMEMBER TO GENERATE THE ENTIRE RESPONSE IN ENGLISH ONLY. BE EXTREMELY CONCISE. NO INTRODUCTORY OR CONCLUDING REMARKS. SKIP THE SPECIFICATIONS, JUST GIVE ME THE BOTTOM LINE. Do not use "*" or any other special character to create a section or subsection or bulletpoints, just use the topic, section and subsection name.]
+[FINAL RULE: REMEMBER TO GENERATE THE ENTIRE RESPONSE IN ENGLISH ONLY. BE EXTREMELY CONCISE. NO INTRODUCTORY OR CONCLUDING REMARKS. SKIP THE SPECIFICATIONS, JUST GIVE ME THE BOTTOM LINE. Do not use bulletpoints, just use the topic, section and subsection name.]
 `;
 
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ANALYZING COMPLEX DATA...';
