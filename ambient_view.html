@@ -1071,141 +1071,13 @@ async function loadSpeciesDatabase(scientificName) {
         if (json.status === "success") {
             currentSpeciesData = json.data;
             console.log("✅ Species Data Loaded Successfully:", currentSpeciesData);
-            // NOTE: Removed premature applySpeciesGuidance() call here so it runs after weight is loaded in loadBiologicalHistory
+            applySpeciesGuidance();
+            
         } else {
             console.warn("⚠️ Species data not found in DB for:", scientificName);
         }
     } catch (e) {
         console.error("❌ Error fetching species data:", e);
-    }
-}
-
-// ==========================================
-// --- APPLY CAREGUIDE REFERENCE DATA ---
-// ==========================================
-function applySpeciesGuidance() {
-    if (!currentSpeciesData) return;
-
-    // Fetch the value directly from the sumWeightVal element as you specified
-    const weightElement = document.getElementById('sumWeightVal');
-    const activeWeight = weightElement ? (parseFloat(weightElement.innerText) || 0) : 0;
-
-    // Helpers
-    const updateSummaryRef = (cardId, text) => {
-        const card = document.getElementById(cardId);
-        if (!card) return;
-        let refEl = card.querySelector('.guide-ref');
-        if (!refEl) {
-            refEl = document.createElement('div');
-            refEl.className = 'guide-ref';
-            card.appendChild(refEl);
-        }
-        refEl.innerHTML = `<i class="fas fa-book-open"></i> Ref: ${text}`;
-    };
-
-    const updateInputRef = (inputId, text) => {
-        const inputEl = document.getElementById(inputId);
-        if (!inputEl) return;
-        const parent = inputEl.closest('.input-card');
-        if (!parent) return;
-        let refEl = parent.querySelector('.guide-ref-input');
-        if (!refEl) {
-            refEl = document.createElement('div');
-            refEl.className = 'guide-ref-input';
-            parent.appendChild(refEl);
-        }
-        refEl.innerHTML = `<i class="fas fa-info-circle"></i> Guide: ${text}`;
-    };
-
-    const data = currentSpeciesData; 
-
-    // 1. Calculate Age in Months
-    let ageInMonths = 0;
-    if (animalBirthDate && animalBirthDate !== "---") {
-        const b = new Date(animalBirthDate);
-        const today = new Date();
-        ageInMonths = (today.getFullYear() - b.getFullYear()) * 12 + (today.getMonth() - b.getMonth());
-    }
-
-    // 2. Determine Life Stage
-    let stage = "Adult"; 
-    let feedFreqMin = data[25], feedFreqMax = data[26];
-    let feedWeightMin = data[27], feedWeightMax = data[28];
-
-    const periodBaby = parseFloat(data[29]) || 0;
-    const periodJuv = parseFloat(data[30]) || 0;
-
-    if (ageInMonths <= periodBaby) {
-        stage = "Baby";
-        feedFreqMin = data[17]; feedFreqMax = data[18];
-        feedWeightMin = data[19]; feedWeightMax = data[20];
-    } else if (ageInMonths <= periodJuv) {
-        stage = "Juvenil";
-        feedFreqMin = data[21]; feedFreqMax = data[22];
-        feedWeightMin = data[23]; feedWeightMax = data[24];
-    }
-
-    // 3. Update Summary Cards
-    updateSummaryRef('sumWeight', `Max Adult: ${data[5] || '---'}g`);
-    updateSummaryRef('sumLength', `Max Adult: ${data[3] || '---'}cm`);
-    updateSummaryRef('sumHeight', `Max Adult: ${data[4] || '---'}cm`);
-    
-    // Calculate recommended feed amount based on separate min/max columns
-    let recFeedMin = "---";
-    let recFeedMax = "---";
-    let feedText = "---";
-    
-    const minWVal = parseFloat(feedWeightMin);
-    const maxWVal = parseFloat(feedWeightMax);
-    const hasMinW = !isNaN(minWVal);
-    const hasMaxW = !isNaN(maxWVal);
-
-    // USING THE ACTIVE WEIGHT DIRECTLY FROM sumWeightVal
-    if (activeWeight > 0) {
-        if (hasMinW) recFeedMin = ((activeWeight * minWVal) / 100).toFixed(1);
-        if (hasMaxW) recFeedMax = ((activeWeight * maxWVal) / 100).toFixed(1);
-        
-        if (hasMinW && hasMaxW) {
-            feedText = `${recFeedMin}g - ${recFeedMax}g`;
-        } else if (hasMinW) {
-            feedText = `~${recFeedMin}g`;
-        }
-    } else {
-        if (hasMinW && hasMaxW) {
-            feedText = `${minWVal}% - ${maxWVal}% of Body Wgt`;
-        } else if (hasMinW) {
-            feedText = `~${minWVal}% of Body Wgt`;
-        }
-    }
-
-    const fMin = feedFreqMin || '---';
-    const fMax = feedFreqMax || '---';
-
-    // Update main summary card directly to prevent overwrite conflicts
-    updateSummaryRef('sumFeeding', `Ideal (${stage}): ${feedText} | Int: ${fMin} to ${fMax} d`);
-
-    // 4. Update Configuration Cards
-    updateInputRef('cfgTempMin', `${data[6] || '---'}°C`);
-    updateInputRef('cfgTempMax', `${data[7] || '---'}°C`);
-    updateInputRef('cfgHumMin', `${data[9] || '---'}%`);
-    updateInputRef('cfgHumMax', `${data[10] || '---'}%`);
-    updateInputRef('cfgFeedInterval', `${fMin} - ${fMax} d`);
-    updateInputRef('cfgFeedAmount', `${feedText}`);
-
-    // 5. Vet Section
-    const vetSection = document.getElementById('vet-section');
-    if (vetSection && data[32]) {
-        let vetRefEl = document.getElementById('vetGuideRef');
-        if (!vetRefEl) {
-            vetRefEl = document.createElement('div');
-            vetRefEl.id = 'vetGuideRef';
-            vetRefEl.className = 'guide-ref-vet';
-            const title = vetSection.querySelector('h3');
-            title.insertAdjacentElement('afterend', vetRefEl);
-        }
-        
-        let sourceLink = data[33] ? `<a href="${data[33]}" target="_blank" style="color: var(--accent);"><i class="fas fa-link"></i> Care Guide Manual</a>` : "";
-        vetRefEl.innerHTML = `<b><i class="fas fa-notes-medical"></i> Species Guidance:</b> Max interval without Vet Checkup is ${data[32]} months. ${sourceLink}`;
     }
 }
     
@@ -1465,7 +1337,6 @@ async function sendDeviceConfig() {
             renderLength(events, accentColor);
             renderHeigth(events, accentColor);
             
-            // Apply guidance *after* weight has been correctly populated in the DOM
             applySpeciesGuidance();
             
         } catch (e) { console.error("Bio-Summary Error:", e); }
@@ -1755,6 +1626,7 @@ function buildForecastChartConfig(labelString, dataArray, color, ctx) {
         }
     }
 };
+
 
     async function sendToCloud(type, elementId) {
         const inputElement = document.getElementById(elementId);
@@ -2239,6 +2111,137 @@ async function openChart(fieldId, label) {
             eduSection.style.display = hasEducationalData ? 'block' : 'none';
         }
     }
+
+
+// ==========================================
+// --- APPLY CAREGUIDE REFERENCE DATA ---
+// ==========================================
+function applySpeciesGuidance() {
+    if (!currentSpeciesData) return;
+
+    // Fetch the value directly from the sumWeightVal element as you specified
+    const weightElement = document.getElementById('sumWeightVal');
+    const activeWeight = weightElement ? (parseFloat(weightElement.innerText) || 0) : 0;
+
+    // Helpers
+    const updateSummaryRef = (cardId, text) => {
+        const card = document.getElementById(cardId);
+        if (!card) return;
+        let refEl = card.querySelector('.guide-ref');
+        if (!refEl) {
+            refEl = document.createElement('div');
+            refEl.className = 'guide-ref';
+            card.appendChild(refEl);
+        }
+        refEl.innerHTML = `<i class="fas fa-book-open"></i> Ref: ${text}`;
+    };
+
+    const updateInputRef = (inputId, text) => {
+        const inputEl = document.getElementById(inputId);
+        if (!inputEl) return;
+        const parent = inputEl.closest('.input-card');
+        if (!parent) return;
+        let refEl = parent.querySelector('.guide-ref-input');
+        if (!refEl) {
+            refEl = document.createElement('div');
+            refEl.className = 'guide-ref-input';
+            parent.appendChild(refEl);
+        }
+        refEl.innerHTML = `<i class="fas fa-info-circle"></i> Guide: ${text}`;
+    };
+
+    const data = currentSpeciesData; 
+
+    // 1. Calculate Age in Months
+    let ageInMonths = 0;
+    if (animalBirthDate && animalBirthDate !== "---") {
+        const b = new Date(animalBirthDate);
+        const today = new Date();
+        ageInMonths = (today.getFullYear() - b.getFullYear()) * 12 + (today.getMonth() - b.getMonth());
+    }
+
+    // 2. Determine Life Stage
+    let stage = "Adult"; 
+    let feedFreqMin = data[25], feedFreqMax = data[26];
+    let feedWeightMin = data[27], feedWeightMax = data[28];
+
+    const periodBaby = parseFloat(data[29]) || 0;
+    const periodJuv = parseFloat(data[30]) || 0;
+
+    if (ageInMonths <= periodBaby) {
+        stage = "Baby";
+        feedFreqMin = data[17]; feedFreqMax = data[18];
+        feedWeightMin = data[19]; feedWeightMax = data[20];
+    } else if (ageInMonths <= periodJuv) {
+        stage = "Juvenil";
+        feedFreqMin = data[21]; feedFreqMax = data[22];
+        feedWeightMin = data[23]; feedWeightMax = data[24];
+    }
+
+    // 3. Update Summary Cards
+    updateSummaryRef('sumWeight', `Max Adult: ${data[5] || '---'}g`);
+    updateSummaryRef('sumLength', `Max Adult: ${data[3] || '---'}cm`);
+    updateSummaryRef('sumHeight', `Max Adult: ${data[4] || '---'}cm`);
+    
+    // Calculate recommended feed amount based on separate min/max columns
+    let recFeedMin = "---";
+    let recFeedMax = "---";
+    let feedText = "---";
+    
+    const minWVal = parseFloat(feedWeightMin);
+    const maxWVal = parseFloat(feedWeightMax);
+    const hasMinW = !isNaN(minWVal);
+    const hasMaxW = !isNaN(maxWVal);
+
+    // USING THE ACTIVE WEIGHT DIRECTLY FROM sumWeightVal
+    if (activeWeight > 0) {
+        if (hasMinW) recFeedMin = ((activeWeight * minWVal) / 100).toFixed(1);
+        if (hasMaxW) recFeedMax = ((activeWeight * maxWVal) / 100).toFixed(1);
+        
+        if (hasMinW && hasMaxW) {
+            feedText = `${recFeedMin}g - ${recFeedMax}g`;
+        } else if (hasMinW) {
+            feedText = `~${recFeedMin}g`;
+        }
+    } else {
+        if (hasMinW && hasMaxW) {
+            feedText = `${minWVal}% - ${maxWVal}% of Body Wgt`;
+        } else if (hasMinW) {
+            feedText = `~${minWVal}% of Body Wgt`;
+        }
+    }
+
+    const fMin = feedFreqMin || '---';
+    const fMax = feedFreqMax || '---';
+
+    // Update main summary card directly to prevent overwrite conflicts
+    updateSummaryRef('sumFeeding', `Ideal (${stage}): ${feedText} | Int: ${fMin} to ${fMax} d`);
+
+    // 4. Update Configuration Cards
+    updateInputRef('cfgTempMin', `${data[6] || '---'}°C`);
+    updateInputRef('cfgTempMax', `${data[7] || '---'}°C`);
+    updateInputRef('cfgHumMin', `${data[9] || '---'}%`);
+    updateInputRef('cfgHumMax', `${data[10] || '---'}%`);
+    updateInputRef('cfgFeedInterval', `${fMin} - ${fMax} d`);
+    updateInputRef('cfgFeedAmount', `${feedText}`);
+
+    // 5. Vet Section
+    const vetSection = document.getElementById('vet-section');
+    if (vetSection && data[32]) {
+        let vetRefEl = document.getElementById('vetGuideRef');
+        if (!vetRefEl) {
+            vetRefEl = document.createElement('div');
+            vetRefEl.id = 'vetGuideRef';
+            vetRefEl.className = 'guide-ref-vet';
+            const title = vetSection.querySelector('h3');
+            title.insertAdjacentElement('afterend', vetRefEl);
+        }
+        
+        let sourceLink = data[33] ? `<a href="${data[33]}" target="_blank" style="color: var(--accent);"><i class="fas fa-link"></i> Care Guide Manual</a>` : "";
+        vetRefEl.innerHTML = `<b><i class="fas fa-notes-medical"></i> Species Guidance:</b> Max interval without Vet Checkup is ${data[32]} months. ${sourceLink}`;
+    }
+}
+
 
     async function generateAIInsight() {
     const btn = document.getElementById('btnAi');
