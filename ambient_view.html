@@ -1247,111 +1247,109 @@ async function sendDeviceConfig() {
 
     // AGORA USA API JSON EM VEZ DE CSV. (Assume script backend com action=read&pageId=...)
     async function loadBiologicalHistory(id) {
-        try {
-            const res = await fetch(`${BIODATA_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(id)}`);
-            const json = await res.json();
-            const events = json.data || [];
-            
-            const lastFeeding = events.filter(e => e[2] === "Feeding").pop();
-            const lastWeight = events.filter(e => e[2] === "Weighting").pop();
-            const lastLength = events.filter(e => e[2] === "Length").pop();
-            const lastHeight = events.filter(e => e[2] === "Height").pop();
-            const lastShed = events.filter(e => e[2] === "Shedding").sort((a, b) => new Date(a[1]) - new Date(b[1])); 
+    try {
+        const res = await fetch(`${BIODATA_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(id)}`);
+        const json = await res.json();
+        const events = json.data || [];
         
-            const feedingEvents = events.filter(e => e[2] === "Feeding");
-            const uniqueFoodTypes = [...new Set(feedingEvents.map(e => e[4]).filter(val => val && val.trim() !== ""))];
-            const uniqueBrands = [...new Set(feedingEvents.map(e => e[5]).filter(val => val && val.trim() !== ""))];
-            
-            const foodListEl = document.getElementById('foodTypeList');
-            const brandListEl = document.getElementById('brandList');
-            if (foodListEl) foodListEl.innerHTML = uniqueFoodTypes.map(ft => `<option value="${ft}">`).join('');
-            if (brandListEl) brandListEl.innerHTML = uniqueBrands.map(b => `<option value="${b}">`).join('');
+        const lastFeeding = events.filter(e => e[2] === "Feeding").pop();
+        const lastWeight = events.filter(e => e[2] === "Weighting").pop();
+        const lastLength = events.filter(e => e[2] === "Length").pop();
+        const lastHeight = events.filter(e => e[2] === "Height").pop();
+        const lastShed = events.filter(e => e[2] === "Shedding").sort((a, b) => new Date(a[1]) - new Date(b[1])); 
 
-            const sheddingProcessed = lastShed.map((event, index) => {
-                if (index === 0) {
-                    return { date: event[1], interval: 0 }; 
-                }
-                const prevDate = new Date(lastShed[index - 1][1]);
-                const currDate = new Date(event[1]);
-    
-                const diffTime = Math.abs(currDate - prevDate);
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-    
-                return { date: event[1], interval: diffDays };
-            });
-            
-            const lastShedResult = sheddingProcessed[sheddingProcessed.length - 1];
-            
-            const elShedInterval = document.getElementById('sumSheddingInterval');
-            const elShedDate = document.getElementById('sumSheddingDate');
-            if (lastShedResult && elShedInterval && elShedDate) {
-                elShedInterval.innerHTML = `${lastShedResult.interval}<span> Days</span>`; 
-                elShedDate.innerText = `Last: ${formatDateDisplay(lastShedResult.date)}`;
+        const feedingEvents = events.filter(e => e[2] === "Feeding");
+        const uniqueFoodTypes = [...new Set(feedingEvents.map(e => e[4]).filter(val => val && val.trim() !== ""))];
+        const uniqueBrands = [...new Set(feedingEvents.map(e => e[5]).filter(val => val && val.trim() !== ""))];
+        
+        const foodListEl = document.getElementById('foodTypeList');
+        const brandListEl = document.getElementById('brandList');
+        if (foodListEl) foodListEl.innerHTML = uniqueFoodTypes.map(ft => `<option value="${ft}">`).join('');
+        if (brandListEl) brandListEl.innerHTML = uniqueBrands.map(b => `<option value="${b}">`).join('');
+
+        const sheddingProcessed = lastShed.map((event, index) => {
+            if (index === 0) {
+                return { date: event[1], interval: 0 }; 
             }
+            const prevDate = new Date(lastShed[index - 1][1]);
+            const currDate = new Date(event[1]);
 
-            const elFeedingVal = document.getElementById('sumFeedingVal');
-            const elFeedingDate = document.getElementById('sumFeedingDate');
-            const elFeedingDaysPassed = document.getElementById('sumFeedingDaysPassed'); // New Element
+            const diffTime = Math.abs(currDate - prevDate);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+
+            return { date: event[1], interval: diffDays };
+        });
+        
+        const lastShedResult = sheddingProcessed[sheddingProcessed.length - 1];
+        
+        const elShedInterval = document.getElementById('sumSheddingInterval');
+        const elShedDate = document.getElementById('sumSheddingDate');
+        if (lastShedResult && elShedInterval && elShedDate) {
+            elShedInterval.innerHTML = `${lastShedResult.interval}<span> Days</span>`; 
+            elShedDate.innerText = `Last: ${formatDateDisplay(lastShedResult.date)}`;
+        }
+
+        const elFeedingVal = document.getElementById('sumFeedingVal');
+        const elFeedingDate = document.getElementById('sumFeedingDate');
+        const elFeedingDaysPassed = document.getElementById('sumFeedingDaysPassed');
+        
+        if(lastFeeding && elFeedingVal && elFeedingDate) {
+            elFeedingVal.innerHTML = `${lastFeeding[3]}<span> g</span>`;
+            elFeedingDate.innerText = formatDateDisplay(lastFeeding[1]);
             
-            if(lastFeeding && elFeedingVal && elFeedingDate) {
-                elFeedingVal.innerHTML = `${lastFeeding[3]}<span> g</span>`;
-                elFeedingDate.innerText = formatDateDisplay(lastFeeding[1]);
+            if (elFeedingDaysPassed) {
+                const feedDate = new Date(lastFeeding[1]);
+                const today = new Date();
                 
-                // New: Calculate Days Passed
-                if (elFeedingDaysPassed) {
-                    const feedDate = new Date(lastFeeding[1]);
-                    const today = new Date();
-                    
-                    // Calculate the difference in milliseconds and convert to days
+                // FIX: Added a safety check for NaN dates so it doesn't break the UI
+                if (!isNaN(feedDate.getTime())) {
                     const diffTime = today.getTime() - feedDate.getTime();
                     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-                    
-                    // Prevent negative days if timezone shifts make today's feed seem slightly in the future
                     const displayDays = diffDays < 0 ? 0 : diffDays; 
-                    
                     elFeedingDaysPassed.innerHTML = `<i class="fas fa-clock"></i> ${displayDays} Days Ago`;
+                } else {
+                    elFeedingDaysPassed.innerHTML = `<i class="fas fa-clock"></i> -- Days Ago`;
                 }
             }
-            
-            const elWeightVal = document.getElementById('sumWeightVal');
-            const elWeightDate = document.getElementById('sumWeightDate');
-            if(lastWeight && elWeightVal && elWeightDate) {
-                // --- CAPTURE WEIGHT GLOBALLY FOR CALCULATIONS ---
-                globalAnimalWeight = parseFloat(lastWeight[3]) || 0;
-
-                elWeightVal.innerHTML = `${lastWeight[3]}<span> g</span>`;
-                elWeightDate.innerText = formatDateDisplay(lastWeight[1]);
-            }
-            
-            const elLengthVal = document.getElementById('sumLengthVal');
-            const elLengthDate = document.getElementById('sumLengthDate');
-            if(lastLength && elLengthVal && elLengthDate) {
-                elLengthVal.innerHTML = `${lastLength[3]}<span> cm</span>`;
-                elLengthDate.innerText = formatDateDisplay(lastLength[1]);
-            }
-            
-            const elHeightVal = document.getElementById('sumHeightVal');
-            const elHeightDate = document.getElementById('sumHeightDate');
-            if(lastHeight && elHeightVal && elHeightDate) {
-                elHeightVal.innerHTML = `${lastHeight[3]}<span> cm</span>`;
-                elHeightDate.innerText = formatDateDisplay(lastHeight[1]);
-            }
+        }
         
-            const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+        const elWeightVal = document.getElementById('sumWeightVal');
+        const elWeightDate = document.getElementById('sumWeightDate');
+        if(lastWeight && elWeightVal && elWeightDate) {
+            globalAnimalWeight = parseFloat(lastWeight[3]) || 0;
+            elWeightVal.innerHTML = `${lastWeight[3]}<span> g</span>`;
+            elWeightDate.innerText = formatDateDisplay(lastWeight[1]);
+        }
+        
+        const elLengthVal = document.getElementById('sumLengthVal');
+        const elLengthDate = document.getElementById('sumLengthDate');
+        if(lastLength && elLengthVal && elLengthDate) {
+            elLengthVal.innerHTML = `${lastLength[3]}<span> cm</span>`;
+            elLengthDate.innerText = formatDateDisplay(lastLength[1]);
+        }
+        
+        const elHeightVal = document.getElementById('sumHeightVal');
+        const elHeightDate = document.getElementById('sumHeightDate');
+        if(lastHeight && elHeightVal && elHeightDate) {
+            elHeightVal.innerHTML = `${lastHeight[3]}<span> cm</span>`;
+            elHeightDate.innerText = formatDateDisplay(lastHeight[1]);
+        }
+        
+        // FIX: Moved the Waiting Stop release BEFORE the chart rendering.
+        // This guarantees the CareGuide notes calculate and display even if a chart canvas fails.
+        isBioHistoryLoaded = true;
+        applySpeciesGuidance();
 
-            renderFeeding(events, accentColor);
-            renderWeight(events, accentColor);
-            renderShedding(sheddingProcessed, '#a3b18a'); 
-            renderLength(events, accentColor);
-            renderHeigth(events, accentColor);
-            
-            // --- RELEASE THE WAITING STOP ---
-            isBioHistoryLoaded = true;
-            applySpeciesGuidance();
-            
-        } catch (e) { console.error("Bio-Summary Error:", e); }
-    }
+        const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
 
+        renderFeeding(events, accentColor);
+        renderWeight(events, accentColor);
+        renderShedding(sheddingProcessed, '#a3b18a'); 
+        renderLength(events, accentColor);
+        renderHeigth(events, accentColor);
+        
+    } catch (e) { console.error("Bio-Summary Error:", e); }
+}
     function getGradient(ctx, color) {
         const gradient = ctx.createLinearGradient(0, 0, 0, 300);
         gradient.addColorStop(0, color + '33'); 
@@ -1360,7 +1358,8 @@ async function sendDeviceConfig() {
     }
 
 function generateForecast(dataArray, numPredictions = 2) {
-    if (dataArray.length < 3) return { values: [], type: 'Insufficient Data' };
+    // FIX: Changed 'type' to 'method' so the label consistently picks it up instead of vanishing
+    if (dataArray.length < 3) return { values: [], method: 'Insufficient Data' }; 
 
     const n = dataArray.length;
     let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
