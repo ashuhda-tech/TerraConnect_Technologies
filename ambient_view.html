@@ -437,7 +437,7 @@
             </div>
         </div>
 
-        <!-- --- Environment Active Configuration --- -->    
+        <!-- --- Environment Active Configuration --- -->  
         <div id="section-env-config">
             <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-bottom: 15px;">
                 <i class="fas fa-sliders-h"></i> Environment Active Configuration
@@ -494,7 +494,7 @@
             <hr style="border: 0.5px solid #eee; margin: 20px 0;">
         </div>
 
-        <!-- --- SUMMARY CARDS --- -->    
+        <!-- --- SUMMARY CARDS --- -->  
         <div id="section-summary" class="summary-section">
             <div class="summary-card" id="sumFeeding">
                 <div class="summary-title a70-font"><i class="fas fa-utensils"></i> Last Feeding</div>
@@ -1442,7 +1442,6 @@ async function sendDeviceConfig() {
             if(lastWeight && elWeightVal && elWeightDate) {
                 elWeightVal.innerHTML = `${lastWeight[3]}<span> g</span>`;
                 elWeightDate.innerText = formatDateDisplay(lastWeight[1]);
-                lastKnownWeight = parseFloat(lastWeight[3]) || 0;
             }
             
             const elLengthVal = document.getElementById('sumLengthVal');
@@ -1467,7 +1466,7 @@ async function sendDeviceConfig() {
             renderLength(events, accentColor);
             renderHeigth(events, accentColor);
             
-            applySpeciesGuidance(lastKnownWeight);
+            applySpeciesGuidance();
             
         } catch (e) { console.error("Bio-Summary Error:", e); }
     }
@@ -2339,8 +2338,11 @@ async function openChart(fieldId, label) {
                 feedWeightMin = d[23]; feedWeightMax = d[24];
             }
             
-            let recFeedMin = feedWeightMin ? ((lastKnownWeight * parseFloat(feedWeightMin)) / 100).toFixed(1) : "---";
-            let recFeedMax = feedWeightMax ? ((lastKnownWeight * parseFloat(feedWeightMax)) / 100).toFixed(1) : "---";
+            const weightElement = document.getElementById('sumWeightVal');
+            const activeWeight = weightElement ? (parseFloat(weightElement.innerText) || 0) : 0;
+
+            let recFeedMin = feedWeightMin ? ((activeWeight * parseFloat(feedWeightMin)) / 100).toFixed(1) : "---";
+            let recFeedMax = feedWeightMax ? ((activeWeight * parseFloat(feedWeightMax)) / 100).toFixed(1) : "---";
 
             aiCareGuideContext = `
 **Species Care Guide (Reference Only - Do not force strict compliance, treat as a baseline):**
@@ -2348,7 +2350,7 @@ async function openChart(fieldId, label) {
 - Temp Limits: Min ${d[6] || '---'}°C / Max ${d[7] || '---'}°C
 - Hum Limits: Min ${d[9] || '---'}% / Max ${d[10] || '---'}%
 - Feed Interval: Every ${feedFreqMin || '---'} to ${feedFreqMax || '---'} days
-- Target Feed Amount: ${recFeedMin}g to ${recFeedMax}g (based on current weight of ${lastKnownWeight}g and factor for ${stage})
+- Target Feed Amount: ${recFeedMin}g to ${recFeedMax}g (based on current weight of ${activeWeight}g and factor for ${stage})
 - Target Adult Max Weight: ${d[5] || '---'}g
 - Target Adult Max Length: ${d[3] || '---'}cm
 - Vet Routine: Max interval checkup is ${d[32] || '---'} months
