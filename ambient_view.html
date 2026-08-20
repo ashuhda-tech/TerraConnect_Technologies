@@ -59,7 +59,7 @@
     body {   background-color: var(--bg-dark); color: var(--text-light); font-family: 'Inter', sans-serif;  margin: 0;   display: flex; height: 100vh; overflow: hidden; transition: background 0.5s, color 0.5s;}
 
     /* --- APP VERSION FLAG --- */
-        .app-version-flag {position: fixed;bottom: 10px;left: 10px;background: rgba(0, 0, 0, 0.6);color: rgba(255, 255, 255, 0.3);padding: 4px 8px;border-radius: 4px;font-size: 0.55rem;font-family: 'Inter', monospace;z-index: 99999;pointer-events: none;border: 1px solid rgba(255, 255, 255, 0.1);backdrop-filter: blur(2px);transition: opacity 0.5s;
+        .app-version-flag {position: fixed;bottom: 10px;left: 10px;background: rgba(0, 0, 0, 0.6);color: rgba(255, 255, 255, 0.3);padding: 4px 8px;border-radius: 4px;font-size: 0.55rem;font-family: 'Inter', monospace;z-index: 99999;pointer-events: none;border: 1px solid rgba(255, 255, 255, 0.1);backdrop-filter: blur(2px);transition: opacity 0.5s; /* Transição suave ao carregar */
         }
     /* Estilo para o Vídeo de Fundo */
     .background-video { position: fixed; right: 0; bottom: 0; min-width: 100%; min-height: 100%; z-index: -1; object-fit: cover; filter: brightness(0.4); }
@@ -258,7 +258,7 @@
             <p id="dynStatus">On-time Environmental Monitoring</p>
         </header>
 
-        <!-- --- AI Insights --- -->                
+        <!-- --- AI Insights --- -->                  
         <div id="section-ai">
             <h3 class="a70-font" style="font-size: 0.9rem; color: #a3b18a; margin: 30px 0 15px 0; display: flex; align-items: center; justify-content: space-between; width: 100%;">
                 <span><i class="fas fa-brain"></i> AI Insights</span>
@@ -276,7 +276,7 @@
             </div>
         </div>
 
-        <!-- --- Main Sensor Unit --- -->   
+        <!-- --- Main Sensor Unit --- -->          
         <div id="section-main">
             <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-top: 20px; margin-bottom: 15px;">
                 <i class="fas fa-broadcast-tower"></i> Main Sensor Unit
@@ -385,7 +385,7 @@
             </div>
         </div>
 
-        <!-- --- Walk Sensor Unit --- -->        
+        <!-- --- Walk Sensor Unit --- -->            
         <div id="section-walk">
             <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-top: 20px; margin-bottom: 15px;">
                 <i class="fas fa-broadcast-tower"></i> Walk Sensor Unit
@@ -473,7 +473,7 @@
                 </div>
 
                 <div class="input-card">
-                    <div class="input-header"><i class="fas fa-clock" style="color: #a3b18a"></i> Feed Interval (h)</div>
+                    <div class="input-header"><i class="fas fa-clock" style="color: #a3b18a"></i> Feed Interval (d)</div>
                     <div class="input-group">
                         <input type="number" id="cfgFeedInterval" class="input-field" placeholder="12">
                     </div>
@@ -754,6 +754,7 @@ const loggedUser = checkSecurity();
     let homeLon = 0;
     let currentSpeciesData = null;
     let lastKnownWeight = 0; // Captures the latest weight for Feed calculations
+    let animalBirthDate = ""; // Corrected: Track the birth date globally
     
     function applyUserTheme() {
         const user = JSON.parse(localStorage.getItem('currentUser'));
@@ -1004,7 +1005,7 @@ async function loadData() {
 
             updateSensors();
             
-            await loadBiologicalHistory(currentPageId); // Added await here
+            loadBiologicalHistory(currentPageId);
             loadVetVisits(currentPageId);
             setInterval(updateSensors, 20000);
             
@@ -1088,6 +1089,7 @@ async function loadSpeciesDatabase(scientificName) {
 function applySpeciesGuidance() {
     if (!currentSpeciesData) return;
 
+    // Helpers
     const updateSummaryRef = (cardId, text) => {
         const card = document.getElementById(cardId);
         if (!card) return;
@@ -1116,6 +1118,7 @@ function applySpeciesGuidance() {
 
     const data = currentSpeciesData; 
 
+    // 1. Calculate Age in Months
     let ageInMonths = 0;
     if (animalBirthDate && animalBirthDate !== "---") {
         const b = new Date(animalBirthDate);
@@ -1123,6 +1126,7 @@ function applySpeciesGuidance() {
         ageInMonths = (today.getFullYear() - b.getFullYear()) * 12 + (today.getMonth() - b.getMonth());
     }
 
+    // 2. Determine Life Stage
     let stage = "Adult"; 
     let feedFreqMin = data[25], feedFreqMax = data[26];
     let feedWeightMin = data[27], feedWeightMax = data[28];
@@ -1133,40 +1137,60 @@ function applySpeciesGuidance() {
     if (ageInMonths <= periodBaby) {
         stage = "Baby";
         feedFreqMin = data[17]; feedFreqMax = data[18];
-        feedWeightMin = data[11]; feedWeightMax = data[12];
+        feedWeightMin = data[19]; feedWeightMax = data[20];
     } else if (ageInMonths <= periodJuv) {
         stage = "Juvenil";
         feedFreqMin = data[21]; feedFreqMax = data[22];
-        feedWeightMin = data[13]; feedWeightMax = data[14];
-    } else {
-        feedWeightMin = data[15]; feedWeightMax = data[16];
+        feedWeightMin = data[23]; feedWeightMax = data[24];
     }
 
+    // 3. Update Summary Cards
     updateSummaryRef('sumWeight', `Max Adult: ${data[5] || '---'}g`);
     updateSummaryRef('sumLength', `Max Adult: ${data[3] || '---'}cm`);
     updateSummaryRef('sumHeight', `Max Adult: ${data[4] || '---'}cm`);
     
+    // Calculate recommended feed amount based on min/max factors
+    let recFeedMin = "---";
+    let recFeedMax = "---";
     let feedText = "---";
-    if (lastKnownWeight > 0 && feedWeightMin) {
-        let minW = parseFloat(feedWeightMin);
-        let maxW = parseFloat(feedWeightMax);
-        let recMin = !isNaN(minW) ? ((lastKnownWeight * minW) / 100).toFixed(1) : null;
-        let recMax = !isNaN(maxW) ? ((lastKnownWeight * maxW) / 100).toFixed(1) : null;
+    
+    const hasMinW = feedWeightMin && !isNaN(parseFloat(feedWeightMin));
+    const hasMaxW = feedWeightMax && !isNaN(parseFloat(feedWeightMax));
 
-        if (recMin && recMax) feedText = `${recMin}g - ${recMax}g`;
-        else if (recMin) feedText = `~${recMin}g`;
+    if (lastKnownWeight > 0) {
+        if (hasMinW) recFeedMin = ((lastKnownWeight * parseFloat(feedWeightMin)) / 100).toFixed(1);
+        if (hasMaxW) recFeedMax = ((lastKnownWeight * parseFloat(feedWeightMax)) / 100).toFixed(1);
+        
+        if (recFeedMin !== "---" && recFeedMax !== "---") {
+            feedText = `${recFeedMin}g - ${recFeedMax}g`;
+        } else if (recFeedMin !== "---") {
+            feedText = `~${recFeedMin}g`;
+        } else if (hasMinW) {
+            feedText = `${feedWeightMin}% of Body Wgt`;
+        }
+    } else {
+        if (hasMinW && hasMaxW) {
+            feedText = `${parseFloat(feedWeightMin)}% - ${parseFloat(feedWeightMax)}% of Body Wgt`;
+        } else if (hasMinW) {
+            feedText = `~${parseFloat(feedWeightMin)}% of Body Wgt`;
+        }
     }
 
-    updateSummaryRef('sumFeeding', `Ideal (${stage}): ${feedText}`);
-    updateSummaryRef('sumFeedingDaysPassed', `Interval: ${feedFreqMin || '---'} to ${feedFreqMax || '---'} Days`);
+    const fMin = feedFreqMin || '---';
+    const fMax = feedFreqMax || '---';
 
+    // Update main summary card directly to prevent overwrite conflicts
+    updateSummaryRef('sumFeeding', `Ideal (${stage}): ${feedText} | Int: ${fMin} to ${fMax} d`);
+
+    // 4. Update Configuration Cards
     updateInputRef('cfgTempMin', `${data[6] || '---'}°C`);
     updateInputRef('cfgTempMax', `${data[7] || '---'}°C`);
     updateInputRef('cfgHumMin', `${data[9] || '---'}%`);
     updateInputRef('cfgHumMax', `${data[10] || '---'}%`);
-    updateInputRef('cfgFeedInterval', `${feedFreqMin || '---'} - ${feedFreqMax || '---'} d`);
+    updateInputRef('cfgFeedInterval', `${fMin} - ${fMax} d`);
     updateInputRef('cfgFeedAmount', `${feedText}`);
 
+    // 5. Vet Section
     const vetSection = document.getElementById('vet-section');
     if (vetSection && data[32]) {
         let vetRefEl = document.getElementById('vetGuideRef');
@@ -1177,6 +1201,7 @@ function applySpeciesGuidance() {
             const title = vetSection.querySelector('h3');
             title.insertAdjacentElement('afterend', vetRefEl);
         }
+        
         let sourceLink = data[33] ? `<a href="${data[33]}" target="_blank" style="color: var(--accent);"><i class="fas fa-link"></i> Care Guide Manual</a>` : "";
         vetRefEl.innerHTML = `<b><i class="fas fa-notes-medical"></i> Species Guidance:</b> Max interval without Vet Checkup is ${data[32]} months. ${sourceLink}`;
     }
@@ -1435,7 +1460,7 @@ async function sendDeviceConfig() {
 
             renderFeeding(events, accentColor);
             renderWeight(events, accentColor);
-            renderShedding(processedData, '#a3b18a'); 
+            renderShedding(sheddingProcessed, '#a3b18a'); 
             renderLength(events, accentColor);
             renderHeigth(events, accentColor);
             applySpeciesGuidance();
@@ -2302,13 +2327,11 @@ async function openChart(fieldId, label) {
             if (ageInMonths <= periodBaby) {
                 stage = "Baby";
                 feedFreqMin = d[17]; feedFreqMax = d[18];
-                feedWeightMin = d[11]; feedWeightMax = d[12];
+                feedWeightMin = d[19]; feedWeightMax = d[20];
             } else if (ageInMonths <= periodJuv) {
                 stage = "Juvenil";
                 feedFreqMin = d[21]; feedFreqMax = d[22];
-                feedWeightMin = d[13]; feedWeightMax = d[14];
-            } else {
-                feedWeightMin = d[15]; feedWeightMax = d[16];
+                feedWeightMin = d[23]; feedWeightMax = d[24];
             }
             
             let recFeedMin = feedWeightMin ? ((lastKnownWeight * parseFloat(feedWeightMin)) / 100).toFixed(1) : "---";
@@ -2360,7 +2383,7 @@ Reference the environmental data with the biological and veterinary data. Is the
 2) Identified Correlations (Cause/Effect)
 3) Management Recommendations
 
-[FINAL RULE: REMEMBER TO GENERATE THE ENTIRE RESPONSE IN ENGLISH ONLY. BE EXTREMELY CONCISE. NO INTRODUCTORY OR CONCLUDING REMARKS. SKIP THE SPECIFICATIONS, JUST GIVE ME THE BOTTOM LINE. Do not use Bulletpoints or any other special character to create a section or subsection, just use the topic name, sections name and go on with the content.]
+[FINAL RULE: REMEMBER TO GENERATE THE ENTIRE RESPONSE IN ENGLISH ONLY. BE EXTREMELY CONCISE. NO INTRODUCTORY OR CONCLUDING REMARKS. SKIP THE SPECIFICATIONS, JUST GIVE ME THE BOTTOM LINE. Do not use "*" or any other special character to create a section or subsection or bulletpoints, just use the topic, section and subsection name.]
 `;
 
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ANALYZING COMPLEX DATA...';
@@ -2375,10 +2398,7 @@ Reference the environmental data with the biological and veterinary data. Is the
         const json = await response.json();
 
         if(json.status === "success") {
-            // FIX: Clean up any markdown bullets (*) generated inside lists
-            let cleanInsight = json.insight.replace(/^\s*\*\s+/gm, '');
-            
-            textBox.innerHTML = cleanInsight
+            textBox.innerHTML = json.insight
                 .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
                 .replace(/\*(.*?)\*/g, '<i>$1</i>')
                 .replace(/\n/g, '<br>');
