@@ -753,7 +753,6 @@ const loggedUser = checkSecurity();
     let homeLat = 0;
     let homeLon = 0;
     let currentSpeciesData = null;
-    let lastKnownWeight = 0; // Captures the latest weight for Feed calculations
     let animalBirthDate = ""; // Corrected: Track the birth date globally
     
     function applyUserTheme() {
@@ -1085,11 +1084,12 @@ async function loadSpeciesDatabase(scientificName) {
 // ==========================================
 // --- APPLY CAREGUIDE REFERENCE DATA ---
 // ==========================================
-function applySpeciesGuidance(weightOverride = null) {
+function applySpeciesGuidance() {
     if (!currentSpeciesData) return;
 
-    // Force the function to use the newly passed weight if available, otherwise fallback
-    const activeWeight = weightOverride !== null ? weightOverride : lastKnownWeight;
+    // Fetch the value directly from the sumWeightVal element as you specified
+    const weightElement = document.getElementById('sumWeightVal');
+    const activeWeight = weightElement ? (parseFloat(weightElement.innerText) || 0) : 0;
 
     // Helpers
     const updateSummaryRef = (cardId, text) => {
@@ -1161,7 +1161,7 @@ function applySpeciesGuidance(weightOverride = null) {
     const hasMinW = !isNaN(minWVal);
     const hasMaxW = !isNaN(maxWVal);
 
-    // USING THE ACTIVE WEIGHT HERE
+    // USING THE ACTIVE WEIGHT DIRECTLY FROM sumWeightVal
     if (activeWeight > 0) {
         if (hasMinW) recFeedMin = ((activeWeight * minWVal) / 100).toFixed(1);
         if (hasMaxW) recFeedMax = ((activeWeight * maxWVal) / 100).toFixed(1);
@@ -1208,7 +1208,7 @@ function applySpeciesGuidance(weightOverride = null) {
         let sourceLink = data[33] ? `<a href="${data[33]}" target="_blank" style="color: var(--accent);"><i class="fas fa-link"></i> Care Guide Manual</a>` : "";
         vetRefEl.innerHTML = `<b><i class="fas fa-notes-medical"></i> Species Guidance:</b> Max interval without Vet Checkup is ${data[32]} months. ${sourceLink}`;
     }
-}  
+}
     
     async function getGeocodedLocation(lat, lon) {
     try {
