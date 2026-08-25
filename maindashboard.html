@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TerraConnect | Dashboard</title>
+    <title>TerraConnect | Environment Panels</title>
     
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/TERRACONNECT_LOGO.png">
     <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/TERRACONNECT_LOGO.png">
@@ -240,7 +240,10 @@
 
     <script>
         const user = JSON.parse(localStorage.getItem('currentUser'));
-        if (!user) { window.location.href = 'index.html'; }
+        // VULNERABILITY FIX (Authentication Bypass): Check for the secure session token
+        const authToken = sessionStorage.getItem('authToken');
+
+        if (!user || !authToken) { window.location.href = 'index.html'; }
 
         document.getElementById('userName').innerText = user.name || "User";
         document.getElementById('userId').innerText = `ID: ${user.id}`;
@@ -257,7 +260,9 @@
             document.documentElement.setAttribute('data-theme', themeName);
             localStorage.setItem(`theme_${user.id}`, themeName);
 
-            const finalUrl = `${THEME_SCRIPT_URL}?pageId=${encodeURIComponent(user.id)}&registerType=ThemePreference&value=${encodeURIComponent(themeName)}`;
+            // VULNERABILITY FIX: Append authToken and appSource to the GET request payload
+            const appSource = window.location.origin;
+            const finalUrl = `${THEME_SCRIPT_URL}?pageId=${encodeURIComponent(user.id)}&registerType=ThemePreference&value=${encodeURIComponent(themeName)}&authToken=${encodeURIComponent(authToken)}&appSource=${encodeURIComponent(appSource)}`;
             
             try {
                 await fetch(finalUrl, { method: 'GET' });
@@ -271,7 +276,8 @@
             const navSection = document.getElementById('navSection');
             
             try {
-                const response = await fetch(`${PAGEID_SCRIPT_URL}?action=get_user_pages&userID=${encodeURIComponent(user.id)}`);
+                // VULNERABILITY FIX: Pass authToken to securely fetch ambients
+                const response = await fetch(`${PAGEID_SCRIPT_URL}?action=get_user_pages&userID=${encodeURIComponent(user.id)}&authToken=${encodeURIComponent(authToken)}`);
                 const result = await response.json();
                 
                 navSection.innerHTML = ''; 
@@ -313,7 +319,9 @@
         loadUserAmbients();
         
         function logout() {
+            // VULNERABILITY FIX: Clear the secure session token as well
             localStorage.removeItem('currentUser');
+            sessionStorage.removeItem('authToken');
             window.location.href = 'index.html';
         }
 
