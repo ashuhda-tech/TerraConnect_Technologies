@@ -740,8 +740,9 @@
      return currentUser;
     }
 
-// Roda a verificação imediatamente
+// Roda a verificação imediatamente e gera o prefixo seguro de URL para ser utilizado em todo o script
 const loggedUser = checkSecurity();
+const authParams = loggedUser ? `&authToken=${encodeURIComponent(loggedUser.authToken)}&csrfToken=${encodeURIComponent(loggedUser.authToken)}` : "";
 
     
     // VULNERABILITY FIX (Hardcoded Secrets): Google Apps Scripts endpoints obfuscated through Base64 Decode logic
@@ -792,14 +793,16 @@ const loggedUser = checkSecurity();
 
     async function getLiveUserPlan(userId) {
         try {
-            const response = await fetch(`${SIGNUP_SCRIPT_URL}?action=get_plan&userId=${encodeURIComponent(userId)}`);
+            console.log("[FLAG] getLiveUserPlan: Authenticating and fetching user plan...");
+            const response = await fetch(`${SIGNUP_SCRIPT_URL}?action=get_plan&userId=${encodeURIComponent(userId)}${authParams}`);
             const result = await response.json();
             
             if (result.status === "success") {
+                console.log("[FLAG] getLiveUserPlan: Success ->", result);
                 return result.plan;
             }
         } catch (e) {
-            console.error("Erro ao validar plano com o servidor:", e);
+            console.error("[FLAG] getLiveUserPlan: Error ->", e);
         }
         return 0; // Se houver erro de rede, assume plano 0 por segurança
     }
@@ -811,7 +814,8 @@ const loggedUser = checkSecurity();
         }
 
         try {
-            const response = await fetch(FLAGS_SCRIPT_URL);
+            console.log("[FLAG] applyVisibilityRules: Authenticating and fetching visibility flags...");
+            const response = await fetch(`${FLAGS_SCRIPT_URL}?${authParams.replace('&', '')}`);
             const jsonResponse = await response.json();
             
             if (jsonResponse.status === "success") {
@@ -841,7 +845,7 @@ const loggedUser = checkSecurity();
                 });
             }
         } catch (e) {
-            console.error("Erro ao aplicar regras de visibilidade:", e);
+            console.error("[FLAG] applyVisibilityRules: Error ->", e);
         }
     }
 
@@ -888,9 +892,13 @@ async function loadData() {
     if (!currentPageId || !loggedUser || !loggedUser.id) return;
 
     try {
-        const secureUrl = `${PAGEID_SCRIPT_URL}?userID=${encodeURIComponent(loggedUser.id)}&pageID=${encodeURIComponent(currentPageId)}&token=${encodeURIComponent(loggedUser.authToken)}`;
+        console.log("[FLAG] loadData: Initiating connection to PAGEID_SCRIPT_URL...");
+        const secureUrl = `${PAGEID_SCRIPT_URL}?userID=${encodeURIComponent(loggedUser.id)}&pageID=${encodeURIComponent(currentPageId)}${authParams}`;
+        
         const response = await fetch(secureUrl);
         const jsonResponse = await response.json();
+        
+        console.log("[FLAG] loadData: Response status ->", jsonResponse.status);
 
         if (jsonResponse.status === "success") {
             const data = jsonResponse.data;
@@ -1051,7 +1059,7 @@ async function loadData() {
             window.location.href = "maindashboard.html"; 
         }
     } catch (e) { 
-        console.error("Database connection error:", e); 
+        console.error("[FLAG] loadData: Database connection error:", e); 
         document.getElementById('dynAmbient').innerText = "ERRO DE CONEXÃO";
         // FAIL-SAFE: Remove o loader mesmo se houver erro crítico na rede
         removeLoader();
@@ -1092,7 +1100,8 @@ async function loadSpeciesDatabase(scientificName) {
     if (!scientificName || scientificName === "---") return;
     
     try {
-        const response = await fetch(`${CAREGUIDE_SCRIPT_URL}?action=get_species_data&scientificName=${encodeURIComponent(scientificName)}`);
+        console.log("[FLAG] loadSpeciesDatabase: Fetching careguide for", scientificName);
+        const response = await fetch(`${CAREGUIDE_SCRIPT_URL}?action=get_species_data&scientificName=${encodeURIComponent(scientificName)}${authParams}`);
         const json = await response.json();
 
         if (json.status === "success") {
@@ -1204,7 +1213,8 @@ function updateFieldUI(id, val) {
     async function loadExistingConfig() {
         if (!currentPageId) return;
         try {
-            const response = await fetch(`${ENVIRONMENT_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(currentPageId)}`);
+            console.log("[FLAG] loadExistingConfig: Fetching environment config.");
+            const response = await fetch(`${ENVIRONMENT_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(currentPageId)}${authParams}`);
             const json = await response.json();
             
             if (json.status === "success" && json.data) {
@@ -1230,10 +1240,12 @@ async function sendDeviceConfig() {
         feedInterval: document.getElementById('cfgFeedInterval').value,
         feedAmount: document.getElementById('cfgFeedAmount').value,
         // VULNERABILITY FIX (CSRF): Including security token to prevent Cross-Site Request Forgery
-        csrfToken: sessionStorage.getItem('authToken')
+        csrfToken: sessionStorage.getItem('authToken'),
+        authToken: sessionStorage.getItem('authToken')
     };
 
     try {
+        console.log("[FLAG] sendDeviceConfig: Posting configuration update...");
         // VULNERABILITY FIX (CSRF): Changed from GET to POST for state-changing operation
         await fetch(ENVIRONMENT_SCRIPT_URL, { 
             method: 'POST', 
@@ -1290,7 +1302,8 @@ async function sendDeviceConfig() {
     // AGORA USA API JSON EM VEZ DE CSV. (Assume script backend com action=read&pageId=...)
     async function loadBiologicalHistory(id) {
     try {
-        const res = await fetch(`${BIODATA_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(id)}`);
+        console.log("[FLAG] loadBiologicalHistory: Fetching bio events...");
+        const res = await fetch(`${BIODATA_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(id)}${authParams}`);
         const json = await res.json();
         const events = json.data || [];
         
@@ -1694,7 +1707,8 @@ function buildForecastChartConfig(labelString, dataArray, color, ctx) {
             date: dateStr,
             registerType: type,
             value: inputValue,
-            csrfToken: sessionStorage.getItem('authToken') // Token to avoid Cross-Site Request Forgery
+            csrfToken: sessionStorage.getItem('authToken'), // Token to avoid Cross-Site Request Forgery
+            authToken: sessionStorage.getItem('authToken')
         };
 
         if (type === 'Feeding') {
@@ -1705,6 +1719,7 @@ function buildForecastChartConfig(labelString, dataArray, color, ctx) {
         }
 
         try {
+            console.log(`[FLAG] sendToCloud: Posting ${type} data...`);
             // VULNERABILITY FIX (CSRF): Use POST to avoid parameters leaking and allow structured payload verification
             await fetch(BIODATA_SCRIPT_URL, { 
                 method: 'POST', 
@@ -1788,7 +1803,8 @@ async function fetchLatestGPS() {
 // AGORA USA API JSON EM VEZ DE CSV
 async function loadVetVisits(id) {
     try {
-        const res = await fetch(`${VETDATA_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(id)}`);
+        console.log("[FLAG] loadVetVisits: Fetching vet records...");
+        const res = await fetch(`${VETDATA_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(id)}${authParams}`);
         const json = await res.json();
         const visits = json.data || [];
         
@@ -2104,7 +2120,8 @@ async function openChart(fieldId, label) {
     // API Calls
     async function loadEducationalCommands() {
         try {
-            const res = await fetch(EDU_SCRIPT_URL);
+            console.log("[FLAG] loadEducationalCommands: Fetching commands...");
+            const res = await fetch(`${EDU_SCRIPT_URL}?${authParams.replace('&', '')}`);
             const json = await res.json();
             
             // Parse 2D Array to Object Array based on Headers (Row 0)
@@ -2346,18 +2363,19 @@ function applySpeciesGuidance() {
         const currTemp = document.getElementById('valField1').innerText;
         const currHum = document.getElementById('valField2').innerText;
 
+        console.log("[FLAG] generateAIInsight: Fetching contextual background data...");
         // Fetch using the new Script URLs (No CSV)
-        const resBio = await fetch(`${BIODATA_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(currentPageId)}`);
+        const resBio = await fetch(`${BIODATA_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(currentPageId)}${authParams}`);
         const jsonBio = await resBio.json();
         const bioRows = jsonBio.data || [];
         const bioHistory = bioRows.map(r => `Data: ${r[1]} | Evento: ${r[2]} | Valor: ${r[3]}`).join('\n');
 
-        const resEnv = await fetch(`${ENVIRONMENT_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(currentPageId)}`);
+        const resEnv = await fetch(`${ENVIRONMENT_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(currentPageId)}${authParams}`);
         const jsonEnv = await resEnv.json();
         const envRow = jsonEnv.data;
         const envConfig = envRow ? `Temp Alvo: Min ${envRow[2]}°C / Max ${envRow[1]}°C | Umidade Alvo: Min ${envRow[4]}% / Max ${envRow[3]}%` : "Não configurado.";
 
-        const resVet = await fetch(`${VETDATA_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(currentPageId)}`);
+        const resVet = await fetch(`${VETDATA_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(currentPageId)}${authParams}`);
         const jsonVet = await resVet.json();
         const vetRows = jsonVet.data || [];
         const vetHistory = vetRows.map(r => `Data: ${r[1]} | Tipo de exame: ${r[3]} | Resultados: ${r[6] || 'Nenhum'} | Observações: ${r[7] || 'Nenhuma'}`).join('\n');
@@ -2444,13 +2462,19 @@ Reference the environmental data with the biological and veterinary data. Is the
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ANALYZING COMPLEX DATA...';
         textBox.innerText = "Database gathered and ready to calculate. Sincronizing with AI models to determine solution pattern...";
 
+        console.log("[FLAG] generateAIInsight: Sending POST request to AI model...");
         const response = await fetch(AI_SCRIPT_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ prompt: superPrompt })
+            body: JSON.stringify({ 
+                prompt: superPrompt, 
+                csrfToken: sessionStorage.getItem('authToken'),
+                authToken: sessionStorage.getItem('authToken')
+            })
         });
         
         const json = await response.json();
+        console.log("[FLAG] generateAIInsight: AI Response ->", json);
 
         if(json.status === "success") {
             textBox.innerHTML = json.insight
