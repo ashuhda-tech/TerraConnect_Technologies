@@ -2355,6 +2355,8 @@ function applySpeciesGuidance() {
         const superPrompt = `
 [STRICT SYSTEM INSTRUCTION: YOUR ENTIRE RESPONSE MUST BE EXCLUSIVELY IN ENGLISH. Do not output any word in Portuguese or any other language. If the provided context data is in another language, you must translate the insights internally and provide the final output ONLY in English.]
 
+[MANDATORY REQUIREMENT: At the very beginning of your response, before presenting the topics, you MUST include this exact warning note translated into professional English: "Disclaimer: This AI analysis is intended solely as a general guide and basic reference. It does not provide a definitive diagnosis and in no way replaces a physical examination or consultation with a qualified veterinarian for proper medical care. If you have any concerns or notice any unusual symptoms in your animal, a veterinary visit is strongly recommended."]
+
 Please analyze the data correlation for the following animal monitored by the TerraConnect IoT system.
 
 **Profile:**
@@ -2389,7 +2391,7 @@ Reference the environmental data with the biological and veterinary data. Is the
 `;
 
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ANALYZING COMPLEX DATA...';
-        textBox.innerText = "Série histórica construída. Enviando para o Google Gemini 1.5 Flash...";
+        textBox.innerText = "Database gathered and ready to calculate. Sincronizing with AI models to determine solution pattern...";
 
         const response = await fetch(AI_SCRIPT_URL, {
             method: 'POST',
@@ -2407,12 +2409,12 @@ Reference the environmental data with the biological and veterinary data. Is the
             document.getElementById('btnListenAI').style.display = 'inline-flex';
             } 
         else {
-            textBox.innerText = "Falha na análise: " + json.message;
+            textBox.innerText = "Analysis Failure: " + json.message;
         }
 
     } catch (e) {
         console.error(e);
-        textBox.innerText = "Erro ao conectar com o Núcleo de IA.";
+        textBox.innerText = "Error when connecting with the AI pattern model.";
     } finally {
         btn.innerHTML = '<i class="fas fa-magic"></i> RE-RUN ANALYSIS';
     }
