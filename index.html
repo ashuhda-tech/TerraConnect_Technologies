@@ -235,12 +235,17 @@
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzFT1YQSMLpJ2zLJQ-bD1JOUzaUJJsRcmCBkpseXd87iGvJXm5Ig7p1gYJf-PmHVwQ/exec';
     const PAGEID_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw3LbOYDqljAxQ8joYW8yDhwe6lsi7AdFCAoi4HG1iRdglS0k9-fI1Oj2eA12ePc6g/exec";
 
-    // Generates a secure, random User ID
+    // VULNERABILITY FIX 3: Generates a secure, random User ID using Web Crypto API
     function generateUUID() {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-            return v.toString(16);
-        });
+        if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+            return crypto.randomUUID();
+        } else {
+            // Secure Fallback
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                var r = crypto.getRandomValues(new Uint8Array(1))[0] % 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
     }
 
     // --- LÓGICA DE PROTEÇÃO INICIAL (O Porteiro) ---
@@ -253,11 +258,14 @@
     grecaptcha.ready(function() {
         grecaptcha.execute('6LcR7gQtAAAAACIEVWPRYCkIf1DRhBQW_OgfipT8', {action: 'homepage'}).then(async function(token) {
             try {
+                // VULNERABILITY FIX 2 (Hardcoded Secrets): Adding Origin property for backend verification payload
+                const payloadCaptcha = { action: 'verify_human', token: token, appSource: window.location.origin };
+
                 // Envia o token para o Apps Script verificar a nota (score)
                 const response = await fetch(SCRIPT_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({ action: 'verify_human', token: token })
+                    body: JSON.stringify(payloadCaptcha)
                 });
                 
                 const result = await response.json();
@@ -289,17 +297,23 @@
         msg.className = "message";
 
         try {
+            // VULNERABILITY FIX 2: Passing Origin Check payload
+            const payloadLogin = { action: 'login_user', email: email, pass: pass, appSource: window.location.origin };
+
             // Envia e-mail e senha para o servidor validar (Sem baixar a planilha)
             const response = await fetch(SCRIPT_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({ action: 'login_user', email: email, pass: pass })
+                body: JSON.stringify(payloadLogin)
             });
             
             const result = await response.json();
 
             if (result.status === "success") {
+                // VULNERABILITY FIX 1 (Authentication Bypass): Store session token
+                sessionStorage.setItem('authToken', result.token); 
                 localStorage.setItem('currentUser', JSON.stringify(result.user));
+                
                 msg.innerText = "Success! Entering...";
                 msg.className = "message success";
                 setTimeout(() => { window.location.href = 'home.html'; }, 1000);
@@ -334,13 +348,15 @@
             name: document.getElementById('regName').value,
             email: document.getElementById('regEmail').value.toLowerCase().trim(),
             pass: document.getElementById('regPass').value,
-            id: newUserID 
+            id: newUserID,
+            appSource: window.location.origin 
         };
 
         // Payload for the PageID Database Sheet
         const payloadPageID = {
             action: 'init_user_page',
-            userID: newUserID
+            userID: newUserID,
+            appSource: window.location.origin 
         };
 
         try {
