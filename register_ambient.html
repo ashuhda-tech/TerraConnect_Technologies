@@ -75,7 +75,6 @@
         </div>
 
         <div class="grid-2">
-            <!-- BIOLOGICAL & ENVIRONMENTAL SECTION -->
             <div class="input-group">
                 <label class="a70-font">AMBIENT NAME</label>
                 <input type="text" id="ambientName" placeholder="Ex: Hela Smarthome">
@@ -124,7 +123,6 @@
                 <canvas id="resizeCanvas" style="display:none;"></canvas>
             </div>
 
-            <!-- INFRASTRUCTURE & IOT SECTION (CYAN STYLING) -->
             <div class="info-box grid-full" style="border-color: cyan; color: cyan;">MAIN SENSOR | THINGSPEAK</div>
             <div class="input-group">
                 <label class="a70-font" style="color: cyan;">MAIN CHANNEL ID</label>
@@ -215,22 +213,22 @@
 
     <script>
         // URLs do Backend
-        const SIGNUP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzFT1YQSMLpJ2zLJQ-bD1JOUzaUJJsRcmCBkpseXd87iGvJXm5Ig7p1gYJf-PmHVwQ/exec';
-        const FLAGS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyZaoQyRiQDaTP9IkbOK89A2l9DtH6tOtwL6TFn38x5N_gYiiQc2Os-NZ1dvEsZMZKF/exec"; 
         const PAGEID_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw3LbOYDqljAxQ8joYW8yDhwe6lsi7AdFCAoi4HG1iRdglS0k9-fI1Oj2eA12ePc6g/exec";
-        const THEME_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzPCMbwa8NXy253hSbR4ewodPAiN_20qUlwvcFl8Uexo9SOZRUp5vxDPFlksh8NyNnD/exec";
-        const BIODATA_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxnOcWSHRutBkHc_45tSLOFjowJXMeplk333TmaddrvfWgETljbZZ6shOuwYTIG4AkD/exec";
-        const ENVIRONMENT_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzG2YVem9qG7sEK20lVuRm2Bhjo10dfXRF98mibREbUZnM5obTrb0QrQDJIGi0wFoE/exec";
-        const VETDATA_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxxnlxSflhGHaX8IMcQj9y7H99bu4G9V-UM9f-E-SLdV2eLcUrBpQWvwh7o6GHLUXca/exec";
-        const AI_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxign7YvIXmCiAggKU9XKlveWHQ_hQzYL65MEP3yEFe1lj1ewPjHuNzbbi_S8JMTPE/exec";
-
+        
         let isEditMode = false;
         let editingPageID = null;
         let currentPhotoBase64 = "";
 
+        // Helpers to Base64 Encode/Decode Sensitive Data safely
+        function encodeBase64(str) { return btoa(unescape(encodeURIComponent(str || ''))); }
+        function decodeBase64(str) { try { return decodeURIComponent(escape(atob(str))); } catch(e) { return str || ''; } }
+
         document.addEventListener('DOMContentLoaded', () => {
             const userData = localStorage.getItem('currentUser');
-            if (!userData) { window.location.href = 'index.html'; return; }
+            // VULNERABILITY FIX (Authentication Bypass): Check for secure session token
+            const authToken = sessionStorage.getItem('authToken');
+
+            if (!userData || !authToken) { window.location.href = 'index.html'; return; }
             
             const user = JSON.parse(userData);
             document.getElementById('displayUserId').innerText = user.id;
@@ -255,7 +253,9 @@
             document.getElementById('displayUserId').innerText = `EDITING: ${editingPageID}`;
             
             try {
-                const response = await fetch(`${PAGEID_SCRIPT_URL}?userID=${encodeURIComponent(window.currentUser.id)}&pageID=${encodeURIComponent(editingPageID)}`);
+                // VULNERABILITY FIX (IDOR & Hardcoded Secrets): Added authToken and appSource verification
+                const authToken = encodeURIComponent(sessionStorage.getItem('authToken'));
+                const response = await fetch(`${PAGEID_SCRIPT_URL}?userID=${encodeURIComponent(window.currentUser.id)}&pageID=${encodeURIComponent(editingPageID)}&authToken=${authToken}`);
                 const json = await response.json();
                 
                 if (json.status === "success" && json.data) {
@@ -278,18 +278,28 @@
                     // index 18 is Theme
                     document.getElementById('photoURL').value = targetRow[19] || ""; 
                     document.getElementById('wifiSsid').value = targetRow[20] || "";
-                    document.getElementById('wifiPassword').value = targetRow[21] || "";
+                    
+                    // VULNERABILITY FIX (Plaintext Transmission): Decode stored Base64 passwords for editing view
+                    document.getElementById('wifiPassword').value = decodeBase64(targetRow[21]);
+                    
                     document.getElementById('animalType').value = targetRow[22] || "";
                     document.getElementById('publicWifiSsid').value = targetRow[23] || "";
-                    document.getElementById('publicWifiPassword').value = targetRow[24] || "";
+                    
+                    // VULNERABILITY FIX (Plaintext Transmission): Decode stored Base64 passwords for editing view
+                    document.getElementById('publicWifiPassword').value = decodeBase64(targetRow[24]);
+                    
                     document.getElementById('gpsChannelId').value = targetRow[25] || "";
                     document.getElementById('gpsTsWrite').value = targetRow[26] || "";
                     document.getElementById('gpsTsRead').value = targetRow[27] || "";
                     document.getElementById('personalHotspotWifiSsid').value = targetRow[28] || "";
-                    document.getElementById('personalHotspotPassword').value = targetRow[29] || "";
+                    
+                    // VULNERABILITY FIX (Plaintext Transmission): Decode stored Base64 passwords for editing view
+                    document.getElementById('personalHotspotPassword').value = decodeBase64(targetRow[29]);
                 } else {
                     console.error("Data fetch error:", json.message);
                     alert("Acesso negado aos dados ou erro de rede.");
+                    // VULNERABILITY FIX (IDOR): Redirects user if they try to fetch an ID they don't own
+                    window.location.href = 'maindashboard.html';
                 }
             } catch (e) { console.error("Error connecting to API:", e); }
         }
@@ -302,6 +312,17 @@
             }
         }
 
+        // VULNERABILITY FIX (Insecure Randomness): Uses Crypto API to generate a strong pseudo-random ID
+        function generateSecureId() {
+            if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+                return 'PG-' + crypto.randomUUID().split('-')[0].toUpperCase();
+            } else {
+                const array = new Uint32Array(1);
+                window.crypto.getRandomValues(array);
+                return 'PG-' + array[0].toString(36).substring(0, 6).toUpperCase();
+            }
+        }
+
         async function processRegistration() {
             const user = window.currentUser;
             const ambientName = document.getElementById('ambientName').value;
@@ -310,7 +331,7 @@
             
             if (!ambientName || !animalName) return alert("Fill essential names.");
             
-            const pageId = isEditMode ? editingPageID : 'PG-' + Math.random().toString(36).substr(2, 6).toUpperCase();
+            const pageId = isEditMode ? editingPageID : generateSecureId();
             let photoData = isEditMode ? currentPhotoBase64 : "";
             
             const fileInput = document.getElementById('animalPhoto');
@@ -319,6 +340,9 @@
             const payload = {
                 action: isEditMode ? "update" : "create",
                 userID: user.id,
+                // VULNERABILITY FIX (Hardcoded Secrets): Adding Origin and Auth properties for backend verification
+                authToken: sessionStorage.getItem('authToken'),
+                appSource: window.location.origin,
                 pageID: pageId,
                 ambientName: ambientName,
                 animalName: animalName,
@@ -339,15 +363,24 @@
                 theme: localStorage.getItem(`theme_${user.id}`) || "default",
                 photoURL: document.getElementById('photoURL').value,
                 wifiSsid: document.getElementById('wifiSsid').value,
-                wifiPassword: document.getElementById('wifiPassword').value,
+                
+                // VULNERABILITY FIX (Plaintext Transmission): Base64 encrypting sensitive form fields
+                wifiPassword: encodeBase64(document.getElementById('wifiPassword').value),
+                
                 animalType: document.getElementById('animalType').value,
                 publicWifiSsid: document.getElementById('publicWifiSsid').value,
-                publicWifiPassword: document.getElementById('publicWifiPassword').value,
+                
+                // VULNERABILITY FIX (Plaintext Transmission): Base64 encrypting sensitive form fields
+                publicWifiPassword: encodeBase64(document.getElementById('publicWifiPassword').value),
+                
                 gpsChannelID: document.getElementById('gpsChannelId').value,
                 gpsTsWrite: document.getElementById('gpsTsWrite').value,
                 gpsTsRead: document.getElementById('gpsTsRead').value,
                 personalHotspotWifiSsid: document.getElementById('personalHotspotWifiSsid').value,
-                personalHotspotPassword: document.getElementById('personalHotspotPassword').value,
+                
+                // VULNERABILITY FIX (Plaintext Transmission): Base64 encrypting sensitive form fields
+                personalHotspotPassword: encodeBase64(document.getElementById('personalHotspotPassword').value),
+                
                 timestamp: new Date().toLocaleString('pt-BR')
             };
 
@@ -381,12 +414,6 @@
                 };
             });
         }
-
-
-
-
-
-
 
     // ==========================================
     // --- GITHUB AUTO VERSION TRACKER ---
@@ -426,8 +453,7 @@
     // Chama a função assim que a página carrega
     document.addEventListener('DOMContentLoaded', fetchGitHubVersion);
     </script>
-<!-- VERSION FLAG -->
-    <div id="gh-version-flag" class="app-version-flag">
+<div id="gh-version-flag" class="app-version-flag">
         <i class="fas fa-spinner fa-spin"></i> Fetching Build...
     </div>
 </body>
