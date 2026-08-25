@@ -45,9 +45,11 @@
         label { font-size: 0.7rem; color: var(--accent); display: block; margin-bottom: 8px; }
         input, textarea, select { width: 100%; padding: 12px; background: var(--bg-dark); border: 1px solid var(--border); color: var(--text-light); border-radius: 4px; box-sizing: border-box; font-size: 0.85rem; font-family: inherit; }
         input:focus, textarea:focus, select:focus { outline: none; border-color: var(--accent); }
+        input:disabled, textarea:disabled, select:disabled { opacity: 0.5; cursor: not-allowed; }
         .info-box { background: rgba(0, 0, 0, 0.2); padding: 10px; border-radius: 4px; font-size: 0.7rem; margin-bottom: 25px; border: 1px dashed var(--border); color: var(--text-light); }
         .btn-save { background: var(--accent); color: var(--bg-dark); border: none; width: 100%; padding: 15px; font-weight: bold; cursor: pointer; border-radius: 4px; transition: 0.3s; margin-top: 20px; }
-        .btn-save:hover { filter: brightness(1.2); transform: translateY(-2px); } 
+        .btn-save:hover:not(:disabled) { filter: brightness(1.2); transform: translateY(-2px); } 
+        .btn-save:disabled { background-color: #555; color: #888; cursor: not-allowed; transform: none; filter: none; }
         .btn-back { display: block; margin-top: 15px; color: var(--text-light); text-decoration: none; font-size: 0.8rem; opacity: 0.7; cursor: pointer; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .grid-full { grid-column: span 2; }
@@ -67,85 +69,90 @@
         
         <div class="info-box">
             <span style="font-size: 0.6rem;">LINKED ANIMAL ID:</span>
-            <strong id="displayPageId" style="font-size: 0.6rem;">---</strong>
+            <strong id="displayPageId" style="font-size: 0.6rem;">Verifying Secure Link...</strong>
         </div>
 
         <div class="grid-2">
             <div class="input-group">
                 <label class="a70-font">DATE</label>
-                <input type="date" id="vetDate">
+                <input type="date" id="vetDate" disabled>
             </div>
             <div class="input-group">
                 <label class="a70-font">TIME</label>
-                <input type="time" id="vetTime">
+                <input type="time" id="vetTime" disabled>
             </div>
 
             <div class="input-group grid-full">
                 <label class="a70-font">EXAM TYPE</label>
-                <input type="text" id="vetExamType" placeholder="Ex: Blood Test, Routine Checkup, Ultrasound">
+                <input type="text" id="vetExamType" placeholder="Ex: Blood Test, Routine Checkup, Ultrasound" disabled>
             </div>
             <div class="input-group">
                 <label class="a70-font">EXAM COST</label>
-                <input type="number" id="vetExamCost" step="0.01" placeholder="0.00">
+                <input type="number" id="vetExamCost" step="0.01" placeholder="0.00" disabled>
             </div>
             <div class="input-group">
                 <label class="a70-font">COST CURRENCY</label>
-                <input type="text" id="vetCostCurrency" placeholder="Ex: BRL, USD, EUR">
+                <input type="text" id="vetCostCurrency" placeholder="Ex: BRL, USD, EUR" disabled>
             </div>
 
             <div class="input-group">
                 <label class="a70-font">DOCTOR NAME</label>
-                <input type="text" id="vetDoctorName" placeholder="Ex: Dr. Jane Doe">
+                <input type="text" id="vetDoctorName" placeholder="Ex: Dr. Jane Doe" disabled>
             </div>
             <div class="input-group">
                 <label class="a70-font">VET CLINIC NAME</label>
-                <input type="text" id="vetName" placeholder="Ex: Central Veterinary Hospital">
+                <input type="text" id="vetName" placeholder="Ex: Central Veterinary Hospital" disabled>
             </div>
             <div class="input-group grid-full">
                 <label class="a70-font">VET PHONE NUMBER</label>
-                <input type="tel" id="vetPhoneNumber" placeholder="Ex: +55 11 99999-9999">
+                <input type="tel" id="vetPhoneNumber" placeholder="Ex: +55 11 99999-9999" disabled>
             </div>
 
             <div class="input-group grid-full">
                 <label class="a70-font">RESULTS</label>
-                <input type="text" id="vetResults" placeholder="Ex: Normal parameters, Medication prescribed">
+                <input type="text" id="vetResults" placeholder="Ex: Normal parameters, Medication prescribed" disabled>
             </div>
             <div class="input-group grid-full">
                 <label class="a70-font">OBSERVATION</label>
-                <textarea id="vetObservation" rows="3" placeholder="Additional details about the animal status, dosage instructions, etc..."></textarea>
+                <textarea id="vetObservation" rows="3" placeholder="Additional details about the animal status, dosage instructions, etc..." disabled></textarea>
             </div>
 
             <div class="input-group grid-full">
                 <label class="a70-font">FILE LINK (URL)</label>
-                <input type="url" id="vetFileLink" placeholder="https://drive.google.com/... (Medical Report PDF)">
+                <input type="url" id="vetFileLink" placeholder="https://drive.google.com/... (Medical Report PDF)" disabled>
             </div>
             <div class="input-group grid-full">
                 <label class="a70-font">VET WEB PAGE (URL)</label>
-                <input type="url" id="vetWebPage" placeholder="https://www.clinicwebsite.com">
+                <input type="url" id="vetWebPage" placeholder="https://www.clinicwebsite.com" disabled>
             </div>
 
             <div class="input-group grid-full">
                 <label class="a70-font">VET ADDRESS</label>
-                <input type="text" id="vetAdress" placeholder="Ex: 123 Green Ave, New York">
+                <input type="text" id="vetAdress" placeholder="Ex: 123 Green Ave, New York" disabled>
             </div>
             <div class="input-group grid-full">
                 <label class="a70-font">VET GEOGRAPHICAL LOCATION</label>
-                <input type="text" id="vetPlusCode" placeholder="Ex: -23.5505, -46.6333">
+                <input type="text" id="vetPlusCode" placeholder="Ex: -23.5505, -46.6333" disabled>
             </div>
         </div>
 
-        <button class="btn-save a70-font" id="btnAction" onclick="processVetRegistration()">SAVE VET RECORD</button>
+        <button class="btn-save a70-font" id="btnAction" onclick="processVetRegistration()" disabled>VERIFYING SECURE CONNECTION...</button>
         <a onclick="window.history.back()" class="btn-back"><i class="fas fa-arrow-left"></i> CANCEL AND BACK</a>
     </div>
 
     <script>
         const VETDATA_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxxnlxSflhGHaX8IMcQj9y7H99bu4G9V-UM9f-E-SLdV2eLcUrBpQWvwh7o6GHLUXca/exec";
+        // VULNERABILITY FIX: Introducing PAGEID verification endpoint for IDOR protection
+        const PAGEID_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw3LbOYDqljAxQ8joYW8yDhwe6lsi7AdFCAoi4HG1iRdglS0k9-fI1Oj2eA12ePc6g/exec";
 
         let targetPageID = null;
         
         document.addEventListener('DOMContentLoaded', () => {
             const userData = localStorage.getItem('currentUser');
-            if (!userData) { window.location.href = 'index.html'; return; }
+            // VULNERABILITY FIX (Authentication Bypass): Strictly check for authToken 
+            const authToken = sessionStorage.getItem('authToken');
+
+            if (!userData || !authToken) { window.location.href = 'index.html'; return; }
             
             const user = JSON.parse(userData);
             window.currentUser = user; 
@@ -162,9 +169,39 @@
                 alert("Error: Animal ID not found. Returning to dashboard.");
                 window.location.href = 'maindashboard.html';
             } else {
-                document.getElementById('displayPageId').innerText = targetPageID;
+                // VULNERABILITY FIX (IDOR): Verify if the logged user actually owns this Page ID before allowing entry
+                verifyOwnership(user.id, authToken, targetPageID);
             }
         });
+
+        // Function to verify ownership mapping natively via Secure Auth Token
+        async function verifyOwnership(userId, token, pageId) {
+            try {
+                const res = await fetch(`${PAGEID_SCRIPT_URL}?action=get_user_pages&userID=${encodeURIComponent(userId)}&authToken=${encodeURIComponent(token)}`);
+                const data = await res.json();
+                
+                if (data.status === "success") {
+                    const ownsPage = data.data.some(row => row[1] === pageId);
+                    if (ownsPage) {
+                        document.getElementById('displayPageId').innerText = pageId;
+                        
+                        // Enable all fields and button upon successful ownership check
+                        const elements = document.querySelectorAll('input, textarea, button');
+                        elements.forEach(el => el.disabled = false);
+                        document.getElementById('btnAction').innerHTML = 'SAVE VET RECORD';
+                    } else {
+                        alert("Security Error: You do not have permission to add records to this Animal ID.");
+                        window.location.href = 'maindashboard.html';
+                    }
+                } else {
+                    alert("Security Error: Unable to verify ownership.");
+                    window.location.href = 'maindashboard.html';
+                }
+            } catch (e) {
+                alert("Connection error during security verification.");
+                window.location.href = 'maindashboard.html';
+            }
+        }
 
         async function processVetRegistration() {
             const date = document.getElementById('vetDate').value;
@@ -175,6 +212,9 @@
             const btn = document.getElementById('btnAction');
             const originalText = btn.innerHTML;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> SAVING RECORD...';
+            btn.disabled = true;
+
+            const authToken = sessionStorage.getItem('authToken');
 
             // Mapeamento idêntico à lista ordenada do seu Excel / CVS
             const payload = {
@@ -193,7 +233,11 @@
                 vetWebPage: document.getElementById('vetWebPage').value,
                 vetAdress: document.getElementById('vetAdress').value,
                 vetPlusCode: document.getElementById('vetPlusCode').value,
-                timestamp: new Date().toLocaleString('pt-BR')
+                timestamp: new Date().toLocaleString('pt-BR'),
+                // VULNERABILITY FIX (Security Identifiers & Origin Audit Tracking)
+                userID: window.currentUser.id,
+                authToken: authToken,
+                appSource: window.location.origin
             };
             
             try {
@@ -208,6 +252,7 @@
             } catch (e) { 
                 alert("Error connecting to DB."); 
                 btn.innerHTML = originalText;
+                btn.disabled = false;
             }
         }
 
