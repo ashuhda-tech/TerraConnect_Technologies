@@ -1559,13 +1559,11 @@ function buildForecastChartConfig(labelString, dataArray, color, ctx) {
     const forecast = generateForecast(realValues, 2); 
     
     const paddedRealValues = [...realValues];
-    const forecastValues = new Array(realValues.length - 1).fill(null);
+    
+    // FIX: Prevents "Invalid array length" (Array(-1)) crash when a specific BioData type has 0 records
+    const forecastValues = new Array(Math.max(0, realValues.length - 1)).fill(null); 
     
     if (realValues.length > 0) {
-        forecastValues.push(realValues[realValues.length - 1]); 
-    }
-    
-    if (forecast.values.length > 0) {
         // Calculate the average historical interval to project future dates
         let avgIntervalMs = 0;
         
@@ -1592,6 +1590,7 @@ function buildForecastChartConfig(labelString, dataArray, color, ctx) {
             labels.push(nextDate.toISOString());
         }
         
+        forecastValues.push(realValues[realValues.length - 1]); 
         forecastValues.push(...forecast.values);
         paddedRealValues.push(...new Array(forecast.values.length).fill(null)); 
     }
@@ -1625,7 +1624,6 @@ function buildForecastChartConfig(labelString, dataArray, color, ctx) {
         options: commonOptions() 
     };
 }
-
     function commonOptions() {
     return {
         responsive: true,
