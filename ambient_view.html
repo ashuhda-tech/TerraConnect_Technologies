@@ -886,9 +886,9 @@ function cleanUpEmptySections() {
 
 async function loadData() {
     if (!currentPageId || !loggedUser || !loggedUser.id) return;
-        
+
     try {
-        const secureUrl = `${PAGEID_SCRIPT_URL}?userID=${encodeURIComponent(loggedUser.id)}&pageID=${encodeURIComponent(currentPageId)}`;
+        const secureUrl = `${PAGEID_SCRIPT_URL}?userID=${encodeURIComponent(loggedUser.id)}&pageID=${encodeURIComponent(currentPageId)}&token=${encodeURIComponent(loggedUser.authToken)}`;
         const response = await fetch(secureUrl);
         const jsonResponse = await response.json();
 
