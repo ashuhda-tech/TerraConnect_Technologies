@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TerraConnect | Dashboard</title>
+    <title>TerraConnect | Authentication</title>
     
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/TERRACONNECT_LOGO.png">
     <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/TERRACONNECT_LOGO.png">
@@ -122,27 +122,29 @@
     const PAGEID_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw3LbOYDqljAxQ8joYW8yDhwe6lsi7AdFCAoi4HG1iRdglS0k9-fI1Oj2eA12ePc6g/exec";
     const SIGNUP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzFT1YQSMLpJ2zLJQ-bD1JOUzaUJJsRcmCBkpseXd87iGvJXm5Ig7p1gYJf-PmHVwQ/exec";
         
-    // 1. GESTÃO DE SESSÃO
+    // 1. GESTÃO DE SESSÃO SECURE
     const user = JSON.parse(localStorage.getItem('currentUser'));
+    // VULNERABILITY FIX (Authentication Bypass): Check for the secure session token
+    const authToken = sessionStorage.getItem('authToken');
 
-    if (!user) {
+    if (!user || !authToken) {
         window.location.href = 'index.html';
     } else {
         document.getElementById('userName').innerText = user.name || "Usuário";
         document.getElementById('userIdDisplay').innerText = user.id || "---";
         
         // Inicia a busca segura de dados no servidor
-        fetchEnvironmentData(user.id);
+        fetchEnvironmentData(user.id, authToken);
     }
 
-    async function fetchEnvironmentData(userId) {
+    async function fetchEnvironmentData(userId, token) {
         const statusMsg = document.getElementById('statusMsg');
         
         try {
             statusMsg.innerText = "Authenticating and syncing User data...";
             
-            // 1. Valida o Plano diretamente no Backend (Oculta a data de expiração do usuário)
-            const planRes = await fetch(`${SIGNUP_SCRIPT_URL}?action=get_plan&userId=${encodeURIComponent(userId)}`);
+            // 1. Valida o Plano diretamente no Backend (Passando o Token de Segurança)
+            const planRes = await fetch(`${SIGNUP_SCRIPT_URL}?action=get_plan&userId=${encodeURIComponent(userId)}&authToken=${encodeURIComponent(token)}`);
             const planData = await planRes.json();
 
             if (planData.status !== "success" || planData.active === false) {
@@ -150,8 +152,8 @@
                 return; // Trava o redirecionamento aqui
             }
 
-            // 2. Busca de forma segura os Ambientes que pertencem SOMENTE a este usuário
-            const envRes = await fetch(`${PAGEID_SCRIPT_URL}?action=get_user_pages&userID=${encodeURIComponent(userId)}`);
+            // 2. Busca de forma segura os Ambientes que pertencem SOMENTE a este usuário (Passando o Token de Segurança)
+            const envRes = await fetch(`${PAGEID_SCRIPT_URL}?action=get_user_pages&userID=${encodeURIComponent(userId)}&authToken=${encodeURIComponent(token)}`);
             const envData = await envRes.json();
 
             if (envData.status === "success" && envData.data.length > 0) {
@@ -182,7 +184,9 @@
     }
 
     function logout() {
+        // VULNERABILITY FIX: Clear both the raw user object AND the secure session token
         localStorage.removeItem('currentUser');
+        sessionStorage.removeItem('authToken');
         window.location.href = 'index.html';
     }
 
