@@ -799,12 +799,16 @@ const CAREGUIDE_SCRIPT_URL = decodeAPI("aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNy
             
             if (result.status === "success") {
                 console.log("[FLAG] getLiveUserPlan: Success ->", result);
+                // Salva o plano no armazenamento local para proteção contra quedas de rede
+                localStorage.setItem(`cachedPlan_${userId}`, result.plan);
                 return result.plan;
             }
         } catch (e) {
             console.error("[FLAG] getLiveUserPlan: Error ->", e);
         }
-        return 0; // Se houver erro de rede, assume plano 0 por segurança
+        
+        // FAIL-SAFE: Em caso de oscilação, usa a última memória de plano do usuário (ou 1 como segurança mínima)
+        return parseInt(localStorage.getItem(`cachedPlan_${userId}`)) || 1; 
     }
     
     // --- NOVO MOTOR DINÂMICO DE VISIBILIDADE (FEATURE FLAGS) ---
@@ -1039,13 +1043,27 @@ async function loadData() {
 
             updateSensors();
             
-            loadBiologicalHistory(currentPageId);
-            loadVetVisits(currentPageId);
+            // -----------------------------------------------------------------
+            // NOVA ARQUITETURA SEQUENCIAL (PREVINE THROTTLING E ERROS DE JSON)
+            // -----------------------------------------------------------------
+            // Ao aguardar (await) cada função, garantimos que o Google Apps Script 
+            // não derrube nossas requisições por limite de concorrência.
+            
+            await loadBiologicalHistory(currentPageId);
+            await loadVetVisits(currentPageId);
+            
+            if (typeof loadExistingConfig === "function") {
+                await loadExistingConfig();
+            }
+            
+            await loadEducationalCommands();
+
+            // Só ativa a leitura constante depois que o layout base estiver cimentado
             setInterval(updateSensors, 20000);
             
-            if (typeof loadExistingConfig === "function") loadExistingConfig();
-            
-            // --- NEW: CLEANUP PASS FOR EMPTY SECTIONS ---
+            // --- CLEANUP ---
+            // Como tudo acima tem "await", o cleanup agora executa no momento cirurgicamente
+            // correto, parando de apagar cards e seções erroneamente.
             cleanUpEmptySections();
             
             // Remove loader se tudo deu certo
@@ -2101,7 +2119,7 @@ async function openChart(fieldId, label) {
     document.addEventListener('DOMContentLoaded', () => {
         applyUserTheme();
         loadData();
-        loadEducationalCommands();
+        // loadEducationalCommands(); // REMOVIDO PARA EVITAR RACE CONDITION
 
         const editButton = document.getElementById('editLink');
         if (currentPageId && editButton) {
