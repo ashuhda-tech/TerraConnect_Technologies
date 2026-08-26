@@ -1802,7 +1802,7 @@ async function fetchLatestGPS() {
 async function loadVetVisits(id) {
     try {
         console.log("[FLAG] loadVetVisits: Fetching vet records...");
-        const res = await fetch(`${VETDATA_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(id)}${authParams}`);
+        const res = await fetch(`${VETDATA_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(id)}&userID=${encodeURIComponent(loggedUser.id)}${authParams}`);
         const json = await res.json();
         const visits = json.data || [];
         
@@ -2373,7 +2373,7 @@ function applySpeciesGuidance() {
         const envRow = jsonEnv.data;
         const envConfig = envRow ? `Temp Alvo: Min ${envRow[2]}°C / Max ${envRow[1]}°C | Umidade Alvo: Min ${envRow[4]}% / Max ${envRow[3]}%` : "Não configurado.";
 
-        const resVet = await fetch(`${VETDATA_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(currentPageId)}${authParams}`);
+        const resVet = await fetch(`${VETDATA_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(currentPageId)}&userID=${encodeURIComponent(loggedUser.id)}${authParams}`);
         const jsonVet = await resVet.json();
         const vetRows = jsonVet.data || [];
         const vetHistory = vetRows.map(r => `Data: ${r[1]} | Tipo de exame: ${r[3]} | Resultados: ${r[6] || 'Nenhum'} | Observações: ${r[7] || 'Nenhuma'}`).join('\n');
