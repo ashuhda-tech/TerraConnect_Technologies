@@ -2169,12 +2169,19 @@ async function openChart(fieldId, label) {
 
         let hasEducationalData = false;
 
+        // NEW: Grab the current animal type being displayed on the dashboard
+        const currentDashboardAnimal = document.getElementById('dynAnimal').innerText.toLowerCase();
+
         dynamicCommands.forEach((cmd, index) => {
             // Ignora linhas sem comando
             if (!cmd.Command) return; 
 
             // 1. Padronização vital: remove espaços invisíveis e joga tudo para minúsculo
-            const animal = String(cmd.AnimalType || '').trim().toLowerCase();
+            const cmdAnimal = String(cmd.AnimalType || '').trim().toLowerCase();
+            
+            // NEW: Gatekeeper - Only proceed if this command belongs to the current animal!
+            if (cmdAnimal !== currentDashboardAnimal) return;
+
             const commandName = cmd.Command;
             const voiceSpeak = cmd.VoiceSpeak || '';
             const numBeeps = parseInt(cmd.NumberOfBeep) || 0;
@@ -2183,7 +2190,7 @@ async function openChart(fieldId, label) {
             const icon = commandIcons[index % commandIcons.length];
             
             // 2. Avalia usando a string limpa
-            const animalIcon = animal === 'dog' ? 'fa-dog' : 'fa-crow';
+            const animalIcon = cmdAnimal === 'dog' ? 'fa-dog' : 'fa-crow';
 
             const cardHTML = `
                 <div class="sensor-card" style="flex-direction: column; cursor: pointer; justify-content: center;" onclick="executeDynamicCommand(${index})">
@@ -2199,12 +2206,12 @@ async function openChart(fieldId, label) {
             `;
 
             // 3. Distribuição baseada na string padronizada (aceita 'parrot' ou 'bird')
-            if (animal === 'dog' && dogGrid) {
+            if (cmdAnimal === 'dog' && dogGrid) {
                 dogGrid.innerHTML += cardHTML;
                 document.getElementById('edu-clicker-section').style.display = 'block';
                 hasEducationalData = true;
             }
-            if ((animal === 'parrot' || animal === 'bird') && birdGrid) {
+            if ((cmdAnimal === 'parrot' || cmdAnimal === 'bird') && birdGrid) {
                 birdGrid.innerHTML += cardHTML;
                 document.getElementById('edu-voice-section').style.display = 'block';
                 hasEducationalData = true;
