@@ -2182,8 +2182,12 @@ async function openChart(fieldId, label) {
             // NEW: Gatekeeper - Only proceed if this command belongs to the current animal!
             if (cmdAnimal !== currentDashboardAnimal) return;
 
-            const commandName = cmd.Command;
-            const voiceSpeak = cmd.VoiceSpeak || '';
+            // Fetch the dynamically loaded animal name from the page
+            const actualName = document.getElementById('dynName').innerText;
+
+            // Replace "Norberto" (case-insensitive) with the actual animal name
+            const commandName = cmd.Command ? cmd.Command.replace(/Norberto/gi, actualName) : '';
+            const voiceSpeak = cmd.VoiceSpeak ? cmd.VoiceSpeak.replace(/Norberto/gi, actualName) : '';
             const numBeeps = parseInt(cmd.NumberOfBeep) || 0;
             
             const color = commandPalette[index % commandPalette.length];
@@ -2726,10 +2730,14 @@ Reference the environmental data with the biological and veterinary data. Is the
             const animalStr = String(cmdData.AnimalType || '').trim().toLowerCase();
             const pitch = (animalStr === 'parrot' || animalStr === 'bird') ? 1.2 : 1.0;
             
+            // Fetch the animal name and replace "Norberto" for the TTS audio output
+            const actualName = document.getElementById('dynName').innerText;
+            const finalVoiceSpeak = cmdData.VoiceSpeak.replace(/Norberto/gi, actualName);
+
             // Wait for all beeps to finish before speaking, plus a 200ms natural buffer
             const speechDelayMs = (totalBeepTime > 0) ? (totalBeepTime * 1000) + 200 : 0;
             
-            speakCommand(cmdData.VoiceSpeak, speechDelayMs, pitch);
+            speakCommand(finalVoiceSpeak, speechDelayMs, pitch);
         }
     }
     
