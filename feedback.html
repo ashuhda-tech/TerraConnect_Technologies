@@ -226,11 +226,26 @@
 
 <script>
     // ==========================================
-    // 1. CONFIGURATION: PASTE YOUR CSV LINK HERE
+    // 1. CONFIGURATION: SECURE DATA ENDPOINT
     // ==========================================
-    const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ00-VnM1vycB59HnA5WYdER9fKaVy15GRLb3nURzI91B8HRRZXrGXg7XhbtT_NF4s_4-LYnLta00c3/pub?output=csv";
+    // FIX 1: Exposed Database (Banco sem tranca)
+    // Replaced direct Google Sheet CSV URL with a backend proxy endpoint. 
+    // A backend service should fetch the sheet, remove sensitive columns, and serve only the safe CSV payload.
+    const SECURE_FEEDBACK_DATA_URL = "/api/v1/feedback-data.csv";
     
     let submitted = false;
+
+    // FIX 2: Stored XSS (Inputs sem tratamento)
+    // Helper function to sanitize user input before it reaches the DOM
+    function escapeHTML(str) {
+        if (!str) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
 
     function handleFormSubmit() {
         submitted = true;
@@ -260,12 +275,13 @@
     // ==========================================
     async function fetchFeedbackData() {
         try {
-            const response = await fetch(GOOGLE_SHEET_CSV_URL);
+            // Using the secure endpoint instead of the direct public sheet link
+            const response = await fetch(SECURE_FEEDBACK_DATA_URL);
             if (!response.ok) throw new Error("Network response was not ok");
             const csvText = await response.text();
             processData(csvText);
         } catch (error) {
-            console.warn("Could not load public sheet data. Please ensure the CSV link is correct and published.");
+            console.warn("Could not load secure sheet data. Please ensure your backend proxy is running.");
             document.getElementById('feedback-table-body').innerHTML = `<tr><td colspan="5" style="text-align:center;">Awaiting initial dashboard sync...</td></tr>`;
         }
     }
@@ -286,12 +302,12 @@
             const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(col => col.replace(/(^"|"$)/g, '').trim());
             
             // Map Columns (A=0: Date, D=3: Category, E=4: Subject, G=6: Status, H=7: Reason)
-            // *NOTE: Adjust indexes if you added columns differently!*
-            const dateStr = cols[0] ? cols[0].split(' ')[0] : 'Unknown'; 
-            const category = cols[3] || 'General';
-            const subject = cols[4] || 'Untitled';
-            const statusRaw = cols[6] || 'To be done'; // Default status if empty
-            const reason = cols[7] || '-';
+            // Stored XSS Fix: Wrapping exposed user-submitted string variables in escapeHTML()
+            const dateStr = escapeHTML(cols[0] ? cols[0].split(' ')[0] : 'Unknown'); 
+            const category = escapeHTML(cols[3] || 'General');
+            const subject = escapeHTML(cols[4] || 'Untitled');
+            const statusRaw = cols[6] || 'To be done'; // Used for logical mapping, no escaping required yet
+            const reason = escapeHTML(cols[7] || '-');
             
             // Normalize Status
             let statusClass = 'todo';
