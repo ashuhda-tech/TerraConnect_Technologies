@@ -23,21 +23,17 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* DEFINIÇÃO DE TODOS OS TEMAS COM BASE NAS PALETAS DAS IMAGENS */
+        /* THEME DEFINITIONS */
         :root {--bg-dark: #070b14; --sidebar-bg: #0d1117; --accent: #d1b38b; --text-light: #f4e9d8; --gray-panel: #1e1e1e; --border: #2d3139;}
-        /* TECH SAVVY & FUTURISTIC */
         [data-theme="tech1"] {--bg-dark: #0B1021; --sidebar-bg: #334155; --accent: #87CEFA; --text-light: #CFFAFE; --gray-panel: #E2E8F0; --border: #334155;}
         [data-theme="tech2"] {--bg-dark: #1a1a1d; --sidebar-bg: #4e4e50; --accent: #ffff00; --text-light: #f5f5f5; --gray-panel: #2e2e2e; --border: #95a5a6;}
         [data-theme="tech3"] {--bg-dark: #56886C; --sidebar-bg: #56887D; --accent: #FFE0FF; --text-light: #FFE9FF; --gray-panel: #56887D; --border: #56886C;}
-        /* PLAYFUL & VIBRANT */
         [data-theme="playful1"] {--bg-dark: #040B11; --sidebar-bg: #2D322C; --accent: #CEE056; --text-light: #F3F3F2; --gray-panel: #2D322C; --border: #EBC61D;}
         [data-theme="playful2"] {--bg-dark: #846B5A; --sidebar-bg: #CAB8A9; --accent: #D4CAC1; --text-light: #FEFCFB; --gray-panel: #FBF8F5; --border: #CAB8A9;}
         [data-theme="playful3"] {--bg-dark: #136a7a; --sidebar-bg: #408d99; --accent: #8dc6bf; --text-light: #d1e8e4; --gray-panel: #f1f7f6; --border: #408d99;}
-        /* MINIMALISTIC & ELEGANT */
         [data-theme="minimalist1"] {--bg-dark: #000000; --sidebar-bg: #1a1a1a; --accent: #d7ccc8; --text-light: #f5f5f5; --gray-panel: #6d4c41; --border: #e1e8ed;}
         [data-theme="minimalist2"] {--bg-dark: #333333; --sidebar-bg: #4f4f4f; --accent: #bdb76b; --text-light: #dcdcdc; --gray-panel: #262626; --border: #e6e6fa;}
         [data-theme="minimalist3"] {--bg-dark: #212121; --sidebar-bg: #404040; --accent: #bdc3c7; --text-light: #ffffff; --gray-panel: #616161; --border: #ff5252;}
-        /* NATURE-INSPIRED */
         [data-theme="nature1"] {--bg-dark: #2b2d24; --sidebar-bg: #3e3e3e; --accent: #cd853f; --text-light: #dad7cd; --gray-panel: #344e41; --border: #588157;}
         [data-theme="nature2"] {--bg-dark: #322D29; --sidebar-bg: #72383D; --accent: #AC9C8D; --text-light: #EFE9E1; --gray-panel: #D1C7BD; --border: #D9D9D9;}
         [data-theme="nature3"] {--bg-dark: #3b4d7b; --sidebar-bg: #1a2a4d; --accent: #c0c0e0; --text-light: #fef9e7; --gray-panel: #804040; --border: #e6b0aa;}
@@ -45,23 +41,29 @@
         body {background-color: var(--bg-dark); color: var(--text-light); font-family: 'Inter', sans-serif; margin: 0; display: flex; height: 100vh; overflow: hidden; transition: 0.5s;}
         .a70-font {font-family: 'Cinzel', serif; letter-spacing: 1px;}
 
-        /* BARRA LATERAL */
+        /* SIDEBAR */
         .sidebar {width: 320px; background-color: var(--sidebar-bg); border-right: 1px solid var(--border); padding: 25px; display: flex; flex-direction: column; justify-content: space-between; z-index: 10; transition: background-color 0.5s, border-color 0.5s;
-            overflow: auto; /* Captura o transbordo horizontal e esconde a barra */
-            scrollbar-width: none; /* Oculta no Firefox */
-            -ms-overflow-style: none; /* Oculta no IE e Edge */
+            overflow: auto; scrollbar-width: none; -ms-overflow-style: none;
         }
-        .sidebar::-webkit-scrollbar { display: none; } /* Oculta no Chrome/Safari */
+        .sidebar::-webkit-scrollbar { display: none; } 
         .nav-section {flex-grow: 1; display: flex; flex-direction: column; gap: 10px; overflow-y: auto;}
         .app-version-flag {position: fixed;bottom: 10px;left: 10px;background: rgba(0, 0, 0, 0.6);color: rgba(255, 255, 255, 0.3);padding: 4px 8px;border-radius: 4px;font-size: 0.55rem;font-family: 'Inter', monospace;z-index: 99999;pointer-events: none;border: 1px solid rgba(255, 255, 255, 0.1);backdrop-filter: blur(2px);transition: opacity 0.5s;}
 
-        /* Cards de Ambiente */
-        .ambient-card {background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); padding: 12px 15px; border-radius: 4px; display: flex; align-items: center; gap: 15px; cursor: pointer; transition: all 0.3s; text-decoration: none; color: var(--text-light); font-size: 0.85rem;}
+        /* AMBIENT CARDS & NEW LEAF TOGGLE */
+        .ambient-card-wrapper { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+        
+        .ambient-card {flex-grow: 1; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); padding: 12px 15px; border-radius: 4px; display: flex; align-items: center; gap: 15px; cursor: pointer; transition: all 0.3s; text-decoration: none; color: var(--text-light); font-size: 0.85rem;}
         .ambient-card i {font-size: 1.1rem; color: var(--accent); width: 20px; text-align: center;}
-        .ambient-card:hover {background: var(--accent); color: var(--bg-dark); transform: translateX(5px);}
+        .ambient-card:hover {background: var(--accent); color: var(--bg-dark); transform: translateX(3px);}
         .ambient-card:hover i { color: var(--bg-dark); }
+        
+        /* THE LEAF NOTIFICATION BUTTON */
+        .env-toggle-btn { background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); color: #555; padding: 12px 15px; border-radius: 4px; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center;}
+        .env-toggle-btn:hover { background: rgba(255, 255, 255, 0.1); }
+        .env-toggle-btn.active { color: #4CAF50; border-color: #4CAF50; background: rgba(76, 175, 80, 0.1); text-shadow: 0 0 8px rgba(76, 175, 80, 0.5);}
+
         .add-card {border: 1px dashed var(--accent); background: transparent; opacity: 0.6; margin-top: 10px;}
-        .add-card:hover {opacity: 1; background: rgba(209, 179, 139, 0.1); color: var(--accent); border-style: solid;}
+        .add-card:hover {opacity: 1; background: rgba(209, 179, 139, 0.1); color: var(--accent); border-style: solid; transform: translateX(0);}
         
         /* BRANDING */
         .brand-logo { text-align: center; margin: 25px 0; border-top: 1px solid var(--border); padding-top: 20px; }
@@ -85,46 +87,20 @@
         .user-card .name { font-weight: bold; font-size: 0.9rem; margin-top: 5px; display: block; }
         .user-card .id { font-family: monospace; font-size: 0.6rem; color: var(--accent); word-break: break-all; margin-top: 5px; display: block; }
 
-        .social-links { display: flex; justify-content: center; gap: 30px; margin-bottom: 20px; }
-        .social-links a { color: var(--text-light); font-size: 1.1rem; text-decoration: none; display: flex; flex-direction: column; align-items: center; gap: 5px; }
-        .social-links span { font-size: 0.45rem; letter-spacing: 1px; }
-
         .btn-exit { background: transparent; border: 1px solid #ef4e4e; color: #ef4e4e; padding: 8px; border-radius: 4px; cursor: pointer; width: 100%; font-size: 0.8rem; transition: 0.3s; }
         .btn-exit:hover { background: #ef4e4e; color: white; }
 
-        /* ========================================================
-           CORREÇÃO DE LAYOUT: O WRAPPER DA ÁREA PRINCIPAL E FOOTER
-           ======================================================== */
-        .main-content-wrapper {
-            flex-grow: 1; /* Ocupa todo o resto da tela à direita da sidebar */
-            display: flex;
-            flex-direction: column; /* Coloca o conteúdo e o footer um embaixo do outro */
-            height: 100vh;
-            padding: 20px; /* Margem transferida do main-panel para o wrapper */
-            box-sizing: border-box;
-            overflow-y: auto; /* Permite rolar se a tela for muito pequena */
-        }
-
-        /* PAINEL PRINCIPAL */
-        .main-panel {flex-grow: 1; /* Faz o painel crescer e empurrar o footer para baixo */
-            border-radius: 30px; /* Borda levemente reduzida para combinar melhor com o footer */
-            display: flex; justify-content: center; align-items: center; border: 1px solid var(--border); position: relative; overflow: hidden;   background-color: #000;
-            min-height: 400px; /* Garante que o vídeo não suma em telas pequenas */
-        }
-
+        /* MAIN CONTENT */
+        .main-content-wrapper { flex-grow: 1; display: flex; flex-direction: column; height: 100vh; padding: 20px; box-sizing: border-box; overflow-y: auto;}
+        .main-panel {flex-grow: 1; border-radius: 30px; display: flex; justify-content: center; align-items: center; border: 1px solid var(--border); position: relative; overflow: hidden; background-color: #000; min-height: 400px; }
         .panel-background { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; opacity: 0.6; }
         .glass-card { position: relative; z-index: 2; text-align: center; padding: 60px; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 30px; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8); max-width: 80%;}
         .glass-card i { font-size: 5rem; margin-bottom: 20px; display: inline-block; color: var(--accent); }
         .glass-card p {font-size: 1.2rem; letter-spacing: 4px; margin: 0; color: #fff; font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.5);}
         .loading-text { font-size: 0.85rem; color: var(--accent); margin-top: 10px; display: block; text-align: center; }
         
-        /* FOOTER GLOBAL - CORRIGIDO */
-        footer {flex-shrink: 0; /* Impede que o flexbox esmague o footer */
-            width: 100%;text-align: center;padding: 15px;background: rgba(10, 12, 16, 0.6); /* Cor adaptada para sutileza */
-            backdrop-filter: blur(10px);border: 1px solid var(--border); /* Acompanha o tema atual dinamicamente */
-            margin-top: 20px; /* Separa o footer do painel de vídeo */
-            border-radius: 15px; /* Bordas arredondadas harmonizando com a UI */
-            box-sizing: border-box;z-index: 100;}
+        /* FOOTER */
+        footer {flex-shrink: 0; width: 100%;text-align: center;padding: 15px;background: rgba(10, 12, 16, 0.6); backdrop-filter: blur(10px);border: 1px solid var(--border); margin-top: 20px; border-radius: 15px; box-sizing: border-box;z-index: 100;}
         .footer-text {font-size: 0.8rem;color: var(--text-muted);font-family: 'Inter', sans-serif;letter-spacing: 0.5px;}
         .footer-link {color: var(--accent); text-decoration: none;font-weight: 600;transition: color 0.3s ease;margin-left: 5px;}
         .footer-link:hover {color: var(--text-light); }
@@ -152,7 +128,6 @@
         <div class="theme-card">
             <label class="a70-font">Setup Appearance</label>
             <div class="theme-group">
-                <!-- Temas Omitidos por brevidade no comentário, mas intactos no código -->
                 <div class="theme-row">
                     <span>STANDARD</span>
                     <div class="theme-options">
@@ -203,23 +178,13 @@
         <button class="btn-exit" onclick="logout()">Log out</button>
     </div>
 
-    <!-- 
-       AQUI ESTÁ A CORREÇÃO PRINCIPAL DO HTML.
-       Embrulhamos o 'main-panel' e o 'footer' dentro do 'main-content-wrapper'. 
-       Isso força eles a se empilharem perfeitamente um em cima do outro, preenchendo a direita da tela. 
-    -->
     <div class="main-content-wrapper">
         <div class="main-panel">
-            <!-- Fundo Dinâmico (MP4 do Google Drive) -->
-            <video class="panel-background" 
-                autoplay loop muted playsinline 
-                   poster="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/b1c4c1f080d96ec1c35ff823176f214b761eb6a6/assets/WALLPAPER_MAINDASHBOARD.png">
+            <video class="panel-background" autoplay loop muted playsinline poster="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/b1c4c1f080d96ec1c35ff823176f214b761eb6a6/assets/WALLPAPER_MAINDASHBOARD.png">
                 <source src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/b1c4c1f080d96ec1c35ff823176f214b761eb6a6/assets/VIDEO/RIVER_MAINDASHBOARD.mp4" type="video/mp4">
-                <!-- Fallback Image -->
-                <img src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/b1c4c1f080d96ec1c35ff823176f214b761eb6a6/assets/WALLPAPER_MAINDASHBOARD.png" title="Seu navegador não suporta vídeos.">
+                <img src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/b1c4c1f080d96ec1c35ff823176f214b761eb6a6/assets/WALLPAPER_MAINDASHBOARD.png">
             </video>
 
-            <!-- Card de Seleção com Efeito Vidro -->
             <div class="glass-card a70-font">
                 <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 20px;">
                     <i class="fas fa-chevron-left"></i>
@@ -229,7 +194,6 @@
             </div>
         </div>
 
-        <!-- GLOBAL FOOTER (AGORA DENTRO DO WRAPPER DA COLUNA DIREITA) -->
         <footer>
             <div class="footer-text">
                 Copyright &copy; 2026 TerraConnect Technologies. All Rights Reserved. | 
@@ -240,7 +204,6 @@
 
     <script>
         const user = JSON.parse(localStorage.getItem('currentUser'));
-        // VULNERABILITY FIX (Authentication Bypass): Check for the secure session token
         const authToken = sessionStorage.getItem('authToken');
 
         if (!user || !authToken) { window.location.href = 'index.html'; }
@@ -251,6 +214,9 @@
         const PAGEID_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw3LbOYDqljAxQ8joYW8yDhwe6lsi7AdFCAoi4HG1iRdglS0k9-fI1Oj2eA12ePc6g/exec";
         const THEME_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzPCMbwa8NXy253hSbR4ewodPAiN_20qUlwvcFl8Uexo9SOZRUp5vxDPFlksh8NyNnD/exec";
         
+        // ⚠️ DEPLOY YOUR UPDATED ROUTINES SCRIPT AND PASTE THE NEW WEB APP URL HERE:
+        const ROUTINES_SCRIPT_URL = "https://script.google.com/macros/s/REPLACE_WITH_NEW_ROUTINES_WEB_APP_URL/exec";
+        
         function applyInitialTheme() {
             const savedTheme = localStorage.getItem(`theme_${user.id}`) || 'default';
             document.documentElement.setAttribute('data-theme', savedTheme);
@@ -260,15 +226,53 @@
             document.documentElement.setAttribute('data-theme', themeName);
             localStorage.setItem(`theme_${user.id}`, themeName);
 
-            // VULNERABILITY FIX: Append authToken and appSource to the GET request payload
             const appSource = window.location.origin;
             const finalUrl = `${THEME_SCRIPT_URL}?pageId=${encodeURIComponent(user.id)}&registerType=ThemePreference&value=${encodeURIComponent(themeName)}&authToken=${encodeURIComponent(authToken)}&appSource=${encodeURIComponent(appSource)}`;
             
             try {
                 await fetch(finalUrl, { method: 'GET' });
-                console.log("Cloud Saved Theme: ", themeName);
             } catch (e) {
                 console.warn("Cloud Sync Error.");
+            }
+        }
+
+        async function toggleAlarm(pageId, btnElement) {
+            // Optimistic UI Update
+            const isActive = !btnElement.classList.contains('active');
+            btnElement.classList.toggle('active');
+            localStorage.setItem(`alarm_${pageId}`, isActive);
+
+            // Animate click
+            btnElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+            const payload = {
+                action: 'toggle_alarm',
+                pageId: pageId,
+                active: isActive,
+                userEmail: user.email,
+                userName: user.name,
+                appSource: window.location.origin
+            };
+
+            try {
+                const response = await fetch(ROUTINES_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+                
+                const result = await response.json();
+                if(result.status === 'success') {
+                    btnElement.innerHTML = '<i class="fas fa-leaf"></i>';
+                } else {
+                    throw new Error("Server error");
+                }
+            } catch (error) {
+                console.error("Failed to toggle alarm:", error);
+                // Revert UI on failure
+                btnElement.classList.toggle('active');
+                localStorage.setItem(`alarm_${pageId}`, !isActive);
+                btnElement.innerHTML = '<i class="fas fa-exclamation-circle" style="color:#ef4e4e;"></i>';
+                setTimeout(() => btnElement.innerHTML = '<i class="fas fa-leaf"></i>', 2000);
             }
         }
 
@@ -276,7 +280,6 @@
             const navSection = document.getElementById('navSection');
             
             try {
-                // VULNERABILITY FIX: Pass authToken to securely fetch ambients
                 const response = await fetch(`${PAGEID_SCRIPT_URL}?action=get_user_pages&userID=${encodeURIComponent(user.id)}&authToken=${encodeURIComponent(authToken)}`);
                 const result = await response.json();
                 
@@ -291,11 +294,31 @@
                         const dbName = columns[2] || "Ambiente sem Nome";
                         const dbTheme = columns[18];
 
+                        // Create wrapper for Card + Leaf Button
+                        const wrapper = document.createElement('div');
+                        wrapper.className = 'ambient-card-wrapper';
+
+                        // Main Ambient Card
                         const card = document.createElement('a');
                         card.href = `ambient_view.html?id=${dbPageId}`;
                         card.className = 'ambient-card a70-font';
                         card.innerHTML = `<i class="fas fa-microchip"></i> ${dbName.toUpperCase()}`;
-                        navSection.appendChild(card);
+                        
+                        // Leaf Notification Button
+                        const toggleBtn = document.createElement('button');
+                        const isAlarmActive = localStorage.getItem(`alarm_${dbPageId}`) === 'true';
+                        toggleBtn.className = `env-toggle-btn ${isAlarmActive ? 'active' : ''}`;
+                        toggleBtn.title = "Toggle Notification Alarms";
+                        toggleBtn.innerHTML = '<i class="fas fa-leaf"></i>';
+                        
+                        toggleBtn.onclick = (e) => {
+                            e.preventDefault(); // Prevent navigating to ambient_view
+                            toggleAlarm(dbPageId, toggleBtn);
+                        };
+
+                        wrapper.appendChild(card);
+                        wrapper.appendChild(toggleBtn);
+                        navSection.appendChild(wrapper);
                         
                         if (dbTheme && !firstThemeToApply) {
                             firstThemeToApply = dbTheme;
@@ -319,7 +342,6 @@
         loadUserAmbients();
         
         function logout() {
-            // VULNERABILITY FIX: Clear the secure session token as well
             localStorage.removeItem('currentUser');
             sessionStorage.removeItem('authToken');
             window.location.href = 'index.html';
@@ -340,9 +362,7 @@
             if (response.ok) {
                 const data = await response.json();
                 const latestCommit = data[0];
-                
                 const shortSha = latestCommit.sha.substring(0, 7);
-                
                 const commitDate = new Date(latestCommit.commit.author.date);
                 const formattedDate = `${String(commitDate.getDate()).padStart(2, '0')}/${String(commitDate.getMonth() + 1).padStart(2, '0')}/${commitDate.getFullYear()}`;
 
@@ -357,7 +377,7 @@
 
     document.addEventListener('DOMContentLoaded', fetchGitHubVersion);
     </script>
-<!-- VERSION FLAG -->
+
     <div id="gh-version-flag" class="app-version-flag">
         <i class="fas fa-spinner fa-spin"></i> Fetching Build...
     </div>
