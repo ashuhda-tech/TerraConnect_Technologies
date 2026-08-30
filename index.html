@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Monitoring Portal | Authentication</title>
     
-    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/TERRACONNECT_LOGO.png">
-    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/TERRACONNECT_LOGO.png">
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/assets/IMAGE/terraconnect%20ICON_no%20bkgr.png">
+    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/assets/IMAGE/terraconnect%20ICON_no%20bkgr.png">
 
     <meta property="og:type" content="website">
     <meta property="og:title" content="TerraConnect Technologies">
@@ -19,29 +19,12 @@
     
     <style>
         @font-face {font-family: 'A760-Roman-Smc';src: url('A760-Roman-Smc Regular.ttf') format('truetype'); font-weight: normal;font-style: normal;}
-
         :root {--bg-color: #0a0c10;--card-bg: rgba(7, 11, 20, 0.85);--card-hover: rgba(17, 24, 39, 0.9);--card-border: rgba(31, 41, 55, 0.5);--accent-dark: #d1b38b;--accent-light: #f4e9d8;--text-main: #f4e9d8;--text-muted: #d1b38b;--border-radius: 10px;--status-ok: #48bb3a;--status-error: #ef4e4e;--font-standard: 'Inter', sans-serif;}
-
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        /* 
-           CORREÇÃO 1: Ajuste do Body
-           Flex-direction: column empilha a tela inteira, permitindo que o footer vá para o final.
-        */
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: var(--font-standard);
-            display: flex;
-            flex-direction: column; 
-            min-height: 100vh;
-            overflow: hidden;
-        }
-
+        body {background-color: var(--bg-color);color: var(--text-main);font-family: var(--font-standard);display: flex;flex-direction: column; min-height: 100vh;overflow: hidden;}
         #intro-overlay {position: fixed;top: 0;left: 0;width: 100%;height: 100%;background-color: #000;z-index: 9999;display: flex;justify-content: center;align-items: center;transition: opacity 1s ease-out;}
         #intro-overlay video {width: 100%;height: 100%;object-fit: cover;}
-        
-        /* --- APP VERSION FLAG --- */
         .app-version-flag {position: fixed;bottom: 10px;left: 10px;background: rgba(0, 0, 0, 0.6);color: rgba(255, 255, 255, 0.3);padding: 4px 8px;border-radius: 4px;font-size: 0.55rem;font-family: 'Inter', monospace;z-index: 99999;pointer-events: none;border: 1px solid rgba(255, 255, 255, 0.1);backdrop-filter: blur(2px);transition: opacity 0.5s;}
         
         .skip-btn { position: absolute; bottom: 40px; right: 40px; background: rgba(0, 0, 0, 0.4); color: rgba(255, 255, 255, 0.6); border: 1px solid rgba(255, 255, 255, 0.3); padding: 8px 16px; border-radius: 6px; cursor: pointer; z-index: 10000; font-family: var(--font-standard); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; backdrop-filter: blur(5px); }
@@ -50,24 +33,11 @@
         .video-bg-container video { min-width: 100%; min-height: 100%; width: auto; height: auto; position: absolute; top: 50%; left: 50%;transform: translate(-50%, -50%);object-fit: cover; }
         .video-overlay {position: fixed;top: 0; left: 0;width: 100%;height: 100%;background: rgba(0, 0, 0, 0.6);  z-index: -1; }
         
-        /* 
-           CORREÇÃO 2: Ajuste do Container
-           Agora ele cresce (flex-grow) para ocupar a tela e mantém o auth-card no meio.
-        */
-        .container { 
-            flex-grow: 1; 
-            display: flex;  
-            justify-content: center; 
-            align-items: center;
-            width: 100%;
-            padding: 20px; 
-            z-index: 1; 
-            overflow-y: auto;
-        }
-
-        .auth-card { background-color: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--border-radius); padding: 40px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7); transition: all 0.3s ease; width: fit-content; min-width: 400px; backdrop-filter: blur(10px);  }
+        .container { flex-grow: 1; display: flex;  justify-content: center; align-items: center;width: 100%;padding: 20px; z-index: 1; overflow-y: auto;}
+        .auth-card { background-color: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--border-radius); padding: 40px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7); transition: all 0.3s ease; width: 100%; max-width: 450px; backdrop-filter: blur(10px);  }
         .auth-card:hover { background-color: var(--card-hover); border-color: var(--accent-dark); }
-        h1 {font-family: 'A760-Roman-Smc', sans-serif; font-size: 2.2rem;text-align: center;margin-bottom: 10px;color: var(--accent-light);text-transform: uppercase; letter-spacing: 2px;white-space: nowrap;}
+        h1 {font-family: 'A760-Roman-Smc', sans-serif; font-size: 2.2rem;text-align: center;margin-bottom: 10px;color: var(--accent-light);text-transform: uppercase; letter-spacing: 2px; line-height: 1.2; word-wrap: break-word;}
+        
         p.subtitle { text-align: center; color: var(--text-muted); font-size: 0.9rem;  margin-bottom: 30px;}
         .auth-form { display: flex; flex-direction: column; gap: 15px; }
         .input-group { display: flex; flex-direction: column; gap: 5px; }
@@ -100,23 +70,13 @@
         .hidden { display: none; }
 
         /* ----- GLOBAL FOOTER ----- */
-        /*
-           CORREÇÃO 3: CSS do Footer usando as variáveis nativas desse arquivo
-        */
-        footer {
-            width: 100%;
-            text-align: center;
-            padding: 15px;
-            background: rgba(10, 12, 16, 0.8);
-            backdrop-filter: blur(10px);
-            border-top: 1px solid var(--card-border);
-            position: relative;
-            z-index: 100;
-            flex-shrink: 0; /* Garante que o footer mantenha seu tamanho */
-        }
+        footer {width: 100%;text-align: center;padding: 15px;background: rgba(10, 12, 16, 0.8);backdrop-filter: blur(10px);border-top: 1px solid var(--card-border);position: relative;z-index: 100;flex-shrink: 0; }
         .footer-text {font-size: 0.8rem; color: var(--text-muted); font-family: var(--font-standard); letter-spacing: 0.5px;}
         .footer-text a {color: var(--accent-dark); text-decoration: none; font-weight: 600; transition: color 0.3s ease; margin-left: 5px;}
         .footer-text a:hover {color: var(--text-main); }
+        
+        /* NEW: MOBILE RESPONSIVENESS */
+        @media (max-width: 480px) {.auth-card { padding: 30px 20px; } h1 { font-size: 1.8rem; }}
     </style>
 
     <script src="https://www.google.com/recaptcha/api.js?render=6LcR7gQtAAAAACIEVWPRYCkIf1DRhBQW_OgfipT8"></script>
