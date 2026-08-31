@@ -24,10 +24,6 @@
         :root {--bg-color: #0a0c10;--card-bg: rgba(30, 30, 30, 0.7);--card-border: rgba(31, 41, 55, 0.5);--accent: #d1b38b;--accent-hover: #e5cba7;--text-main: #f4e9d8;--text-muted: #9ca3af;--border-radius: 15px;--font-standard: 'Inter', sans-serif;--font-title: 'Cinzel', serif;}
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
-        /* 
-           CORREÇÃO 1: Transformando o body em uma coluna flexível 
-           para garantir que o footer grude no rodapé.
-        */
         body {
             background-color: var(--bg-color);
             color: var(--text-main);
@@ -53,10 +49,6 @@
         .btn-back:hover {background: var(--accent);color: var(--bg-color);}
         
         /* ----- PAGE CONTAINER ----- */
-        /* 
-           CORREÇÃO 2: Adicionando flex-grow: 1 para empurrar o footer 
-           e width: 100% para respeitar o max-width.
-        */
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -102,7 +94,9 @@
         .feature-list i {color: var(--accent);margin-top: 3px;}
         
         /* ----- PRODUCT SPECIFICS ----- */
-        .product-icon {font-size: 3rem;color: var(--accent);text-align: center;margin-bottom: 20px;}
+        .product-icon {text-align: center; margin-bottom: 20px;}
+        .product-icon i {font-size: 3rem; color: var(--accent);}
+        .product-icon img {height: 60px; max-width: 100%; object-fit: contain; display: inline-block;}
         .product-title {font-family: var(--font-title);font-size: 1.3rem;text-align: center;margin-bottom: 15px; }
         .product-desc {font-size: 0.85rem;color: var(--text-muted);text-align: center;line-height: 1.6;margin-bottom: 25px;flex-grow: 1;}
         .product-price {text-align: center;font-size: 1.5rem;font-weight: bold;margin-bottom: 20px;}
@@ -117,7 +111,7 @@
             border-color: var(--accent);
             color: var(--bg-color);
         }
-        .card-inverted .product-icon { color: var(--bg-color); }
+        .card-inverted .product-icon i { color: var(--bg-color); }
         .card-inverted .product-title { color: var(--bg-color); font-weight: 700; }
         .card-inverted .product-desc { color: rgba(10, 12, 16, 0.85); }
         .card-inverted .product-price { color: var(--bg-color); }
@@ -133,7 +127,7 @@
         /* ----- QR CODE FLOATING WIDGET ----- */
         #qr-widget {
             position: fixed;
-            pointer-events: none; /* Prevents the widget from interfering with mouse clicks/hover */
+            pointer-events: none; 
             z-index: 99999;
             background: rgba(10, 12, 16, 0.95);
             border: 2px solid var(--accent);
@@ -142,7 +136,7 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
             opacity: 0;
             visibility: hidden;
-            transform: translate(15px, 15px); /* Offsets it slightly from the cursor */
+            transform: translate(15px, 15px); 
             transition: opacity 0.2s ease, visibility 0.2s ease;
             text-align: center;
         }
@@ -157,9 +151,6 @@
         }
 
         /* ----- GLOBAL FOOTER ----- */
-        /*
-           CORREÇÃO 3: Adicionando o estilo do footer
-        */
         footer {
             width: 100%;
             text-align: center;
@@ -169,7 +160,7 @@
             border-top: 1px solid var(--card-border);
             position: relative;
             z-index: 100;
-            flex-shrink: 0; /* Garante que o footer não encolha */
+            flex-shrink: 0; 
         }
         .footer-text {font-size: 0.8rem; color: var(--text-muted); font-family: var(--font-standard); letter-spacing: 0.5px;}
         .footer-link {color: var(--accent); text-decoration: none; font-weight: 600; transition: color 0.3s ease; margin-left: 5px;}
@@ -270,8 +261,10 @@
     <div class="product-grid">
         <!-- Main Sensor -->
         <div class="card">
-            <div class="product-icon"><i class="fas fa-microchip"></i></div>
-            <h3 class="product-title">Main Sensor Unit (MS-1) | Actuator (AUnit)</h3>
+            <div class="product-icon">
+                <img src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/9909c8d042a000fcdc76705f3fcffeef74150438/assets/IMAGE/LOGOS%20OROBORO_NO_BKGRD---accent.png" alt="Jörmungandr Icon">
+            </div>
+            <h3 class="product-title">Jörmungandr (MS-1) | Actuator (AUnit)</h3>
             <p class="product-desc">The core brain of your terrarium. Monitors ambient air temperature, humidity and CO2 concentration, soil humidity and water reservoir level on-time. Wi-Fi enabled.</p>
             <div class="product-price">$TBD</div>
             <button class="btn-action"><i class="fas fa-shopping-cart"></i> Add to Cart</button>
@@ -279,7 +272,9 @@
 
         <!-- Remote Sensor -->
         <div class="card">
-            <div class="product-icon"><i class="fas fa-broadcast-tower"></i></div>
+            <div class="product-icon">
+                <img src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/9909c8d042a000fcdc76705f3fcffeef74150438/assets/IMAGE/LEAF_LOGO---accent.png" alt="Remote Sensor Icon">
+            </div>
             <h3 class="product-title">Remote Sensor Unit (RS-1)</h3>
             <p class="product-desc">Perfect for establishing thermal gradients. Place this to track localized air temperature and humidity, and Soil humidity.</p>
             <div class="product-price">$TBD</div>
@@ -288,8 +283,10 @@
 
         <!-- Camera Module -->
         <div class="card">
-            <div class="product-icon"><i class="fas fa-video"></i></div>
-            <h3 class="product-title">SOS Sensor Unit (W-1)</h3>
+            <div class="product-icon">
+                <img src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/9909c8d042a000fcdc76705f3fcffeef74150438/assets/IMAGE/WOLF1_NO_BACKGROUND---accent.png" alt="Fenrir Icon">
+            </div>
+            <h3 class="product-title">Fenrir (W-1)</h3>
             <p class="product-desc">Training sound clickers, LEDs with exercise monitoring and safety feature for lost and runnway Pet.</p>
             <div class="product-price">$TBD</div>
             <button class="btn-action"><i class="fas fa-shopping-cart"></i> Add to Cart</button>
@@ -352,9 +349,6 @@
 
 </div>
 
-<!-- 
-    CORREÇÃO 4: Inserindo o Global Footer logo após o container principal.
--->
 <!-- GLOBAL FOOTER -->
 <footer>
     <div class="footer-text">
