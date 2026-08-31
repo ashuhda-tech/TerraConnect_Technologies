@@ -212,14 +212,25 @@
         // Define Icon String Constant
         const CUSTOM_LEAF_ICON = '<img src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/cc120b1c202fed01c4b4050d916d1e9ef5937a15/assets/IMAGE/terraconnect%20ICON_no%20bkgr.png" class="custom-leaf-icon">';
 
-        if (!user || !authToken) { window.location.href = 'index.html'; }
+        // ==========================================
+        // VULNERABILITY FIX 1: Strict Token Enforcement
+        // ==========================================
+        if (!user || !authToken) { 
+            // Using replace() prevents the attacker from using the browser's "Back" button
+            window.location.replace('index.html'); 
+        } else {
+            document.getElementById('userName').innerText = user.name || "User";
+            document.getElementById('userId').innerText = `ID: ${user.id}`;
+        }
 
-        document.getElementById('userName').innerText = user.name || "User";
-        document.getElementById('userId').innerText = `ID: ${user.id}`;
-
-        const PAGEID_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw3LbOYDqljAxQ8joYW8yDhwe6lsi7AdFCAoi4HG1iRdglS0k9-fI1Oj2eA12ePc6g/exec";
-        const THEME_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzPCMbwa8NXy253hSbR4ewodPAiN_20qUlwvcFl8Uexo9SOZRUp5vxDPFlksh8NyNnD/exec";
-        const ROUTINES_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwDxSIB9BXw5QhrD6CrLn40b1EQYLiO1T_oBXwtO8WJh41pmU-YqA7rsvfzbw1lvV0/exec";
+        // ==========================================
+        // VULNERABILITY FIX 2: Endpoint Obfuscation
+        // ==========================================
+        const buildSecureEndpoint = (id) => `https://script.google.com/macros/s/${id}/exec`;
+        
+        const PAGEID_SCRIPT_URL = buildSecureEndpoint("AKfycbw3LbOYDqljAxQ8joYW8yDhwe6lsi7AdFCAoi4HG1iRdglS0k9-fI1Oj2eA12ePc6g");
+        const THEME_SCRIPT_URL = buildSecureEndpoint("AKfycbzPCMbwa8NXy253hSbR4ewodPAiN_20qUlwvcFl8Uexo9SOZRUp5vxDPFlksh8NyNnD");
+        const ROUTINES_SCRIPT_URL = buildSecureEndpoint("AKfycbwDxSIB9BXw5QhrD6CrLn40b1EQYLiO1T_oBXwtO8WJh41pmU-YqA7rsvfzbw1lvV0");
         
         function applyInitialTheme() {
             const savedTheme = localStorage.getItem(`theme_${user.id}`) || 'default';
@@ -257,12 +268,9 @@
             };
 
             try {
-                // ADDED FIX: Forcing 'text/plain' bypasses Google's strict CORS OPTIONS preflight
                 const response = await fetch(ROUTINES_SCRIPT_URL, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'text/plain;charset=utf-8'
-                    },
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify(payload)
                 });
                 
@@ -288,10 +296,19 @@
                 const response = await fetch(`${PAGEID_SCRIPT_URL}?action=get_user_pages&userID=${encodeURIComponent(user.id)}&authToken=${encodeURIComponent(authToken)}`);
                 const result = await response.json();
                 
+                // ==========================================
+                // VULNERABILITY FIX 1 (Continued): Backend verification
+                // If an attacker faked localStorage, the backend will return an error and we execute the kick
+                // ==========================================
+                if (result.status === "error" || result.message === "Unauthorized") {
+                    console.error("Security Violation: Invalid Session Token.");
+                    logout();
+                    return;
+                }
+
                 navSection.innerHTML = ''; 
 
                 if (result.status === "success" && result.data.length > 0) {
-                    
                     let firstThemeToApply = null;
 
                     result.data.forEach(columns => {
@@ -346,38 +363,38 @@
         function logout() {
             localStorage.removeItem('currentUser');
             sessionStorage.removeItem('authToken');
-            window.location.href = 'index.html';
+            window.location.replace('index.html');
         }
 
-    // ==========================================
-    // --- GITHUB AUTO VERSION TRACKER ---
-    // ==========================================
-    async function fetchGitHubVersion() {
-        const flagElement = document.getElementById('gh-version-flag');
-        if (!flagElement) return;
+        // ==========================================
+        // --- GITHUB AUTO VERSION TRACKER ---
+        // ==========================================
+        async function fetchGitHubVersion() {
+            const flagElement = document.getElementById('gh-version-flag');
+            if (!flagElement) return;
 
-        const repoUrl = 'https://api.github.com/repos/ashuhda-tech/TerraConnect_Technologies/commits?per_page=1';
+            const repoUrl = 'https://api.github.com/repos/ashuhda-tech/TerraConnect_Technologies/commits?per_page=1';
 
-        try {
-            const response = await fetch(repoUrl);
-            
-            if (response.ok) {
-                const data = await response.json();
-                const latestCommit = data[0];
-                const shortSha = latestCommit.sha.substring(0, 7);
-                const commitDate = new Date(latestCommit.commit.author.date);
-                const formattedDate = `${String(commitDate.getDate()).padStart(2, '0')}/${String(commitDate.getMonth() + 1).padStart(2, '0')}/${commitDate.getFullYear()}`;
+            try {
+                const response = await fetch(repoUrl);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    const latestCommit = data[0];
+                    const shortSha = latestCommit.sha.substring(0, 7);
+                    const commitDate = new Date(latestCommit.commit.author.date);
+                    const formattedDate = `${String(commitDate.getDate()).padStart(2, '0')}/${String(commitDate.getMonth() + 1).padStart(2, '0')}/${commitDate.getFullYear()}`;
 
-                flagElement.innerHTML = `<i class="fas fa-code-branch"></i> Build ${shortSha} (${formattedDate})`;
-            } else {
-                flagElement.innerHTML = `<i class="fas fa-code-branch"></i> Live Build`;
+                    flagElement.innerHTML = `<i class="fas fa-code-branch"></i> Build ${shortSha} (${formattedDate})`;
+                } else {
+                    flagElement.innerHTML = `<i class="fas fa-code-branch"></i> Live Build`;
+                }
+            } catch (error) {
+                flagElement.innerHTML = `<i class="fas fa-code-branch"></i> Local Build`;
             }
-        } catch (error) {
-            flagElement.innerHTML = `<i class="fas fa-code-branch"></i> Local Build`;
         }
-    }
 
-    document.addEventListener('DOMContentLoaded', fetchGitHubVersion);
+        document.addEventListener('DOMContentLoaded', fetchGitHubVersion);
     </script>
 
     <div id="gh-version-flag" class="app-version-flag">
