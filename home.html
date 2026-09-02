@@ -102,36 +102,56 @@
     let pageIdScriptUrl = "";
 
     async function fetchDatabaseRoutes() {
+        console.log("[DEBUG] Fetching database routes from Master Directory...");
         try {
             const payload = { pageName: "home.html" };
-            const response = await fetch(atob(MASTER_DIRECTORY_B64), {
+            const masterUrl = atob(MASTER_DIRECTORY_B64);
+            console.log("[DEBUG] Master Directory URL decoded:", masterUrl);
+
+            const response = await fetch(masterUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify(payload)
             });
             const result = await response.json();
+            console.log("[DEBUG] Master Directory response received:", result);
             
             if (result.status === "success") {
-                // Decode the Base64 URLs received from the Master Script
-                signupScriptUrl = atob(result.data["TerraConnect_SignUp"]); 
-                pageIdScriptUrl = atob(result.data["TerraConnect_PageID"]);
+                const rawSignUp = result.data["TerraConnect_SignUp"];
+                const rawPageId = result.data["TerraConnect_PageID"];
+                
+                console.log("[DEBUG] Raw TerraConnect_SignUp from Master:", rawSignUp);
+                console.log("[DEBUG] Raw TerraConnect_PageID from Master:", rawPageId);
+
+                if (!rawSignUp || !rawPageId) {
+                    console.error("[ERROR] Missing database URL in Master Directory response for home.html. Check Column F (WebPagesUsingDatabase) in your spreadsheet!");
+                    return false;
+                }
+
+                signupScriptUrl = atob(rawSignUp); 
+                pageIdScriptUrl = atob(rawPageId);
+                
+                console.log("[DEBUG] Decoded SignUp URL:", signupScriptUrl);
+                console.log("[DEBUG] Decoded PageID URL:", pageIdScriptUrl);
                 return true;
             } else {
-                console.error("Routing Access Denied:", result.message);
+                console.error("[ERROR] Routing Access Denied by Master Script:", result.message);
                 return false;
             }
         } catch (error) {
-            console.error("Failed to connect to Master Directory:", error);
+            console.error("[ERROR] Failed to connect to Master Directory:", error);
             return false;
         }
     }
 
     async function initHome() {
+        console.log("[DEBUG] Initializing home.html session check...");
         const user = JSON.parse(localStorage.getItem('currentUser'));
         const authToken = sessionStorage.getItem('authToken');
         const statusMsg = document.getElementById('statusMsg');
 
         if (!user || !authToken) {
+            console.warn("[WARN] No active user or auth token found. Redirecting to index.html.");
             window.location.href = 'index.html';
             return;
         }
@@ -143,6 +163,7 @@
 
         const routesLoaded = await fetchDatabaseRoutes();
         if (!routesLoaded || !signupScriptUrl || !pageIdScriptUrl) {
+            console.error("[ERROR] Route loading failed or returned empty URLs.");
             statusMsg.innerHTML = '<span style="color: #ef4e4e;">System configuration error: Failed to load secure routes.</span>';
             return;
         }
@@ -155,17 +176,22 @@
         
         try {
             statusMsg.innerText = "Authenticating and syncing User data...";
+            console.log("[DEBUG] Fetching user plan from SignUp script:", signupScriptUrl);
             
             const planRes = await fetch(`${signupScriptUrl}?action=get_plan&userId=${encodeURIComponent(userId)}&authToken=${encodeURIComponent(token)}`);
             const planData = await planRes.json();
+            console.log("[DEBUG] Plan data received:", planData);
 
             if (planData.status !== "success" || planData.active === false) {
+                console.warn("[WARN] User plan inactive or invalid:", planData);
                 statusMsg.innerHTML = '<span style="color: #ef4e4e;">Access Denied: Your plan is expired or invalid. Please check your subscription.</span>';
                 return; 
             }
 
+            console.log("[DEBUG] Fetching user pages from PageID script:", pageIdScriptUrl);
             const envRes = await fetch(`${pageIdScriptUrl}?action=get_user_pages&userID=${encodeURIComponent(userId)}&authToken=${encodeURIComponent(token)}`);
             const envData = await envRes.json();
+            console.log("[DEBUG] Environment pages received:", envData);
 
             if (envData.status === "success" && envData.data.length > 0) {
                 const firstEnv = envData.data[0];
@@ -179,19 +205,22 @@
 
                 statusMsg.innerText = "Data located and secured! Redirecting...";
                 statusMsg.style.color = "#48bb3a";
+                console.log("[DEBUG] Synchronization complete. Redirecting to maindashboard.html...");
                 
                 setTimeout(() => { window.location.href = 'maindashboard.html'; }, 1000);
             } else {
+                console.warn("[WARN] No environment configuration found in envData:", envData);
                 statusMsg.innerHTML = '<span style="color: #ef4e4e;">Error: No environment configuration found for this user.</span>';
             }
 
         } catch (e) {
-            console.error("Fetch Error:", e);
+            console.error("[ERROR] Exception caught inside fetchEnvironmentData:", e);
             statusMsg.innerHTML = '<span style="color: #ef4e4e;">Error connecting to the secure data server.</span>';
         }
     }
 
     function logout() {
+        console.log("[DEBUG] Logging out user, clearing local storage and session token.");
         localStorage.removeItem('currentUser');
         sessionStorage.removeItem('authToken');
         window.location.href = 'index.html';
