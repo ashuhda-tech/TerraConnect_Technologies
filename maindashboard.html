@@ -216,22 +216,44 @@
         // VULNERABILITY FIX 1: Strict Token Enforcement
         // ==========================================
         if (!user || !authToken) { 
-            // Using replace() prevents the attacker from using the browser's "Back" button
             window.location.replace('index.html'); 
         } else {
             document.getElementById('userName').innerText = user.name || "User";
             document.getElementById('userId').innerText = `ID: ${user.id}`;
         }
 
-        // ==========================================
-        // VULNERABILITY FIX 2: Endpoint Obfuscation
-        // ==========================================
-        const buildSecureEndpoint = (id) => `https://script.google.com/macros/s/${id}/exec`;
-        
-        const PAGEID_SCRIPT_URL = buildSecureEndpoint("AKfycbw3LbOYDqljAxQ8joYW8yDhwe6lsi7AdFCAoi4HG1iRdglS0k9-fI1Oj2eA12ePc6g");
-        const THEME_SCRIPT_URL = buildSecureEndpoint("AKfycbzPCMbwa8NXy253hSbR4ewodPAiN_20qUlwvcFl8Uexo9SOZRUp5vxDPFlksh8NyNnD");
-        const ROUTINES_SCRIPT_URL = buildSecureEndpoint("AKfycbwDxSIB9BXw5QhrD6CrLn40b1EQYLiO1T_oBXwtO8WJh41pmU-YqA7rsvfzbw1lvV0");
-        
+        // Master Directory URL encoded in Base64
+        const MASTER_DIRECTORY_B64 = 'aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J6cTRZVWUzWjJQeGNsdlJtRWNxaVF1bk1KRXRXNVE5cmxOV21KOXF6RWdQcWM5OVVlVThud3VjYm91SFdzaE1Bdy9leGVj'; 
+
+        let pageIdScriptUrl = "";
+        let themeScriptUrl = "";
+        let routinesScriptUrl = "";
+
+        async function fetchDatabaseRoutes() {
+            try {
+                const payload = { pageName: "maindashboard.html" };
+                const response = await fetch(atob(MASTER_DIRECTORY_B64), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+                
+                if (result.status === "success") {
+                    pageIdScriptUrl = atob(result.data["TerraConnect_PageID"] || ""); 
+                    themeScriptUrl = atob(result.data["TerraConnect_FLAGS_Dashboard View"] || "");
+                    routinesScriptUrl = atob(result.data["TerraConnect_Routines"] || "");
+                    return true;
+                } else {
+                    console.error("Routing Access Denied:", result.message);
+                    return false;
+                }
+            } catch (error) {
+                console.error("Failed to connect to Master Directory:", error);
+                return false;
+            }
+        }
+
         function applyInitialTheme() {
             const savedTheme = localStorage.getItem(`theme_${user.id}`) || 'default';
             document.documentElement.setAttribute('data-theme', savedTheme);
@@ -241,8 +263,10 @@
             document.documentElement.setAttribute('data-theme', themeName);
             localStorage.setItem(`theme_${user.id}`, themeName);
 
+            if (!themeScriptUrl) return;
+
             const appSource = window.location.origin;
-            const finalUrl = `${THEME_SCRIPT_URL}?pageId=${encodeURIComponent(user.id)}&registerType=ThemePreference&value=${encodeURIComponent(themeName)}&authToken=${encodeURIComponent(authToken)}&appSource=${encodeURIComponent(appSource)}`;
+            const finalUrl = `${themeScriptUrl}?pageId=${encodeURIComponent(user.id)}&registerType=ThemePreference&value=${encodeURIComponent(themeName)}&authToken=${encodeURIComponent(authToken)}&appSource=${encodeURIComponent(appSource)}`;
             
             try {
                 await fetch(finalUrl, { method: 'GET' });
@@ -252,6 +276,11 @@
         }
 
         async function toggleAlarm(pageId, btnElement) {
+            if (!routinesScriptUrl) {
+                console.error("Routines endpoint not loaded.");
+                return;
+            }
+
             const isActive = !btnElement.classList.contains('active');
             btnElement.classList.toggle('active');
             localStorage.setItem(`alarm_${pageId}`, isActive);
@@ -268,7 +297,7 @@
             };
 
             try {
-                const response = await fetch(ROUTINES_SCRIPT_URL, {
+                const response = await fetch(routinesScriptUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify(payload)
@@ -293,13 +322,9 @@
             const navSection = document.getElementById('navSection');
             
             try {
-                const response = await fetch(`${PAGEID_SCRIPT_URL}?action=get_user_pages&userID=${encodeURIComponent(user.id)}&authToken=${encodeURIComponent(authToken)}`);
+                const response = await fetch(`${pageIdScriptUrl}?action=get_user_pages&userID=${encodeURIComponent(user.id)}&authToken=${encodeURIComponent(authToken)}`);
                 const result = await response.json();
                 
-                // ==========================================
-                // VULNERABILITY FIX 1 (Continued): Backend verification
-                // If an attacker faked localStorage, the backend will return an error and we execute the kick
-                // ==========================================
                 if (result.status === "error" || result.message === "Unauthorized") {
                     console.error("Security Violation: Invalid Session Token.");
                     logout();
@@ -357,8 +382,20 @@
             }
         }
 
-        applyInitialTheme();
-        loadUserAmbients();
+        async function initDashboard() {
+            const navSection = document.getElementById('navSection');
+            const routesLoaded = await fetchDatabaseRoutes();
+
+            if (!routesLoaded || !pageIdScriptUrl) {
+                navSection.innerHTML = '<span class="loading-text" style="color:#ef4e4e;">System configuration error: Failed to load secure routes.</span>';
+                return;
+            }
+
+            applyInitialTheme();
+            loadUserAmbients();
+        }
+
+        initDashboard();
         
         function logout() {
             localStorage.removeItem('currentUser');
@@ -366,9 +403,6 @@
             window.location.replace('index.html');
         }
 
-        // ==========================================
-        // --- GITHUB AUTO VERSION TRACKER ---
-        // ==========================================
         async function fetchGitHubVersion() {
             const flagElement = document.getElementById('gh-version-flag');
             if (!flagElement) return;
