@@ -191,16 +191,50 @@
         finishIntro();
     }
 
-    // Apenas a URL Segura do Apps Script (SEM O LINK PÚBLICO DO CSV)
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzFT1YQSMLpJ2zLJQ-bD1JOUzaUJJsRcmCBkpseXd87iGvJXm5Ig7p1gYJf-PmHVwQ/exec';
-    const PAGEID_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw3LbOYDqljAxQ8joYW8yDhwe6lsi7AdFCAoi4HG1iRdglS0k9-fI1Oj2eA12ePc6g/exec";
+    // ==========================================
+    // --- DYNAMIC BASE64 URL ROUTING LOGIC ---
+    // ==========================================
+    
+    // Master Directory URL encoded in Base64
+    const MASTER_DIRECTORY_B64 = 'aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J6cTRZVWUzWjJQeGNsdlJtRWNxaVF1bk1KRXRXNVE5cmxOV21KOXF6RWdQcWM5OVVlVThud3VjYm91SFdzaE1Bdy9leGVj'; 
 
-    // VULNERABILITY FIX 3: Generates a secure, random User ID using Web Crypto API
+    // Global variables to hold the decoded URLs in volatile memory
+    let authScriptUrl = "";
+    let pageIdScriptUrl = "";
+
+    async function fetchDatabaseRoutes() {
+        try {
+            const payload = { pageName: "index.html" };
+            const response = await fetch(atob(MASTER_DIRECTORY_B64), {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(payload)
+            });
+            const result = await response.json();
+            
+            if (result.status === "success") {
+                // Decode the incoming Base64 strings from the server
+                authScriptUrl = atob(result.data["TerraConnect_SignUp"]); 
+                pageIdScriptUrl = atob(result.data["TerraConnect_PageID"]);
+                return true;
+            } else {
+                console.error("Routing Access Denied:", result.message);
+                return false;
+            }
+        } catch (error) {
+            console.error("Failed to connect to Master Directory:", error);
+            return false;
+        }
+    }
+
+    // ==========================================
+    // --- AUTHENTICATION & FORMS LOGIC ---
+    // ==========================================
+
     function generateUUID() {
         if (typeof crypto !== 'undefined' && crypto.randomUUID) {
             return crypto.randomUUID();
         } else {
-            // Secure Fallback
             return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
                 var r = crypto.getRandomValues(new Uint8Array(1))[0] % 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
                 return v.toString(16);
@@ -208,21 +242,29 @@
         }
     }
 
-    // --- LÓGICA DE PROTEÇÃO INICIAL (O Porteiro) ---
     function unlockForms() {
         const elements = document.querySelectorAll('input, button');
         elements.forEach(el => el.disabled = false);
         document.getElementById('loginMsg').innerText = "";
     }
 
-    grecaptcha.ready(function() {
+    // The Gatekeeper: Wait for Routes -> Check Captcha -> Unlock
+    grecaptcha.ready(async function() {
+        // 1. Fetch routes before doing anything else
+        const routesLoaded = await fetchDatabaseRoutes();
+        
+        if (!routesLoaded || !authScriptUrl) {
+            document.getElementById('loginMsg').innerText = "System configuration error. Connection refused.";
+            document.getElementById('loginMsg').className = "message error";
+            return; // Halt completely if the backend is unreachable
+        }
+
+        // 2. Proceed with human verification
         grecaptcha.execute('6LcR7gQtAAAAACIEVWPRYCkIf1DRhBQW_OgfipT8', {action: 'homepage'}).then(async function(token) {
             try {
-                // VULNERABILITY FIX 2 (Hardcoded Secrets): Adding Origin property for backend verification payload
                 const payloadCaptcha = { action: 'verify_human', token: token, appSource: window.location.origin };
 
-                // Envia o token para o Apps Script verificar a nota (score)
-                const response = await fetch(SCRIPT_URL, {
+                const response = await fetch(authScriptUrl, { 
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify(payloadCaptcha)
@@ -231,22 +273,18 @@
                 const result = await response.json();
                 
                 if (result.status === "bot") {
-                    // SE FOR BOT, REDIRECIONA PARA A ARMADILHA
                     window.location.href = "https://www.google.com";
                 } else {
-                    // SE FOR HUMANO, DESBLOQUEIA OS CAMPOS
                     unlockForms();
                 }
             } catch (e) {
                 console.error("Erro na verificação:", e);
-                // Em caso de falha de conexão, libera por precaução para não travar clientes reais
                 unlockForms(); 
             }
         });
     });
-    // ------------------------------------------------
 
-    // --- NOVA LÓGICA DE LOGIN (AUTENTICAÇÃO NO SERVIDOR) ---
+    // --- LOGIN LOGIC ---
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const msg = document.getElementById('loginMsg');
@@ -257,11 +295,9 @@
         msg.className = "message";
 
         try {
-            // VULNERABILITY FIX 2: Passing Origin Check payload
             const payloadLogin = { action: 'login_user', email: email, pass: pass, appSource: window.location.origin };
 
-            // Envia e-mail e senha para o servidor validar (Sem baixar a planilha)
-            const response = await fetch(SCRIPT_URL, {
+            const response = await fetch(authScriptUrl, { 
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify(payloadLogin)
@@ -270,7 +306,6 @@
             const result = await response.json();
 
             if (result.status === "success") {
-                // VULNERABILITY FIX 1 (Authentication Bypass): Store session token
                 sessionStorage.setItem('authToken', result.token); 
                 localStorage.setItem('currentUser', JSON.stringify(result.user));
                 
@@ -288,11 +323,10 @@
         }
     });
 
-    // --- NOVA LÓGICA DE REGISTRO ---
+    // --- SIGN UP LOGIC ---
     document.getElementById('signupForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         
-        // --- 1. AI CONSENT VALIDATION ---
         const consentBox = document.getElementById('aiConsent');
         if (!consentBox.checked) {
             alert("Action Required: You must agree to the Data Processing & AI Consent terms to create an account.");
@@ -302,7 +336,6 @@
         const msg = document.getElementById('signupMsg');
         const newUserID = generateUUID(); 
 
-        // Payload for the User Registration Sheet
         const payloadSignUp = {
             action: 'register_user', 
             name: document.getElementById('regName').value,
@@ -312,7 +345,6 @@
             appSource: window.location.origin 
         };
 
-        // Payload for the PageID Database Sheet
         const payloadPageID = {
             action: 'init_user_page',
             userID: newUserID,
@@ -323,8 +355,7 @@
             msg.className = "message";
             msg.innerText = "Registering user profile...";
             
-            // Send data to the Sign Up Sheet
-            await fetch(SCRIPT_URL, { 
+            await fetch(authScriptUrl, { 
                 method: 'POST', 
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify(payloadSignUp) 
@@ -332,8 +363,7 @@
             
             msg.innerText = "Initializing secure environment...";
             
-            // Send data to the PageID Sheet
-            await fetch(PAGEID_SCRIPT_URL, { 
+            await fetch(pageIdScriptUrl, { 
                 method: 'POST', 
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify(payloadPageID) 
@@ -355,7 +385,6 @@
         document.getElementById('signup-section').classList.toggle('hidden');
     }
 
-    
     // ==========================================
     // --- GITHUB AUTO VERSION TRACKER ---
     // ==========================================
@@ -363,7 +392,6 @@
         const flagElement = document.getElementById('gh-version-flag');
         if (!flagElement) return;
 
-        // URL da API pública do GitHub apontando para os commits do seu repositório
         const repoUrl = 'https://api.github.com/repos/ashuhda-tech/TerraConnect_Technologies/commits?per_page=1';
 
         try {
@@ -373,27 +401,22 @@
                 const data = await response.json();
                 const latestCommit = data[0];
                 
-                // Pega os 7 primeiros caracteres do hash do commit (Padrão de versão)
                 const shortSha = latestCommit.sha.substring(0, 7);
-                
-                // Pega a data e formata
                 const commitDate = new Date(latestCommit.commit.author.date);
                 const formattedDate = `${String(commitDate.getDate()).padStart(2, '0')}/${String(commitDate.getMonth() + 1).padStart(2, '0')}/${commitDate.getFullYear()}`;
 
                 flagElement.innerHTML = `<i class="fas fa-code-branch"></i> Build ${shortSha} (${formattedDate})`;
             } else {
-                // Se o GitHub limitar as requisições (Rate Limit)
                 flagElement.innerHTML = `<i class="fas fa-code-branch"></i> Live Build`;
             }
         } catch (error) {
-            // Se houver erro de rede
             flagElement.innerHTML = `<i class="fas fa-code-branch"></i> Local Build`;
         }
     }
 
-    // Chama a função assim que a página carrega
     document.addEventListener('DOMContentLoaded', fetchGitHubVersion);
-    </script>
+</script>
+
 <!-- VERSION FLAG -->
     <div id="gh-version-flag" class="app-version-flag">
         <i class="fas fa-spinner fa-spin"></i> Fetching Build...
