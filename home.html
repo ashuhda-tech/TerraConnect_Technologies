@@ -95,41 +95,33 @@
     </footer>
 
 <script>
-    // Master Directory URL encoded in Base64
     const MASTER_DIRECTORY_B64 = 'aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J6cTRZVWUzWjJQeGNsdlJtRWNxaVF1bk1KRXRXNVE5cmxOV21KOXF6RWdQcWM5OVVlVThud3VjYm91SFdzaE1Bdy9leGVj'; 
 
     let signupScriptUrl = "";
     let pageIdScriptUrl = "";
 
     async function fetchDatabaseRoutes() {
-        console.log("[DEBUG 1] Starting fetchDatabaseRoutes...");
+        console.log("[DEBUG] Fetching routes...");
         try {
             const payload = { pageName: "home.html" };
             const masterUrl = atob(MASTER_DIRECTORY_B64).trim();
-            console.log("[DEBUG 2] Connecting to Master Directory at:", masterUrl);
-
+            
             const response = await fetch(masterUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify(payload)
             });
             const result = await response.json();
-            console.log("[DEBUG 3] Master Directory JSON Response:", result);
             
             if (result.status === "success") {
-                // The .trim() prevents any invisible spreadsheet spaces from breaking the URL
                 signupScriptUrl = atob(result.data["TerraConnect_SignUp"]).trim(); 
                 pageIdScriptUrl = atob(result.data["TerraConnect_PageID"]).trim();
-                
-                console.log("[DEBUG 4] Decoded SignUp URL:", signupScriptUrl);
-                console.log("[DEBUG 5] Decoded PageID URL:", pageIdScriptUrl);
                 return true;
             } else {
-                console.error("[ERROR] Routing Access Denied by Master:", result.message);
                 return false;
             }
         } catch (error) {
-            console.error("[ERROR] Failed to fetch from Master Directory:", error);
+            console.error("[ERROR] Master Directory Fail:", error);
             return false;
         }
     }
@@ -166,57 +158,45 @@
             
             // 1. Validating Plan
             const planUrl = `${signupScriptUrl}?action=get_plan&userId=${encodeURIComponent(userId)}&authToken=${encodeURIComponent(token)}`;
-            console.log("[DEBUG 6] Requesting Plan Data from:", planUrl);
-            
             const planRes = await fetch(planUrl);
-            console.log("[DEBUG 7] Plan Response Status Code:", planRes.status);
-            
-            const planText = await planRes.text();
-            console.log("[DEBUG 8] Raw Plan Response Text:", planText);
-            
-            const planData = JSON.parse(planText);
+            const planData = await planRes.json();
 
             if (planData.status !== "success" || planData.active === false) {
-                console.warn("[WARN] Invalid or inactive plan returned:", planData);
                 statusMsg.innerHTML = '<span style="color: #ef4e4e;">Access Denied: Your plan is expired or invalid. Please check your subscription.</span>';
                 return; 
             }
 
             // 2. Validating Pages
             const envUrl = `${pageIdScriptUrl}?action=get_user_pages&userID=${encodeURIComponent(userId)}&authToken=${encodeURIComponent(token)}`;
-            console.log("[DEBUG 9] Requesting Environment Data from:", envUrl);
-            
             const envRes = await fetch(envUrl);
-            console.log("[DEBUG 10] Environment Response Status Code:", envRes.status);
-            
-            const envText = await envRes.text();
-            console.log("[DEBUG 11] Raw Environment Response Text:", envText);
-            
-            const envData = JSON.parse(envText);
+            const envData = await envRes.json();
 
             if (envData.status === "success" && envData.data.length > 0) {
                 const firstEnv = envData.data[0];
                 
+                // FIX: Retrieve the user object locally so the function knows what 'user' is
+                let user = JSON.parse(localStorage.getItem('currentUser'));
+
                 user.channelId = firstEnv[12]; 
                 user.apiKey = firstEnv[14];    
                 user.planType = planData.plan; 
                 user.planValidDate = "Validated Server-Side"; 
 
+                // Save it back to local storage
                 localStorage.setItem('currentUser', JSON.stringify(user));
 
                 statusMsg.innerText = "Data located and secured! Redirecting...";
                 statusMsg.style.color = "#48bb3a";
-                console.log("[DEBUG 12] Synchronization Complete. Executing Redirect.");
+                console.log("[DEBUG] Synchronization Complete. Executing Redirect.");
                 
                 setTimeout(() => { window.location.href = 'maindashboard.html'; }, 1000);
             } else {
-                console.warn("[WARN] Array returned empty environments:", envData);
                 statusMsg.innerHTML = '<span style="color: #ef4e4e;">Error: No environment configuration found for this user.</span>';
             }
 
         } catch (e) {
             console.error("[CRITICAL ERROR] Failed during fetchEnvironmentData:", e);
-            statusMsg.innerHTML = '<span style="color: #ef4e4e;">Error connecting to the secure data server. Open Console (F12) for details.</span>';
+            statusMsg.innerHTML = '<span style="color: #ef4e4e;">Error connecting to the secure data server.</span>';
         }
     }
 
