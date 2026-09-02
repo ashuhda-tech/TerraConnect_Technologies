@@ -159,7 +159,15 @@
             // 1. Validating Plan
             const planUrl = `${signupScriptUrl}?action=get_plan&userId=${encodeURIComponent(userId)}&authToken=${encodeURIComponent(token)}`;
             const planRes = await fetch(planUrl);
-            const planData = await planRes.json();
+            const planText = await planRes.text();
+
+            if (planText.trim().startsWith("<")) {
+                console.error("[ERROR] Server returned HTML instead of JSON for Plan Script. The URL in the spreadsheet might be incorrect or the script is unpublished.");
+                statusMsg.innerHTML = '<span style="color: #ef4e4e;">Server Error: Invalid Database URL. Please verify Master Spreadsheet.</span>';
+                return;
+            }
+
+            const planData = JSON.parse(planText);
 
             if (planData.status !== "success" || planData.active === false) {
                 statusMsg.innerHTML = '<span style="color: #ef4e4e;">Access Denied: Your plan is expired or invalid. Please check your subscription.</span>';
@@ -169,12 +177,19 @@
             // 2. Validating Pages
             const envUrl = `${pageIdScriptUrl}?action=get_user_pages&userID=${encodeURIComponent(userId)}&authToken=${encodeURIComponent(token)}`;
             const envRes = await fetch(envUrl);
-            const envData = await envRes.json();
+            const envText = await envRes.text();
+
+            if (envText.trim().startsWith("<")) {
+                console.error("[ERROR] Server returned HTML instead of JSON for PageID Script. The URL in the spreadsheet might be incorrect or the script is unpublished.");
+                statusMsg.innerHTML = '<span style="color: #ef4e4e;">Server Error: Invalid Database URL. Please verify Master Spreadsheet.</span>';
+                return;
+            }
+
+            const envData = JSON.parse(envText);
 
             if (envData.status === "success" && envData.data.length > 0) {
                 const firstEnv = envData.data[0];
                 
-                // FIX: Retrieve the user object locally so the function knows what 'user' is
                 let user = JSON.parse(localStorage.getItem('currentUser'));
 
                 user.channelId = firstEnv[12]; 
@@ -182,7 +197,6 @@
                 user.planType = planData.plan; 
                 user.planValidDate = "Validated Server-Side"; 
 
-                // Save it back to local storage
                 localStorage.setItem('currentUser', JSON.stringify(user));
 
                 statusMsg.innerText = "Data located and secured! Redirecting...";
