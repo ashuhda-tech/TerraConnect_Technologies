@@ -24,37 +24,25 @@
     <style>
         :root {--bg-color: #1a1c20;--card-bg: #070b14;--accent: #d1b38b;--text: #f4e9d8; }
         
-        /* 
-           CORREÇÃO 1: Ajuste do Body
-           Removemos o alinhamento central daqui e adicionamos flex-direction: column 
-           para que os blocos da página se empilhem verticalmente. 
-        */
         body {
             background-color: var(--bg-color);
             color: var(--text);
             font-family: 'Segoe UI', sans-serif;
             display: flex;
-            flex-direction: column; /* Empilha o wrapper e o footer verticalmente */
+            flex-direction: column;
             min-height: 100vh; 
             margin: 0;
         }
 
-        /* 
-           CORREÇÃO 2: Wrapper do Conteúdo
-           O flex-grow: 1 faz essa div preencher todo o espaço vazio da tela,
-           empurrando o footer lá para baixo. Aqui colocamos as regras
-           de centralização para manter o card no meio da tela.
-        */
         .content-wrapper {
-            flex-grow: 1; /* Ocupa o espaço livre */
-            display: flex;
-            justify-content: center; /* Centraliza o card horizontalmente */
-            align-items: center; /* Centraliza o card verticalmente */
-            padding: 20px; /* Garante que o card não encoste nas bordas em telas muito pequenas */
+            flex-grow: 1; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            padding: 20px; 
             box-sizing: border-box;
         }
 
-        /* --- APP VERSION FLAG --- */
         .app-version-flag {position: fixed;bottom: 10px;left: 10px;background: rgba(0, 0, 0, 0.6);color: rgba(255, 255, 255, 0.3);padding: 4px 8px;border-radius: 4px;font-size: 0.55rem;font-family: 'Inter', monospace;z-index: 99999;pointer-events: none;border: 1px solid rgba(255, 255, 255, 0.1);backdrop-filter: blur(2px);transition: opacity 0.5s;}
         
         .dashboard-card {background-color: var(--card-bg);padding: 40px;border-radius: 12px;border: 1px solid #1f2937;text-align: center;max-width: 500px;width: 100%;}
@@ -63,25 +51,19 @@
         .btn-logout {background: transparent;border: 1px solid var(--accent);color: var(--accent); padding: 10px 20px;cursor: pointer;border-radius: 6px;margin-top: 20px; transition: 0.3s;}
         .btn-logout:hover {background: var(--accent); color: var(--card-bg);}
 
-        /* ----- GLOBAL FOOTER ----- */
-        /*
-           CORREÇÃO 3: Ajuste do Footer
-           Removi a margem gigante (margin-top) já que o flex-grow acima 
-           já empurra o footer perfeitamente para o fundo.
-        */
         footer {
             width: 100%;
             text-align: center;
             padding: 20px;
             background: rgba(10, 12, 16, 0.8);
             backdrop-filter: blur(10px);
-            border-top: 1px solid var(--border, #2d3139); /* Usei um fallback color caso a variável não exista aqui */
+            border-top: 1px solid var(--border, #2d3139);
             position: relative;
             z-index: 100; 
             box-sizing: border-box;
-            flex-shrink: 0; /* Impede o footer de encolher */
+            flex-shrink: 0; 
         }
-        .footer-text {font-size: 0.8rem;color: #9ca3af;font-family: 'Inter', sans-serif;letter-spacing: 0.5px;} /* Troquei a variável --text-muted direto pela cor para evitar conflito caso não declarada no :root deste arquivo */
+        .footer-text {font-size: 0.8rem;color: #9ca3af;font-family: 'Inter', sans-serif;letter-spacing: 0.5px;}
         .footer-link {color: var(--accent); text-decoration: none;font-weight: 600;transition: color 0.3s ease;margin-left: 5px;}
         .footer-link:hover {color: var(--text); }
         
@@ -89,10 +71,6 @@
 </head>
 <body>
 
-    <!-- 
-       CORREÇÃO 4: HTML Structure
-       O dashboard-card agora fica "abraçado" pela div content-wrapper.
-    -->
     <div class="content-wrapper">
         <div class="dashboard-card">
             <i class="fas fa-user-circle fa-4x" style="color: var(--accent); margin-bottom: 20px;"></i>
@@ -109,7 +87,6 @@
         </div>
     </div>
     
-    <!-- GLOBAL FOOTER (Fica fora do wrapper central) -->
     <footer>
         <div class="footer-text">
             Copyright &copy; 2026 TerraConnect Technologies. All Rights Reserved. | 
@@ -118,22 +95,57 @@
     </footer>
 
 <script>
-    // Constants for your Secure Environment Database (NO MORE CSV URLs)
-    const PAGEID_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw3LbOYDqljAxQ8joYW8yDhwe6lsi7AdFCAoi4HG1iRdglS0k9-fI1Oj2eA12ePc6g/exec";
-    const SIGNUP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzFT1YQSMLpJ2zLJQ-bD1JOUzaUJJsRcmCBkpseXd87iGvJXm5Ig7p1gYJf-PmHVwQ/exec";
-        
-    // 1. GESTÃO DE SESSÃO SECURE
-    const user = JSON.parse(localStorage.getItem('currentUser'));
-    // VULNERABILITY FIX (Authentication Bypass): Check for the secure session token
-    const authToken = sessionStorage.getItem('authToken');
+    // Master Directory URL encoded in Base64
+    const MASTER_DIRECTORY_B64 = 'aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J6cTRZVWUzWjJQeGNsdlJtRWNxaVF1bk1KRXRXNVE5cmxOV21KOXF6RWdQcWM5OVVlVThud3VjYm91SFdzaE1Bdy9leGVj'; 
 
-    if (!user || !authToken) {
-        window.location.href = 'index.html';
-    } else {
+    let signupScriptUrl = "";
+    let pageIdScriptUrl = "";
+
+    async function fetchDatabaseRoutes() {
+        try {
+            const payload = { pageName: "home.html" };
+            const response = await fetch(atob(MASTER_DIRECTORY_B64), {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(payload)
+            });
+            const result = await response.json();
+            
+            if (result.status === "success") {
+                signupScriptUrl = atob(result.data["TerraConnect_SignUp"]); 
+                pageIdScriptUrl = atob(result.data["TerraConnect_PageID"]);
+                return true;
+            } else {
+                console.error("Routing Access Denied:", result.message);
+                return false;
+            }
+        } catch (error) {
+            console.error("Failed to connect to Master Directory:", error);
+            return false;
+        }
+    }
+
+    async function initHome() {
+        const user = JSON.parse(localStorage.getItem('currentUser'));
+        const authToken = sessionStorage.getItem('authToken');
+        const statusMsg = document.getElementById('statusMsg');
+
+        if (!user || !authToken) {
+            window.location.href = 'index.html';
+            return;
+        }
+
         document.getElementById('userName').innerText = user.name || "Usuário";
         document.getElementById('userIdDisplay').innerText = user.id || "---";
-        
-        // Inicia a busca segura de dados no servidor
+
+        statusMsg.innerText = "Connecting to Master Directory...";
+
+        const routesLoaded = await fetchDatabaseRoutes();
+        if (!routesLoaded || !signupScriptUrl || !pageIdScriptUrl) {
+            statusMsg.innerHTML = '<span style="color: #ef4e4e;">System configuration error: Failed to load secure routes.</span>';
+            return;
+        }
+
         fetchEnvironmentData(user.id, authToken);
     }
 
@@ -143,30 +155,25 @@
         try {
             statusMsg.innerText = "Authenticating and syncing User data...";
             
-            // 1. Valida o Plano diretamente no Backend (Passando o Token de Segurança)
-            const planRes = await fetch(`${SIGNUP_SCRIPT_URL}?action=get_plan&userId=${encodeURIComponent(userId)}&authToken=${encodeURIComponent(token)}`);
+            const planRes = await fetch(`${signupScriptUrl}?action=get_plan&userId=${encodeURIComponent(userId)}&authToken=${encodeURIComponent(token)}`);
             const planData = await planRes.json();
 
             if (planData.status !== "success" || planData.active === false) {
                 statusMsg.innerHTML = '<span style="color: #ef4e4e;">Access Denied: Your plan is expired or invalid. Please check your subscription.</span>';
-                return; // Trava o redirecionamento aqui
+                return; 
             }
 
-            // 2. Busca de forma segura os Ambientes que pertencem SOMENTE a este usuário (Passando o Token de Segurança)
-            const envRes = await fetch(`${PAGEID_SCRIPT_URL}?action=get_user_pages&userID=${encodeURIComponent(userId)}&authToken=${encodeURIComponent(token)}`);
+            const envRes = await fetch(`${pageIdScriptUrl}?action=get_user_pages&userID=${encodeURIComponent(userId)}&authToken=${encodeURIComponent(token)}`);
             const envData = await envRes.json();
 
             if (envData.status === "success" && envData.data.length > 0) {
-                
-                // Mapeia os dados baseados no código legado 
                 const firstEnv = envData.data[0];
                 
-                user.channelId = firstEnv[12]; // MainTsRead
-                user.apiKey = firstEnv[14];    // R1TsWrite
-                user.planType = planData.plan; // Plano processado pelo servidor
-                user.planValidDate = "Validated Server-Side"; // Não expomos mais no LocalStorage
+                user.channelId = firstEnv[12]; 
+                user.apiKey = firstEnv[14];    
+                user.planType = planData.plan; 
+                user.planValidDate = "Validated Server-Side"; 
 
-                // Atualiza a sessão
                 localStorage.setItem('currentUser', JSON.stringify(user));
 
                 statusMsg.innerText = "Data located and secured! Redirecting...";
@@ -184,20 +191,15 @@
     }
 
     function logout() {
-        // VULNERABILITY FIX: Clear both the raw user object AND the secure session token
         localStorage.removeItem('currentUser');
         sessionStorage.removeItem('authToken');
         window.location.href = 'index.html';
     }
 
-    // ==========================================
-    // --- GITHUB AUTO VERSION TRACKER ---
-    // ==========================================
     async function fetchGitHubVersion() {
         const flagElement = document.getElementById('gh-version-flag');
         if (!flagElement) return;
 
-        // URL da API pública do GitHub apontando para os commits do seu repositório
         const repoUrl = 'https://api.github.com/repos/ashuhda-tech/TerraConnect_Technologies/commits?per_page=1';
 
         try {
@@ -207,28 +209,24 @@
                 const data = await response.json();
                 const latestCommit = data[0];
                 
-                // Pega os 7 primeiros caracteres do hash do commit (Padrão de versão)
                 const shortSha = latestCommit.sha.substring(0, 7);
-                
-                // Pega a data e formata
                 const commitDate = new Date(latestCommit.commit.author.date);
                 const formattedDate = `${String(commitDate.getDate()).padStart(2, '0')}/${String(commitDate.getMonth() + 1).padStart(2, '0')}/${commitDate.getFullYear()}`;
 
                 flagElement.innerHTML = `<i class="fas fa-code-branch"></i> Build ${shortSha} (${formattedDate})`;
             } else {
-                // Se o GitHub limitar as requisições (Rate Limit)
                 flagElement.innerHTML = `<i class="fas fa-code-branch"></i> Live Build`;
             }
         } catch (error) {
-            // Se houver erro de rede
             flagElement.innerHTML = `<i class="fas fa-code-branch"></i> Local Build`;
         }
     }
 
-    // Chama a função assim que a página carrega
-    document.addEventListener('DOMContentLoaded', fetchGitHubVersion);
-    </script>
-<!-- VERSION FLAG -->
+    document.addEventListener('DOMContentLoaded', () => {
+        initHome();
+        fetchGitHubVersion();
+    });
+</script>
     <div id="gh-version-flag" class="app-version-flag">
         <i class="fas fa-spinner fa-spin"></i> Fetching Build...
     </div>
