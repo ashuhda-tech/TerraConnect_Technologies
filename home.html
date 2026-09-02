@@ -102,11 +102,11 @@
     let pageIdScriptUrl = "";
 
     async function fetchDatabaseRoutes() {
-        console.log("[DEBUG] Fetching database routes from Master Directory...");
+        console.log("[DEBUG 1] Starting fetchDatabaseRoutes...");
         try {
             const payload = { pageName: "home.html" };
-            const masterUrl = atob(MASTER_DIRECTORY_B64);
-            console.log("[DEBUG] Master Directory URL decoded:", masterUrl);
+            const masterUrl = atob(MASTER_DIRECTORY_B64).trim();
+            console.log("[DEBUG 2] Connecting to Master Directory at:", masterUrl);
 
             const response = await fetch(masterUrl, {
                 method: 'POST',
@@ -114,44 +114,32 @@
                 body: JSON.stringify(payload)
             });
             const result = await response.json();
-            console.log("[DEBUG] Master Directory response received:", result);
+            console.log("[DEBUG 3] Master Directory JSON Response:", result);
             
             if (result.status === "success") {
-                const rawSignUp = result.data["TerraConnect_SignUp"];
-                const rawPageId = result.data["TerraConnect_PageID"];
+                // The .trim() prevents any invisible spreadsheet spaces from breaking the URL
+                signupScriptUrl = atob(result.data["TerraConnect_SignUp"]).trim(); 
+                pageIdScriptUrl = atob(result.data["TerraConnect_PageID"]).trim();
                 
-                console.log("[DEBUG] Raw TerraConnect_SignUp from Master:", rawSignUp);
-                console.log("[DEBUG] Raw TerraConnect_PageID from Master:", rawPageId);
-
-                if (!rawSignUp || !rawPageId) {
-                    console.error("[ERROR] Missing database URL in Master Directory response for home.html. Check Column F (WebPagesUsingDatabase) in your spreadsheet!");
-                    return false;
-                }
-
-                signupScriptUrl = atob(rawSignUp); 
-                pageIdScriptUrl = atob(rawPageId);
-                
-                console.log("[DEBUG] Decoded SignUp URL:", signupScriptUrl);
-                console.log("[DEBUG] Decoded PageID URL:", pageIdScriptUrl);
+                console.log("[DEBUG 4] Decoded SignUp URL:", signupScriptUrl);
+                console.log("[DEBUG 5] Decoded PageID URL:", pageIdScriptUrl);
                 return true;
             } else {
-                console.error("[ERROR] Routing Access Denied by Master Script:", result.message);
+                console.error("[ERROR] Routing Access Denied by Master:", result.message);
                 return false;
             }
         } catch (error) {
-            console.error("[ERROR] Failed to connect to Master Directory:", error);
+            console.error("[ERROR] Failed to fetch from Master Directory:", error);
             return false;
         }
     }
 
     async function initHome() {
-        console.log("[DEBUG] Initializing home.html session check...");
         const user = JSON.parse(localStorage.getItem('currentUser'));
         const authToken = sessionStorage.getItem('authToken');
         const statusMsg = document.getElementById('statusMsg');
 
         if (!user || !authToken) {
-            console.warn("[WARN] No active user or auth token found. Redirecting to index.html.");
             window.location.href = 'index.html';
             return;
         }
@@ -163,8 +151,7 @@
 
         const routesLoaded = await fetchDatabaseRoutes();
         if (!routesLoaded || !signupScriptUrl || !pageIdScriptUrl) {
-            console.error("[ERROR] Route loading failed or returned empty URLs.");
-            statusMsg.innerHTML = '<span style="color: #ef4e4e;">System configuration error: Failed to load secure routes.</span>';
+            statusMsg.innerHTML = '<span style="color: #ef4e4e;">System configuration error: Failed to load secure routes. Check console logs.</span>';
             return;
         }
 
@@ -176,22 +163,36 @@
         
         try {
             statusMsg.innerText = "Authenticating and syncing User data...";
-            console.log("[DEBUG] Fetching user plan from SignUp script:", signupScriptUrl);
             
-            const planRes = await fetch(`${signupScriptUrl}?action=get_plan&userId=${encodeURIComponent(userId)}&authToken=${encodeURIComponent(token)}`);
-            const planData = await planRes.json();
-            console.log("[DEBUG] Plan data received:", planData);
+            // 1. Validating Plan
+            const planUrl = `${signupScriptUrl}?action=get_plan&userId=${encodeURIComponent(userId)}&authToken=${encodeURIComponent(token)}`;
+            console.log("[DEBUG 6] Requesting Plan Data from:", planUrl);
+            
+            const planRes = await fetch(planUrl);
+            console.log("[DEBUG 7] Plan Response Status Code:", planRes.status);
+            
+            const planText = await planRes.text();
+            console.log("[DEBUG 8] Raw Plan Response Text:", planText);
+            
+            const planData = JSON.parse(planText);
 
             if (planData.status !== "success" || planData.active === false) {
-                console.warn("[WARN] User plan inactive or invalid:", planData);
+                console.warn("[WARN] Invalid or inactive plan returned:", planData);
                 statusMsg.innerHTML = '<span style="color: #ef4e4e;">Access Denied: Your plan is expired or invalid. Please check your subscription.</span>';
                 return; 
             }
 
-            console.log("[DEBUG] Fetching user pages from PageID script:", pageIdScriptUrl);
-            const envRes = await fetch(`${pageIdScriptUrl}?action=get_user_pages&userID=${encodeURIComponent(userId)}&authToken=${encodeURIComponent(token)}`);
-            const envData = await envRes.json();
-            console.log("[DEBUG] Environment pages received:", envData);
+            // 2. Validating Pages
+            const envUrl = `${pageIdScriptUrl}?action=get_user_pages&userID=${encodeURIComponent(userId)}&authToken=${encodeURIComponent(token)}`;
+            console.log("[DEBUG 9] Requesting Environment Data from:", envUrl);
+            
+            const envRes = await fetch(envUrl);
+            console.log("[DEBUG 10] Environment Response Status Code:", envRes.status);
+            
+            const envText = await envRes.text();
+            console.log("[DEBUG 11] Raw Environment Response Text:", envText);
+            
+            const envData = JSON.parse(envText);
 
             if (envData.status === "success" && envData.data.length > 0) {
                 const firstEnv = envData.data[0];
@@ -205,22 +206,21 @@
 
                 statusMsg.innerText = "Data located and secured! Redirecting...";
                 statusMsg.style.color = "#48bb3a";
-                console.log("[DEBUG] Synchronization complete. Redirecting to maindashboard.html...");
+                console.log("[DEBUG 12] Synchronization Complete. Executing Redirect.");
                 
                 setTimeout(() => { window.location.href = 'maindashboard.html'; }, 1000);
             } else {
-                console.warn("[WARN] No environment configuration found in envData:", envData);
+                console.warn("[WARN] Array returned empty environments:", envData);
                 statusMsg.innerHTML = '<span style="color: #ef4e4e;">Error: No environment configuration found for this user.</span>';
             }
 
         } catch (e) {
-            console.error("[ERROR] Exception caught inside fetchEnvironmentData:", e);
-            statusMsg.innerHTML = '<span style="color: #ef4e4e;">Error connecting to the secure data server.</span>';
+            console.error("[CRITICAL ERROR] Failed during fetchEnvironmentData:", e);
+            statusMsg.innerHTML = '<span style="color: #ef4e4e;">Error connecting to the secure data server. Open Console (F12) for details.</span>';
         }
     }
 
     function logout() {
-        console.log("[DEBUG] Logging out user, clearing local storage and session token.");
         localStorage.removeItem('currentUser');
         sessionStorage.removeItem('authToken');
         window.location.href = 'index.html';
