@@ -860,7 +860,28 @@ async function fetchDatabaseRoutes() {
                 const flags = jsonResponse.data;
                 const animalType = String(animalTypeRaw).toUpperCase().trim();
 
+                // --- UI ELEMENT LOGGING FOR DEBUGGING ---
+                console.log("=== ALL DASHBOARD ELEMENTS DETECTED ===");
+                const trackedElements = document.querySelectorAll('[id]');
+                let availableIds = [];
+                trackedElements.forEach(el => {
+                    if (el.id.startsWith('sum') || el.id.startsWith('in') || el.id.startsWith('chart') || el.id.startsWith('valField') || el.id.startsWith('section')) {
+                        availableIds.push(`${el.id} (${el.tagName})`);
+                    }
+                });
+                console.log("Available UI Elements for Flags:", availableIds.join(" | "));
+                console.log("=======================================");
+
                 console.log("=== DASHBOARD ELEMENTS VISIBILITY EVALUATION ===");
+
+                // Smart Association Mapping (Links Inputs, Summaries, and Charts together logically)
+                const smartGroups = {
+                    'Height': ['inHeight', 'sumHeight', 'chart-height'],
+                    'Length': ['inLength', 'sumLength', 'chart-length'],
+                    'Weight': ['inWeight', 'sumWeight', 'chart-weight'],
+                    'Feeding': ['inFeed', 'sumFeeding', 'chart-feeding'],
+                    'Shedding': ['inShed', 'sumShedding', 'chart-shedding']
+                };
 
                 flags.forEach(flag => {
                     let element = document.getElementById(flag.element);
@@ -877,25 +898,44 @@ async function fetchDatabaseRoutes() {
 
                     const minPlan = parseInt(flag.minPlan) || 1;
                     
-                    // Convert to string and split by the pipe delimiter to handle "DOG | LIZZARD | SNAKE"
                     const allowedStr = Array.isArray(flag.allowedAnimals) ? flag.allowedAnimals.join('|') : String(flag.allowedAnimals);
-                    const allowedKeywords = allowedStr.toUpperCase().split('|').map(s => s.trim());
+                    // FIXED: Strict boolean filter and whitespace trim ensures no empty elements trigger false positives
+                    const allowedKeywords = allowedStr.toUpperCase().split('|').map(s => s.trim()).filter(Boolean);
 
                     const planOk = userPlan >= minPlan;
                     
-                    // Checks if ALL is present, or if the keyword is inside the animal string (e.g. "SNAKE" in "BLACK MEXICAN KINGSNAKE") 
-                    // or vice-versa to cover typos.
+                    // FIXED: Re-mapped the 'includes' logic so distinct animals don't falsely trigger each other
                     const animalOk = allowedKeywords.includes('ALL') || allowedKeywords.some(keyword => {
-                        if (!keyword) return false;
-                        return animalType.includes(keyword) || keyword.includes(animalType);
+                        const kw = keyword.toUpperCase();
+                        const at = animalType.toUpperCase();
+                        // This prevents string-fragment overlaps (like "NA" matching "SNAKE")
+                        const regex = new RegExp(`\\b${kw}\\b`, 'i');
+                        return regex.test(at) || kw === at;
                     });
 
                     if (!planOk || !animalOk) {
                         element.style.display = 'none';
-                        console.log(`[HIDDEN] ${flag.element} -> PlanOk: ${planOk} | AnimalOk: false (Target: '${animalType}' not matched in '${allowedStr}')`);
+                        console.log(`[HIDDEN] ${flag.element} -> PlanOk:${planOk} | AnimalOk: false (Target: '${animalType}' not matched in '${allowedStr}')`);
+                        
+                        // Smart Associate Hiding logic
+                        for (const [groupName, ids] of Object.entries(smartGroups)) {
+                            if (ids.includes(flag.element)) {
+                                ids.forEach(relatedId => {
+                                    let relElement = document.getElementById(relatedId);
+                                    if (relElement) {
+                                        if (relElement.tagName === 'INPUT') {
+                                            const pCard = relElement.closest('.input-card');
+                                            if (pCard) relElement = pCard;
+                                        }
+                                        relElement.style.display = 'none';
+                                        console.log(`   ↳ [SMART HIDE] Associated element linked to ${groupName} hidden:${relatedId}`);
+                                    }
+                                });
+                            }
+                        }
                     } else {
                         element.style.display = '';
-                        console.log(`[SHOWN]  ${flag.element} -> PlanOk: ${planOk} | AnimalOk: true`);
+                        console.log(`[SHOWN]  ${flag.element} -> PlanOk:${planOk} | AnimalOk: true`);
                     }
                 });
                 
@@ -1197,7 +1237,7 @@ async function loadSpeciesDatabase(scientificName) {
                 console.log("✅ Species Data Loaded & Verified Successfully:", currentSpeciesData);
                 applySpeciesGuidance();
             } else {
-                console.warn(`⚠️ Species data for ${scientificName} is NOT verified (Flag: ${qualityFlag}). Skipping analytics & AI integration.`);
+                console.warn(`⚠️ Species data for ${scientificName} is NOT verified (Flag:${qualityFlag}). Skipping analytics & AI integration.`);
                 // Force null so applySpeciesGuidance and the AI context ignore this scraped row
                 currentSpeciesData = null; 
             }
@@ -1219,12 +1259,12 @@ async function loadSpeciesDatabase(scientificName) {
             const city = data.address.city || data.address.town || data.address.municipality || "Unknown City";
             const state = data.address.state || "Unknown State";
             const country = data.address.country || "Unknown Country";
-            return `${city}, ${state} - ${country}`;
+            return `${city}, ${state} -${country}`;
         }
     } catch (error) {
         console.warn("Geocoding failed, falling back to raw coordinates.", error);
     }
-    return `${lat}, ${lon}`; 
+    return `${lat},${lon}`; 
 }
     
 async function updateSensors() {
@@ -1269,7 +1309,7 @@ async function updateSensors() {
                 // Handle Field 31 manually to combine LAT and LON gracefully without breaking parseFloat
                 const locEl = document.getElementById('valField31');
                 if (locEl && last.field1 && last.field2) {
-                    locEl.innerHTML = `${parseFloat(last.field1).toFixed(4)}, ${parseFloat(last.field2).toFixed(4)}<span>°</span>`;
+                    locEl.innerHTML = `${parseFloat(last.field1).toFixed(4)},${parseFloat(last.field2).toFixed(4)}<span>°</span>`;
                 }
 
                 updateFieldUI(33, last.field3); 
@@ -1376,7 +1416,7 @@ async function sendDeviceConfig() {
         const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
         const d = new Date(dateStr);
         if (isNaN(d)) return dateStr;
-        return `${String(d.getDate()).padStart(2, '0')} / ${months[d.getMonth()]} / ${d.getFullYear()}`;
+        return `${String(d.getDate()).padStart(2, '0')} / ${months[d.getMonth()]} /${d.getFullYear()}`;
     }
 
 
@@ -1561,7 +1601,7 @@ function renderFeeding(events, color) {
     const combos = data.map(e => {
         const ft = (e[4] && e[4].trim() !== "") ? e[4].trim() : 'N/A';
         const br = (e[5] && e[5].trim() !== "") ? e[5].trim() : 'N/A';
-        return `${ft} | ${br}`;
+        return `${ft} \vert{}${br}`;
     });
     
     const uniqueCombos = [...new Set(combos)];
@@ -1676,7 +1716,7 @@ function buildForecastChartConfig(labelString, dataArray, color, ctx) {
         paddedRealValues.push(...new Array(forecast.values.length).fill(null)); 
     }
 
-    const dynamicLabel = forecast.method ? `${labelString} [AI: ${forecast.method}]` : labelString;
+    const dynamicLabel = forecast.method ? `${labelString} [AI:${forecast.method}]` : labelString;
 
     return {
         type: 'line',
@@ -1903,7 +1943,7 @@ async function loadVetVisits(id) {
                     webContent = `<a href="${safeURL}" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: bold;"><i class="fas fa-globe"></i> Site</a>`;
                 }
 
-                // --- MULTICULTURAL DATE & TIME FORMATTER ---
+                // --- MULTICULTURAL DATE & TIME FORMATTER FIX ---
                 let formattedDateTime = "---";
                 if (v[1] && v[1].trim() !== "") {
                     const d = new Date(v[1]);
@@ -1912,8 +1952,21 @@ async function loadVetVisits(id) {
                         const day = String(d.getDate()).padStart(2, '0');
                         const month = months[d.getMonth()];
                         const year = d.getFullYear();
-                        const timeStr = (v[2] && v[2].trim() !== "") ? ` - ${v[2].trim()}` : "";
-                        formattedDateTime = `${day} / ${month} / ${year}${timeStr}`;
+                        
+                        let timeStr = "";
+                        if (v[2] && v[2].trim() !== "") {
+                            let rawTime = v[2].trim();
+                            // Handle Google Sheets 1899 epoch issue
+                            if (rawTime.includes('T')) {
+                                const timeParts = rawTime.split('T')[1].split(':');
+                                if (timeParts.length >= 2) {
+                                    timeStr = ` - ${timeParts[0]}:${timeParts[1]}`;
+                                }
+                            } else {
+                                timeStr = ` - ${rawTime}`;
+                            }
+                        }
+                        formattedDateTime = `${day} /${month} / ${year}${timeStr}`;
                     } else {
                         formattedDateTime = v[1] + (v[2] ? ` - ${v[2]}` : "");
                     }
