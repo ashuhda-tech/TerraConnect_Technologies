@@ -370,14 +370,71 @@
 
     <script>
 // ==========================================
+// --- SECURE ROUTING SYSTEM ---
+// ==========================================
+const MASTER_DIRECTORY_B64 = 'aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J6cTRZVWUzWjJQeGNsdlJtRWNxaVF1bk1KRXRXNVE5cmxOV21KOXF6RWdQcWM5OVVlVThud3VjYm91SFdzaE1Bdy9leGVj'; 
+let FLAGS_SCRIPT_URL = "";
+
+// Safe URL parser: Returns standard URLs as-is, decodes if Base64
+function safeParseUrl(val) {
+    if (!val) return "";
+    let str = String(val).trim();
+    if (str.startsWith("http")) return str; 
+    try { return atob(str).trim(); }        
+    catch (e) { return str; }               
+}
+
+async function fetchDatabaseRoutes() {
+    console.log("[DEBUG] Fetching routes for Store/Matrix...");
+    try {
+        const payload = { pageName: "store.html" };
+        const masterUrl = atob(MASTER_DIRECTORY_B64).trim();
+        
+        const response = await fetch(masterUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(payload)
+        });
+        const text = await response.text();
+        
+        if (text.trim().startsWith("<")) {
+            console.error("[ERROR] Server returned HTML instead of JSON. Check the Master Spreadsheet URL.");
+            return false;
+        }
+
+        const result = JSON.parse(text);
+        
+        if (result.status === "success") {
+            // We only need the Flags route for the Tier Matrix in this page
+            FLAGS_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_Flags"]);
+            return true;
+        } else {
+            console.error("[ERROR] Route fetch failed:", result.message);
+            return false;
+        }
+    } catch (error) {
+        console.error("[ERROR] Master Directory Fail:", error);
+        return false;
+    }
+}
+
+// ==========================================
 // --- DYNAMIC TIER MATRIX GENERATOR ---
 // ==========================================
 async function loadTierMatrix() {
     const container = document.getElementById('tierMatrixContainer');
-    const API_URL = 'https://script.google.com/macros/s/AKfycbyZaoQyRiQDaTP9IkbOK89A2l9DtH6tOtwL6TFn38x5N_gYiiQc2Os-NZ1dvEsZMZKF/exec';
+    
+    // 1. Await Secure Database Routing FIRST
+    const routesLoaded = await fetchDatabaseRoutes();
+    
+    if (!routesLoaded || !FLAGS_SCRIPT_URL) {
+        container.innerHTML = `<div style="text-align:center; padding: 40px; color: #ff5f5f;">Critical System Error: Failed to load secure routes from Master Directory.</div>`;
+        return;
+    }
 
     try {
-        const response = await fetch(API_URL);
+        // 2. Fetch from the dynamically acquired Database URL
+        const response = await fetch(FLAGS_SCRIPT_URL);
         const result = await response.json();
 
         if (result.status === 'success') {
