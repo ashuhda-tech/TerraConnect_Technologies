@@ -141,13 +141,59 @@
     </div>
 
     <script>
-        const VETDATA_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxxnlxSflhGHaX8IMcQj9y7H99bu4G9V-UM9f-E-SLdV2eLcUrBpQWvwh7o6GHLUXca/exec";
-        // VULNERABILITY FIX: Introducing PAGEID verification endpoint for IDOR protection
-        const PAGEID_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw3LbOYDqljAxQ8joYW8yDhwe6lsi7AdFCAoi4HG1iRdglS0k9-fI1Oj2eA12ePc6g/exec";
-
-        let targetPageID = null;
+// ==========================================
+// --- SECURE ROUTING SYSTEM ---
+// ==========================================
+        const MASTER_DIRECTORY_B64 = 'aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J6cTRZVWUzWjJQeGNsdlJtRWNxaVF1bk1KRXRXNVE5cmxOV21KOXF6RWdQcWM5OVVlVThud3VjYm91SFdzaE1Bdy9leGVj'; 
         
-        document.addEventListener('DOMContentLoaded', () => {
+        let VETDATA_SCRIPT_URL = "";
+        let PAGEID_SCRIPT_URL = "";
+        let targetPageID = null;
+
+        // Safe URL parser: Returns standard URLs as-is, decodes if Base64
+        function safeParseUrl(val) {
+            if (!val) return "";
+            let str = String(val).trim();
+            if (str.startsWith("http")) return str; 
+            try { return atob(str).trim(); }        
+            catch (e) { return str; }               
+        }
+
+        async function fetchDatabaseRoutes() {
+            console.log("[DEBUG] Fetching routes for Vet Registry...");
+            try {
+                const payload = { pageName: "vet_registry.html" };
+                const masterUrl = atob(MASTER_DIRECTORY_B64).trim();
+                
+                const response = await fetch(masterUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(payload)
+                });
+                const text = await response.text();
+                
+                if (text.trim().startsWith("<")) {
+                    console.error("[ERROR] Server returned HTML instead of JSON. Check the Master Spreadsheet URL.");
+                    return false;
+                }
+
+                const result = JSON.parse(text);
+                
+                if (result.status === "success") {
+                    PAGEID_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_PageID"]);
+                    VETDATA_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_VetData"]);
+                    return true;
+                } else {
+                    console.error("[ERROR] Route fetch failed:", result.message);
+                    return false;
+                }
+            } catch (error) {
+                console.error("[ERROR] Master Directory Fail:", error);
+                return false;
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', async () => {
             const userData = localStorage.getItem('currentUser');
             // VULNERABILITY FIX (Authentication Bypass): Strictly check for authToken 
             const authToken = sessionStorage.getItem('authToken');
@@ -168,10 +214,21 @@
             if (!targetPageID) {
                 alert("Error: Animal ID not found. Returning to dashboard.");
                 window.location.href = 'maindashboard.html';
-            } else {
-                // VULNERABILITY FIX (IDOR): Verify if the logged user actually owns this Page ID before allowing entry
-                verifyOwnership(user.id, authToken, targetPageID);
+                return;
+            } 
+            
+            // --- AWAIT DATABASE ROUTES BEFORE VERIFYING OWNERSHIP ---
+            const routesLoaded = await fetchDatabaseRoutes();
+            
+            if (!routesLoaded || !PAGEID_SCRIPT_URL || !VETDATA_SCRIPT_URL) {
+                document.getElementById('displayPageId').innerText = "SYSTEM ERROR";
+                document.getElementById('btnAction').innerHTML = 'SYSTEM ERROR - ROUTES FAILED';
+                alert("Critical System Error: Failed to load secure routes from Master Directory. Please check console.");
+                return;
             }
+
+            // VULNERABILITY FIX (IDOR): Verify if the logged user actually owns this Page ID before allowing entry
+            verifyOwnership(user.id, authToken, targetPageID);
         });
 
         // Function to verify ownership mapping natively via Secure Auth Token
