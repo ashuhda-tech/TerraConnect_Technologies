@@ -370,7 +370,7 @@
 
     <script>
 // ==========================================
-// --- SECURE ROUTING SYSTEM ---
+// --- SECURE ROUTING SYSTEM (WITH DIAGNOSTICS) ---
 // ==========================================
 const MASTER_DIRECTORY_B64 = 'aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J6cTRZVWUzWjJQeGNsdlJtRWNxaVF1bk1KRXRXNVE5cmxOV21KOXF6RWdQcWM5OVVlVThud3VjYm91SFdzaE1Bdy9leGVj'; 
 let FLAGS_SCRIPT_URL = "";
@@ -385,35 +385,69 @@ function safeParseUrl(val) {
 }
 
 async function fetchDatabaseRoutes() {
-    console.log("[DEBUG] Fetching routes for Store/Matrix...");
+    // Starts a collapsible group in the console to keep it clean but highly detailed
+    console.groupCollapsed("🛠️ [DIAGNOSTIC] Master Directory Fetch Event (store.html)");
+    console.log("1. Initiating request sequence...");
+    
     try {
         const payload = { pageName: "store.html" };
         const masterUrl = atob(MASTER_DIRECTORY_B64).trim();
-        
+        console.log("2. Target URL decoded successfully.");
+
+        console.log("3. Sending POST request to Google Apps Script...");
         const response = await fetch(masterUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify(payload)
         });
+
+        console.log(`4. HTTP Response Status: ${response.status} ${response.statusText}`);
+
         const text = await response.text();
-        
+        console.log("5. Raw Response Text:", text.substring(0, 250) + (text.length > 250 ? "...\n[TRUNCATED]" : ""));
+
+        // Diagnostic trap for Google HTML error pages
         if (text.trim().startsWith("<")) {
-            console.error("[ERROR] Server returned HTML instead of JSON. Check the Master Spreadsheet URL.");
+            console.error("❌ ERROR: Server returned HTML instead of JSON. Possible causes:\n- Script deployed incorrectly (Must be 'Execute as: Me' and 'Access: Anyone').\n- Master script crashed and returned a default Google error page.\n- Authorization was unexpectedly required.");
+            console.groupEnd();
             return false;
         }
 
-        const result = JSON.parse(text);
+        let result;
+        try {
+            result = JSON.parse(text);
+            console.log("6. Parsed JSON payload successfully:", result);
+        } catch (e) {
+            console.error("❌ ERROR: JSON Parse Failed. The script did not return a valid JSON string.");
+            console.groupEnd();
+            return false;
+        }
         
+        // Diagnostic trap for functional script errors
         if (result.status === "success") {
-            // We only need the Flags route for the Tier Matrix in this page
+            console.log("7. Available Keys mapped by Master Script:", Object.keys(result.data));
+            
             FLAGS_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_Flags"]);
+            console.log("8. Extracted FLAGS_SCRIPT_URL:", FLAGS_SCRIPT_URL || "[MISSING/EMPTY]");
+
+            if (!FLAGS_SCRIPT_URL) {
+                console.warn("⚠️ WARNING: 'TerraConnect_Flags' key was not found in the database response.");
+            }
+            
+            console.log("✅ Master Directory Routing Successful!");
+            console.groupEnd();
             return true;
         } else {
-            console.error("[ERROR] Route fetch failed:", result.message);
+            console.error("❌ ERROR: Script executed but returned functional failure message:", result.message);
+            console.groupEnd();
             return false;
         }
     } catch (error) {
-        console.error("[ERROR] Master Directory Fail:", error);
+        // Diagnostic trap for CORS blocks or Network Drops
+        console.error("❌ CRITICAL FETCH ERROR:", error.name, "-", error.message);
+        console.warn("💡 If this is 'TypeError: Failed to fetch', it is almost certainly a CORS preflight block or a disconnected network.");
+        console.dir(error); 
+        console.groupEnd();
         return false;
     }
 }
