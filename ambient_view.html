@@ -1884,10 +1884,26 @@ async function loadVetVisits(id) {
                     webContent = `<a href="${safeURL}" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: bold;"><i class="fas fa-globe"></i> Site</a>`;
                 }
 
+                // --- MULTICULTURAL DATE & TIME FORMATTER ---
+                let formattedDateTime = "---";
+                if (v[1] && v[1].trim() !== "") {
+                    const d = new Date(v[1]);
+                    if (!isNaN(d.getTime())) {
+                        const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+                        const day = String(d.getDate()).padStart(2, '0');
+                        const month = months[d.getMonth()];
+                        const year = d.getFullYear();
+                        const timeStr = (v[2] && v[2].trim() !== "") ? ` - ${v[2].trim()}` : "";
+                        formattedDateTime = `${day} / ${month} / ${year}${timeStr}`;
+                    } else {
+                        formattedDateTime = v[1] + (v[2] ? ` - ${v[2]}` : "");
+                    }
+                }
+
                 // VULNERABILITY FIX (Stored XSS): Escape text content inside innerHTML to prevent arbitrary code execution
                 tbody.innerHTML += `
                     <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                        <td style="padding: 10px;">${escapeHTML(v[1])}</td>
+                        <td style="padding: 10px;">${escapeHTML(formattedDateTime)}</td>
                         <td style="padding: 10px;">${escapeHTML(v[3])}</td>
                         <td style="padding: 10px;">${escapeHTML(v[6])}</td>
                         <td style="padding: 10px;">${escapeHTML(v[7])}</td>
