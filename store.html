@@ -427,11 +427,12 @@ async function fetchDatabaseRoutes() {
         if (result.status === "success") {
             console.log("7. Available Keys mapped by Master Script:", Object.keys(result.data));
             
-            FLAGS_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_Flags"]);
+            // UPDATED TO MATCH THE CORRECT JSON KEY FROM THE MASTER SCRIPT
+            FLAGS_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_FLAGS_Dashboard View"]);
             console.log("8. Extracted FLAGS_SCRIPT_URL:", FLAGS_SCRIPT_URL || "[MISSING/EMPTY]");
 
             if (!FLAGS_SCRIPT_URL) {
-                console.warn("⚠️ WARNING: 'TerraConnect_Flags' key was not found in the database response.");
+                console.warn("⚠️ WARNING: 'TerraConnect_FLAGS_Dashboard View' key was not found in the database response.");
             }
             
             console.log("✅ Master Directory Routing Successful!");
