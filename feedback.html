@@ -226,17 +226,14 @@
 
 <script>
     // ==========================================
-    // 1. CONFIGURATION: SECURE DATA ENDPOINT
+    // 1. SECURE DATABASE ROUTING (BASE 64)
     // ==========================================
-    // FIX 1: Exposed Database (Banco sem tranca)
-    // Replaced direct Google Sheet CSV URL with a backend proxy endpoint. 
-    // A backend service should fetch the sheet, remove sensitive columns, and serve only the safe CSV payload.
-    const SECURE_FEEDBACK_DATA_URL = "/api/v1/feedback-data.csv";
-    
+    // Master Directory URL encoded in Base64
+    const MASTER_DIRECTORY_B64 = 'aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J6cTRZVWUzWjJQeGNsdlJtRWNxaVF1bk1KRXRXNVE5cmxOV21KOXF6RWdQcWM5OVVlVThud3VjYm91SFdzaE1Bdy9leGVj'; 
+    let feedbackCsvUrl = "";
     let submitted = false;
 
-    // FIX 2: Stored XSS (Inputs sem tratamento)
-    // Helper function to sanitize user input before it reaches the DOM
+    // Helper function to sanitize user input to prevent XSS
     function escapeHTML(str) {
         if (!str) return '';
         return String(str)
@@ -247,6 +244,35 @@
             .replace(/'/g, '&#39;');
     }
 
+    // Fetches the secure route from the master script
+    async function fetchDatabaseRoutes() {
+        try {
+            console.log("[Master Script] Requesting secure database routes...");
+            const payload = { pageName: "feedback.html" };
+            const response = await fetch(atob(MASTER_DIRECTORY_B64), {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(payload)
+            });
+            const result = await response.json();
+            
+            if (result.status === "success") {
+                // Gets the decoded link matching your exact spreadsheet database name
+                feedbackCsvUrl = atob(result.data["TerraConnect_Feedbacks"] || ""); 
+                return true;
+            } else {
+                console.error("Routing Access Denied:", result.message);
+                return false;
+            }
+        } catch (error) {
+            console.error("Failed to connect to Master Directory:", error);
+            return false;
+        }
+    }
+
+    // ==========================================
+    // 2. FORM & UI HANDLING
+    // ==========================================
     function handleFormSubmit() {
         submitted = true;
         const btn = document.getElementById('submitBtn');
@@ -271,18 +297,27 @@
     }
 
     // ==========================================
-    // 2. DATA PROCESSING & VISUALIZATION
+    // 3. DATA PROCESSING & VISUALIZATION
     // ==========================================
     async function fetchFeedbackData() {
         try {
-            // Using the secure endpoint instead of the direct public sheet link
-            const response = await fetch(SECURE_FEEDBACK_DATA_URL);
+            // Wait for the master script to provide the secure URL first
+            const routesLoaded = await fetchDatabaseRoutes();
+            
+            if (!routesLoaded || !feedbackCsvUrl) {
+                throw new Error("Master Script did not provide a valid URL for TerraConnect_Feedbacks.");
+            }
+
+            console.log("Secure Route confirmed. Fetching CSV data...");
+            const response = await fetch(feedbackCsvUrl);
+            
             if (!response.ok) throw new Error("Network response was not ok");
             const csvText = await response.text();
             processData(csvText);
+            
         } catch (error) {
-            console.warn("Could not load secure sheet data. Please ensure your backend proxy is running.");
-            document.getElementById('feedback-table-body').innerHTML = `<tr><td colspan="5" style="text-align:center;">Awaiting initial dashboard sync...</td></tr>`;
+            console.error("Data Fetch Error:", error);
+            document.getElementById('feedback-table-body').innerHTML = `<tr><td colspan="5" style="text-align:center; color: #ff5f5f;">Failed to load secure sheet data. Please check console.</td></tr>`;
         }
     }
 
@@ -291,7 +326,7 @@
         const rows = csvText.split('\n').slice(1);
         
         let stats = { todo: 0, ongoing: 0, implemented: 0, canceled: 0, total: 0 };
-        let timelineData = {}; // Format: { "YYYY-MM": { implemented: 0, canceled: 0, pending: 0 } }
+        let timelineData = {}; 
         let tableHTML = '';
 
         // Sort rows to show newest first in table
@@ -302,11 +337,10 @@
             const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(col => col.replace(/(^"|"$)/g, '').trim());
             
             // Map Columns (A=0: Date, D=3: Category, E=4: Subject, G=6: Status, H=7: Reason)
-            // Stored XSS Fix: Wrapping exposed user-submitted string variables in escapeHTML()
             const dateStr = escapeHTML(cols[0] ? cols[0].split(' ')[0] : 'Unknown'); 
             const category = escapeHTML(cols[3] || 'General');
             const subject = escapeHTML(cols[4] || 'Untitled');
-            const statusRaw = cols[6] || 'To be done'; // Used for logical mapping, no escaping required yet
+            const statusRaw = cols[6] || 'To be done'; 
             const reason = escapeHTML(cols[7] || '-');
             
             // Normalize Status
@@ -325,7 +359,7 @@
             if (dateStr !== 'Unknown') {
                 const parts = dateStr.split('/');
                 if(parts.length >= 2) {
-                    const monthKey = `${parts[1]}/${parts[2]}`; // Assuming DD/MM/YYYY. Adjust if US date.
+                    const monthKey = `${parts[1]}/${parts[2]}`; 
                     if (!timelineData[monthKey]) timelineData[monthKey] = { success: 0, fail: 0, pending: 0 };
                     
                     if (statusClass === 'implemented') timelineData[monthKey].success++;
