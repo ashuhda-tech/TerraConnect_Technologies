@@ -53,6 +53,10 @@
         .btn-back { display: block; margin-top: 15px; color: var(--text-light); text-decoration: none; font-size: 0.8rem; opacity: 0.7; cursor: pointer; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .grid-full { grid-column: span 2; }
+        
+        /* Custom styling for the new location button */
+        .btn-icon { width: auto; margin-top: 0; padding: 12px 20px; background-color: transparent; border: 1px solid var(--accent); color: var(--accent); font-size: 1.1rem; }
+        .btn-icon:hover:not(:disabled) { background-color: var(--accent); color: var(--bg-dark); }
     </style>
 </head>
 <body>
@@ -130,9 +134,16 @@
                 <label class="a70-font">VET ADDRESS</label>
                 <input type="text" id="vetAdress" placeholder="Ex: 123 Green Ave, New York" disabled>
             </div>
+            
+            <!-- NEW GEOLOCATION FIELD & BUTTON -->
             <div class="input-group grid-full">
                 <label class="a70-font">VET GEOGRAPHICAL LOCATION</label>
-                <input type="text" id="vetPlusCode" placeholder="Ex: -23.5505, -46.6333" disabled>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="vetPlusCode" placeholder="Ex: -23.5505, -46.6333" disabled style="flex-grow: 1;">
+                    <button type="button" id="btnLocation" class="btn-save btn-icon" onclick="getDeviceLocation()" title="Get Current Location" disabled>
+                        <i class="fas fa-location-arrow"></i>
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -142,7 +153,7 @@
 
     <script>
 // ==========================================
-// --- SECURE ROUTING SYSTEM ---
+// --- SECURE ROUTING SYSTEM (WITH DIAGNOSTICS) ---
 // ==========================================
         const MASTER_DIRECTORY_B64 = 'aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J6cTRZVWUzWjJQeGNsdlJtRWNxaVF1bk1KRXRXNVE5cmxOV21KOXF6RWdQcWM5OVVlVThud3VjYm91SFdzaE1Bdy9leGVj'; 
         
@@ -160,35 +171,59 @@
         }
 
         async function fetchDatabaseRoutes() {
-            console.log("[DEBUG] Fetching routes for Vet Registry...");
+            console.groupCollapsed("🛠️ [DIAGNOSTIC] Master Directory Fetch Event (vet_registry.html)");
+            console.log("1. Initiating request sequence...");
             try {
                 const payload = { pageName: "vet_registry.html" };
                 const masterUrl = atob(MASTER_DIRECTORY_B64).trim();
+                console.log("2. Target URL decoded successfully.");
                 
+                console.log("3. Sending POST request to Google Apps Script...");
                 const response = await fetch(masterUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify(payload)
                 });
+                
+                console.log(`4. HTTP Response Status: ${response.status} ${response.statusText}`);
                 const text = await response.text();
+                console.log("5. Raw Response Text:", text.substring(0, 250) + (text.length > 250 ? "...\n[TRUNCATED]" : ""));
                 
                 if (text.trim().startsWith("<")) {
-                    console.error("[ERROR] Server returned HTML instead of JSON. Check the Master Spreadsheet URL.");
+                    console.error("❌ ERROR: Server returned HTML instead of JSON. Check the Master Spreadsheet URL.");
+                    console.groupEnd();
                     return false;
                 }
 
-                const result = JSON.parse(text);
+                let result;
+                try {
+                    result = JSON.parse(text);
+                    console.log("6. Parsed JSON payload successfully:", result);
+                } catch (e) {
+                    console.error("❌ ERROR: JSON Parse Failed. The script did not return a valid JSON string.");
+                    console.groupEnd();
+                    return false;
+                }
                 
                 if (result.status === "success") {
+                    console.log("7. Available Keys mapped by Master Script:", Object.keys(result.data));
+                    
                     PAGEID_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_PageID"]);
                     VETDATA_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_VetData"]);
+                    
+                    console.log("8. Extracted URLs:", { PAGEID_SCRIPT_URL, VETDATA_SCRIPT_URL });
+                    console.log("✅ Master Directory Routing Successful!");
+                    console.groupEnd();
                     return true;
                 } else {
-                    console.error("[ERROR] Route fetch failed:", result.message);
+                    console.error("❌ ERROR: Script executed but returned functional failure message:", result.message);
+                    console.groupEnd();
                     return false;
                 }
             } catch (error) {
-                console.error("[ERROR] Master Directory Fail:", error);
+                console.error("❌ CRITICAL FETCH ERROR:", error.name, "-", error.message);
+                console.dir(error); 
+                console.groupEnd();
                 return false;
             }
         }
@@ -242,7 +277,7 @@
                     if (ownsPage) {
                         document.getElementById('displayPageId').innerText = pageId;
                         
-                        // Enable all fields and button upon successful ownership check
+                        // Enable all fields and buttons upon successful ownership check
                         const elements = document.querySelectorAll('input, textarea, button');
                         elements.forEach(el => el.disabled = false);
                         document.getElementById('btnAction').innerHTML = 'SAVE VET RECORD';
@@ -260,6 +295,40 @@
             }
         }
 
+        // --- NEW GEOLOCATION FUNCTION ---
+        function getDeviceLocation() {
+            const btn = document.getElementById('btnLocation');
+            const input = document.getElementById('vetPlusCode');
+            
+            if (!navigator.geolocation) {
+                alert("Geolocation is not supported by your browser.");
+                return;
+            }
+
+            // Visual feedback while loading
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            btn.disabled = true;
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const lat = position.coords.latitude.toFixed(6);
+                    const lng = position.coords.longitude.toFixed(6);
+                    input.value = `${lat}, ${lng}`;
+                    
+                    // Restore button state
+                    btn.innerHTML = '<i class="fas fa-location-arrow"></i>';
+                    btn.disabled = false;
+                },
+                (error) => {
+                    alert("Unable to retrieve location. Please check browser permissions.");
+                    console.error("Geolocation error:", error);
+                    btn.innerHTML = '<i class="fas fa-location-arrow"></i>';
+                    btn.disabled = false;
+                },
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+            );
+        }
+
         async function processVetRegistration() {
             const date = document.getElementById('vetDate').value;
             const examType = document.getElementById('vetExamType').value;
@@ -273,10 +342,9 @@
 
             const authToken = sessionStorage.getItem('authToken');
 
-            // Mapeamento idêntico à lista ordenada do seu Excel / CVS
             const payload = {
                 pageID: targetPageID,
-                date: date,
+                vetDate: date, // FIXED: Changed 'date' to 'vetDate' to perfectly match Apps Script requirements
                 time: document.getElementById('vetTime').value,
                 examType: examType,
                 examCost: document.getElementById('vetExamCost').value,
