@@ -741,6 +741,15 @@ let AI_SCRIPT_URL = "";
 let EDU_SCRIPT_URL = "";
 let CAREGUIDE_SCRIPT_URL = "";
 
+// Safe URL parser: Returns standard URLs as-is, decodes if Base64
+function safeParseUrl(val) {
+    if (!val) return "";
+    let str = String(val).trim();
+    if (str.startsWith("http")) return str; 
+    try { return atob(str).trim(); }        
+    catch (e) { return str; }               
+}
+
 async function fetchDatabaseRoutes() {
     console.log("[DEBUG] Fetching routes for Ambient View...");
     try {
@@ -762,16 +771,16 @@ async function fetchDatabaseRoutes() {
         const result = JSON.parse(text);
         
         if (result.status === "success") {
-            SIGNUP_SCRIPT_URL = atob(result.data["TerraConnect_SignUp"]).trim(); 
-            FLAGS_SCRIPT_URL = atob(result.data["TerraConnect_Flags"]).trim();
-            PAGEID_SCRIPT_URL = atob(result.data["TerraConnect_PageID"]).trim();
-            THEME_SCRIPT_URL = atob(result.data["TerraConnect_Themes"]).trim();
-            BIODATA_SCRIPT_URL = atob(result.data["TerraConnect_BioData"]).trim();
-            ENVIRONMENT_SCRIPT_URL = atob(result.data["TerraConnect_Environment"]).trim();
-            VETDATA_SCRIPT_URL = atob(result.data["TerraConnect_VetData"]).trim();
-            AI_SCRIPT_URL = atob(result.data["TerraConnect_AI"]).trim();
-            EDU_SCRIPT_URL = atob(result.data["TerraConnect_Educational"]).trim();
-            CAREGUIDE_SCRIPT_URL = atob(result.data["TerraConnect_CareGuide"]).trim();
+            SIGNUP_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_SignUp"]); 
+            FLAGS_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_Flags"]);
+            PAGEID_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_PageID"]);
+            THEME_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_Themes"]);
+            BIODATA_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_BioData"]);
+            ENVIRONMENT_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_Environment"]);
+            VETDATA_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_VetData"]);
+            AI_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_AI"]);
+            EDU_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_Educational"]);
+            CAREGUIDE_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_CareGuide"]);
             return true;
         } else {
             console.error("[ERROR] Route fetch failed:", result.message);
@@ -1078,19 +1087,20 @@ async function loadData() {
             updateSensors();
             
             // -----------------------------------------------------------------
-            // NOVA ARQUITETURA SEQUENCIAL (PREVINE THROTTLING E ERROS DE JSON)
+            // NOVA ARQUITETURA PARALELA (ACELERA O CARREGAMENTO DOS DADOS)
             // -----------------------------------------------------------------
-            // Ao aguardar (await) cada função, garantimos que o Google Apps Script 
-            // não derrube nossas requisições por limite de concorrência.
-            
-            await loadBiologicalHistory(currentPageId);
-            await loadVetVisits(currentPageId);
+            // Execute all secondary database fetches in parallel
+            const loadTasks = [
+                loadBiologicalHistory(currentPageId),
+                loadVetVisits(currentPageId),
+                loadEducationalCommands()
+            ];
             
             if (typeof loadExistingConfig === "function") {
-                await loadExistingConfig();
+                loadTasks.push(loadExistingConfig());
             }
-            
-            await loadEducationalCommands();
+
+            await Promise.allSettled(loadTasks);
 
             // Só ativa a leitura constante depois que o layout base estiver cimentado
             setInterval(updateSensors, 20000);
