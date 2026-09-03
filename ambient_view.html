@@ -207,7 +207,6 @@
                 <div class="bio-item"><b>Scientific Name</b> <span id="dynScientific">---</span></div>
                 <div class="bio-item"><b>Sex</b> <span id="dynSex">---</span></div>
                 <div class="bio-item"><b>Birth Date</b> <span id="dynBirth">---</span></div>
-                <!-- Legal Check included here -->
                 <div class="bio-item"><b>Registration</b> <span id="dynReg">---</span></div>
                 <div class="bio-item"><b>Location</b> <span id="dynLoc">---</span></div>
                 <div class="bio-item"><b>Channel ID</b> <span id="dynChannel">---</span></div>
@@ -247,7 +246,6 @@
     
     <main class="main-content">
         
-        <!-- SISPASS/SISFAUNA Legal Warning Banner -->
         <div id="legal-warning" style="display:none; background: rgba(255,95,95,0.1); border-left: 4px solid #ff5f5f; padding: 15px; margin-bottom: 30px; border-radius: 5px; color: var(--text-light);">
             <h4 style="color: #ff5f5f; margin: 0 0 5px 0;"><i class="fas fa-balance-scale"></i> TERMS OF USE & COMPLIANCE WARNING</h4>
             <p style="margin: 0; font-size: 0.85rem;">The SISPASS / SISFAUNA registration data for this animal is missing or unverified. <b>The legal guardian is solely responsible for ensuring the legality of keeping this animal under state and federal environmental laws.</b> TerraConnect acts strictly as an IoT telemetry provider and disclaims any liability for illegal possession.</p>
@@ -258,7 +256,6 @@
             <p id="dynStatus">On-time Environmental Monitoring</p>
         </header>
 
-        <!-- --- AI Insights --- -->                
         <div id="section-ai">
             <h3 class="a70-font" style="font-size: 0.9rem; color: #a3b18a; margin: 30px 0 15px 0; display: flex; align-items: center; justify-content: space-between; width: 100%;">
                 <span><i class="fas fa-brain"></i> AI Insights</span>
@@ -276,7 +273,6 @@
             </div>
         </div>
 
-        <!-- --- Main Sensor Unit --- -->          
         <div id="section-main">
             <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-top: 20px; margin-bottom: 15px;">
                 <i class="fas fa-broadcast-tower"></i> Main Sensor Unit
@@ -341,7 +337,6 @@
             </div>
         </div>
 
-        <!-- --- Remote Sensor Unit --- -->                
         <div id="section-remote">
             <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-top: 20px; margin-bottom: 15px;">
                 <i class="fas fa-broadcast-tower"></i> Remote Sensor Unit
@@ -385,13 +380,11 @@
             </div>
         </div>
 
-        <!-- --- Walk Sensor Unit --- -->          
         <div id="section-walk">
             <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-top: 20px; margin-bottom: 15px;">
                 <i class="fas fa-broadcast-tower"></i> Walk Sensor Unit
             </h3>
             <div class="sensor-grid" id="sensor-grid-walk">
-                <!-- Note: ID 31 opens chart based on Field 1 (LAT) for history -->
                 <div class="sensor-card" onclick="openChart(31, 'Location History (LAT)')" style="cursor: pointer;">
                     <i class="fas fa-location-dot sensor-icon" style="color: #a3b18a;"></i>
                     <div class="sensor-data">
@@ -437,7 +430,6 @@
             </div>
         </div>
 
-        <!-- --- Environment Active Configuration --- -->  
         <div id="section-env-config">
             <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-bottom: 15px;">
                 <i class="fas fa-sliders-h"></i> Environment Active Configuration
@@ -494,7 +486,6 @@
             <hr style="border: 0.5px solid #eee; margin: 20px 0;">
         </div>
 
-        <!-- --- SUMMARY CARDS --- -->  
         <div id="section-summary" class="summary-section">
             <div class="summary-card" id="sumFeeding">
                 <div class="summary-title a70-font"><i class="fas fa-utensils"></i> Last Feeding</div>
@@ -526,7 +517,6 @@
             </div>
         </div>
 
-        <!-- --- Control Center --- -->
         <div id="section-control-center">
             <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-bottom: 15px;">
                 <i class="fas fa-database"></i> Control Center
@@ -598,7 +588,6 @@
             </div>
         </div>
 
-        <!-- --- Live Monitoring | Camera --- -->
         <div id="section-camera">
             <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-bottom: 15px;">
                 <i class="fas fa-video"></i> Live Monitoring | Camera
@@ -622,13 +611,11 @@
             </div>
         </div>
         
-        <!-- --- EDUCATIONAL PET SECTION --- -->
         <div id="section-education" style="display: none;">
             <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-top: 30px; margin-bottom: 15px;">
                 <i class="fas fa-graduation-cap"></i> Educational Pet | Training
             </h3>
 
-            <!-- Dog Educational Panel (Dynamic) -->
             <div id="edu-clicker-section" style="display: none; margin-bottom: 20px;">
                 <h4 style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0; margin-bottom: 10px;">Dog Commands (Audio & Voice)</h4>
                 
@@ -636,15 +623,12 @@
                     <i class="fas fa-exclamation-triangle"></i> TRIGGER EMERGENCY SOS
                 </button>
                 
-                <!-- Cards will be injected here -->
                 <div class="management-grid" id="dog-commands-grid"></div>
             </div>
 
-            <!-- Bird Educational Panel (Dynamic) -->
             <div id="edu-voice-section" style="display: none; margin-bottom: 20px;">
                 <h4 style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0; margin-bottom: 10px;">Bird Vocal Learning</h4>
                 
-                <!-- Cards will be injected here -->
                 <div class="management-grid" id="bird-commands-grid"></div>
             </div>
         </div>
@@ -679,7 +663,6 @@
             </div>
         </div>
         
-        <!-- GLOBAL FOOTER -->
         <footer style="width: 100%; text-align: center; padding: 20px; background: rgba(10, 12, 16, 0.8); backdrop-filter: blur(10px); border-top: 1px solid var(--border); margin-top: 40px; position: relative; z-index: 100; border-radius: 12px; box-sizing: border-box;">
             <div class="footer-text" style="font-size: 0.8rem; color: var(--text-muted); font-family: 'Inter', sans-serif; letter-spacing: 0.5px;">
                 Copyright &copy; 2026 TerraConnect Technologies. All Rights Reserved. | 
@@ -744,21 +727,63 @@
 const loggedUser = checkSecurity();
 const authParams = loggedUser ? `&authToken=${encodeURIComponent(loggedUser.authToken)}&csrfToken=${encodeURIComponent(loggedUser.authToken)}` : "";
 
-    
-   // VULNERABILITY FIX (Hardcoded Secrets): Google Apps Scripts endpoints obfuscated through Base64 Decode logic
-const decodeAPI = (b64) => atob(b64);
+// --- NEW MASTER SCRIPT LOGIC START ---
+const MASTER_DIRECTORY_B64 = 'aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J6cTRZVWUzWjJQeGNsdlJtRWNxaVF1bk1KRXRXNVE5cmxOV21KOXF6RWdQcWM5OVVlVThud3VjYm91SFdzaE1Bdy9leGVj'; 
 
-const SIGNUP_SCRIPT_URL = decodeAPI("aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J6RlQxWVFTTUxwSjJ6TEpRLWJEMUpPVXphVUpKc1JjbUNCa3BzZVhkODdpR3ZKWG01SWc3cDFnWUpmLVBtSFZ3US9leGVj");
-const FLAGS_SCRIPT_URL = decodeAPI("aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J5WmFvUXlSaVFEYVRQOUlrYk9LODlBMmw5RHRINnRPdHdMNlRGbjM4eDVOX2dZaWlRYzJPcy1OWjFkdkVzWk1aS0YvZXhlYw=="); 
-const PAGEID_SCRIPT_URL = decodeAPI("aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J3M0xiT1lEcWxqQXhROGpvWVc4eURod2U2bHNpN0FkRkNBb2k0SEcxaVJkZ2xTMGs5LWZJMU9qMmVBMTJlUGM2Zy9leGVj");
-const THEME_SCRIPT_URL = decodeAPI("aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J6UENNYndhOE5YeTI1M2hTYlI0ZXdvZFBBaU5fMjBxVWx3dmNGbDhVZXhvOVNPWlJVcDV2eERQRmxrc2g4TnlObkQvZXhlYw==");
-const BIODATA_SCRIPT_URL = decodeAPI("aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J4bk9jV1NIUnV0QmtIY180NXRTTE9Gam93SlhNZXBsazMzM1RtYWRkcnZmV2dFVGxqYlpaNnNoT3V3WVRJRzRBa0QvZXhlYw==");
-const ENVIRONMENT_SCRIPT_URL = decodeAPI("aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J6RzJZVmVtOXFHN3NFSzIwbFZ1Um0yQmhqbzEwZGZYUkY5OG1pYlJFYlVabk01b2JUcmIwUXJRREpJR2kwd0ZvRS9leGVj");
-const VETDATA_SCRIPT_URL = decodeAPI("aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J4eG5seFNmbGhHSGFYOElNY1FqOXk3SDk5YnU0RzlWLVVNOWYtRS1TTGRWMmVMY1VyQnBRV3Z3aDdvNkdITFVYY2EvZXhlYw==");
-const AI_SCRIPT_URL = decodeAPI("aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J4aWduN1l2SVhtQ2lBZ2dLVTlYS2x2ZVdIUV9oUXpZTDY1TUVQM3lFRmUxbGoxZXdQakh1TnpYQmlfUzhKTVRQRS9leGVj");
-const EDU_SCRIPT_URL = decodeAPI("aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J4UTFEVXpFLW5NTmh1RjlaeGtENF9jUDlyamtTRTl2RjJxUXVkTC1GMi14MXBManRKZy15UkNNN0FJWGY5R0VUYjkvZXhlYw==");
-const CAREGUIDE_SCRIPT_URL = decodeAPI("aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J4TkFTajdnaFBwbTVYUlBBNFl2VWVQMFdPT0FSeVZ0dW5XZXNVZ21WNzl1TEQ5ZUl1QjdObjV5QnVMQ0h3LXczdzAvZXhlYw==");
-    
+let SIGNUP_SCRIPT_URL = "";
+let FLAGS_SCRIPT_URL = ""; 
+let PAGEID_SCRIPT_URL = "";
+let THEME_SCRIPT_URL = "";
+let BIODATA_SCRIPT_URL = "";
+let ENVIRONMENT_SCRIPT_URL = "";
+let VETDATA_SCRIPT_URL = "";
+let AI_SCRIPT_URL = "";
+let EDU_SCRIPT_URL = "";
+let CAREGUIDE_SCRIPT_URL = "";
+
+async function fetchDatabaseRoutes() {
+    console.log("[DEBUG] Fetching routes for Ambient View...");
+    try {
+        const payload = { pageName: "ambient_view.html" };
+        const masterUrl = atob(MASTER_DIRECTORY_B64).trim();
+        
+        const response = await fetch(masterUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(payload)
+        });
+        const text = await response.text();
+        
+        if (text.trim().startsWith("<")) {
+            console.error("[ERROR] Server returned HTML instead of JSON. Check the Master Spreadsheet URL.");
+            return false;
+        }
+
+        const result = JSON.parse(text);
+        
+        if (result.status === "success") {
+            SIGNUP_SCRIPT_URL = atob(result.data["TerraConnect_SignUp"]).trim(); 
+            FLAGS_SCRIPT_URL = atob(result.data["TerraConnect_Flags"]).trim();
+            PAGEID_SCRIPT_URL = atob(result.data["TerraConnect_PageID"]).trim();
+            THEME_SCRIPT_URL = atob(result.data["TerraConnect_Themes"]).trim();
+            BIODATA_SCRIPT_URL = atob(result.data["TerraConnect_BioData"]).trim();
+            ENVIRONMENT_SCRIPT_URL = atob(result.data["TerraConnect_Environment"]).trim();
+            VETDATA_SCRIPT_URL = atob(result.data["TerraConnect_VetData"]).trim();
+            AI_SCRIPT_URL = atob(result.data["TerraConnect_AI"]).trim();
+            EDU_SCRIPT_URL = atob(result.data["TerraConnect_Educational"]).trim();
+            CAREGUIDE_SCRIPT_URL = atob(result.data["TerraConnect_CareGuide"]).trim();
+            return true;
+        } else {
+            console.error("[ERROR] Route fetch failed:", result.message);
+            return false;
+        }
+    } catch (error) {
+        console.error("[ERROR] Master Directory Fail:", error);
+        return false;
+    }
+}
+// --- NEW MASTER SCRIPT LOGIC END ---
+
     let dynamicCommands = [];
     const commandPalette = ['#74b9ff', '#a3b18a', '#d4a373', '#ff5f5f', '#00f2ff', '#6ecc87', '#feca57'];
     const commandIcons = ['fa-arrow-down', 'fa-arrows-down-to-line', 'fa-forward', 'fa-road', 'fa-hand-paper', 'fa-sync', 'fa-walking', 'fa-eye', 'fa-comment-dots', 'fa-seedling', 'fa-tint'];
@@ -894,6 +919,15 @@ function cleanUpEmptySections() {
 
 async function loadData() {
     if (!currentPageId || !loggedUser || !loggedUser.id) return;
+
+    // --- FETCH ROUTES FIRST ---
+    const routesLoaded = await fetchDatabaseRoutes();
+    if (!routesLoaded) {
+        document.getElementById('dynAmbient').innerText = "SYSTEM ERROR";
+        alert("Critical System Error: Failed to load secure routes from Master Directory. Please check console.");
+        removeLoader();
+        return;
+    }
 
     try {
         console.log("[FLAG] loadData: Initiating connection to PAGEID_SCRIPT_URL...");
@@ -1757,17 +1791,6 @@ function buildForecastChartConfig(labelString, dataArray, color, ctx) {
         } catch (e) {
             alert("Technical error sending data.");
         }
-    }
-
-    loadData();
-
-    const editButton = document.getElementById('editLink');
-    
-    if (currentPageId && editButton) {
-        editButton.href = `register_ambient.html?pageID=${currentPageId}`;
-        editButton.style.display = 'inline-flex'; 
-    } else if (editButton) {
-        editButton.style.display = 'none'; 
     }
 
 
@@ -2779,8 +2802,7 @@ Reference the environmental data with the biological and veterinary data. Is the
     // Chama a função assim que a página carrega
     document.addEventListener('DOMContentLoaded', fetchGitHubVersion);
     </script>
-<!-- VERSION FLAG -->
-    <div id="gh-version-flag" class="app-version-flag">
+<div id="gh-version-flag" class="app-version-flag">
         <i class="fas fa-spinner fa-spin"></i> Fetching Build...
     </div>
 </body>
