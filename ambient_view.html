@@ -858,29 +858,48 @@ async function fetchDatabaseRoutes() {
             
             if (jsonResponse.status === "success") {
                 const flags = jsonResponse.data;
-                const animalType = animalTypeRaw.toUpperCase().trim();
+                const animalType = String(animalTypeRaw).toUpperCase().trim();
+
+                console.log("=== DASHBOARD ELEMENTS VISIBILITY EVALUATION ===");
 
                 flags.forEach(flag => {
                     let element = document.getElementById(flag.element);
-                    if (!element) return;
+                    if (!element) {
+                        console.log(`[NOT FOUND IN DOM] Element ID: ${flag.element}`);
+                        return;
+                    }
 
+                    // Adjust scope if the target is an input field inside a card
                     if (element.tagName === 'INPUT') {
                         const parentCard = element.closest('.input-card');
                         if (parentCard) element = parentCard;
                     }
 
                     const minPlan = parseInt(flag.minPlan) || 1;
-                    const allowedAnimals = flag.allowedAnimals;
+                    
+                    // Convert to string and split by the pipe delimiter to handle "DOG | LIZZARD | SNAKE"
+                    const allowedStr = Array.isArray(flag.allowedAnimals) ? flag.allowedAnimals.join('|') : String(flag.allowedAnimals);
+                    const allowedKeywords = allowedStr.toUpperCase().split('|').map(s => s.trim());
 
                     const planOk = userPlan >= minPlan;
-                    const animalOk = allowedAnimals.includes('ALL') || allowedAnimals.includes(animalType);
+                    
+                    // Checks if ALL is present, or if the keyword is inside the animal string (e.g. "SNAKE" in "BLACK MEXICAN KINGSNAKE") 
+                    // or vice-versa to cover typos.
+                    const animalOk = allowedKeywords.includes('ALL') || allowedKeywords.some(keyword => {
+                        if (!keyword) return false;
+                        return animalType.includes(keyword) || keyword.includes(animalType);
+                    });
 
                     if (!planOk || !animalOk) {
                         element.style.display = 'none';
+                        console.log(`[HIDDEN] ${flag.element} -> PlanOk: ${planOk} | AnimalOk: false (Target: '${animalType}' not matched in '${allowedStr}')`);
                     } else {
                         element.style.display = '';
+                        console.log(`[SHOWN]  ${flag.element} -> PlanOk: ${planOk} | AnimalOk: true`);
                     }
                 });
+                
+                console.log("================================================");
             }
         } catch (e) {
             console.error("[FLAG] applyVisibilityRules: Error ->", e);
