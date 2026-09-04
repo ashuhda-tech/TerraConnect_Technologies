@@ -523,7 +523,7 @@
             </h3>
                     
             <div class="masonry-grid">
-                <div class="input-card" style="gap: 8px;">
+                <div class="input-card" id="inFeedWrapper" style="gap: 8px;">
                     <div class="input-header"><i class="fas fa-utensils"></i> Add Feeding (g)</div>
                     <input type="number" id="inFeed" class="input-field" placeholder="Amount (g)">
                     <input list="foodTypeList" id="inFoodType" class="input-field" placeholder="Food Type (e.g. Mouse)">
@@ -534,28 +534,28 @@
                         <i class="fas fa-plus"></i> ADD RECORD
                     </button>
                 </div>
-                <div class="input-card">
+                <div class="input-card" id="inShedWrapper">
                     <div class="input-header"><i class="fas fa-snake"></i> Add Shedd (Date)</div>
                     <div class="input-group">
                         <input type="date" id="inShed" class="input-field">
                         <button class="btn-send" onclick="sendToCloud('Shedding', 'inShed')"><i class="fas fa-plus"></i></button>
                     </div>
                 </div>
-                <div class="input-card">
+                <div class="input-card" id="inWeightWrapper">
                     <div class="input-header"><i class="fas fa-weight"></i> Add Weighting (g)</div>
                     <div class="input-group">
                         <input type="number" id="inWeight" class="input-field" placeholder="0">
                         <button class="btn-send" onclick="sendToCloud('Weighting', 'inWeight')"><i class="fas fa-plus"></i></button>
                     </div>
                 </div>
-                <div class="input-card">
+                <div class="input-card" id="inHeightWrapper">
                     <div class="input-header"><i class="fas fa-ruler-vertical"></i> Add Height (cm)</div>
                     <div class="input-group">
                         <input type="number" id="inHeight" class="input-field" placeholder="0">
                         <button class="btn-send" onclick="sendToCloud('Height', 'inHeight')"><i class="fas fa-plus"></i></button>
                     </div>
                 </div>
-                <div class="input-card">
+                <div class="input-card" id="inLengthWrapper">
                     <div class="input-header"><i class="fas fa-ruler-horizontal"></i> Add Length (cm)</div>
                     <div class="input-group">
                         <input type="number" id="inLength" class="input-field" placeholder="0">
@@ -643,7 +643,7 @@
                     <table style="width: 100%; border-collapse: collapse; color: var(--text-light); font-size: 0.8rem;">
                         <thead>
                             <tr style="border-bottom: 1px solid var(--border); color: var(--accent);">
-                                <th style="padding: 10px; text-align: left;">Date</th>
+                                <th style="padding: 10px; text-align: left; white-space: nowrap; min-width: 150px;">Date</th>
                                 <th style="padding: 10px; text-align: left;">Type</th>
                                 <th style="padding: 10px; text-align: left;">Result</th>
                                 <th style="padding: 10px; text-align: left;">Observation</th>
@@ -864,11 +864,7 @@ async function fetchDatabaseRoutes() {
                 console.log("=== ALL DASHBOARD ELEMENTS DETECTED ===");
                 const trackedElements = document.querySelectorAll('[id]');
                 let availableIds = [];
-                trackedElements.forEach(el => {
-                    if (el.id.startsWith('sum') || el.id.startsWith('in') || el.id.startsWith('chart') || el.id.startsWith('valField') || el.id.startsWith('section')) {
-                        availableIds.push(`${el.id} (${el.tagName})`);
-                    }
-                });
+                trackedElements.forEach(el => availableIds.push(`${el.id} (${el.tagName})`));
                 console.log("Available UI Elements for Flags:", availableIds.join(" | "));
                 console.log("=======================================");
 
@@ -884,16 +880,19 @@ async function fetchDatabaseRoutes() {
                 };
 
                 flags.forEach(flag => {
-                    let element = document.getElementById(flag.element);
-                    if (!element) {
-                        console.log(`[NOT FOUND IN DOM] Element ID: ${flag.element}`);
-                        return;
-                    }
+                    let targetIds = [flag.element];
 
-                    // Adjust scope if the target is an input field inside a card
-                    if (element.tagName === 'INPUT') {
-                        const parentCard = element.closest('.input-card');
-                        if (parentCard) element = parentCard;
+                    // Smart group mapping: if the DB flag is exactly the category word, use all its component IDs.
+                    // If it's a specific ID, see if it is part of a broader smart group and hide everything attached to it.
+                    if (smartGroups[flag.element]) {
+                        targetIds = smartGroups[flag.element];
+                    } else {
+                        for (const [groupName, ids] of Object.entries(smartGroups)) {
+                            if (ids.includes(flag.element)) {
+                                targetIds = ids;
+                                break;
+                            }
+                        }
                     }
 
                     const minPlan = parseInt(flag.minPlan) || 1;
@@ -913,30 +912,26 @@ async function fetchDatabaseRoutes() {
                         return regex.test(at) || kw === at;
                     });
 
-                    if (!planOk || !animalOk) {
-                        element.style.display = 'none';
-                        console.log(`[HIDDEN] ${flag.element} -> PlanOk:${planOk} | AnimalOk: false (Target: '${animalType}' not matched in '${allowedStr}')`);
-                        
-                        // Smart Associate Hiding logic
-                        for (const [groupName, ids] of Object.entries(smartGroups)) {
-                            if (ids.includes(flag.element)) {
-                                ids.forEach(relatedId => {
-                                    let relElement = document.getElementById(relatedId);
-                                    if (relElement) {
-                                        if (relElement.tagName === 'INPUT') {
-                                            const pCard = relElement.closest('.input-card');
-                                            if (pCard) relElement = pCard;
-                                        }
-                                        relElement.style.display = 'none';
-                                        console.log(`   ↳ [SMART HIDE] Associated element linked to ${groupName} hidden:${relatedId}`);
-                                    }
-                                });
+                    targetIds.forEach(id => {
+                        let element = document.getElementById(id);
+                        if (element) {
+                            // Adjust scope if the target is an input field inside a card
+                            if (element.tagName === 'INPUT') {
+                                const parentCard = element.closest('.input-card');
+                                if (parentCard) element = parentCard;
                             }
+
+                            if (!planOk || !animalOk) {
+                                element.style.display = 'none';
+                                console.log(`[HIDDEN] ${id} -> PlanOk:${planOk} | AnimalOk: false (Target: '${animalType}' not matched in '${allowedStr}')`);
+                            } else {
+                                element.style.display = '';
+                                console.log(`[SHOWN]  ${id} -> PlanOk:${planOk} | AnimalOk: true`);
+                            }
+                        } else {
+                            console.log(`[NOT FOUND IN DOM] Element ID: ${id}`);
                         }
-                    } else {
-                        element.style.display = '';
-                        console.log(`[SHOWN]  ${flag.element} -> PlanOk:${planOk} | AnimalOk: true`);
-                    }
+                    });
                 });
                 
                 console.log("================================================");
@@ -1975,7 +1970,7 @@ async function loadVetVisits(id) {
                 // VULNERABILITY FIX (Stored XSS): Escape text content inside innerHTML to prevent arbitrary code execution
                 tbody.innerHTML += `
                     <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                        <td style="padding: 10px;">${escapeHTML(formattedDateTime)}</td>
+                        <td style="padding: 10px; white-space: nowrap;">${escapeHTML(formattedDateTime)}</td>
                         <td style="padding: 10px;">${escapeHTML(v[3])}</td>
                         <td style="padding: 10px;">${escapeHTML(v[6])}</td>
                         <td style="padding: 10px;">${escapeHTML(v[7])}</td>
