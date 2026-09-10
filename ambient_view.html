@@ -730,6 +730,7 @@ const authParams = loggedUser ? `&authToken=${encodeURIComponent(loggedUser.auth
 // --- NEW MASTER SCRIPT LOGIC START ---
 const MASTER_DIRECTORY_B64 = 'aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J6cTRZVWUzWjJQeGNsdlJtRWNxaVF1bk1KRXRXNVE5cmxOV21KOXF6RWdQcWM5OVVlVThud3VjYm91SFdzaE1Bdy9leGVj'; 
 
+let DB_LOAD_SEQUENCE = []; // ADD THIS TO HOLD THE COLUMN A ORDER    
 let SIGNUP_SCRIPT_URL = "";
 let FLAGS_SCRIPT_URL = ""; 
 let PAGEID_SCRIPT_URL = "";
@@ -771,6 +772,7 @@ async function fetchDatabaseRoutes() {
         const result = JSON.parse(text);
         
         if (result.status === "success") {
+            DB_LOAD_SEQUENCE = result.sequence || Object.keys(result.data); // ADD THIS LINE HERE
             SIGNUP_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_SignUp"]); 
             FLAGS_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_Flags"]);
             PAGEID_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_PageID"]);
@@ -1141,27 +1143,36 @@ async function loadData() {
             updateSensors();
             
             // -----------------------------------------------------------------
-            // NOVA ARQUITETURA PARALELA (ACELERA O CARREGAMENTO DOS DADOS)
+            // NOVA ARQUITETURA SEQUENCIAL (BASEADA NA COLUNA A DO GOOGLE SHEETS)
             // -----------------------------------------------------------------
-            // Execute all secondary database fetches in parallel
-            const loadTasks = [
-                loadBiologicalHistory(currentPageId),
-                loadVetVisits(currentPageId),
-                loadEducationalCommands()
-            ];
-            
-            if (typeof loadExistingConfig === "function") {
-                loadTasks.push(loadExistingConfig());
-            }
+            console.log("[PRIORITY QUEUE] Starting sequential database loading...");
 
-            await Promise.allSettled(loadTasks);
+            for (const dbName of DB_LOAD_SEQUENCE) {
+                console.log(`[PRIORITY QUEUE] Awaiting: ${dbName}`);
+                try {
+                    if (dbName === "TerraConnect_CareGuide" && scientificNameStr !== "---") {
+                        await loadSpeciesDatabase(scientificNameStr);
+                    } else if (dbName === "TerraConnect_Educational Training") {
+                        await loadEducationalCommands();
+                    } else if (dbName === "TerraConnect_BioData") {
+                        await loadBiologicalHistory(currentPageId);
+                    } else if (dbName === "TerraConnect_VetData") {
+                        await loadVetVisits(currentPageId);
+                    } else if (dbName === "TerraConnect_Enviromental Setup") {
+                        if (typeof loadExistingConfig === "function") await loadExistingConfig();
+                    } else if (dbName === "TerraConnect_FLAGS_Dashboard View") {
+                        // THIS NOW RUNS LAST - applying filters safely to fully built elements!
+                        await applyVisibilityRules(animalTypeRaw, liveUserPlan);
+                    }
+                } catch (queueErr) {
+                    console.error(`[ERROR] Failed to process ${dbName} in priority queue:`, queueErr);
+                }
+            }
 
             // Só ativa a leitura constante depois que o layout base estiver cimentado
             setInterval(updateSensors, 20000);
             
             // --- CLEANUP ---
-            // Como tudo acima tem "await", o cleanup agora executa no momento cirurgicamente
-            // correto, parando de apagar cards e seções erroneamente.
             cleanUpEmptySections();
             
             // Remove loader se tudo deu certo
