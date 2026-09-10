@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TerraConnect | Cultivating Synergy</title>
+    
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/TERRACONNECT_LOGO.png">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-color: #0a0c10;
+            --card-bg: rgba(7, 11, 20, 0.75);
+            --card-border: rgba(209, 179, 139, 0.2); /* Subtle gold tint for borders */
+            --accent-dark: #d1b38b;
+            --accent-light: #f4e9d8;
+            --text-main: #f4e9d8;
+            --text-muted: #9ca3af;
+            --border-radius: 12px;
+            --font-standard: 'Inter', sans-serif;
+            --font-title: 'Cinzel', serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body { background-color: var(--bg-color); color: var(--text-main); font-family: var(--font-standard); overflow-x: hidden; }
+        
+        /* ----- BACKGROUND VIDEO ----- */
+        .video-bg-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; overflow: hidden; }
+        .video-bg-container video { min-width: 100%; min-height: 100%; width: auto; height: auto; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); object-fit: cover; filter: brightness(0.35); }
+        .video-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(10, 12, 16, 0.4) 0%, rgba(10, 12, 16, 0.8) 100%); z-index: -1; }
+        
+        /* ----- HEADER ----- */
+        header { padding: 30px 50px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); background: rgba(10, 12, 16, 0.5); backdrop-filter: blur(10px); position: fixed; width: 100%; top: 0; z-index: 100; transition: background 0.3s; }
+        .logo-area h1 { font-family: var(--font-title); color: var(--accent-dark); font-size: 1.8rem; letter-spacing: 2px; text-transform: uppercase; }
+        .btn-back { text-decoration: none; color: var(--accent-dark); border: 1px solid var(--accent-dark); padding: 8px 20px; border-radius: 5px; font-size: 0.85rem; transition: 0.4s ease; font-family: var(--font-title); text-transform: uppercase; font-weight: bold; }
+        .btn-back:hover { background: var(--accent-dark); color: var(--bg-color); }
+        
+        /* ----- HERO SECTION ----- */
+        .hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 0 20px; z-index: 1; }
+        .hero h1 { font-family: var(--font-title); font-size: 4.5rem; color: var(--accent-light); text-transform: uppercase; letter-spacing: 8px; margin-bottom: 20px; text-shadow: 0 4px 20px rgba(0,0,0,0.8); }
+        .hero p { font-size: 1.2rem; color: var(--accent-dark); font-weight: 300; letter-spacing: 3px; text-transform: uppercase; max-width: 600px; line-height: 1.6; }
+        .scroll-indicator { position: absolute; bottom: 40px; color: var(--accent-dark); font-size: 1.5rem; animation: bounce 2s infinite; }
+        
+        @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-15px); } 60% { transform: translateY(-7px); } }
+
+        /* ----- CONTENT SECTIONS ----- */
+        .container { width: 100%; max-width: 1000px; margin: 0 auto; padding: 60px 20px; z-index: 1; position: relative; }
+        
+        .philosophy-card { background-color: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--border-radius); padding: 60px 70px; margin-bottom: 60px; box-shadow: 0 15px 50px rgba(0, 0, 0, 0.6); backdrop-filter: blur(15px); text-align: center; }
+        
+        .section-title { font-family: var(--font-title); font-size: 2rem; color: var(--accent-dark); text-transform: uppercase; letter-spacing: 3px; margin-bottom: 25px; display: inline-block; border-bottom: 1px solid var(--accent-dark); padding-bottom: 10px; }
+        
+        .philosophy-card p { font-size: 1.05rem; line-height: 1.9; color: rgba(244, 233, 216, 0.9); margin-bottom: 20px; font-weight: 300; }
+        
+        /* ----- CORE VALUES GRID ----- */
+        .values-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; margin-top: 40px; text-align: left; }
+        .value-item h3 { font-family: var(--font-title); color: var(--accent-light); font-size: 1.2rem; letter-spacing: 1.5px; margin-bottom: 12px; text-transform: uppercase; border-left: 3px solid var(--accent-dark); padding-left: 15px; }
+        .value-item p { font-size: 0.95rem; line-height: 1.7; color: var(--text-muted); border: none; padding: 0; }
+
+        /* ----- BOTTOM IMAGE PANEL ----- */
+        .image-panel-container { width: 100%; background: var(--bg-color); padding: 80px 20px; position: relative; z-index: 2; border-top: 1px solid var(--card-border); }
+        .image-panel { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .image-wrapper { overflow: hidden; border-radius: var(--border-radius); border: 1px solid var(--card-border); aspect-ratio: 16/9; position: relative; }
+        .image-wrapper img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s ease, filter 0.8s ease; filter: grayscale(60%) brightness(0.8); }
+        .image-wrapper:hover img { transform: scale(1.05); filter: grayscale(0%) brightness(1); }
+        
+        /* Image Overlay Text */
+        .image-overlay { position: absolute; bottom: 0; left: 0; width: 100%; background: linear-gradient(transparent, rgba(10, 12, 16, 0.9)); padding: 20px; color: var(--accent-light); font-family: var(--font-title); font-size: 0.9rem; letter-spacing: 2px; text-transform: uppercase; transform: translateY(100%); transition: transform 0.4s ease; }
+        .image-wrapper:hover .image-overlay { transform: translateY(0); }
+
+        /* Footer */
+        footer { background: var(--bg-color); text-align: center; padding: 40px 20px; color: var(--text-muted); font-size: 0.85rem; z-index: 2; position: relative; }
+
+        @media (max-width: 768px) {
+            header { padding: 20px; flex-direction: column; gap: 15px; background: rgba(10, 12, 16, 0.8); }
+            .hero h1 { font-size: 2.5rem; letter-spacing: 4px; }
+            .hero p { font-size: 1rem; }
+            .philosophy-card { padding: 40px 25px; }
+            .values-grid { grid-template-columns: 1fr; gap: 30px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- BACKGROUND VIDEO -->
+<div class="video-bg-container">
+    <video autoplay loop muted playsinline poster="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/WALLPAPER_MAINDASHBOARD.png">
+        <source src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/VIDEO/RIVER_MAINDASHBOARD.mp4" type="video/mp4">
+    </video>
+</div>
+<div class="video-overlay"></div>
+
+<!-- HEADER -->
+<header>
+    <div class="logo-area">
+        <h1>TerraConnect</h1>
+    </div>
+    <a href="index.html" class="btn-back"><i class="fas fa-arrow-left"></i> Return Home</a>
+</header>
+
+<!-- HERO SECTION -->
+<div class="hero">
+    <h1>Cultivating Synergy</h1>
+    <p>Technology and nature operating in perfect balance</p>
+    <a href="#philosophy" class="scroll-indicator"><i class="fas fa-chevron-down"></i></a>
+</div>
+
+<!-- CONTENT SCROLL -->
+<div class="container" id="philosophy">
+    
+    <!-- THE VISION -->
+    <div class="philosophy-card">
+        <h2 class="section-title">The Vision</h2>
+        <p>To cultivate a highly conscious world where technology and nature operate in perfect synergy, guided by a deep respect for the whole.</p>
+        <p>We envision a future of decentralized stewardship, where society is so ecologically and socially responsible that harmony is a natural byproduct of our collective awareness. In this future, the barriers between human, animal, and environment dissolve into a cohesive, supportive ecosystem. Terraconnect exists to reflect this utopian potential—proving that when humans are empowered with transparent, high-quality information, they naturally choose empathy, respect, and balance.</p>
+    </div>
+
+    <!-- THE MISSION -->
+    <div class="philosophy-card">
+        <h2 class="section-title">The Mission</h2>
+        <p>To democratize open, high-quality environmental data and automation, bridging the gap between human awareness and natural habitats to foster profound mutual respect.</p>
+        <p>As a non-profit initiative, our goal is not to extract value from users or nature, but to generate synergy between them. Step by step, micro-ecosystem by micro-ecosystem, we provide the open-source tools and transparent knowledge required to perfectly understand the environments we interact with. We are building a foundation of freely shared data that empowers individuals to become conscious stewards of the natural world.</p>
+    </div>
+
+    <!-- CORE VALUES -->
+    <div class="philosophy-card">
+        <h2 class="section-title" style="border:none; margin-bottom: 0;">Our Pillars</h2>
+        <div class="values-grid">
+            <div class="value-item">
+                <h3>Radical Transparency</h3>
+                <p>We operate with open books and open source code. Trust is not requested; it is freely given through the unhindered sharing of our knowledge, designs, and intentions.</p>
+            </div>
+            <div class="value-item">
+                <h3>Decentralized Stewardship</h3>
+                <p>We believe in the power of the educated individual. By providing accessible, high-quality information, we remove the need for centralized control, empowering a self-governing community of responsible caretakers.</p>
+            </div>
+            <div class="value-item">
+                <h3>Synergy Over Profit</h3>
+                <p>We are driven by the cohesive function of society and nature. Every piece of hardware built and line of code written is measured by its ability to improve the whole, rather than its ability to generate capital.</p>
+            </div>
+            <div class="value-item">
+                <h3>Reverence for the Whole</h3>
+                <p>We recognize that the observer, the tool, and the habitat are one interconnected system. Our technology is designed to respect and elevate all three simultaneously.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- BOTTOM IMAGE PANEL -->
+<div class="image-panel-container">
+    <div class="image-panel">
+        <!-- Image 1 -->
+        <div class="image-wrapper">
+            <img src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/WALLPAPER_MAINDASHBOARD.png" alt="TerraConnect Interface">
+            <div class="image-overlay">Transparent Data</div>
+        </div>
+        <!-- Image 2 (Placeholder: Replace URL with actual Github asset) -->
+        <div class="image-wrapper">
+            <img src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/WALLPAPER_MAINDASHBOARD.png" alt="Hardware Architecture">
+            <div class="image-overlay">Open Architecture</div>
+        </div>
+        <!-- Image 3 (Placeholder: Replace URL with actual Github asset) -->
+        <div class="image-wrapper">
+            <img src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/WALLPAPER_MAINDASHBOARD.png" alt="Ecosystem Harmony">
+            <div class="image-overlay">Ecosystem Harmony</div>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <p>Copyright &copy; 2026 TerraConnect Technologies. Engineered for the Whole.</p>
+</footer>
+
+</body>
+</html>
