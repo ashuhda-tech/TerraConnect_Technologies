@@ -59,10 +59,15 @@
         .footer-link a { color: var(--accent-dark); text-decoration: none; font-weight: bold; }
         .footer-link a:hover { text-decoration: underline; }
 
-        /* ----- FLOATING STORE BUTTON ----- */
-        .floating-store-btn {position: fixed;top: 30px;right: 40px;background: rgba(7, 11, 20, 0.6);border: 1px solid var(--accent-dark);color: var(--accent-dark);padding: 10px 20px;border-radius: 30px;text-decoration: none;font-family: var(--font-standard);font-size: 0.85rem;font-weight: bold;display: flex;align-items: center;gap: 8px;z-index: 1000;backdrop-filter: blur(5px);transition: all 0.3s ease;text-transform: uppercase;letter-spacing: 1px;}
-        .floating-store-btn:hover {background: var(--accent-dark);color: var(--bg-color);transform: scale(1.05);box-shadow: 0 4px 15px rgba(209, 179, 139, 0.2);}
-        @media (max-width: 600px) {.floating-store-btn {top: 20px;right: 20px;padding: 8px 15px;font-size: 0.75rem;}}
+        /* ----- FLOATING TOP NAVIGATION RIBBON ----- */
+        .top-nav-ribbon {position: fixed;top: 30px;right: 40px;display: flex;gap: 15px;z-index: 1000;}
+        .floating-nav-btn {background: rgba(7, 11, 20, 0.6);border: 1px solid var(--accent-dark);color: var(--accent-dark);padding: 10px 20px;border-radius: 30px;text-decoration: none;font-family: var(--font-standard);font-size: 0.85rem;font-weight: bold;display: flex;align-items: center;gap: 8px;backdrop-filter: blur(5px);transition: all 0.3s ease;text-transform: uppercase;letter-spacing: 1px;}
+        .floating-nav-btn:hover {background: var(--accent-dark);color: var(--bg-color);transform: scale(1.05);box-shadow: 0 4px 15px rgba(209, 179, 139, 0.2);}
+        
+        @media (max-width: 600px) {
+            .top-nav-ribbon {top: 20px;right: 20px;gap: 10px;}
+            .floating-nav-btn {padding: 8px 15px;font-size: 0.75rem;}
+        }
 
         .message { font-size: 0.8rem; text-align: center; margin-top: 10px; min-height: 1.2rem; }
         .error { color: var(--status-error); }
@@ -99,9 +104,15 @@
 </div>
 <div class="video-overlay"></div>
 
-    <a href="store.html" class="floating-store-btn" title="View Hardware & Subscriptions">
-    <i class="fas fa-store"></i> Store & Plans
-</a>
+<!-- NEW FLOATING RIBBON WITH BOTH BUTTONS -->
+<div class="top-nav-ribbon">
+    <a href="about_us.html" class="floating-nav-btn" title="Discover Our Vision">
+        <i class="fas fa-seedling"></i> About Us
+    </a>
+    <a href="store.html" class="floating-nav-btn" title="View Hardware & Subscriptions">
+        <i class="fas fa-store"></i> Store & Plans
+    </a>
+</div>
 
 <!-- 
     CORREÇÃO 4: O container empurra o footer de forma responsiva para a base da página 
