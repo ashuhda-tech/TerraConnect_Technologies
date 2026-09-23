@@ -774,14 +774,14 @@ async function fetchDatabaseRoutes() {
         if (result.status === "success") {
             DB_LOAD_SEQUENCE = result.sequence || Object.keys(result.data); // ADD THIS LINE HERE
             SIGNUP_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_SignUp"]); 
-            FLAGS_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_Flags"]);
+            FLAGS_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_FLAGS_Dashboard View"]);
             PAGEID_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_PageID"]);
             THEME_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_Themes"]);
             BIODATA_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_BioData"]);
-            ENVIRONMENT_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_Environment"]);
+            ENVIRONMENT_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_Enviromental Setup"]);
             VETDATA_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_VetData"]);
             AI_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_AI"]);
-            EDU_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_Educational"]);
+            EDU_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_Educational Training"]);
             CAREGUIDE_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_CareGuide"]);
             return true;
         } else {
