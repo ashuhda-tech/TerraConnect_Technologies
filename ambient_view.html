@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TerraConnect | Monitoring</title>
     
-    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/terraconnect_ICON_no_bkgr.png">
-    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/terraconnect_ICON_no_bkgr.png">
-
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/assets/IMAGE/terraconnect%20ICON_no%20bkgr.png">
+    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/assets/IMAGE/terraconnect%20ICON_no%20bkgr.png">
+    
     <meta property="og:type" content="website">
     <meta property="og:title" content="TerraConnect Technologies">
     <meta property="og:description" content="Environmental Animal IOT Monitoring Center">
@@ -207,7 +207,6 @@
                 <div class="bio-item"><b>Scientific Name</b> <span id="dynScientific">---</span></div>
                 <div class="bio-item"><b>Sex</b> <span id="dynSex">---</span></div>
                 <div class="bio-item"><b>Birth Date</b> <span id="dynBirth">---</span></div>
-                <!-- Legal Check included here -->
                 <div class="bio-item"><b>Registration</b> <span id="dynReg">---</span></div>
                 <div class="bio-item"><b>Location</b> <span id="dynLoc">---</span></div>
                 <div class="bio-item"><b>Channel ID</b> <span id="dynChannel">---</span></div>
@@ -247,7 +246,6 @@
     
     <main class="main-content">
         
-        <!-- SISPASS/SISFAUNA Legal Warning Banner -->
         <div id="legal-warning" style="display:none; background: rgba(255,95,95,0.1); border-left: 4px solid #ff5f5f; padding: 15px; margin-bottom: 30px; border-radius: 5px; color: var(--text-light);">
             <h4 style="color: #ff5f5f; margin: 0 0 5px 0;"><i class="fas fa-balance-scale"></i> TERMS OF USE & COMPLIANCE WARNING</h4>
             <p style="margin: 0; font-size: 0.85rem;">The SISPASS / SISFAUNA registration data for this animal is missing or unverified. <b>The legal guardian is solely responsible for ensuring the legality of keeping this animal under state and federal environmental laws.</b> TerraConnect acts strictly as an IoT telemetry provider and disclaims any liability for illegal possession.</p>
@@ -258,7 +256,6 @@
             <p id="dynStatus">On-time Environmental Monitoring</p>
         </header>
 
-        <!-- --- AI Insights --- -->                
         <div id="section-ai">
             <h3 class="a70-font" style="font-size: 0.9rem; color: #a3b18a; margin: 30px 0 15px 0; display: flex; align-items: center; justify-content: space-between; width: 100%;">
                 <span><i class="fas fa-brain"></i> AI Insights</span>
@@ -276,7 +273,6 @@
             </div>
         </div>
 
-        <!-- --- Main Sensor Unit --- -->          
         <div id="section-main">
             <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-top: 20px; margin-bottom: 15px;">
                 <i class="fas fa-broadcast-tower"></i> Main Sensor Unit
@@ -341,7 +337,6 @@
             </div>
         </div>
 
-        <!-- --- Remote Sensor Unit --- -->                
         <div id="section-remote">
             <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-top: 20px; margin-bottom: 15px;">
                 <i class="fas fa-broadcast-tower"></i> Remote Sensor Unit
@@ -385,13 +380,11 @@
             </div>
         </div>
 
-        <!-- --- Walk Sensor Unit --- -->          
         <div id="section-walk">
             <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-top: 20px; margin-bottom: 15px;">
                 <i class="fas fa-broadcast-tower"></i> Walk Sensor Unit
             </h3>
             <div class="sensor-grid" id="sensor-grid-walk">
-                <!-- Note: ID 31 opens chart based on Field 1 (LAT) for history -->
                 <div class="sensor-card" onclick="openChart(31, 'Location History (LAT)')" style="cursor: pointer;">
                     <i class="fas fa-location-dot sensor-icon" style="color: #a3b18a;"></i>
                     <div class="sensor-data">
@@ -437,7 +430,6 @@
             </div>
         </div>
 
-        <!-- --- Environment Active Configuration --- -->  
         <div id="section-env-config">
             <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-bottom: 15px;">
                 <i class="fas fa-sliders-h"></i> Environment Active Configuration
@@ -494,7 +486,6 @@
             <hr style="border: 0.5px solid #eee; margin: 20px 0;">
         </div>
 
-        <!-- --- SUMMARY CARDS --- -->  
         <div id="section-summary" class="summary-section">
             <div class="summary-card" id="sumFeeding">
                 <div class="summary-title a70-font"><i class="fas fa-utensils"></i> Last Feeding</div>
@@ -526,14 +517,13 @@
             </div>
         </div>
 
-        <!-- --- Control Center --- -->
         <div id="section-control-center">
             <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-bottom: 15px;">
                 <i class="fas fa-database"></i> Control Center
             </h3>
                     
             <div class="masonry-grid">
-                <div class="input-card" style="gap: 8px;">
+                <div class="input-card" id="inFeedWrapper" style="gap: 8px;">
                     <div class="input-header"><i class="fas fa-utensils"></i> Add Feeding (g)</div>
                     <input type="number" id="inFeed" class="input-field" placeholder="Amount (g)">
                     <input list="foodTypeList" id="inFoodType" class="input-field" placeholder="Food Type (e.g. Mouse)">
@@ -544,28 +534,28 @@
                         <i class="fas fa-plus"></i> ADD RECORD
                     </button>
                 </div>
-                <div class="input-card">
+                <div class="input-card" id="inShedWrapper">
                     <div class="input-header"><i class="fas fa-snake"></i> Add Shedd (Date)</div>
                     <div class="input-group">
                         <input type="date" id="inShed" class="input-field">
                         <button class="btn-send" onclick="sendToCloud('Shedding', 'inShed')"><i class="fas fa-plus"></i></button>
                     </div>
                 </div>
-                <div class="input-card">
+                <div class="input-card" id="inWeightWrapper">
                     <div class="input-header"><i class="fas fa-weight"></i> Add Weighting (g)</div>
                     <div class="input-group">
                         <input type="number" id="inWeight" class="input-field" placeholder="0">
                         <button class="btn-send" onclick="sendToCloud('Weighting', 'inWeight')"><i class="fas fa-plus"></i></button>
                     </div>
                 </div>
-                <div class="input-card">
+                <div class="input-card" id="inHeightWrapper">
                     <div class="input-header"><i class="fas fa-ruler-vertical"></i> Add Height (cm)</div>
                     <div class="input-group">
                         <input type="number" id="inHeight" class="input-field" placeholder="0">
                         <button class="btn-send" onclick="sendToCloud('Height', 'inHeight')"><i class="fas fa-plus"></i></button>
                     </div>
                 </div>
-                <div class="input-card">
+                <div class="input-card" id="inLengthWrapper">
                     <div class="input-header"><i class="fas fa-ruler-horizontal"></i> Add Length (cm)</div>
                     <div class="input-group">
                         <input type="number" id="inLength" class="input-field" placeholder="0">
@@ -598,7 +588,6 @@
             </div>
         </div>
 
-        <!-- --- Live Monitoring | Camera --- -->
         <div id="section-camera">
             <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-bottom: 15px;">
                 <i class="fas fa-video"></i> Live Monitoring | Camera
@@ -622,13 +611,11 @@
             </div>
         </div>
         
-        <!-- --- EDUCATIONAL PET SECTION --- -->
         <div id="section-education" style="display: none;">
             <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-top: 30px; margin-bottom: 15px;">
                 <i class="fas fa-graduation-cap"></i> Educational Pet | Training
             </h3>
 
-            <!-- Dog Educational Panel (Dynamic) -->
             <div id="edu-clicker-section" style="display: none; margin-bottom: 20px;">
                 <h4 style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0; margin-bottom: 10px;">Dog Commands (Audio & Voice)</h4>
                 
@@ -636,15 +623,12 @@
                     <i class="fas fa-exclamation-triangle"></i> TRIGGER EMERGENCY SOS
                 </button>
                 
-                <!-- Cards will be injected here -->
                 <div class="management-grid" id="dog-commands-grid"></div>
             </div>
 
-            <!-- Bird Educational Panel (Dynamic) -->
             <div id="edu-voice-section" style="display: none; margin-bottom: 20px;">
                 <h4 style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0; margin-bottom: 10px;">Bird Vocal Learning</h4>
                 
-                <!-- Cards will be injected here -->
                 <div class="management-grid" id="bird-commands-grid"></div>
             </div>
         </div>
@@ -659,7 +643,7 @@
                     <table style="width: 100%; border-collapse: collapse; color: var(--text-light); font-size: 0.8rem;">
                         <thead>
                             <tr style="border-bottom: 1px solid var(--border); color: var(--accent);">
-                                <th style="padding: 10px; text-align: left;">Date</th>
+                                <th style="padding: 10px; text-align: left; white-space: nowrap; min-width: 150px;">Date</th>
                                 <th style="padding: 10px; text-align: left;">Type</th>
                                 <th style="padding: 10px; text-align: left;">Result</th>
                                 <th style="padding: 10px; text-align: left;">Observation</th>
@@ -679,7 +663,6 @@
             </div>
         </div>
         
-        <!-- GLOBAL FOOTER -->
         <footer style="width: 100%; text-align: center; padding: 20px; background: rgba(10, 12, 16, 0.8); backdrop-filter: blur(10px); border-top: 1px solid var(--border); margin-top: 40px; position: relative; z-index: 100; border-radius: 12px; box-sizing: border-box;">
             <div class="footer-text" style="font-size: 0.8rem; color: var(--text-muted); font-family: 'Inter', sans-serif; letter-spacing: 0.5px;">
                 Copyright &copy; 2026 TerraConnect Technologies. All Rights Reserved. | 
@@ -706,36 +689,112 @@
     const urlParams = new URLSearchParams(window.location.search);
     const currentPageId = urlParams.get('id');
 
+// VULNERABILITY FIX (Stored XSS): Escape HTML entities before injection
+    function escapeHTML(str) {
+        if (str === null || str === undefined) return "";
+        return String(str).replace(/[&<>'"]/g, 
+            tag => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                "'": '&#39;',
+                '"': '&quot;'
+            }[tag])
+        );
+    }
+
 // 2. SISTEMA DE SEGURANÇA FRONTEND (Verificação de Login)
     function checkSecurity() {
     const userString = localStorage.getItem('currentUser');
     
-    // Se não tiver ninguém logado, chuta para a página de login
-    if (!userString) {
+    // VULNERABILITY FIX (Client-Side Authentication Bypass): Verifica a existência de token de sessão seguro
+    const authToken = sessionStorage.getItem('authToken');
+    
+    // Se não tiver ninguém logado ou faltar o token de segurança, chuta para a página de login
+    if (!userString || !authToken) {
         alert("Acesso Negado: Por favor, faça login.");
         window.location.href = "https://ashuhda-tech.github.io/TerraConnect_Technologies/"; 
-        return null;}
+        return null;
+    }
 
      const currentUser = JSON.parse(userString);
+     // Attach authToken to user info
+     currentUser.authToken = authToken;
      return currentUser;
     }
 
-// Roda a verificação imediatamente
+// Roda a verificação imediatamente e gera o prefixo seguro de URL para ser utilizado em todo o script
 const loggedUser = checkSecurity();
+const authParams = loggedUser ? `&authToken=${encodeURIComponent(loggedUser.authToken)}&csrfToken=${encodeURIComponent(loggedUser.authToken)}` : "";
 
-    
-    // URLs do Backend - CSVs REMOVIDOS COMPLETAMENTE E SUBSTITUÍDOS PELAS APIS
-    const SIGNUP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzFT1YQSMLpJ2zLJQ-bD1JOUzaUJJsRcmCBkpseXd87iGvJXm5Ig7p1gYJf-PmHVwQ/exec';
-    const FLAGS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyZaoQyRiQDaTP9IkbOK89A2l9DtH6tOtwL6TFn38x5N_gYiiQc2Os-NZ1dvEsZMZKF/exec"; 
-    const PAGEID_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw3LbOYDqljAxQ8joYW8yDhwe6lsi7AdFCAoi4HG1iRdglS0k9-fI1Oj2eA12ePc6g/exec";
-    const THEME_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzPCMbwa8NXy253hSbR4ewodPAiN_20qUlwvcFl8Uexo9SOZRUp5vxDPFlksh8NyNnD/exec";
-    const BIODATA_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxnOcWSHRutBkHc_45tSLOFjowJXMeplk333TmaddrvfWgETljbZZ6shOuwYTIG4AkD/exec";
-    const ENVIRONMENT_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzG2YVem9qG7sEK20lVuRm2Bhjo10dfXRF98mibREbUZnM5obTrb0QrQDJIGi0wFoE/exec";
-    const VETDATA_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxxnlxSflhGHaX8IMcQj9y7H99bu4G9V-UM9f-E-SLdV2eLcUrBpQWvwh7o6GHLUXca/exec";
-    const AI_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxign7YvIXmCiAggKU9XKlveWHQ_hQzYL65MEP3yEFe1lj1ewPjHuNzbbi_S8JMTPE/exec";
-    const EDU_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxQ1DUzE-nMNhuF9ZxkD4_cP9rjkSE9vF2qQudL-F2-x1pLjtJg-yRCM7AIXf9GETb9/exec";
-    const CAREGUIDE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxNASj7ghPpm5XRPA4YvUeP0WOOARyVtunWesUgmV79uLD9eIuB7Nn5yBuLCHw-w3w0/exec";
-   
+// --- NEW MASTER SCRIPT LOGIC START ---
+const MASTER_DIRECTORY_B64 = 'aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J6cTRZVWUzWjJQeGNsdlJtRWNxaVF1bk1KRXRXNVE5cmxOV21KOXF6RWdQcWM5OVVlVThud3VjYm91SFdzaE1Bdy9leGVj'; 
+
+let DB_LOAD_SEQUENCE = []; // ADD THIS TO HOLD THE COLUMN A ORDER    
+let SIGNUP_SCRIPT_URL = "";
+let FLAGS_SCRIPT_URL = ""; 
+let PAGEID_SCRIPT_URL = "";
+let THEME_SCRIPT_URL = "";
+let BIODATA_SCRIPT_URL = "";
+let ENVIRONMENT_SCRIPT_URL = "";
+let VETDATA_SCRIPT_URL = "";
+let AI_SCRIPT_URL = "";
+let EDU_SCRIPT_URL = "";
+let CAREGUIDE_SCRIPT_URL = "";
+
+// Safe URL parser: Returns standard URLs as-is, decodes if Base64
+function safeParseUrl(val) {
+    if (!val) return "";
+    let str = String(val).trim();
+    if (str.startsWith("http")) return str; 
+    try { return atob(str).trim(); }        
+    catch (e) { return str; }               
+}
+
+async function fetchDatabaseRoutes() {
+    console.log("[DEBUG] Fetching routes for Ambient View...");
+    try {
+        const payload = { pageName: "ambient_view.html" };
+        const masterUrl = atob(MASTER_DIRECTORY_B64).trim();
+        
+        const response = await fetch(masterUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(payload)
+        });
+        const text = await response.text();
+        
+        if (text.trim().startsWith("<")) {
+            console.error("[ERROR] Server returned HTML instead of JSON. Check the Master Spreadsheet URL.");
+            return false;
+        }
+
+        const result = JSON.parse(text);
+        
+        if (result.status === "success") {
+            DB_LOAD_SEQUENCE = result.sequence || Object.keys(result.data); // ADD THIS LINE HERE
+            SIGNUP_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_SignUp"]); 
+            FLAGS_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_Flags"]);
+            PAGEID_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_PageID"]);
+            THEME_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_Themes"]);
+            BIODATA_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_BioData"]);
+            ENVIRONMENT_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_Environment"]);
+            VETDATA_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_VetData"]);
+            AI_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_AI"]);
+            EDU_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_Educational"]);
+            CAREGUIDE_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_CareGuide"]);
+            return true;
+        } else {
+            console.error("[ERROR] Route fetch failed:", result.message);
+            return false;
+        }
+    } catch (error) {
+        console.error("[ERROR] Master Directory Fail:", error);
+        return false;
+    }
+}
+// --- NEW MASTER SCRIPT LOGIC END ---
+
     let dynamicCommands = [];
     const commandPalette = ['#74b9ff', '#a3b18a', '#d4a373', '#ff5f5f', '#00f2ff', '#6ecc87', '#feca57'];
     const commandIcons = ['fa-arrow-down', 'fa-arrows-down-to-line', 'fa-forward', 'fa-road', 'fa-hand-paper', 'fa-sync', 'fa-walking', 'fa-eye', 'fa-comment-dots', 'fa-seedling', 'fa-tint'];
@@ -770,16 +829,22 @@ const loggedUser = checkSecurity();
 
     async function getLiveUserPlan(userId) {
         try {
-            const response = await fetch(`${SIGNUP_SCRIPT_URL}?action=get_plan&userId=${encodeURIComponent(userId)}`);
+            console.log("[FLAG] getLiveUserPlan: Authenticating and fetching user plan...");
+            const response = await fetch(`${SIGNUP_SCRIPT_URL}?action=get_plan&userId=${encodeURIComponent(userId)}${authParams}`);
             const result = await response.json();
             
             if (result.status === "success") {
+                console.log("[FLAG] getLiveUserPlan: Success ->", result);
+                // Salva o plano no armazenamento local para proteção contra quedas de rede
+                localStorage.setItem(`cachedPlan_${userId}`, result.plan);
                 return result.plan;
             }
         } catch (e) {
-            console.error("Erro ao validar plano com o servidor:", e);
+            console.error("[FLAG] getLiveUserPlan: Error ->", e);
         }
-        return 0; // Se houver erro de rede, assume plano 0 por segurança
+        
+        // FAIL-SAFE: Em caso de oscilação, usa a última memória de plano do usuário (ou 1 como segurança mínima)
+        return parseInt(localStorage.getItem(`cachedPlan_${userId}`)) || 1; 
     }
     
     // --- NOVO MOTOR DINÂMICO DE VISIBILIDADE (FEATURE FLAGS) ---
@@ -789,37 +854,92 @@ const loggedUser = checkSecurity();
         }
 
         try {
-            const response = await fetch(FLAGS_SCRIPT_URL);
+            console.log("[FLAG] applyVisibilityRules: Authenticating and fetching visibility flags...");
+            const response = await fetch(`${FLAGS_SCRIPT_URL}?${authParams.replace('&', '')}`);
             const jsonResponse = await response.json();
             
             if (jsonResponse.status === "success") {
                 const flags = jsonResponse.data;
-                const animalType = animalTypeRaw.toUpperCase().trim();
+                const animalType = String(animalTypeRaw).toUpperCase().trim();
+
+                // --- UI ELEMENT LOGGING FOR DEBUGGING ---
+                console.log("=== ALL DASHBOARD ELEMENTS DETECTED ===");
+                const trackedElements = document.querySelectorAll('[id]');
+                let availableIds = [];
+                trackedElements.forEach(el => availableIds.push(`${el.id} (${el.tagName})`));
+                console.log("Available UI Elements for Flags:", availableIds.join(" | "));
+                console.log("=======================================");
+
+                console.log("=== DASHBOARD ELEMENTS VISIBILITY EVALUATION ===");
+
+                // Smart Association Mapping (Links Inputs, Summaries, and Charts together logically)
+                const smartGroups = {
+                    'Height': ['inHeight', 'sumHeight', 'chart-height'],
+                    'Length': ['inLength', 'sumLength', 'chart-length'],
+                    'Weight': ['inWeight', 'sumWeight', 'chart-weight'],
+                    'Feeding': ['inFeed', 'sumFeeding', 'chart-feeding'],
+                    'Shedding': ['inShed', 'sumShedding', 'chart-shedding']
+                };
 
                 flags.forEach(flag => {
-                    let element = document.getElementById(flag.element);
-                    if (!element) return;
+                    let targetIds = [flag.element];
 
-                    if (element.tagName === 'INPUT') {
-                        const parentCard = element.closest('.input-card');
-                        if (parentCard) element = parentCard;
+                    // Smart group mapping: if the DB flag is exactly the category word, use all its component IDs.
+                    // If it's a specific ID, see if it is part of a broader smart group and hide everything attached to it.
+                    if (smartGroups[flag.element]) {
+                        targetIds = smartGroups[flag.element];
+                    } else {
+                        for (const [groupName, ids] of Object.entries(smartGroups)) {
+                            if (ids.includes(flag.element)) {
+                                targetIds = ids;
+                                break;
+                            }
+                        }
                     }
 
                     const minPlan = parseInt(flag.minPlan) || 1;
-                    const allowedAnimals = flag.allowedAnimals;
+                    
+                    const allowedStr = Array.isArray(flag.allowedAnimals) ? flag.allowedAnimals.join('|') : String(flag.allowedAnimals);
+                    // FIXED: Strict boolean filter and whitespace trim ensures no empty elements trigger false positives
+                    const allowedKeywords = allowedStr.toUpperCase().split('|').map(s => s.trim()).filter(Boolean);
 
                     const planOk = userPlan >= minPlan;
-                    const animalOk = allowedAnimals.includes('ALL') || allowedAnimals.includes(animalType);
+                    
+                    // FIXED: Re-mapped the 'includes' logic so distinct animals don't falsely trigger each other
+                    const animalOk = allowedKeywords.includes('ALL') || allowedKeywords.some(keyword => {
+                        const kw = keyword.toUpperCase();
+                        const at = animalType.toUpperCase();
+                        // This prevents string-fragment overlaps (like "NA" matching "SNAKE")
+                        const regex = new RegExp(`\\b${kw}\\b`, 'i');
+                        return regex.test(at) || kw === at;
+                    });
 
-                    if (!planOk || !animalOk) {
-                        element.style.display = 'none';
-                    } else {
-                        element.style.display = '';
-                    }
+                    targetIds.forEach(id => {
+                        let element = document.getElementById(id);
+                        if (element) {
+                            // Adjust scope if the target is an input field inside a card
+                            if (element.tagName === 'INPUT') {
+                                const parentCard = element.closest('.input-card');
+                                if (parentCard) element = parentCard;
+                            }
+
+                            if (!planOk || !animalOk) {
+                                element.style.display = 'none';
+                                console.log(`[HIDDEN] ${id} -> PlanOk:${planOk} | AnimalOk: false (Target: '${animalType}' not matched in '${allowedStr}')`);
+                            } else {
+                                element.style.display = '';
+                                console.log(`[SHOWN]  ${id} -> PlanOk:${planOk} | AnimalOk: true`);
+                            }
+                        } else {
+                            console.log(`[NOT FOUND IN DOM] Element ID: ${id}`);
+                        }
+                    });
                 });
+                
+                console.log("================================================");
             }
         } catch (e) {
-            console.error("Erro ao aplicar regras de visibilidade:", e);
+            console.error("[FLAG] applyVisibilityRules: Error ->", e);
         }
     }
 
@@ -864,11 +984,24 @@ function cleanUpEmptySections() {
 
 async function loadData() {
     if (!currentPageId || !loggedUser || !loggedUser.id) return;
-        
+
+    // --- FETCH ROUTES FIRST ---
+    const routesLoaded = await fetchDatabaseRoutes();
+    if (!routesLoaded) {
+        document.getElementById('dynAmbient').innerText = "SYSTEM ERROR";
+        alert("Critical System Error: Failed to load secure routes from Master Directory. Please check console.");
+        removeLoader();
+        return;
+    }
+
     try {
-        const secureUrl = `${PAGEID_SCRIPT_URL}?userID=${encodeURIComponent(loggedUser.id)}&pageID=${encodeURIComponent(currentPageId)}`;
+        console.log("[FLAG] loadData: Initiating connection to PAGEID_SCRIPT_URL...");
+        const secureUrl = `${PAGEID_SCRIPT_URL}?userID=${encodeURIComponent(loggedUser.id)}&pageID=${encodeURIComponent(currentPageId)}${authParams}`;
+        
         const response = await fetch(secureUrl);
         const jsonResponse = await response.json();
+        
+        console.log("[FLAG] loadData: Response status ->", jsonResponse.status);
 
         if (jsonResponse.status === "success") {
             const data = jsonResponse.data;
@@ -1009,13 +1142,37 @@ async function loadData() {
 
             updateSensors();
             
-            loadBiologicalHistory(currentPageId);
-            loadVetVisits(currentPageId);
+            // -----------------------------------------------------------------
+            // NOVA ARQUITETURA SEQUENCIAL (BASEADA NA COLUNA A DO GOOGLE SHEETS)
+            // -----------------------------------------------------------------
+            console.log("[PRIORITY QUEUE] Starting sequential database loading...");
+
+            for (const dbName of DB_LOAD_SEQUENCE) {
+                console.log(`[PRIORITY QUEUE] Awaiting: ${dbName}`);
+                try {
+                    if (dbName === "TerraConnect_CareGuide" && scientificNameStr !== "---") {
+                        await loadSpeciesDatabase(scientificNameStr);
+                    } else if (dbName === "TerraConnect_Educational Training") {
+                        await loadEducationalCommands();
+                    } else if (dbName === "TerraConnect_BioData") {
+                        await loadBiologicalHistory(currentPageId);
+                    } else if (dbName === "TerraConnect_VetData") {
+                        await loadVetVisits(currentPageId);
+                    } else if (dbName === "TerraConnect_Enviromental Setup") {
+                        if (typeof loadExistingConfig === "function") await loadExistingConfig();
+                    } else if (dbName === "TerraConnect_FLAGS_Dashboard View") {
+                        // THIS NOW RUNS LAST - applying filters safely to fully built elements!
+                        await applyVisibilityRules(animalTypeRaw, liveUserPlan);
+                    }
+                } catch (queueErr) {
+                    console.error(`[ERROR] Failed to process ${dbName} in priority queue:`, queueErr);
+                }
+            }
+
+            // Só ativa a leitura constante depois que o layout base estiver cimentado
             setInterval(updateSensors, 20000);
             
-            if (typeof loadExistingConfig === "function") loadExistingConfig();
-            
-            // --- NEW: CLEANUP PASS FOR EMPTY SECTIONS ---
+            // --- CLEANUP ---
             cleanUpEmptySections();
             
             // Remove loader se tudo deu certo
@@ -1029,7 +1186,7 @@ async function loadData() {
             window.location.href = "maindashboard.html"; 
         }
     } catch (e) { 
-        console.error("Database connection error:", e); 
+        console.error("[FLAG] loadData: Database connection error:", e); 
         document.getElementById('dynAmbient').innerText = "ERRO DE CONEXÃO";
         // FAIL-SAFE: Remove o loader mesmo se houver erro crítico na rede
         removeLoader();
@@ -1070,7 +1227,8 @@ async function loadSpeciesDatabase(scientificName) {
     if (!scientificName || scientificName === "---") return;
     
     try {
-        const response = await fetch(`${CAREGUIDE_SCRIPT_URL}?action=get_species_data&scientificName=${encodeURIComponent(scientificName)}`);
+        console.log("[FLAG] loadSpeciesDatabase: Fetching careguide for", scientificName);
+        const response = await fetch(`${CAREGUIDE_SCRIPT_URL}?action=get_species_data&scientificName=${encodeURIComponent(scientificName)}${authParams}`);
         const json = await response.json();
 
         if (json.status === "success") {
@@ -1085,7 +1243,7 @@ async function loadSpeciesDatabase(scientificName) {
                 console.log("✅ Species Data Loaded & Verified Successfully:", currentSpeciesData);
                 applySpeciesGuidance();
             } else {
-                console.warn(`⚠️ Species data for ${scientificName} is NOT verified (Flag: ${qualityFlag}). Skipping analytics & AI integration.`);
+                console.warn(`⚠️ Species data for ${scientificName} is NOT verified (Flag:${qualityFlag}). Skipping analytics & AI integration.`);
                 // Force null so applySpeciesGuidance and the AI context ignore this scraped row
                 currentSpeciesData = null; 
             }
@@ -1107,12 +1265,12 @@ async function loadSpeciesDatabase(scientificName) {
             const city = data.address.city || data.address.town || data.address.municipality || "Unknown City";
             const state = data.address.state || "Unknown State";
             const country = data.address.country || "Unknown Country";
-            return `${city}, ${state} - ${country}`;
+            return `${city}, ${state} -${country}`;
         }
     } catch (error) {
         console.warn("Geocoding failed, falling back to raw coordinates.", error);
     }
-    return `${lat}, ${lon}`; 
+    return `${lat},${lon}`; 
 }
     
 async function updateSensors() {
@@ -1157,7 +1315,7 @@ async function updateSensors() {
                 // Handle Field 31 manually to combine LAT and LON gracefully without breaking parseFloat
                 const locEl = document.getElementById('valField31');
                 if (locEl && last.field1 && last.field2) {
-                    locEl.innerHTML = `${parseFloat(last.field1).toFixed(4)}, ${parseFloat(last.field2).toFixed(4)}<span>°</span>`;
+                    locEl.innerHTML = `${parseFloat(last.field1).toFixed(4)},${parseFloat(last.field2).toFixed(4)}<span>°</span>`;
                 }
 
                 updateFieldUI(33, last.field3); 
@@ -1182,7 +1340,8 @@ function updateFieldUI(id, val) {
     async function loadExistingConfig() {
         if (!currentPageId) return;
         try {
-            const response = await fetch(`${ENVIRONMENT_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(currentPageId)}`);
+            console.log("[FLAG] loadExistingConfig: Fetching environment config.");
+            const response = await fetch(`${ENVIRONMENT_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(currentPageId)}${authParams}`);
             const json = await response.json();
             
             if (json.status === "success" && json.data) {
@@ -1198,7 +1357,7 @@ function updateFieldUI(id, val) {
     }
 
 async function sendDeviceConfig() {
-    const params = new URLSearchParams({
+    const payload = {
         action: "write",
         pageId: currentPageId,
         maxTemp: document.getElementById('cfgTempMax').value,
@@ -1206,11 +1365,21 @@ async function sendDeviceConfig() {
         maxHum: document.getElementById('cfgHumMax').value,
         minHum: document.getElementById('cfgHumMin').value,
         feedInterval: document.getElementById('cfgFeedInterval').value,
-        feedAmount: document.getElementById('cfgFeedAmount').value
-    });
+        feedAmount: document.getElementById('cfgFeedAmount').value,
+        // VULNERABILITY FIX (CSRF): Including security token to prevent Cross-Site Request Forgery
+        csrfToken: sessionStorage.getItem('authToken'),
+        authToken: sessionStorage.getItem('authToken')
+    };
 
     try {
-        await fetch(`${ENVIRONMENT_SCRIPT_URL}?${params.toString()}`, { method: 'GET', mode: 'no-cors' });
+        console.log("[FLAG] sendDeviceConfig: Posting configuration update...");
+        // VULNERABILITY FIX (CSRF): Changed from GET to POST for state-changing operation
+        await fetch(ENVIRONMENT_SCRIPT_URL, { 
+            method: 'POST', 
+            mode: 'no-cors',
+            body: JSON.stringify(payload),
+            headers: { 'Content-Type': 'application/json' }
+        });
         alert("Configuração enviada com sucesso!");
     } catch (e) {
         alert("Erro na sincronização.");
@@ -1253,14 +1422,15 @@ async function sendDeviceConfig() {
         const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
         const d = new Date(dateStr);
         if (isNaN(d)) return dateStr;
-        return `${String(d.getDate()).padStart(2, '0')} / ${months[d.getMonth()]} / ${d.getFullYear()}`;
+        return `${String(d.getDate()).padStart(2, '0')} / ${months[d.getMonth()]} /${d.getFullYear()}`;
     }
 
 
     // AGORA USA API JSON EM VEZ DE CSV. (Assume script backend com action=read&pageId=...)
     async function loadBiologicalHistory(id) {
     try {
-        const res = await fetch(`${BIODATA_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(id)}`);
+        console.log("[FLAG] loadBiologicalHistory: Fetching bio events...");
+        const res = await fetch(`${BIODATA_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(id)}${authParams}`);
         const json = await res.json();
         const events = json.data || [];
         
@@ -1437,7 +1607,7 @@ function renderFeeding(events, color) {
     const combos = data.map(e => {
         const ft = (e[4] && e[4].trim() !== "") ? e[4].trim() : 'N/A';
         const br = (e[5] && e[5].trim() !== "") ? e[5].trim() : 'N/A';
-        return `${ft} | ${br}`;
+        return `${ft} \vert{}${br}`;
     });
     
     const uniqueCombos = [...new Set(combos)];
@@ -1516,13 +1686,11 @@ function buildForecastChartConfig(labelString, dataArray, color, ctx) {
     const forecast = generateForecast(realValues, 2); 
     
     const paddedRealValues = [...realValues];
-    const forecastValues = new Array(realValues.length - 1).fill(null);
+    
+    // FIX: Prevents "Invalid array length" (Array(-1)) crash when a specific BioData type has 0 records
+    const forecastValues = new Array(Math.max(0, realValues.length - 1)).fill(null); 
     
     if (realValues.length > 0) {
-        forecastValues.push(realValues[realValues.length - 1]); 
-    }
-    
-    if (forecast.values.length > 0) {
         // Calculate the average historical interval to project future dates
         let avgIntervalMs = 0;
         
@@ -1549,11 +1717,12 @@ function buildForecastChartConfig(labelString, dataArray, color, ctx) {
             labels.push(nextDate.toISOString());
         }
         
+        forecastValues.push(realValues[realValues.length - 1]); 
         forecastValues.push(...forecast.values);
         paddedRealValues.push(...new Array(forecast.values.length).fill(null)); 
     }
 
-    const dynamicLabel = forecast.method ? `${labelString} [AI: ${forecast.method}]` : labelString;
+    const dynamicLabel = forecast.method ? `${labelString} [AI:${forecast.method}]` : labelString;
 
     return {
         type: 'line',
@@ -1582,7 +1751,6 @@ function buildForecastChartConfig(labelString, dataArray, color, ctx) {
         options: commonOptions() 
     };
 }
-
     function commonOptions() {
     return {
         responsive: true,
@@ -1657,18 +1825,33 @@ function buildForecastChartConfig(labelString, dataArray, color, ctx) {
         const today = new Date();
         const dateStr = (today.getMonth() + 1) + "/" + today.getDate() + "/" + today.getFullYear();
         
-        let finalUrl = `${BIODATA_SCRIPT_URL}?pageId=${encodeURIComponent(currentPageId)}&date=${encodeURIComponent(dateStr)}&registerType=${encodeURIComponent(type)}&value=${encodeURIComponent(inputValue)}`;
+        // VULNERABILITY FIX (CSRF): Construct payload for POST logic, replacing GET parameters
+        const payload = {
+            action: "write",
+            pageId: currentPageId,
+            date: dateStr,
+            registerType: type,
+            value: inputValue,
+            csrfToken: sessionStorage.getItem('authToken'), // Token to avoid Cross-Site Request Forgery
+            authToken: sessionStorage.getItem('authToken')
+        };
 
         if (type === 'Feeding') {
             const inFoodType = document.getElementById('inFoodType');
             const inBrand = document.getElementById('inBrand');
-            const ftVal = inFoodType ? inFoodType.value : "";
-            const brVal = inBrand ? inBrand.value : "";
-            finalUrl += `&foodType=${encodeURIComponent(ftVal)}&brand=${encodeURIComponent(brVal)}`;
+            payload.foodType = inFoodType ? inFoodType.value : "";
+            payload.brand = inBrand ? inBrand.value : "";
         }
 
         try {
-            await fetch(finalUrl, { method: 'GET', mode: 'no-cors' });
+            console.log(`[FLAG] sendToCloud: Posting ${type} data...`);
+            // VULNERABILITY FIX (CSRF): Use POST to avoid parameters leaking and allow structured payload verification
+            await fetch(BIODATA_SCRIPT_URL, { 
+                method: 'POST', 
+                mode: 'no-cors',
+                body: JSON.stringify(payload),
+                headers: { 'Content-Type': 'application/json' }
+            });
             alert(`Success: ${type} registered!`);
             inputElement.value = "";
             
@@ -1683,17 +1866,6 @@ function buildForecastChartConfig(labelString, dataArray, color, ctx) {
         } catch (e) {
             alert("Technical error sending data.");
         }
-    }
-
-    loadData();
-
-    const editButton = document.getElementById('editLink');
-    
-    if (currentPageId && editButton) {
-        editButton.href = `register_ambient.html?pageID=${currentPageId}`;
-        editButton.style.display = 'inline-flex'; 
-    } else if (editButton) {
-        editButton.style.display = 'none'; 
     }
 
 
@@ -1745,7 +1917,8 @@ async function fetchLatestGPS() {
 // AGORA USA API JSON EM VEZ DE CSV
 async function loadVetVisits(id) {
     try {
-        const res = await fetch(`${VETDATA_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(id)}`);
+        console.log("[FLAG] loadVetVisits: Fetching vet records...");
+        const res = await fetch(`${VETDATA_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(id)}&userID=${encodeURIComponent(loggedUser.id)}${authParams}`);
         const json = await res.json();
         const visits = json.data || [];
         
@@ -1760,24 +1933,61 @@ async function loadVetVisits(id) {
                 if (v[8] && v[8].trim() !== "") { 
                     let url_link = v[8].trim();
                     if (!url_link.startsWith("http")) url_link = "https://" + url_link;
-                    vetFile = `<a href="${url_link}" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: bold;"><i class="fas fa-link"></i> File</a>`;
+                    // VULNERABILITY FIX (Stored XSS): Sanitizing dynamic link generation
+                    let safeURL = escapeHTML(url_link);
+                    if (safeURL.toLowerCase().startsWith('javascript:')) safeURL = "#";
+                    vetFile = `<a href="${safeURL}" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: bold;"><i class="fas fa-link"></i> File</a>`;
                 }
+                
                 let webContent = "---";
                 if (v[12] && v[12].trim() !== "") {
                     let url = v[12].trim();
                     if (!url.startsWith("http")) url = "https://" + url;
-                    webContent = `<a href="${url}" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: bold;"><i class="fas fa-globe"></i> Site</a>`;
+                    // VULNERABILITY FIX (Stored XSS): Sanitizing dynamic link generation
+                    let safeURL = escapeHTML(url);
+                    if (safeURL.toLowerCase().startsWith('javascript:')) safeURL = "#";
+                    webContent = `<a href="${safeURL}" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: bold;"><i class="fas fa-globe"></i> Site</a>`;
                 }
 
+                // --- MULTICULTURAL DATE & TIME FORMATTER FIX ---
+                let formattedDateTime = "---";
+                if (v[1] && v[1].trim() !== "") {
+                    const d = new Date(v[1]);
+                    if (!isNaN(d.getTime())) {
+                        const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+                        const day = String(d.getDate()).padStart(2, '0');
+                        const month = months[d.getMonth()];
+                        const year = d.getFullYear();
+                        
+                        let timeStr = "";
+                        if (v[2] && v[2].trim() !== "") {
+                            let rawTime = v[2].trim();
+                            // Handle Google Sheets 1899 epoch issue
+                            if (rawTime.includes('T')) {
+                                const timeParts = rawTime.split('T')[1].split(':');
+                                if (timeParts.length >= 2) {
+                                    timeStr = ` - ${timeParts[0]}:${timeParts[1]}`;
+                                }
+                            } else {
+                                timeStr = ` - ${rawTime}`;
+                            }
+                        }
+                        formattedDateTime = `${day} /${month} / ${year}${timeStr}`;
+                    } else {
+                        formattedDateTime = v[1] + (v[2] ? ` - ${v[2]}` : "");
+                    }
+                }
+
+                // VULNERABILITY FIX (Stored XSS): Escape text content inside innerHTML to prevent arbitrary code execution
                 tbody.innerHTML += `
                     <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                        <td style="padding: 10px;">${v[1]}</td>
-                        <td style="padding: 10px;">${v[3]}</td>
-                        <td style="padding: 10px;">${v[6]}</td>
-                        <td style="padding: 10px;">${v[7]}</td>
+                        <td style="padding: 10px; white-space: nowrap;">${escapeHTML(formattedDateTime)}</td>
+                        <td style="padding: 10px;">${escapeHTML(v[3])}</td>
+                        <td style="padding: 10px;">${escapeHTML(v[6])}</td>
+                        <td style="padding: 10px;">${escapeHTML(v[7])}</td>
                         <td style="padding: 10px;">${vetFile}</td>
-                        <td style="padding: 10px;">${v[9]}</td>
-                        <td style="padding: 10px;">${v[10]}</td>
+                        <td style="padding: 10px;">${escapeHTML(v[9])}</td>
+                        <td style="padding: 10px;">${escapeHTML(v[10])}</td>
                         <td style="padding: 10px;">${webContent}</td>
                     </tr>
                 `;
@@ -2036,7 +2246,7 @@ async function openChart(fieldId, label) {
     document.addEventListener('DOMContentLoaded', () => {
         applyUserTheme();
         loadData();
-        loadEducationalCommands();
+        // loadEducationalCommands(); // REMOVIDO PARA EVITAR RACE CONDITION
 
         const editButton = document.getElementById('editLink');
         if (currentPageId && editButton) {
@@ -2053,7 +2263,8 @@ async function openChart(fieldId, label) {
     // API Calls
     async function loadEducationalCommands() {
         try {
-            const res = await fetch(EDU_SCRIPT_URL);
+            console.log("[FLAG] loadEducationalCommands: Fetching commands...");
+            const res = await fetch(`${EDU_SCRIPT_URL}?${authParams.replace('&', '')}`);
             const json = await res.json();
             
             // Parse 2D Array to Object Array based on Headers (Row 0)
@@ -2085,21 +2296,32 @@ async function openChart(fieldId, label) {
 
         let hasEducationalData = false;
 
+        // NEW: Grab the current animal type being displayed on the dashboard
+        const currentDashboardAnimal = document.getElementById('dynAnimal').innerText.toLowerCase();
+
         dynamicCommands.forEach((cmd, index) => {
             // Ignora linhas sem comando
             if (!cmd.Command) return; 
 
             // 1. Padronização vital: remove espaços invisíveis e joga tudo para minúsculo
-            const animal = String(cmd.AnimalType || '').trim().toLowerCase();
-            const commandName = cmd.Command;
-            const voiceSpeak = cmd.VoiceSpeak || '';
+            const cmdAnimal = String(cmd.AnimalType || '').trim().toLowerCase();
+            
+            // NEW: Gatekeeper - Only proceed if this command belongs to the current animal!
+            if (cmdAnimal !== currentDashboardAnimal) return;
+
+            // Fetch the dynamically loaded animal name from the page
+            const actualName = document.getElementById('dynName').innerText;
+
+            // Replace "Norberto" (case-insensitive) with the actual animal name
+            const commandName = cmd.Command ? cmd.Command.replace(/Norberto/gi, actualName) : '';
+            const voiceSpeak = cmd.VoiceSpeak ? cmd.VoiceSpeak.replace(/Norberto/gi, actualName) : '';
             const numBeeps = parseInt(cmd.NumberOfBeep) || 0;
             
             const color = commandPalette[index % commandPalette.length];
             const icon = commandIcons[index % commandIcons.length];
             
             // 2. Avalia usando a string limpa
-            const animalIcon = animal === 'dog' ? 'fa-dog' : 'fa-crow';
+            const animalIcon = cmdAnimal === 'dog' ? 'fa-dog' : 'fa-crow';
 
             const cardHTML = `
                 <div class="sensor-card" style="flex-direction: column; cursor: pointer; justify-content: center;" onclick="executeDynamicCommand(${index})">
@@ -2115,12 +2337,12 @@ async function openChart(fieldId, label) {
             `;
 
             // 3. Distribuição baseada na string padronizada (aceita 'parrot' ou 'bird')
-            if (animal === 'dog' && dogGrid) {
+            if (cmdAnimal === 'dog' && dogGrid) {
                 dogGrid.innerHTML += cardHTML;
                 document.getElementById('edu-clicker-section').style.display = 'block';
                 hasEducationalData = true;
             }
-            if ((animal === 'parrot' || animal === 'bird') && birdGrid) {
+            if ((cmdAnimal === 'parrot' || cmdAnimal === 'bird') && birdGrid) {
                 birdGrid.innerHTML += cardHTML;
                 document.getElementById('edu-voice-section').style.display = 'block';
                 hasEducationalData = true;
@@ -2295,18 +2517,19 @@ function applySpeciesGuidance() {
         const currTemp = document.getElementById('valField1').innerText;
         const currHum = document.getElementById('valField2').innerText;
 
+        console.log("[FLAG] generateAIInsight: Fetching contextual background data...");
         // Fetch using the new Script URLs (No CSV)
-        const resBio = await fetch(`${BIODATA_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(currentPageId)}`);
+        const resBio = await fetch(`${BIODATA_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(currentPageId)}${authParams}`);
         const jsonBio = await resBio.json();
         const bioRows = jsonBio.data || [];
         const bioHistory = bioRows.map(r => `Data: ${r[1]} | Evento: ${r[2]} | Valor: ${r[3]}`).join('\n');
 
-        const resEnv = await fetch(`${ENVIRONMENT_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(currentPageId)}`);
+        const resEnv = await fetch(`${ENVIRONMENT_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(currentPageId)}${authParams}`);
         const jsonEnv = await resEnv.json();
         const envRow = jsonEnv.data;
         const envConfig = envRow ? `Temp Alvo: Min ${envRow[2]}°C / Max ${envRow[1]}°C | Umidade Alvo: Min ${envRow[4]}% / Max ${envRow[3]}%` : "Não configurado.";
 
-        const resVet = await fetch(`${VETDATA_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(currentPageId)}`);
+        const resVet = await fetch(`${VETDATA_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(currentPageId)}&userID=${encodeURIComponent(loggedUser.id)}${authParams}`);
         const jsonVet = await resVet.json();
         const vetRows = jsonVet.data || [];
         const vetHistory = vetRows.map(r => `Data: ${r[1]} | Tipo de exame: ${r[3]} | Resultados: ${r[6] || 'Nenhum'} | Observações: ${r[7] || 'Nenhuma'}`).join('\n');
@@ -2355,6 +2578,8 @@ function applySpeciesGuidance() {
         const superPrompt = `
 [STRICT SYSTEM INSTRUCTION: YOUR ENTIRE RESPONSE MUST BE EXCLUSIVELY IN ENGLISH. Do not output any word in Portuguese or any other language. If the provided context data is in another language, you must translate the insights internally and provide the final output ONLY in English.]
 
+[MANDATORY REQUIREMENT: At the very beginning of your response, before presenting the topics, you MUST include this exact warning note translated into professional English: "Disclaimer: This AI analysis is intended solely as a general guide and basic reference. It does not provide a definitive diagnosis and in no way replaces a physical examination or consultation with a qualified veterinarian for proper medical care. If you have any concerns or notice any unusual symptoms in your animal, a veterinary visit is strongly recommended."]
+
 Please analyze the data correlation for the following animal monitored by the TerraConnect IoT system.
 
 **Profile:**
@@ -2389,15 +2614,21 @@ Reference the environmental data with the biological and veterinary data. Is the
 `;
 
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ANALYZING COMPLEX DATA...';
-        textBox.innerText = "Série histórica construída. Enviando para o Google Gemini 1.5 Flash...";
+        textBox.innerText = "Database gathered and ready to calculate. Sincronizing with AI models to determine solution pattern...";
 
+        console.log("[FLAG] generateAIInsight: Sending POST request to AI model...");
         const response = await fetch(AI_SCRIPT_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ prompt: superPrompt })
+            body: JSON.stringify({ 
+                prompt: superPrompt, 
+                csrfToken: sessionStorage.getItem('authToken'),
+                authToken: sessionStorage.getItem('authToken')
+            })
         });
         
         const json = await response.json();
+        console.log("[FLAG] generateAIInsight: AI Response ->", json);
 
         if(json.status === "success") {
             textBox.innerHTML = json.insight
@@ -2407,12 +2638,12 @@ Reference the environmental data with the biological and veterinary data. Is the
             document.getElementById('btnListenAI').style.display = 'inline-flex';
             } 
         else {
-            textBox.innerText = "Falha na análise: " + json.message;
+            textBox.innerText = "Analysis Failure: " + json.message;
         }
 
     } catch (e) {
         console.error(e);
-        textBox.innerText = "Erro ao conectar com o Núcleo de IA.";
+        textBox.innerText = "Error when connecting with the AI pattern model.";
     } finally {
         btn.innerHTML = '<i class="fas fa-magic"></i> RE-RUN ANALYSIS';
     }
@@ -2626,10 +2857,14 @@ Reference the environmental data with the biological and veterinary data. Is the
             const animalStr = String(cmdData.AnimalType || '').trim().toLowerCase();
             const pitch = (animalStr === 'parrot' || animalStr === 'bird') ? 1.2 : 1.0;
             
+            // Fetch the animal name and replace "Norberto" for the TTS audio output
+            const actualName = document.getElementById('dynName').innerText;
+            const finalVoiceSpeak = cmdData.VoiceSpeak.replace(/Norberto/gi, actualName);
+
             // Wait for all beeps to finish before speaking, plus a 200ms natural buffer
             const speechDelayMs = (totalBeepTime > 0) ? (totalBeepTime * 1000) + 200 : 0;
             
-            speakCommand(cmdData.VoiceSpeak, speechDelayMs, pitch);
+            speakCommand(finalVoiceSpeak, speechDelayMs, pitch);
         }
     }
     
@@ -2671,8 +2906,7 @@ Reference the environmental data with the biological and veterinary data. Is the
     // Chama a função assim que a página carrega
     document.addEventListener('DOMContentLoaded', fetchGitHubVersion);
     </script>
-<!-- VERSION FLAG -->
-    <div id="gh-version-flag" class="app-version-flag">
+<div id="gh-version-flag" class="app-version-flag">
         <i class="fas fa-spinner fa-spin"></i> Fetching Build...
     </div>
 </body>
