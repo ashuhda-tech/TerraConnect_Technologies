@@ -747,7 +747,7 @@ const authParams = loggedUser ? `&authToken=${encodeURIComponent(loggedUser.auth
 // --- NEW MASTER SCRIPT LOGIC START ---
 const MASTER_DIRECTORY_B64 = 'aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J6cTRZVWUzWjJQeGNsdlJtRWNxaVF1bk1KRXRXNVE5cmxOV21KOXF6RWdQcWM5OVVlVThud3VjYm91SFdzaE1Bdy9leGVj'; 
 
-let DB_LOAD_SEQUENCE = []; // ADD THIS TO HOLD THE COLUMN A ORDER    
+let DB_LOAD_SEQUENCE = [];     
 let SIGNUP_SCRIPT_URL = "";
 let FLAGS_SCRIPT_URL = ""; 
 let PAGEID_SCRIPT_URL = "";
@@ -789,7 +789,7 @@ async function fetchDatabaseRoutes() {
         const result = JSON.parse(text);
         
         if (result.status === "success") {
-            DB_LOAD_SEQUENCE = result.sequence || Object.keys(result.data); // ADD THIS LINE HERE
+            DB_LOAD_SEQUENCE = result.sequence || Object.keys(result.data); 
             SIGNUP_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_SignUp"]); 
             FLAGS_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_Flags"]);
             PAGEID_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_PageID"]);
@@ -980,9 +980,20 @@ function cleanUpEmptySections() {
 
 async function loadData() {
     if (!currentPageId || !loggedUser || !loggedUser.id) return;
+
+    // --- CRITICAL FIX: FETCH SCRIPT URLS FIRST ---
+    // The previous version hung here because fetchDatabaseRoutes() was never executed, leaving all backend URLs empty.
+    const routesLoaded = await fetchDatabaseRoutes();
+    if (!routesLoaded) {
+        document.getElementById('dynAmbient').innerText = "SYSTEM ERROR";
+        alert("Critical System Error: Failed to load secure routes from Master Directory. Please check console.");
+        removeLoader();
+        return;
+    }
         
     try {
-        const secureUrl = `${PAGEID_SCRIPT_URL}?userID=${encodeURIComponent(loggedUser.id)}&pageID=${encodeURIComponent(currentPageId)}`;
+        // --- CRITICAL FIX: REATTACHED AUTH PARAMS TO PREVENT SECURITY BLOCK ---
+        const secureUrl = `${PAGEID_SCRIPT_URL}?userID=${encodeURIComponent(loggedUser.id)}&pageID=${encodeURIComponent(currentPageId)}${authParams}`;
         const response = await fetch(secureUrl);
         const jsonResponse = await response.json();
 
@@ -992,7 +1003,7 @@ async function loadData() {
             document.getElementById('dynName').innerText = data[3] || "---";
             document.getElementById('dynSex').innerText = data[4] || "---";
             
-            // MODIFIED CODE HERE: Extract Scientific Name and fetch DB immediately
+            // Extract Scientific Name and fetch DB immediately
             const scientificNameStr = data[5] || "---";
             document.getElementById('dynScientific').innerText = scientificNameStr;
             
@@ -1010,7 +1021,7 @@ async function loadData() {
                 document.getElementById('dynBirth').innerText = `${ageString}${formattedDate}`;
             } else {document.getElementById('dynBirth').innerText = "---"; }
             
-            // CORREÇÃO: Força a variável a ser String para impedir o crash do .trim() e .toUpperCase()
+            // Força a variável a ser String para impedir o crash do .trim() e .toUpperCase()
             const regValue = String(data[7] || "---");
             const regElement = document.getElementById('dynReg');
             const legalWarning = document.getElementById('legal-warning');
@@ -1125,13 +1136,15 @@ async function loadData() {
 
             updateSensors();
             
+            // --- REVERTED BACK TO V1/V3 RAPID LOADING METHOD ---
+            // Removed the strict DB_LOAD_SEQUENCE for loop from V2 that was breaking the page
             loadBiologicalHistory(currentPageId);
             loadVetVisits(currentPageId);
             setInterval(updateSensors, 20000);
             
             if (typeof loadExistingConfig === "function") loadExistingConfig();
             
-            // --- NEW: CLEANUP PASS FOR EMPTY SECTIONS ---
+            // --- CLEANUP PASS FOR EMPTY SECTIONS ---
             cleanUpEmptySections();
             
             // Remove loader se tudo deu certo
@@ -1186,7 +1199,7 @@ async function loadSpeciesDatabase(scientificName) {
     if (!scientificName || scientificName === "---") return;
     
     try {
-        const response = await fetch(`${CAREGUIDE_SCRIPT_URL}?action=get_species_data&scientificName=${encodeURIComponent(scientificName)}`);
+        const response = await fetch(`${CAREGUIDE_SCRIPT_URL}?action=get_species_data&scientificName=${encodeURIComponent(scientificName)}${authParams}`);
         const json = await response.json();
 
         if (json.status === "success") {
@@ -1298,7 +1311,7 @@ function updateFieldUI(id, val) {
     async function loadExistingConfig() {
         if (!currentPageId) return;
         try {
-            const response = await fetch(`${ENVIRONMENT_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(currentPageId)}`);
+            const response = await fetch(`${ENVIRONMENT_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(currentPageId)}${authParams}`);
             const json = await response.json();
             
             if (json.status === "success" && json.data) {
@@ -1314,7 +1327,8 @@ function updateFieldUI(id, val) {
     }
 
 async function sendDeviceConfig() {
-    const params = new URLSearchParams({
+    // --- CRITICAL FIX: RESTORED V2 POST FOR SECURITY AND DATA INTEGRITY ---
+    const payload = {
         action: "write",
         pageId: currentPageId,
         maxTemp: document.getElementById('cfgTempMax').value,
@@ -1322,11 +1336,18 @@ async function sendDeviceConfig() {
         maxHum: document.getElementById('cfgHumMax').value,
         minHum: document.getElementById('cfgHumMin').value,
         feedInterval: document.getElementById('cfgFeedInterval').value,
-        feedAmount: document.getElementById('cfgFeedAmount').value
-    });
+        feedAmount: document.getElementById('cfgFeedAmount').value,
+        csrfToken: sessionStorage.getItem('authToken'),
+        authToken: sessionStorage.getItem('authToken')
+    };
 
     try {
-        await fetch(`${ENVIRONMENT_SCRIPT_URL}?${params.toString()}`, { method: 'GET', mode: 'no-cors' });
+        await fetch(ENVIRONMENT_SCRIPT_URL, { 
+            method: 'POST', 
+            mode: 'no-cors',
+            body: JSON.stringify(payload),
+            headers: { 'Content-Type': 'application/json' }
+        });
         alert("Configuração enviada com sucesso!");
     } catch (e) {
         alert("Erro na sincronização.");
@@ -1373,10 +1394,10 @@ async function sendDeviceConfig() {
     }
 
 
-    // AGORA USA API JSON EM VEZ DE CSV. (Assume script backend com action=read&pageId=...)
+    // AGORA USA API JSON EM VEZ DE CSV.
     async function loadBiologicalHistory(id) {
     try {
-        const res = await fetch(`${BIODATA_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(id)}`);
+        const res = await fetch(`${BIODATA_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(id)}${authParams}`);
         const json = await res.json();
         const events = json.data || [];
         
@@ -1632,13 +1653,9 @@ function buildForecastChartConfig(labelString, dataArray, color, ctx) {
     const forecast = generateForecast(realValues, 2); 
     
     const paddedRealValues = [...realValues];
-    const forecastValues = new Array(realValues.length - 1).fill(null);
+    const forecastValues = new Array(Math.max(0, realValues.length - 1)).fill(null);
     
     if (realValues.length > 0) {
-        forecastValues.push(realValues[realValues.length - 1]); 
-    }
-    
-    if (forecast.values.length > 0) {
         // Calculate the average historical interval to project future dates
         let avgIntervalMs = 0;
         
@@ -1665,6 +1682,7 @@ function buildForecastChartConfig(labelString, dataArray, color, ctx) {
             labels.push(nextDate.toISOString());
         }
         
+        forecastValues.push(realValues[realValues.length - 1]); 
         forecastValues.push(...forecast.values);
         paddedRealValues.push(...new Array(forecast.values.length).fill(null)); 
     }
@@ -1773,18 +1791,32 @@ function buildForecastChartConfig(labelString, dataArray, color, ctx) {
         const today = new Date();
         const dateStr = (today.getMonth() + 1) + "/" + today.getDate() + "/" + today.getFullYear();
         
-        let finalUrl = `${BIODATA_SCRIPT_URL}?pageId=${encodeURIComponent(currentPageId)}&date=${encodeURIComponent(dateStr)}&registerType=${encodeURIComponent(type)}&value=${encodeURIComponent(inputValue)}`;
+        // --- CRITICAL FIX: RESTORED V2 POST METHOD FOR SECURITY AND LARGE PAYLOADS ---
+        const payload = {
+            action: "write",
+            pageId: currentPageId,
+            date: dateStr,
+            registerType: type,
+            value: inputValue,
+            csrfToken: sessionStorage.getItem('authToken'), // Token to avoid Cross-Site Request Forgery
+            authToken: sessionStorage.getItem('authToken')
+        };
 
         if (type === 'Feeding') {
             const inFoodType = document.getElementById('inFoodType');
             const inBrand = document.getElementById('inBrand');
-            const ftVal = inFoodType ? inFoodType.value : "";
-            const brVal = inBrand ? inBrand.value : "";
-            finalUrl += `&foodType=${encodeURIComponent(ftVal)}&brand=${encodeURIComponent(brVal)}`;
+            payload.foodType = inFoodType ? inFoodType.value : "";
+            payload.brand = inBrand ? inBrand.value : "";
         }
 
         try {
-            await fetch(finalUrl, { method: 'GET', mode: 'no-cors' });
+            await fetch(BIODATA_SCRIPT_URL, { 
+                method: 'POST', 
+                mode: 'no-cors',
+                body: JSON.stringify(payload),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            
             alert(`Success: ${type} registered!`);
             inputElement.value = "";
             
@@ -1861,7 +1893,7 @@ async function fetchLatestGPS() {
 // AGORA USA API JSON EM VEZ DE CSV
 async function loadVetVisits(id) {
     try {
-        const res = await fetch(`${VETDATA_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(id)}`);
+        const res = await fetch(`${VETDATA_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(id)}&userID=${encodeURIComponent(loggedUser.id)}${authParams}`);
         const json = await res.json();
         const visits = json.data || [];
         
@@ -1876,13 +1908,17 @@ async function loadVetVisits(id) {
                 if (v[8] && v[8].trim() !== "") { 
                     let url_link = v[8].trim();
                     if (!url_link.startsWith("http")) url_link = "https://" + url_link;
-                    vetFile = `<a href="${url_link}" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: bold;"><i class="fas fa-link"></i> File</a>`;
+                    let safeURL = escapeHTML(url_link);
+                    if (safeURL.toLowerCase().startsWith('javascript:')) safeURL = "#";
+                    vetFile = `<a href="${safeURL}" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: bold;"><i class="fas fa-link"></i> File</a>`;
                 }
                 let webContent = "---";
                 if (v[12] && v[12].trim() !== "") {
                     let url = v[12].trim();
                     if (!url.startsWith("http")) url = "https://" + url;
-                    webContent = `<a href="${url}" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: bold;"><i class="fas fa-globe"></i> Site</a>`;
+                    let safeURL = escapeHTML(url);
+                    if (safeURL.toLowerCase().startsWith('javascript:')) safeURL = "#";
+                    webContent = `<a href="${safeURL}" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: bold;"><i class="fas fa-globe"></i> Site</a>`;
                 }
 
                 tbody.innerHTML += `
@@ -2169,7 +2205,7 @@ async function openChart(fieldId, label) {
     // API Calls
     async function loadEducationalCommands() {
         try {
-            const res = await fetch(EDU_SCRIPT_URL);
+            const res = await fetch(`${EDU_SCRIPT_URL}?${authParams.replace('&', '')}`);
             const json = await res.json();
             
             // Parse 2D Array to Object Array based on Headers (Row 0)
@@ -2411,18 +2447,18 @@ function applySpeciesGuidance() {
         const currTemp = document.getElementById('valField1').innerText;
         const currHum = document.getElementById('valField2').innerText;
 
-        // Fetch using the new Script URLs (No CSV)
-        const resBio = await fetch(`${BIODATA_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(currentPageId)}`);
+        // Fetch using the new Script URLs and securely appended auth tokens
+        const resBio = await fetch(`${BIODATA_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(currentPageId)}${authParams}`);
         const jsonBio = await resBio.json();
         const bioRows = jsonBio.data || [];
         const bioHistory = bioRows.map(r => `Data: ${r[1]} | Evento: ${r[2]} | Valor: ${r[3]}`).join('\n');
 
-        const resEnv = await fetch(`${ENVIRONMENT_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(currentPageId)}`);
+        const resEnv = await fetch(`${ENVIRONMENT_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(currentPageId)}${authParams}`);
         const jsonEnv = await resEnv.json();
         const envRow = jsonEnv.data;
         const envConfig = envRow ? `Temp Alvo: Min ${envRow[2]}°C / Max ${envRow[1]}°C | Umidade Alvo: Min ${envRow[4]}% / Max ${envRow[3]}%` : "Não configurado.";
 
-        const resVet = await fetch(`${VETDATA_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(currentPageId)}`);
+        const resVet = await fetch(`${VETDATA_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(currentPageId)}&userID=${encodeURIComponent(loggedUser.id)}${authParams}`);
         const jsonVet = await resVet.json();
         const vetRows = jsonVet.data || [];
         const vetHistory = vetRows.map(r => `Data: ${r[1]} | Tipo de exame: ${r[3]} | Resultados: ${r[6] || 'Nenhum'} | Observações: ${r[7] || 'Nenhuma'}`).join('\n');
@@ -2511,8 +2547,12 @@ Reference the environmental data with the biological and veterinary data. Is the
 
         const response = await fetch(AI_SCRIPT_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ prompt: superPrompt })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                prompt: superPrompt,
+                csrfToken: sessionStorage.getItem('authToken'),
+                authToken: sessionStorage.getItem('authToken')
+            })
         });
         
         const json = await response.json();
