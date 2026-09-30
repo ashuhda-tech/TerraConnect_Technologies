@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monitoring Portal | Authentication</title>
+    <title>TerraConnect | Authentication</title>
     
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/IMAGE/LOGOS%20OROBORO_NO_BKGRD.png">
     <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/IMAGE/LOGOS%20OROBORO_NO_BKGRD.png">
@@ -11,7 +11,7 @@
     <meta property="og:type" content="website">
     <meta property="og:title" content="TerraConnect Technologies">
     <meta property="og:description" content="Environmental Animal IOT Monitoring Center">
-    <meta property="og:url" content="https://ashuhda-tech.github.io/TerraConnect_Technologies/">
+    <meta property="og:url" content="https://nhanderu-lab.github.io/Tupan/">
     <meta property="og:image" content="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/TERRACONNECT_LOGOBRAND.png">
 
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
@@ -80,7 +80,6 @@
         .footer-text a {color: var(--accent-dark); text-decoration: none; font-weight: 600; transition: color 0.3s ease; margin-left: 5px;}
         .footer-text a:hover {color: var(--text-main); }
         
-        /* NEW: MOBILE RESPONSIVENESS */
         @media (max-width: 480px) {.auth-card { padding: 30px 20px; } h1 { font-size: 1.8rem; }}
     </style>
 
@@ -105,7 +104,6 @@
 </div>
 <div class="video-overlay"></div>
 
-<!-- NEW FLOATING RIBBON WITH BOTH BUTTONS -->
 <div class="top-nav-ribbon">
     <a href="about_us.html" class="floating-nav-btn" title="Discover Our Vision">
         <i class="fas fa-seedling"></i> About Us
@@ -115,9 +113,6 @@
     </a>
 </div>
 
-<!-- 
-    CORREÇÃO 4: O container empurra o footer de forma responsiva para a base da página 
--->
 <div class="container">
     <div class="auth-card">
         <div id="login-section">
@@ -163,7 +158,6 @@
                     <label>Password</label>
                     <input type="password" id="regPass" placeholder="Create a strong password" required disabled>
                 </div>
-                <!-- AI CONSENT CHECKBOX -->
                 <div class="input-group" style="display: flex; align-items: flex-start; gap: 10px; margin-top: 15px; margin-bottom: 25px; text-align: left;">
                     <input type="checkbox" id="aiConsent" style="width: 20px; height: 20px; flex-shrink: 0; cursor: pointer; accent-color: var(--accent-dark); margin-top: 2px;">
                     <label for="aiConsent" style="font-size: 0.75rem; color: var(--text-main); line-height: 1.5; text-transform: none; cursor: pointer;">
@@ -174,7 +168,6 @@
                 <div id="signupMsg" class="message"></div>
             </form>
 
-            <!-- NEW SOCIAL SIGN UP GRID -->
             <div class="divider"><span>Or sign up with</span></div>
             <div class="social-grid">
                 <button type="button" class="btn-social" id="googleAuthBtnSignup" title="Google" onclick="handleGoogleSignUp()"><i class="fab fa-google"></i></button>
@@ -187,7 +180,6 @@
     </div>
 </div>
 
-<!-- GLOBAL FOOTER INSERIDO NO FINAL DA PÁGINA -->
 <footer>
     <div class="footer-text">
         Copyright &copy; 2026 TerraConnect Technologies. All Rights Reserved. | 
@@ -212,20 +204,21 @@
     }
 
     // ==========================================
-    // --- DYNAMIC BASE64 URL ROUTING LOGIC ---
+    // --- DYNAMIC URL ROUTING LOGIC (Optimized Plain Text) ---
     // ==========================================
     
-    // Master Directory URL encoded in Base64
-    const MASTER_DIRECTORY_B64 = 'aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J6cTRZVWUzWjJQeGNsdlJtRWNxaVF1bk1KRXRXNVE5cmxOV21KOXF6RWdQcWM5OVVlVThud3VjYm91SFdzaE1Bdy9leGVj'; 
+    // Original Master Directory Script URL restored
+    const MASTER_DIRECTORY_URL = 'https://script.google.com/macros/s/AKfycbzq4YUe3Z2PxclvRmEcqiQunMJEtW5Q9rlNWmJ9qzEgPqc99UeU8nwucbouHWshMAw/exec'; 
 
-    // Global variables to hold the decoded URLs in volatile memory
     let authScriptUrl = "";
     let pageIdScriptUrl = "";
+    let googleClientId = "";
+    let googleInitialized = false;
 
     async function fetchDatabaseRoutes() {
         try {
-            const payload = { pageName: "index.html" };
-            const response = await fetch(atob(MASTER_DIRECTORY_B64), {
+            const payload = { pageName: "index.html", appSource: window.location.origin };
+            const response = await fetch(MASTER_DIRECTORY_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify(payload)
@@ -233,9 +226,15 @@
             const result = await response.json();
             
             if (result.status === "success") {
-                // Decode the incoming Base64 strings from the server
-                authScriptUrl = atob(result.data["TerraConnect_SignUp"]); 
-                pageIdScriptUrl = atob(result.data["TerraConnect_PageID"]);
+                // BASE64 REMOVED - Expecting direct URLs from the backend
+                authScriptUrl = result.data["TerraConnect_SignUp"]; 
+                pageIdScriptUrl = result.data["TerraConnect_PageID"];
+                
+                // Fetching Google Client ID dynamically from the Database
+                googleClientId = result.data["TerraConnect_Goog_Auth"]; 
+                if (googleClientId) {
+                    initializeGoogleAuth(googleClientId);
+                }
                 return true;
             } else {
                 console.error("Routing Access Denied:", result.message);
@@ -268,40 +267,42 @@
         document.getElementById('loginMsg').innerText = "";
     }
 
-    // The Gatekeeper: Wait for Routes -> Check Captcha -> Unlock
+    // ==========================================
+    // --- PARALLEL GATEKEEPER EXECUTION ---
+    // ==========================================
     grecaptcha.ready(async function() {
-        // 1. Fetch routes before doing anything else
-        const routesLoaded = await fetchDatabaseRoutes();
-        
-        if (!routesLoaded || !authScriptUrl) {
-            document.getElementById('loginMsg').innerText = "System configuration error. Connection refused.";
-            document.getElementById('loginMsg').className = "message error";
-            return; // Halt completely if the backend is unreachable
-        }
-
-        // 2. Proceed with human verification
-        grecaptcha.execute('6LcR7gQtAAAAACIEVWPRYCkIf1DRhBQW_OgfipT8', {action: 'homepage'}).then(async function(token) {
-            try {
-                const payloadCaptcha = { action: 'verify_human', token: token, appSource: window.location.origin };
-
-                const response = await fetch(authScriptUrl, { 
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify(payloadCaptcha)
-                });
-                
-                const result = await response.json();
-                
-                if (result.status === "bot") {
-                    window.location.href = "https://www.google.com";
-                } else {
-                    unlockForms();
-                }
-            } catch (e) {
-                console.error("Erro na verificação:", e);
-                unlockForms(); 
+        try {
+            // FIRE BOTH REQUESTS AT THE SAME TIME TO DOUBLE SPEED
+            const [routesLoaded, captchaToken] = await Promise.all([
+                fetchDatabaseRoutes(),
+                grecaptcha.execute('6LcR7gQtAAAAACIEVWPRYCkIf1DRhBQW_OgfipT8', {action: 'homepage'})
+            ]);
+            
+            if (!routesLoaded || !authScriptUrl) {
+                document.getElementById('loginMsg').innerText = "System configuration error. Connection refused.";
+                document.getElementById('loginMsg').className = "message error";
+                return; 
             }
-        });
+
+            // Proceed with human verification now that we have the URL and Token
+            const payloadCaptcha = { action: 'verify_human', token: captchaToken, appSource: window.location.origin };
+            const response = await fetch(authScriptUrl, { 
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(payloadCaptcha)
+            });
+            
+            const result = await response.json();
+            
+            if (result.status === "bot") {
+                window.location.href = "https://www.google.com";
+            } else {
+                unlockForms();
+            }
+        } catch (e) {
+            console.error("Initialization Error:", e);
+            unlockForms(); // Failsafe unlock so users aren't locked out on a network glitch
+        }
     });
 
     // --- LOGIN LOGIC ---
@@ -406,105 +407,106 @@
     }
 
     // --- JWT DECODER HELPER ---
-function parseJwt(token) {
-    try {
-        const base64Url = token.split('.')[1];
-        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-        }).join(''));
-        return JSON.parse(jsonPayload);
-    } catch (e) {
-        console.error("Failed to parse JWT", e);
-        return null;
-    }
-}
-
-// --- GOOGLE SIGN-UP TRIGGER (Validates Checkbox) ---
-function handleGoogleSignUp() {
-    const consentBox = document.getElementById('aiConsent');
-    if (!consentBox.checked) {
-        alert("Action Required: You must agree to the Terms of Service & Privacy Policy before signing up with Google.");
-        return; 
-    }
-    
-    // If consent is checked, trigger the standard Google popup targeting the Signup button
-    handleGoogleSignIn('googleAuthBtnSignup');
-}
-
-// --- GOOGLE SIGN-IN TRIGGER ---
-function handleGoogleSignIn(targetBtnId = 'googleAuthBtn') {
-    if (typeof google === 'undefined') {
-        alert("Google Identity Service is loading. Please try again in a moment.");
-        return;
-    }
-
-    google.accounts.id.initialize({
-        client_id: "986200867991-so2avph45rlfuo3akvi2kiial0rdr85p.apps.googleusercontent.com", 
-        callback: handleGoogleCredentialResponse
-    });
-
-    // Triggers the Google One Tap prompt or account selector popup
-    google.accounts.id.prompt((notification) => {
-        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-            // Fallback to standard explicit sign-in flow if One Tap is dismissed
-            const targetEl = document.getElementById(targetBtnId);
-            if (targetEl) {
-                google.accounts.id.renderButton(
-                    targetEl,
-                    { theme: "outline", size: "large" }
-                );
-            }
+    function parseJwt(token) {
+        try {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            return JSON.parse(jsonPayload);
+        } catch (e) {
+            console.error("Failed to parse JWT", e);
+            return null;
         }
-    });
-}
-
-// --- GOOGLE RESPONSE HANDLER ---
-async function handleGoogleCredentialResponse(response) {
-    const userProfile = parseJwt(response.credential);
-    if (!userProfile) {
-        alert("Failed to decode Google identity token.");
-        return;
     }
 
-    const msg = document.getElementById('loginMsg');
-    msg.innerText = "Authenticating with Google...";
-    msg.className = "message";
-
-    const payloadGoogle = {
-        action: 'google_auth',
-        email: userProfile.email,
-        name: userProfile.name,
-        googleId: userProfile.sub,
-        appSource: window.location.origin
-    };
-
-    try {
-        const res = await fetch(authScriptUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify(payloadGoogle)
+    // --- DYNAMIC GOOGLE INITIALIZATION ---
+    function initializeGoogleAuth(clientId) {
+        if (typeof google === 'undefined') return;
+        google.accounts.id.initialize({
+            client_id: clientId, 
+            callback: handleGoogleCredentialResponse
         });
+        googleInitialized = true;
+    }
 
-        const result = await res.json();
+    // --- GOOGLE SIGN-UP TRIGGER (Validates Checkbox) ---
+    function handleGoogleSignUp() {
+        const consentBox = document.getElementById('aiConsent');
+        if (!consentBox.checked) {
+            alert("Action Required: You must agree to the Terms of Service & Privacy Policy before signing up with Google.");
+            return; 
+        }
+        handleGoogleSignIn('googleAuthBtnSignup');
+    }
 
-        if (result.status === "success") {
-            sessionStorage.setItem('authToken', result.token);
-            localStorage.setItem('currentUser', JSON.stringify(result.user));
+    // --- GOOGLE SIGN-IN TRIGGER ---
+    function handleGoogleSignIn(targetBtnId = 'googleAuthBtn') {
+        if (!googleInitialized) {
+            alert("Google Identity Service is loading or missing Client ID. Please try again in a moment.");
+            return;
+        }
 
-            msg.innerText = "Success! Entering...";
-            msg.className = "message success";
-            setTimeout(() => { window.location.href = 'home.html'; }, 1000);
-        } else {
-            msg.innerText = result.message || "Google authentication failed.";
+        google.accounts.id.prompt((notification) => {
+            if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+                const targetEl = document.getElementById(targetBtnId);
+                if (targetEl) {
+                    google.accounts.id.renderButton(
+                        targetEl,
+                        { theme: "outline", size: "large" }
+                    );
+                }
+            }
+        });
+    }
+
+    // --- GOOGLE RESPONSE HANDLER ---
+    async function handleGoogleCredentialResponse(response) {
+        const userProfile = parseJwt(response.credential);
+        if (!userProfile) {
+            alert("Failed to decode Google identity token.");
+            return;
+        }
+
+        const msg = document.getElementById('loginMsg');
+        msg.innerText = "Authenticating with Google...";
+        msg.className = "message";
+
+        const payloadGoogle = {
+            action: 'google_auth',
+            email: userProfile.email,
+            name: userProfile.name,
+            googleId: userProfile.sub,
+            appSource: window.location.origin
+        };
+
+        try {
+            const res = await fetch(authScriptUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(payloadGoogle)
+            });
+
+            const result = await res.json();
+
+            if (result.status === "success") {
+                sessionStorage.setItem('authToken', result.token);
+                localStorage.setItem('currentUser', JSON.stringify(result.user));
+
+                msg.innerText = "Success! Entering...";
+                msg.className = "message success";
+                setTimeout(() => { window.location.href = 'home.html'; }, 1000);
+            } else {
+                msg.innerText = result.message || "Google authentication failed.";
+                msg.className = "message error";
+            }
+        } catch (error) {
+            console.error("Google Auth Error:", error);
+            msg.innerText = "Connection error to authentication server.";
             msg.className = "message error";
         }
-    } catch (error) {
-        console.error("Google Auth Error:", error);
-        msg.innerText = "Connection error to authentication server.";
-        msg.className = "message error";
     }
-}
 
     // ==========================================
     // --- GITHUB AUTO VERSION TRACKER ---
@@ -538,7 +540,6 @@ async function handleGoogleCredentialResponse(response) {
     document.addEventListener('DOMContentLoaded', fetchGitHubVersion);
 </script>
 
-<!-- VERSION FLAG -->
     <div id="gh-version-flag" class="app-version-flag">
         <i class="fas fa-spinner fa-spin"></i> Fetching Build...
     </div>
