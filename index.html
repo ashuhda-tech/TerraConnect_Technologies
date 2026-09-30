@@ -174,6 +174,14 @@
                 <div id="signupMsg" class="message"></div>
             </form>
 
+            <!-- NEW SOCIAL SIGN UP GRID -->
+            <div class="divider"><span>Or sign up with</span></div>
+            <div class="social-grid">
+                <button type="button" class="btn-social" id="googleAuthBtnSignup" title="Google" onclick="handleGoogleSignUp()"><i class="fab fa-google"></i></button>
+                <button class="btn-social" title="LinkedIn" disabled><i class="fab fa-linkedin-in"></i></button>
+                <button class="btn-social" title="Facebook" disabled><i class="fab fa-facebook-f"></i></button>
+            </div>
+
             <p class="footer-link">Already have access? <a href="#" onclick="toggleAuth()">Sign in</a></p>
         </div>
     </div>
@@ -412,15 +420,27 @@ function parseJwt(token) {
     }
 }
 
+// --- GOOGLE SIGN-UP TRIGGER (Validates Checkbox) ---
+function handleGoogleSignUp() {
+    const consentBox = document.getElementById('aiConsent');
+    if (!consentBox.checked) {
+        alert("Action Required: You must agree to the Terms of Service & Privacy Policy before signing up with Google.");
+        return; 
+    }
+    
+    // If consent is checked, trigger the standard Google popup targeting the Signup button
+    handleGoogleSignIn('googleAuthBtnSignup');
+}
+
 // --- GOOGLE SIGN-IN TRIGGER ---
-function handleGoogleSignIn() {
+function handleGoogleSignIn(targetBtnId = 'googleAuthBtn') {
     if (typeof google === 'undefined') {
         alert("Google Identity Service is loading. Please try again in a moment.");
         return;
     }
 
     google.accounts.id.initialize({
-        client_id: "986200867991-so2avph45rlfuo3akvi2kiial0rdr85p.apps.googleusercontent.com", // Paste your Client ID here
+        client_id: "986200867991-so2avph45rlfuo3akvi2kiial0rdr85p.apps.googleusercontent.com", 
         callback: handleGoogleCredentialResponse
     });
 
@@ -428,10 +448,13 @@ function handleGoogleSignIn() {
     google.accounts.id.prompt((notification) => {
         if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
             // Fallback to standard explicit sign-in flow if One Tap is dismissed
-            google.accounts.id.renderButton(
-                document.getElementById("googleAuthBtn"),
-                { theme: "outline", size: "large" }
-            );
+            const targetEl = document.getElementById(targetBtnId);
+            if (targetEl) {
+                google.accounts.id.renderButton(
+                    targetEl,
+                    { theme: "outline", size: "large" }
+                );
+            }
         }
     });
 }
