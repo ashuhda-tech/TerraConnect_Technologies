@@ -84,6 +84,7 @@
         @media (max-width: 480px) {.auth-card { padding: 30px 20px; } h1 { font-size: 1.8rem; }}
     </style>
 
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="https://www.google.com/recaptcha/api.js?render=6LcR7gQtAAAAACIEVWPRYCkIf1DRhBQW_OgfipT8"></script>
 </head>
 <body>
@@ -138,7 +139,7 @@
 
             <div class="divider"><span>Or sign in with</span></div>
             <div class="social-grid">
-                <button class="btn-social" title="Google" disabled><i class="fab fa-google"></i></button>
+                <button type="button" class="btn-social" id="googleAuthBtn" title="Google" onclick="handleGoogleSignIn()"><i class="fab fa-google"></i></button>
                 <button class="btn-social" title="LinkedIn" disabled><i class="fab fa-linkedin-in"></i></button>
                 <button class="btn-social" title="Facebook" disabled><i class="fab fa-facebook-f"></i></button>
             </div>
@@ -395,6 +396,92 @@
         document.getElementById('login-section').classList.toggle('hidden');
         document.getElementById('signup-section').classList.toggle('hidden');
     }
+
+    // --- JWT DECODER HELPER ---
+function parseJwt(token) {
+    try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        return JSON.parse(jsonPayload);
+    } catch (e) {
+        console.error("Failed to parse JWT", e);
+        return null;
+    }
+}
+
+// --- GOOGLE SIGN-IN TRIGGER ---
+function handleGoogleSignIn() {
+    if (typeof google === 'undefined') {
+        alert("Google Identity Service is loading. Please try again in a moment.");
+        return;
+    }
+
+    google.accounts.id.initialize({
+        client_id: "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com", // Paste your Client ID here
+        callback: handleGoogleCredentialResponse
+    });
+
+    // Triggers the Google One Tap prompt or account selector popup
+    google.accounts.id.prompt((notification) => {
+        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+            // Fallback to standard explicit sign-in flow if One Tap is dismissed
+            google.accounts.id.renderButton(
+                document.getElementById("googleAuthBtn"),
+                { theme: "outline", size: "large" }
+            );
+        }
+    });
+}
+
+// --- GOOGLE RESPONSE HANDLER ---
+async function handleGoogleCredentialResponse(response) {
+    const userProfile = parseJwt(response.credential);
+    if (!userProfile) {
+        alert("Failed to decode Google identity token.");
+        return;
+    }
+
+    const msg = document.getElementById('loginMsg');
+    msg.innerText = "Authenticating with Google...";
+    msg.className = "message";
+
+    const payloadGoogle = {
+        action: 'google_auth',
+        email: userProfile.email,
+        name: userProfile.name,
+        googleId: userProfile.sub,
+        appSource: window.location.origin
+    };
+
+    try {
+        const res = await fetch(authScriptUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(payloadGoogle)
+        });
+
+        const result = await res.json();
+
+        if (result.status === "success") {
+            sessionStorage.setItem('authToken', result.token);
+            localStorage.setItem('currentUser', JSON.stringify(result.user));
+
+            msg.innerText = "Success! Entering...";
+            msg.className = "message success";
+            setTimeout(() => { window.location.href = 'home.html'; }, 1000);
+        } else {
+            msg.innerText = result.message || "Google authentication failed.";
+            msg.className = "message error";
+        }
+    } catch (error) {
+        console.error("Google Auth Error:", error);
+        msg.innerText = "Connection error to authentication server.";
+        msg.className = "message error";
+    }
+}
 
     // ==========================================
     // --- GITHUB AUTO VERSION TRACKER ---
