@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TerraConnect | Authentication</title>
     
-    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/IMAGE/LOGOS%20OROBORO_NO_BKGRD.png">
-    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/IMAGE/LOGOS%20OROBORO_NO_BKGRD.png">
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/IMAGE/terraconnect_ICON_no_bkgr.png">
+    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/IMAGE/terraconnect_ICON_no_bkgr.png">
 
     <meta property="og:type" content="website">
     <meta property="og:title" content="TerraConnect Technologies">
@@ -59,7 +59,6 @@
         .footer-link a { color: var(--accent-dark); text-decoration: none; font-weight: bold; }
         .footer-link a:hover { text-decoration: underline; }
 
-        /* ----- FLOATING TOP NAVIGATION RIBBON ----- */
         .top-nav-ribbon {position: fixed;top: 30px;right: 40px;display: flex;gap: 15px;z-index: 1000;}
         .floating-nav-btn {background: rgba(7, 11, 20, 0.6);border: 1px solid var(--accent-dark);color: var(--accent-dark);padding: 10px 20px;border-radius: 30px;text-decoration: none;font-family: var(--font-standard);font-size: 0.85rem;font-weight: bold;display: flex;align-items: center;gap: 8px;backdrop-filter: blur(5px);transition: all 0.3s ease;text-transform: uppercase;letter-spacing: 1px;}
         .floating-nav-btn:hover {background: var(--accent-dark);color: var(--bg-color);transform: scale(1.05);box-shadow: 0 4px 15px rgba(209, 179, 139, 0.2);}
@@ -74,7 +73,6 @@
         .success { color: var(--status-ok); }
         .hidden { display: none; }
 
-        /* ----- GLOBAL FOOTER ----- */
         footer {width: 100%;text-align: center;padding: 15px;background: rgba(10, 12, 16, 0.8);backdrop-filter: blur(10px);border-top: 1px solid var(--card-border);position: relative;z-index: 100;flex-shrink: 0; }
         .footer-text {font-size: 0.8rem; color: var(--text-muted); font-family: var(--font-standard); letter-spacing: 0.5px;}
         .footer-text a {color: var(--accent-dark); text-decoration: none; font-weight: 600; transition: color 0.3s ease; margin-left: 5px;}
@@ -204,10 +202,8 @@
     }
 
     // ==========================================
-    // --- DYNAMIC URL ROUTING LOGIC (Optimized Plain Text) ---
+    // --- DYNAMIC URL ROUTING LOGIC (Plain Text) ---
     // ==========================================
-    
-    // Original Master Directory Script URL restored
     const MASTER_DIRECTORY_URL = 'https://script.google.com/macros/s/AKfycbzq4YUe3Z2PxclvRmEcqiQunMJEtW5Q9rlNWmJ9qzEgPqc99UeU8nwucbouHWshMAw/exec'; 
 
     let authScriptUrl = "";
@@ -226,11 +222,11 @@
             const result = await response.json();
             
             if (result.status === "success") {
-                // BASE64 REMOVED - Expecting direct URLs from the backend
+                // Fetching plain text directly (NO BASE64)
                 authScriptUrl = result.data["TerraConnect_SignUp"]; 
                 pageIdScriptUrl = result.data["TerraConnect_PageID"];
                 
-                // Fetching Google Client ID dynamically from the Database
+                // Retrieve plain text Google Client ID
                 googleClientId = result.data["TerraConnect_Goog_Auth"]; 
                 if (googleClientId) {
                     initializeGoogleAuth(googleClientId);
@@ -249,7 +245,6 @@
     // ==========================================
     // --- AUTHENTICATION & FORMS LOGIC ---
     // ==========================================
-
     function generateUUID() {
         if (typeof crypto !== 'undefined' && crypto.randomUUID) {
             return crypto.randomUUID();
@@ -267,12 +262,10 @@
         document.getElementById('loginMsg').innerText = "";
     }
 
-    // ==========================================
-    // --- PARALLEL GATEKEEPER EXECUTION ---
-    // ==========================================
+    // --- PARALLEL GATEKEEPER EXECUTION (Maximum Speed) ---
     grecaptcha.ready(async function() {
         try {
-            // FIRE BOTH REQUESTS AT THE SAME TIME TO DOUBLE SPEED
+            // FIRE BOTH REQUESTS AT THE SAME TIME
             const [routesLoaded, captchaToken] = await Promise.all([
                 fetchDatabaseRoutes(),
                 grecaptcha.execute('6LcR7gQtAAAAACIEVWPRYCkIf1DRhBQW_OgfipT8', {action: 'homepage'})
@@ -284,7 +277,7 @@
                 return; 
             }
 
-            // Proceed with human verification now that we have the URL and Token
+            // Proceed with human verification
             const payloadCaptcha = { action: 'verify_human', token: captchaToken, appSource: window.location.origin };
             const response = await fetch(authScriptUrl, { 
                 method: 'POST',
@@ -301,7 +294,7 @@
             }
         } catch (e) {
             console.error("Initialization Error:", e);
-            unlockForms(); // Failsafe unlock so users aren't locked out on a network glitch
+            unlockForms(); 
         }
     });
 
@@ -317,13 +310,11 @@
 
         try {
             const payloadLogin = { action: 'login_user', email: email, pass: pass, appSource: window.location.origin };
-
             const response = await fetch(authScriptUrl, { 
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify(payloadLogin)
             });
-            
             const result = await response.json();
 
             if (result.status === "success") {
@@ -347,7 +338,6 @@
     // --- SIGN UP LOGIC ---
     document.getElementById('signupForm').addEventListener('submit', async (e) => {
         e.preventDefault();
-        
         const consentBox = document.getElementById('aiConsent');
         if (!consentBox.checked) {
             alert("Action Required: You must agree to the Data Processing & AI Consent terms to create an account.");
@@ -375,7 +365,6 @@
         try {
             msg.className = "message";
             msg.innerText = "Registering user profile...";
-            
             await fetch(authScriptUrl, { 
                 method: 'POST', 
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -383,7 +372,6 @@
             });
             
             msg.innerText = "Initializing secure environment...";
-            
             await fetch(pageIdScriptUrl, { 
                 method: 'POST', 
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -393,7 +381,6 @@
             msg.innerText = "Successfully registered! Please proceed to Sign in.";
             msg.className = "message success";
             e.target.reset();
-            
         } catch (error) {
             msg.className = "message error";
             msg.innerText = "Sign up Error. Please try again.";
@@ -431,7 +418,6 @@
         googleInitialized = true;
     }
 
-    // --- GOOGLE SIGN-UP TRIGGER (Validates Checkbox) ---
     function handleGoogleSignUp() {
         const consentBox = document.getElementById('aiConsent');
         if (!consentBox.checked) {
@@ -441,13 +427,11 @@
         handleGoogleSignIn('googleAuthBtnSignup');
     }
 
-    // --- GOOGLE SIGN-IN TRIGGER ---
     function handleGoogleSignIn(targetBtnId = 'googleAuthBtn') {
         if (!googleInitialized) {
             alert("Google Identity Service is loading or missing Client ID. Please try again in a moment.");
             return;
         }
-
         google.accounts.id.prompt((notification) => {
             if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
                 const targetEl = document.getElementById(targetBtnId);
@@ -461,7 +445,6 @@
         });
     }
 
-    // --- GOOGLE RESPONSE HANDLER ---
     async function handleGoogleCredentialResponse(response) {
         const userProfile = parseJwt(response.credential);
         if (!userProfile) {
@@ -487,7 +470,6 @@
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify(payloadGoogle)
             });
-
             const result = await res.json();
 
             if (result.status === "success") {
@@ -508,26 +490,19 @@
         }
     }
 
-    // ==========================================
     // --- GITHUB AUTO VERSION TRACKER ---
-    // ==========================================
     async function fetchGitHubVersion() {
         const flagElement = document.getElementById('gh-version-flag');
         if (!flagElement) return;
-
         const repoUrl = 'https://api.github.com/repos/ashuhda-tech/TerraConnect_Technologies/commits?per_page=1';
-
         try {
             const response = await fetch(repoUrl);
-            
             if (response.ok) {
                 const data = await response.json();
                 const latestCommit = data[0];
-                
                 const shortSha = latestCommit.sha.substring(0, 7);
                 const commitDate = new Date(latestCommit.commit.author.date);
                 const formattedDate = `${String(commitDate.getDate()).padStart(2, '0')}/${String(commitDate.getMonth() + 1).padStart(2, '0')}/${commitDate.getFullYear()}`;
-
                 flagElement.innerHTML = `<i class="fas fa-code-branch"></i> Build ${shortSha} (${formattedDate})`;
             } else {
                 flagElement.innerHTML = `<i class="fas fa-code-branch"></i> Live Build`;
