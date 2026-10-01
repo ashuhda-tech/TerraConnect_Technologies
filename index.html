@@ -225,7 +225,6 @@
                 authScriptUrl = result.data["TerraConnect_SignUp"]; 
                 pageIdScriptUrl = result.data["TerraConnect_PageID"];
                 
-                // Advanced Debugging Check
                 if (!authScriptUrl) {
                     console.error("CRITICAL ERROR: 'TerraConnect_SignUp' URL is missing from the Master Directory response. Check your Spreadsheet!", result.data);
                     return false;
@@ -337,6 +336,7 @@
         }
     });
 
+    // --- SIGN UP LOGIC (Updated for Dual Registration) ---
     document.getElementById('signupForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const consentBox = document.getElementById('aiConsent');
@@ -366,22 +366,42 @@
         try {
             msg.className = "message";
             msg.innerText = "Registering user profile...";
-            await fetch(authScriptUrl, { 
+            
+            // 1. Send data to Sign Up Database
+            const authResponse = await fetch(authScriptUrl, { 
                 method: 'POST', 
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify(payloadSignUp) 
             });
             
-            msg.innerText = "Initializing secure environment...";
-            await fetch(pageIdScriptUrl, { 
-                method: 'POST', 
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify(payloadPageID) 
-            });
-            
-            msg.innerText = "Successfully registered! Please proceed to Sign in.";
-            msg.className = "message success";
-            e.target.reset();
+            const authResult = await authResponse.json();
+
+            // 2. Only proceed if the user registration was successful
+            if (authResult.status === "success") {
+                msg.innerText = "Initializing secure environment...";
+                
+                // Send data to Page ID Database
+                const pageIdResponse = await fetch(pageIdScriptUrl, { 
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(payloadPageID) 
+                });
+                
+                const pageIdResult = await pageIdResponse.json();
+
+                if (pageIdResult.status === "success") {
+                    msg.innerText = "Successfully registered! Please proceed to Sign in.";
+                    msg.className = "message success";
+                    e.target.reset();
+                } else {
+                     msg.className = "message error";
+                     msg.innerText = "User registered, but environment setup failed: " + pageIdResult.message;
+                }
+            } else {
+                msg.className = "message error";
+                msg.innerText = authResult.message || "Registration failed.";
+            }
+
         } catch (error) {
             msg.className = "message error";
             msg.innerText = "Sign up Error. Please try again.";
@@ -444,6 +464,7 @@
         });
     }
 
+    // --- GOOGLE SIGN-IN & REGISTRATION LOGIC ---
     async function handleGoogleCredentialResponse(response) {
         const userProfile = parseJwt(response.credential);
         if (!userProfile) {
@@ -472,6 +493,27 @@
             const result = await res.json();
 
             if (result.status === "success") {
+                // Determine if this is a new registration based on the server response
+                // If the server explicitly tells us a new user was created, initialize their page
+                if (result.isNewUser) {
+                    msg.innerText = "Initializing new user environment...";
+                     const payloadPageID = {
+                        action: 'init_user_page',
+                        userID: result.user.id, // Assuming the backend returns the assigned ID
+                        appSource: window.location.origin 
+                    };
+                    
+                    try {
+                        await fetch(pageIdScriptUrl, { 
+                            method: 'POST', 
+                            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                            body: JSON.stringify(payloadPageID) 
+                        });
+                    } catch (e) {
+                         console.error("Failed to initialize environment for new Google user:", e);
+                    }
+                }
+
                 sessionStorage.setItem('authToken', result.token);
                 localStorage.setItem('currentUser', JSON.stringify(result.user));
 
