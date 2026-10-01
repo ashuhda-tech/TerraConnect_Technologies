@@ -5,19 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TerraConnect | Environment Panels</title>
     
-    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/assets/IMAGE/terraconnect%20ICON_no%20bkgr.png">
-    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/assets/IMAGE/terraconnect%20ICON_no%20bkgr.png">
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/IMAGE/terraconnect%20ICON_no%20bkgr.png">
+    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/IMAGE/terraconnect%20ICON_no%20bkgr.png">
     
     <meta property="og:type" content="website">
     <meta property="og:title" content="TerraConnect Technologies">
     <meta property="og:description" content="Environmental Animal IOT Monitoring Center">
     <meta property="og:url" content="https://ashuhda-tech.github.io/TerraConnect_Technologies/">
 
-    <meta property="og:image" content="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/TERRACONNECT_LOGOBRAND.png">
+    <meta property="og:image" content="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/TERRACONNECT_LOGOBRAND.png">
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="TerraConnect Technologies">
-    <meta name="twitter:image" content="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/TERRACONNECT_LOGOBRAND.png">
+    <meta name="twitter:image" content="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/TERRACONNECT_LOGOBRAND.png">
     
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -212,14 +212,17 @@
         // Define Icon String Constant
         const CUSTOM_LEAF_ICON = '<img src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/cc120b1c202fed01c4b4050d916d1e9ef5937a15/assets/IMAGE/terraconnect%20ICON_no%20bkgr.png" class="custom-leaf-icon">';
 
+        // Determine correct standardized User ID (Fallback to legacy id if needed)
+        const actualUserID = user ? (user.userID || user.id) : null;
+
         // ==========================================
         // VULNERABILITY FIX 1: Strict Token Enforcement
         // ==========================================
-        if (!user || !authToken) { 
+        if (!user || !authToken || !actualUserID) { 
             window.location.replace('index.html'); 
         } else {
             document.getElementById('userName').innerText = user.name || "User";
-            document.getElementById('userId').innerText = `ID: ${user.id}`;
+            document.getElementById('userId').innerText = `ID: ${actualUserID}`;
         }
 
         // Master Directory URL encoded in Base64
@@ -231,7 +234,7 @@
 
         async function fetchDatabaseRoutes() {
             try {
-                const payload = { pageName: "maindashboard.html" };
+                const payload = { pageName: "maindashboard.html", appSource: window.location.origin };
                 const response = await fetch(atob(MASTER_DIRECTORY_B64), {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -240,9 +243,10 @@
                 const result = await response.json();
                 
                 if (result.status === "success") {
-                    pageIdScriptUrl = atob(result.data["TerraConnect_PageID"] || ""); 
-                    themeScriptUrl = atob(result.data["TerraConnect_FLAGS_Dashboard View"] || "");
-                    routinesScriptUrl = atob(result.data["TerraConnect_Routines"] || "");
+                    // Removed atob() decoding; expecting plain-text URLs from backend now
+                    pageIdScriptUrl = result.data["TerraConnect_PageID"] || ""; 
+                    themeScriptUrl = result.data["TerraConnect_FLAGS_Dashboard View"] || "";
+                    routinesScriptUrl = result.data["TerraConnect_Routines"] || "";
                     return true;
                 } else {
                     console.error("Routing Access Denied:", result.message);
@@ -255,18 +259,18 @@
         }
 
         function applyInitialTheme() {
-            const savedTheme = localStorage.getItem(`theme_${user.id}`) || 'default';
+            const savedTheme = localStorage.getItem(`theme_${actualUserID}`) || 'default';
             document.documentElement.setAttribute('data-theme', savedTheme);
         }
 
         async function setTheme(themeName) {
             document.documentElement.setAttribute('data-theme', themeName);
-            localStorage.setItem(`theme_${user.id}`, themeName);
+            localStorage.setItem(`theme_${actualUserID}`, themeName);
 
             if (!themeScriptUrl) return;
 
             const appSource = window.location.origin;
-            const finalUrl = `${themeScriptUrl}?pageId=${encodeURIComponent(user.id)}&registerType=ThemePreference&value=${encodeURIComponent(themeName)}&authToken=${encodeURIComponent(authToken)}&appSource=${encodeURIComponent(appSource)}`;
+            const finalUrl = `${themeScriptUrl}?pageId=${encodeURIComponent(actualUserID)}&registerType=ThemePreference&value=${encodeURIComponent(themeName)}&authToken=${encodeURIComponent(authToken)}&appSource=${encodeURIComponent(appSource)}`;
             
             try {
                 await fetch(finalUrl, { method: 'GET' });
@@ -322,7 +326,7 @@
             const navSection = document.getElementById('navSection');
             
             try {
-                const response = await fetch(`${pageIdScriptUrl}?action=get_user_pages&userID=${encodeURIComponent(user.id)}&authToken=${encodeURIComponent(authToken)}`);
+                const response = await fetch(`${pageIdScriptUrl}?action=get_user_pages&userID=${encodeURIComponent(actualUserID)}&authToken=${encodeURIComponent(authToken)}`);
                 const result = await response.json();
                 
                 if (result.status === "error" || result.message === "Unauthorized") {
@@ -369,7 +373,7 @@
                         }
                     });
 
-                    if (firstThemeToApply && !localStorage.getItem(`theme_${user.id}`)) {
+                    if (firstThemeToApply && !localStorage.getItem(`theme_${actualUserID}`)) {
                         setTheme(firstThemeToApply);
                     }
 
