@@ -202,7 +202,7 @@
     }
 
     // ==========================================
-    // --- DYNAMIC URL ROUTING LOGIC (Plain Text) ---
+    // --- DYNAMIC URL ROUTING LOGIC (With Verbose Error Logging) ---
     // ==========================================
     const MASTER_DIRECTORY_URL = 'https://script.google.com/macros/s/AKfycbzq4YUe3Z2PxclvRmEcqiQunMJEtW5Q9rlNWmJ9qzEgPqc99UeU8nwucbouHWshMAw/exec'; 
 
@@ -222,29 +222,33 @@
             const result = await response.json();
             
             if (result.status === "success") {
-                // Fetching plain text directly (NO BASE64)
                 authScriptUrl = result.data["TerraConnect_SignUp"]; 
                 pageIdScriptUrl = result.data["TerraConnect_PageID"];
                 
-                // Retrieve plain text Google Client ID
+                // Advanced Debugging Check
+                if (!authScriptUrl) {
+                    console.error("CRITICAL ERROR: 'TerraConnect_SignUp' URL is missing from the Master Directory response. Check your Spreadsheet!", result.data);
+                    return false;
+                }
+
                 googleClientId = result.data["TerraConnect_Goog_Auth"]; 
                 if (googleClientId) {
                     initializeGoogleAuth(googleClientId);
+                } else {
+                    console.warn("WARNING: Google Client ID not found in database routes. Google Sign-In will not work.");
                 }
+                
                 return true;
             } else {
-                console.error("Routing Access Denied:", result.message);
+                console.error("Backend Rejected Request:", result.message);
                 return false;
             }
         } catch (error) {
-            console.error("Failed to connect to Master Directory:", error);
+            console.error("Network/CORS Error contacting Master Directory:", error);
             return false;
         }
     }
 
-    // ==========================================
-    // --- AUTHENTICATION & FORMS LOGIC ---
-    // ==========================================
     function generateUUID() {
         if (typeof crypto !== 'undefined' && crypto.randomUUID) {
             return crypto.randomUUID();
@@ -262,22 +266,19 @@
         document.getElementById('loginMsg').innerText = "";
     }
 
-    // --- PARALLEL GATEKEEPER EXECUTION (Maximum Speed) ---
     grecaptcha.ready(async function() {
         try {
-            // FIRE BOTH REQUESTS AT THE SAME TIME
             const [routesLoaded, captchaToken] = await Promise.all([
                 fetchDatabaseRoutes(),
                 grecaptcha.execute('6LcR7gQtAAAAACIEVWPRYCkIf1DRhBQW_OgfipT8', {action: 'homepage'})
             ]);
             
             if (!routesLoaded || !authScriptUrl) {
-                document.getElementById('loginMsg').innerText = "System configuration error. Connection refused.";
+                document.getElementById('loginMsg').innerText = "System configuration error. Connection refused. (Check Console F12)";
                 document.getElementById('loginMsg').className = "message error";
                 return; 
             }
 
-            // Proceed with human verification
             const payloadCaptcha = { action: 'verify_human', token: captchaToken, appSource: window.location.origin };
             const response = await fetch(authScriptUrl, { 
                 method: 'POST',
@@ -294,11 +295,12 @@
             }
         } catch (e) {
             console.error("Initialization Error:", e);
+            document.getElementById('loginMsg').innerText = "Failed to initialize properly.";
+            document.getElementById('loginMsg').className = "message error";
             unlockForms(); 
         }
     });
 
-    // --- LOGIN LOGIC ---
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const msg = document.getElementById('loginMsg');
@@ -335,7 +337,6 @@
         }
     });
 
-    // --- SIGN UP LOGIC ---
     document.getElementById('signupForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const consentBox = document.getElementById('aiConsent');
@@ -393,7 +394,6 @@
         document.getElementById('signup-section').classList.toggle('hidden');
     }
 
-    // --- JWT DECODER HELPER ---
     function parseJwt(token) {
         try {
             const base64Url = token.split('.')[1];
@@ -408,7 +408,6 @@
         }
     }
 
-    // --- DYNAMIC GOOGLE INITIALIZATION ---
     function initializeGoogleAuth(clientId) {
         if (typeof google === 'undefined') return;
         google.accounts.id.initialize({
@@ -490,7 +489,6 @@
         }
     }
 
-    // --- GITHUB AUTO VERSION TRACKER ---
     async function fetchGitHubVersion() {
         const flagElement = document.getElementById('gh-version-flag');
         if (!flagElement) return;
