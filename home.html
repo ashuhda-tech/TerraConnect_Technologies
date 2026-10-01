@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TerraConnect | Authentication</title>
+    <title>TerraConnect | Verification</title>
     
-    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/assets/IMAGE/terraconnect%20ICON_no%20bkgr.png">
-    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/assets/IMAGE/terraconnect%20ICON_no%20bkgr.png">
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/IMAGE/terraconnect_ICON_no_bkgr.png">
+    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/IMAGE/terraconnect_ICON_no_bkgr.png">
     
     <meta property="og:type" content="website">
     <meta property="og:title" content="TerraConnect Technologies">
@@ -95,7 +95,8 @@
     </footer>
 
 <script>
-    const MASTER_DIRECTORY_B64 = 'aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J6cTRZVWUzWjJQeGNsdlJtRWNxaVF1bk1KRXRXNVE5cmxOV21KOXF6RWdQcWM5OVVlVThud3VjYm91SFdzaE1Bdy9leGVj'; 
+    // Master URL maintained as Base64 format to match index.html logic
+    const MASTER_DIRECTORY_URL = atob('aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J6cTRZVWUzWjJQeGNsdlJtRWNxaVF1bk1KRXRXNVE5cmxOV21KOXF6RWdQcWM5OVVlVThud3VjYm91SFdzaE1Bdy9leGVj'); 
 
     let signupScriptUrl = "";
     let pageIdScriptUrl = "";
@@ -103,10 +104,9 @@
     async function fetchDatabaseRoutes() {
         console.log("[DEBUG] Fetching routes...");
         try {
-            const payload = { pageName: "home.html" };
-            const masterUrl = atob(MASTER_DIRECTORY_B64).trim();
+            const payload = { pageName: "home.html", appSource: window.location.origin };
             
-            const response = await fetch(masterUrl, {
+            const response = await fetch(MASTER_DIRECTORY_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify(payload)
@@ -114,8 +114,9 @@
             const result = await response.json();
             
             if (result.status === "success") {
-                signupScriptUrl = atob(result.data["TerraConnect_SignUp"]).trim(); 
-                pageIdScriptUrl = atob(result.data["TerraConnect_PageID"]).trim();
+                // Now receiving direct plain-text URLs from the Master Directory (no atob required)
+                signupScriptUrl = result.data["TerraConnect_SignUp"]; 
+                pageIdScriptUrl = result.data["TerraConnect_PageID"];
                 return true;
             } else {
                 return false;
@@ -136,8 +137,11 @@
             return;
         }
 
+        // Standardized to user.userID (with fallback to user.id for cached old sessions)
+        const actualUserID = user.userID || user.id;
+
         document.getElementById('userName').innerText = user.name || "Usuário";
-        document.getElementById('userIdDisplay').innerText = user.id || "---";
+        document.getElementById('userIdDisplay').innerText = actualUserID || "---";
 
         statusMsg.innerText = "Connecting to Master Directory...";
 
@@ -147,17 +151,17 @@
             return;
         }
 
-        fetchEnvironmentData(user.id, authToken);
+        fetchEnvironmentData(actualUserID, authToken);
     }
 
-    async function fetchEnvironmentData(userId, token) {
+    async function fetchEnvironmentData(userID, token) {
         const statusMsg = document.getElementById('statusMsg');
         
         try {
             statusMsg.innerText = "Authenticating and syncing User data...";
             
-            // 1. Validating Plan
-            const planUrl = `${signupScriptUrl}?action=get_plan&userId=${encodeURIComponent(userId)}&authToken=${encodeURIComponent(token)}`;
+            // 1. Validating Plan (Updated parameter to userID)
+            const planUrl = `${signupScriptUrl}?action=get_plan&userID=${encodeURIComponent(userID)}&authToken=${encodeURIComponent(token)}`;
             const planRes = await fetch(planUrl);
             const planText = await planRes.text();
 
@@ -175,7 +179,7 @@
             }
 
             // 2. Validating Pages
-            const envUrl = `${pageIdScriptUrl}?action=get_user_pages&userID=${encodeURIComponent(userId)}&authToken=${encodeURIComponent(token)}`;
+            const envUrl = `${pageIdScriptUrl}?action=get_user_pages&userID=${encodeURIComponent(userID)}&authToken=${encodeURIComponent(token)}`;
             const envRes = await fetch(envUrl);
             const envText = await envRes.text();
 
