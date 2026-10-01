@@ -353,13 +353,13 @@
             name: document.getElementById('regName').value,
             email: document.getElementById('regEmail').value.toLowerCase().trim(),
             pass: document.getElementById('regPass').value,
-            id: newUserID,
+            userID: newUserID, // STANDARDIZED
             appSource: window.location.origin 
         };
 
         const payloadPageID = {
             action: 'init_user_page',
-            userID: newUserID,
+            userID: newUserID, // STANDARDIZED
             appSource: window.location.origin 
         };
 
@@ -494,12 +494,11 @@
 
             if (result.status === "success") {
                 // Determine if this is a new registration based on the server response
-                // If the server explicitly tells us a new user was created, initialize their page
                 if (result.isNewUser) {
                     msg.innerText = "Initializing new user environment...";
                      const payloadPageID = {
                         action: 'init_user_page',
-                        userID: result.user.id, // Assuming the backend returns the assigned ID
+                        userID: result.user.userID, // STANDARDIZED
                         appSource: window.location.origin 
                     };
                     
