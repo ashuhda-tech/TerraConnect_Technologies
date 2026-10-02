@@ -273,6 +273,22 @@
             </div>
         </div>
 
+        <div id="aiFeedbackContainer" style="display:none; margin-top: 10px; gap: 10px; align-items: center;">
+            <span style="font-size: 0.75rem; color: var(--text-muted);">Was this insight helpful?</span>
+            <button onclick="submitAIFeedback(1)" class="btn-send" style="padding: 4px 8px; height: 28px;"><i class="fas fa-thumbs-up"></i></button>
+            <button onclick="openNegativeFeedbackModal()" class="btn-send" style="padding: 4px 8px; height: 28px; border-color: #ff5f5f; color: #ff5f5f;"><i class="fas fa-thumbs-down"></i></button>
+        </div>
+        
+        <!-- Negative Feedback Modal -->
+        <div id="feedbackModal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:var(--sidebar-bg); border:1px solid var(--border); padding:20px; border-radius:10px; z-index:10000; width:300px;">
+            <h4 style="margin-0 0 10px 0; color:var(--accent);">Improve AI Accuracy</h4>
+            <textarea id="feedbackComment" class="input-field" placeholder="What was inaccurate or unhelpful?" style="width:100%; height:80px;"></textarea>
+            <div style="display:flex; justify-content:space-between; margin-top:10px;">
+                <button onclick="closeFeedbackModal()" class="btn-send">Cancel</button>
+                <button onclick="submitAIFeedback(-1)" class="btn-send" style="border-color:#ff5f5f; color:#ff5f5f;">Submit</button>
+            </div>
+        </div>
+
         <div id="section-main">
             <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-top: 20px; margin-bottom: 15px;">
                 <i class="fas fa-broadcast-tower"></i> Main Sensor Unit
@@ -2506,126 +2522,73 @@ function applySpeciesGuidance() {
     const textBox = document.getElementById('aiInsightText');
     
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> COMPILING HISTORY...';
-    textBox.innerText = "Coletando toda a série histórica de sensores, biometria e laudos veterinários...";
+    textBox.innerText = "Sincronizando com o backend AI e coletando histórico do ecossistema...";
 
     try {
         const animalName = document.getElementById('dynName').innerText;
         const animalType = document.getElementById('dynAnimal').innerText;
         const scientificName = document.getElementById('dynScientific').innerText; 
         const sex = document.getElementById('dynSex').innerText;
-        const birthDate = document.getElementById('dynBirth').innerText;
         const currentLocation = document.getElementById('dynLoc').innerText; 
         const currTemp = document.getElementById('valField1').innerText;
         const currHum = document.getElementById('valField2').innerText;
 
         console.log("[FLAG] generateAIInsight: Fetching contextual background data...");
-        // Fetch using the new Script URLs (No CSV)
+        
+        // 1. Fetch Bio Data (Kept on frontend until backend directly queries the Sheets)
         const resBio = await fetch(`${BIODATA_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(currentPageId)}${authParams}`);
         const jsonBio = await resBio.json();
         const bioRows = jsonBio.data || [];
         const bioHistory = bioRows.map(r => `Data: ${r[1]} | Evento: ${r[2]} | Valor: ${r[3]}`).join('\n');
 
+        // 2. Fetch Environment Limits (Kept on frontend until backend directly queries the Sheets)
         const resEnv = await fetch(`${ENVIRONMENT_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(currentPageId)}${authParams}`);
         const jsonEnv = await resEnv.json();
         const envRow = jsonEnv.data;
         const envConfig = envRow ? `Temp Alvo: Min ${envRow[2]}°C / Max ${envRow[1]}°C | Umidade Alvo: Min ${envRow[4]}% / Max ${envRow[3]}%` : "Não configurado.";
 
-        const resVet = await fetch(`${VETDATA_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(currentPageId)}&userID=${encodeURIComponent(loggedUser.id)}${authParams}`);
+        // 3. Fetch Vet Data (Kept on frontend until backend directly queries the Sheets)
+        const vetUserId = typeof actualUserID !== 'undefined' ? actualUserID : loggedUser.id;
+        const resVet = await fetch(`${VETDATA_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(currentPageId)}&userID=${encodeURIComponent(vetUserId)}${authParams}`);
         const jsonVet = await resVet.json();
         const vetRows = jsonVet.data || [];
         const vetHistory = vetRows.map(r => `Data: ${r[1]} | Tipo de exame: ${r[3]} | Resultados: ${r[6] || 'Nenhum'} | Observações: ${r[7] || 'Nenhuma'}`).join('\n');
         
-                let tsHistory = "No telemetry data available.";
-                if (mainChannelId && mainReadKey) {
-                    try {
-                        const tsUrl = `https://api.thingspeak.com/channels/${mainChannelId}/feeds.json?api_key=${mainReadKey}&results=100`;
-                        const tsRes = await fetch(tsUrl);
-                        const tsJson = await tsRes.json();
-                        
-                        if (tsJson.feeds && tsJson.feeds.length > 0) {
-                            tsHistory = tsJson.feeds.map(f => {
-                                const date = new Date(f.created_at).toLocaleString('en-US');
-                                return `[${date}] Air Temperature of Main sensor: ${f.field1 || '--'}°C | Air Humidity of Main sensor: ${f.field2 || '--'}% | CO2: ${f.field3 || '--'}ppm | Ground Humidity of Main sensor: ${f.field4 || '--'}% | Light intensity of Main sensor: ${f.field7 || '--'}lx`;
-                            }).join('\n');
-                        }
-                    } catch(e) {
-                        console.warn("Failed to fetch ThingSpeak history for AI", e);
-                        tsHistory = "Error retrieving telemetry.";
-                    }
-                }
-                
-                let rsHistory = "No telemetry data available for Remote Sensor.";
-                if (r1ChannelId && r1ReadKey) {
-                    try {
-                        const rsUrl = `https://api.thingspeak.com/channels/${r1ChannelId}/feeds.json?api_key=${r1ReadKey}&results=100`;
-                        const rsRes = await fetch(rsUrl);
-                        const rsJson = await rsRes.json();
-                        
-                        if (rsJson.feeds && rsJson.feeds.length > 0) {
-                            rsHistory = rsJson.feeds.map(f => {
-                                const date = new Date(f.created_at).toLocaleString('en-US');
-                                return `[${date}] Air Temperature of Remote sensor: ${f.field1 || '--'}°C | Air Humidity of Remote sensor: ${f.field2 || '--'}% | Ground Humidity of remote sensor: ${f.field3 || '--'}%`;
-                            }).join('\n');
-                        }
-                    } catch(e) {
-                        console.warn("Failed to fetch Remote ThingSpeak history for AI", e);
-                        rsHistory = "Error retrieving remote telemetry.";
-                    }
-                }
-                
-        // --- OPTIMIZATION: USE THE GLOBAL CONTEXT GENERATED IN applySpeciesGuidance ---
-        const aiCareGuideContext = globalCareGuideContext;
-
-        const superPrompt = `
-[STRICT SYSTEM INSTRUCTION: YOUR ENTIRE RESPONSE MUST BE EXCLUSIVELY IN ENGLISH. Do not output any word in Portuguese or any other language. If the provided context data is in another language, you must translate the insights internally and provide the final output ONLY in English.]
-
-[MANDATORY REQUIREMENT: At the very beginning of your response, before presenting the topics, you MUST include this exact warning note translated into professional English: "Disclaimer: This AI analysis is intended solely as a general guide and basic reference. It does not provide a definitive diagnosis and in no way replaces a physical examination or consultation with a qualified veterinarian for proper medical care. If you have any concerns or notice any unusual symptoms in your animal, a veterinary visit is strongly recommended."]
-
-Please analyze the data correlation for the following animal monitored by the TerraConnect IoT system.
-
-**Profile:**
-- Name: ${animalName} (${animalType} | Scientific Name: ${scientificName} | Sex: ${sex})
-- Enclosure Physical Location: ${currentLocation}
-- Current Terrarium Conditions: Temp ${currTemp} | Humidity ${currHum}
-- Ideal Limits Configuration: ${envConfig}
-
-${aiCareGuideContext}
-
-**Environmental Telemetry History (Last 100 readings from IoT Sensors):**
-${tsHistory}
-
-**Remote Sensor Telemetry History (Warm Zone / Thermal Regulation) - Last 100 readings:**
-${rsHistory}
-
-**Biological History Series (Weight, Feeding, Molting):**
-${bioHistory || "No biological records."}
-
-**Veterinary History Series (Consultations and Examinations):**
-${vetHistory || "No veterinary records."}
-
-**Task:**
-
-Reference the environmental data with the biological and veterinary data. Is there any weight stagnation? Is the feeding frequency correlated with problems described in veterinary visits? Submit 3 topics:
-
-1) General Health Analysis
-2) Identified Correlations (Cause/Effect)
-3) Management Recommendations
-
-[FINAL RULE: REMEMBER TO GENERATE THE ENTIRE RESPONSE IN ENGLISH ONLY. BE EXTREMELY CONCISE. NO INTRODUCTORY OR CONCLUDING REMARKS. SKIP THE SPECIFICATIONS, JUST GIVE ME THE BOTTOM LINE. Do not use bulletpoints, just use the topic, section and subsection name.]
-`;
+        // 4. FRONTEND NO LONGER FETCHES THINGSPEAK TELEMETRY HERE!
+        // The backend handles the heavy IoT data directly to save browser resources.
 
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ANALYZING COMPLEX DATA...';
-        textBox.innerText = "Database gathered and ready to calculate. Sincronizing with AI models to determine solution pattern...";
+        textBox.innerText = "Database gathered. AI Core processing on Google Servers...";
 
-        console.log("[FLAG] generateAIInsight: Sending POST request to AI model...");
+        // PACKAGE THE DATA SECURELY
+        const payload = {
+            action: "generate_insight",
+            pageId: currentPageId,
+            animalName: animalName,
+            animalType: animalType,
+            scientificName: scientificName,
+            sex: sex,
+            currentLocation: currentLocation,
+            currTemp: currTemp,
+            currHum: currHum,
+            envConfig: envConfig,
+            careGuide: globalCareGuideContext,
+            // Pass the API Keys so the backend can fetch ThingSpeak securely
+            mainChannelId: mainChannelId,
+            mainReadKey: mainReadKey,
+            r1ChannelId: r1ChannelId,
+            r1ReadKey: r1ReadKey,
+            bioHistory: bioHistory,
+            vetHistory: vetHistory,
+            csrfToken: sessionStorage.getItem('authToken'),
+            authToken: sessionStorage.getItem('authToken')
+        };
+
+        console.log("[FLAG] generateAIInsight: Sending POST request to unified AI backend...");
         const response = await fetch(AI_SCRIPT_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ 
-                prompt: superPrompt, 
-                csrfToken: sessionStorage.getItem('authToken'),
-                authToken: sessionStorage.getItem('authToken')
-            })
+            body: JSON.stringify(payload)
         });
         
         const json = await response.json();
@@ -2636,9 +2599,14 @@ Reference the environmental data with the biological and veterinary data. Is the
                 .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
                 .replace(/\*(.*?)\*/g, '<i>$1</i>')
                 .replace(/\n/g, '<br>');
+            
+            // Show action buttons
             document.getElementById('btnListenAI').style.display = 'inline-flex';
-            } 
-        else {
+            document.getElementById('aiFeedbackContainer').style.display = 'flex';
+            
+            // Save Insight ID for feedback tracking
+            currentInsightId = json.insightId;
+        } else {
             textBox.innerText = "Analysis Failure: " + json.message;
         }
 
@@ -2650,7 +2618,32 @@ Reference the environmental data with the biological and veterinary data. Is the
     }
 }
 
+
    window.aiSpeechUtterances = [];
+
+    let currentInsightId = ""; // Tracked per generation
+
+    async function submitAIFeedback(rating) {
+        const comment = document.getElementById('feedbackComment') ? document.getElementById('feedbackComment').value : "";
+        
+        const payload = {
+            action: "log_feedback",
+            pageId: currentPageId,
+            insightId: currentInsightId,
+            rating: rating, // +1 or -1
+            comment: comment,
+            authToken: sessionStorage.getItem('authToken')
+        };
+    
+        await fetch(AI_SCRIPT_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(payload)
+        });
+    
+        closeFeedbackModal();
+        alert("Thank you! Your feedback helps train our monitoring models.");
+    }
 
     function toggleSpeakAI() {
         const textBox = document.getElementById('aiInsightText');
