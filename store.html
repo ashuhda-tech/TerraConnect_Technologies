@@ -5,13 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TerraConnect | Store & Plans</title>
     
-    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/TERRACONNECT_LOGO.png">
-    
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/IMAGE/terraconnect_ICON_no_bkgr.png">
+    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/IMAGE/terraconnect_ICON_no_bkgr.png">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="TerraConnect Technologies">
+    <meta property="og:description" content="Environmental Animal IOT Monitoring Center">
+    <meta property="og:url" content="https://nhanderu-lab.github.io/Tupan/">
+    <meta property="og:image" content="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/TERRACONNECT_LOGOBRAND.png">
+
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- QR Code Generator Library -->
+    <!-- QR Code Generator & Chart.js Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         @font-face {
@@ -124,6 +132,20 @@
             color: var(--accent);
         }
 
+        /* ----- AI STATS SPECIFICS ----- */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-bottom: 40px; }
+        .stat-card { background: var(--card-bg); backdrop-filter: blur(15px); border: 1px solid var(--card-border); border-radius: var(--border-radius); padding: 25px; text-align: center; transition: transform 0.3s ease; }
+        .stat-card:hover { transform: translateY(-3px); border-color: var(--accent); }
+        .stat-value { font-size: 2.5rem; font-family: var(--font-title); color: var(--text-main); margin-bottom: 5px; font-weight: bold; }
+        .stat-value span { font-size: 1rem; color: var(--text-muted); }
+        .stat-label { font-size: 0.85rem; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+        .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px; margin-bottom: 20px; }
+        .chart-wrapper { background: var(--card-bg); backdrop-filter: blur(15px); border: 1px solid var(--card-border); border-radius: var(--border-radius); padding: 30px; display: flex; flex-direction: column; align-items: center; }
+        .chart-container { position: relative; height: 260px; width: 100%; margin-bottom: 15px; }
+        .chart-caption { font-size: 0.85rem; color: var(--text-muted); text-align: center; margin-top: 15px; line-height: 1.5; padding: 0 15px; }
+        .chart-caption strong { color: var(--accent); font-family: var(--font-title); letter-spacing: 1px; display: block; margin-bottom: 5px; font-size: 1rem;}
+        .footnote { font-size: 0.75rem; color: var(--text-muted); text-align: center; margin-bottom: 80px; font-style: italic; opacity: 0.7; }
+
         /* ----- QR CODE FLOATING WIDGET ----- */
         #qr-widget {
             position: fixed;
@@ -168,7 +190,7 @@
 
         @media (max-width: 768px) {
             header { padding: 20px; flex-direction: column; gap: 15px; }
-            .pricing-grid, .product-grid, .tier-grid { grid-template-columns: 1fr; }
+            .pricing-grid, .product-grid, .tier-grid, .charts-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -249,6 +271,66 @@
                 <li><i class="fas fa-check"></i> Sensitive data privacy</li>
             </ul>
             <button class="btn-action">Subscribe Now</button>
+        </div>
+    </div>
+
+    <hr style="border: 0.5px solid var(--card-border); margin-bottom: 80px;">
+
+    <!-- AI TRANSPARENCY SECTION -->
+    <h2 class="section-title">AI Core Transparency</h2>
+    <p class="section-subtitle">Live statistical overview of our AI insight performance, driven entirely by user feedback and generation metrics.</p>
+
+    <div id="aiStatsLoading" style="text-align:center; padding: 40px; margin-bottom: 40px;">
+        <i class="fas fa-spinner fa-spin fa-2x" style="color: var(--accent);"></i>
+        <p style="margin-top: 15px; color: var(--text-muted); font-family: var(--font-title);">Compiling Live AI Feedback Analytics...</p>
+    </div>
+
+    <div id="aiStatsContainer" style="display: none;">
+        <!-- KPI Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">AI Generations</div>
+                <div class="stat-value" id="kpi-gen">--</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Feedbacks Received</div>
+                <div class="stat-value" id="kpi-fb">--</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Positive (by Feedback)</div>
+                <div class="stat-value" id="kpi-pos-fb">--<span>%</span></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Positive (by Generation)</div>
+                <div class="stat-value" id="kpi-pos-gen">--<span>%</span></div>
+            </div>
+        </div>
+
+        <!-- Donut Charts -->
+        <div class="charts-grid">
+            <div class="chart-wrapper">
+                <div class="chart-container">
+                    <canvas id="chartFeedbackQuality"></canvas>
+                </div>
+                <div class="chart-caption">
+                    <strong>Feedback Quality Ratio</strong>
+                    Displays the proportion of positive versus negative ratings specifically among the insights that received user feedback.
+                </div>
+            </div>
+
+            <div class="chart-wrapper">
+                <div class="chart-container">
+                    <canvas id="chartEngagement"></canvas>
+                </div>
+                <div class="chart-caption">
+                    <strong>Global Generation Efficacy</strong>
+                    Displays the proportion of positively rated insights compared against the total number of AI generations (including unrated autonomous queries).
+                </div>
+            </div>
+        </div>
+        
+        <div class="footnote">
+            * Data is securely and dynamically fetched from the TerraConnect_AIFeedback database repository.
         </div>
     </div>
 
@@ -368,12 +450,13 @@
     <i class="fas fa-spinner fa-spin"></i> Fetching Build...
 </div>
 
-    <script>
+<script>
 // ==========================================
 // --- SECURE ROUTING SYSTEM (WITH DIAGNOSTICS) ---
 // ==========================================
 const MASTER_DIRECTORY_B64 = 'aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J6cTRZVWUzWjJQeGNsdlJtRWNxaVF1bk1KRXRXNVE5cmxOV21KOXF6RWdQcWM5OVVlVThud3VjYm91SFdzaE1Bdy9leGVj'; 
 let FLAGS_SCRIPT_URL = "";
+let AIFEEDBACK_SCRIPT_URL = "";
 
 // Safe URL parser: Returns standard URLs as-is, decodes if Base64
 function safeParseUrl(val) {
@@ -385,7 +468,6 @@ function safeParseUrl(val) {
 }
 
 async function fetchDatabaseRoutes() {
-    // Starts a collapsible group in the console to keep it clean but highly detailed
     console.groupCollapsed("🛠️ [DIAGNOSTIC] Master Directory Fetch Event (store.html)");
     console.log("1. Initiating request sequence...");
     
@@ -404,11 +486,9 @@ async function fetchDatabaseRoutes() {
         console.log(`4. HTTP Response Status: ${response.status} ${response.statusText}`);
 
         const text = await response.text();
-        console.log("5. Raw Response Text:", text.substring(0, 250) + (text.length > 250 ? "...\n[TRUNCATED]" : ""));
-
-        // Diagnostic trap for Google HTML error pages
+        
         if (text.trim().startsWith("<")) {
-            console.error("❌ ERROR: Server returned HTML instead of JSON. Possible causes:\n- Script deployed incorrectly (Must be 'Execute as: Me' and 'Access: Anyone').\n- Master script crashed and returned a default Google error page.\n- Authorization was unexpectedly required.");
+            console.error("❌ ERROR: Server returned HTML instead of JSON.");
             console.groupEnd();
             return false;
         }
@@ -416,40 +496,122 @@ async function fetchDatabaseRoutes() {
         let result;
         try {
             result = JSON.parse(text);
-            console.log("6. Parsed JSON payload successfully:", result);
         } catch (e) {
-            console.error("❌ ERROR: JSON Parse Failed. The script did not return a valid JSON string.");
+            console.error("❌ ERROR: JSON Parse Failed.");
             console.groupEnd();
             return false;
         }
         
-        // Diagnostic trap for functional script errors
         if (result.status === "success") {
-            console.log("7. Available Keys mapped by Master Script:", Object.keys(result.data));
-            
-            // UPDATED TO MATCH THE CORRECT JSON KEY FROM THE MASTER SCRIPT
             FLAGS_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_FLAGS_Dashboard View"]);
-            console.log("8. Extracted FLAGS_SCRIPT_URL:", FLAGS_SCRIPT_URL || "[MISSING/EMPTY]");
-
-            if (!FLAGS_SCRIPT_URL) {
-                console.warn("⚠️ WARNING: 'TerraConnect_FLAGS_Dashboard View' key was not found in the database response.");
-            }
+            
+            // Extracts the newly created AIFeedback database reference (Index 19)[cite: 11]
+            AIFEEDBACK_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_AIFeedback"]); 
             
             console.log("✅ Master Directory Routing Successful!");
             console.groupEnd();
             return true;
         } else {
-            console.error("❌ ERROR: Script executed but returned functional failure message:", result.message);
+            console.error("❌ ERROR: Script executed but returned functional failure message.");
             console.groupEnd();
             return false;
         }
     } catch (error) {
-        // Diagnostic trap for CORS blocks or Network Drops
         console.error("❌ CRITICAL FETCH ERROR:", error.name, "-", error.message);
-        console.warn("💡 If this is 'TypeError: Failed to fetch', it is almost certainly a CORS preflight block or a disconnected network.");
-        console.dir(error); 
         console.groupEnd();
         return false;
+    }
+}
+
+// ==========================================
+// --- AI FEEDBACK & STATISTICS ENGINE ---
+// ==========================================
+let qualityChartInstance = null;
+let engagementChartInstance = null;
+
+async function loadAIFeedbackStats() {
+    if (!AIFEEDBACK_SCRIPT_URL) {
+        document.getElementById('aiStatsLoading').innerHTML = `<div style="color: #ff5f5f;">AI Feedback database route is unconfigured or offline.</div>`;
+        return;
+    }
+
+    try {
+        const response = await fetch(`${AIFEEDBACK_SCRIPT_URL}?action=get_stats`);
+        const result = await response.json();
+
+        if (result.status === "success") {
+            const metrics = result.metrics;
+
+            // Hide loader, show container
+            document.getElementById('aiStatsLoading').style.display = 'none';
+            document.getElementById('aiStatsContainer').style.display = 'block';
+
+            // Populate KPI values
+            document.getElementById('kpi-gen').innerText = metrics.totalGenerations;
+            document.getElementById('kpi-fb').innerText = metrics.totalFeedbacks;
+            document.getElementById('kpi-pos-fb').innerHTML = `${metrics.posVsFeedbacksRate}<span>%</span>`;
+            document.getElementById('kpi-pos-gen').innerHTML = `${metrics.posVsGenerationsRate}<span>%</span>`;
+
+            // Standardize colors based on the platform theme
+            const colorPositive = '#a3b18a'; // TerraConnect Green
+            const colorNegative = '#ff5f5f'; // TerraConnect Red
+            const colorAccent = '#d1b38b';   // Primary TerraConnect Gold Accent
+            const colorEmpty = 'rgba(255, 255, 255, 0.05)'; // Ghost color for unrated
+
+            // Render Chart 1: Feedback Quality Ratio (Positive vs Negative)
+            const ctxQuality = document.getElementById('chartFeedbackQuality').getContext('2d');
+            qualityChartInstance = new Chart(ctxQuality, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Positive Feedback', 'Negative Feedback'],
+                    datasets: [{
+                        data: [metrics.positiveFeedbacks, metrics.negativeFeedbacks],
+                        backgroundColor: [colorPositive, colorNegative],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '71%', // Precise 71% inner radius requirement
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: '#9ca3af', font: { family: 'Inter', size: 11 } } },
+                        tooltip: { callbacks: { label: function(context) { return ` ${context.label}: ${context.raw}`; } } }
+                    }
+                }
+            });
+
+            // Render Chart 2: Global Generation Efficacy (Positive vs Unrated/Negative)
+            const ctxEngagement = document.getElementById('chartEngagement').getContext('2d');
+            engagementChartInstance = new Chart(ctxEngagement, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Positive Output', 'Unrated Output', 'Negative Output'],
+                    datasets: [{
+                        data: [metrics.positiveFeedbacks, metrics.unratedGenerations, metrics.negativeFeedbacks],
+                        backgroundColor: [colorAccent, colorEmpty, colorNegative],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '71%', // Precise 71% inner radius requirement
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: '#9ca3af', font: { family: 'Inter', size: 11 } } },
+                        tooltip: { callbacks: { label: function(context) { return ` ${context.label}: ${context.raw}`; } } }
+                    }
+                }
+            });
+
+        } else {
+            document.getElementById('aiStatsLoading').innerHTML = `<div style="color: #ff5f5f;">Failed to retrieve statistical data.</div>`;
+        }
+    } catch (e) {
+        document.getElementById('aiStatsLoading').innerHTML = `<div style="color: #ff5f5f;">Connection error trying to reach AI stats database.</div>`;
+        console.error("AI Stats Loading Error:", e);
     }
 }
 
@@ -467,6 +629,9 @@ async function loadTierMatrix() {
         return;
     }
 
+    // 1.5 Load AI Analytics now that routing is complete
+    loadAIFeedbackStats();
+
     try {
         // 2. Fetch from the dynamically acquired Database URL
         const response = await fetch(FLAGS_SCRIPT_URL);
@@ -476,7 +641,6 @@ async function loadTierMatrix() {
             const data = result.data;
             const categories = {};
 
-            // Group by category and deduplicate descriptions (finding lowest minPlan)
             data.forEach(item => {
                 const cat = item.categoria || "Geral";
                 const desc = item.descricao;
@@ -489,7 +653,6 @@ async function loadTierMatrix() {
                 }
             });
 
-            // Build HTML Table
             let tableHTML = `
                 <table class="tier-table">
                     <thead>
@@ -506,18 +669,15 @@ async function loadTierMatrix() {
             `;
 
             for (const [categoryName, features] of Object.entries(categories)) {
-                // Add Category Header Row
                 tableHTML += `
                     <tr>
                         <td colspan="6" class="category-row"><i class="fas fa-layer-group" style="margin-right: 8px;"></i> ${categoryName}</td>
                     </tr>
                 `;
 
-                // Add Feature Rows
                 for (const [featureName, minTier] of Object.entries(features)) {
                     tableHTML += `<tr><td class="feature-name">${featureName}</td>`;
                     
-                    // Generate columns for Level 1 to 5
                     for (let level = 1; level <= 5; level++) {
                         if (level >= minTier) {
                             tableHTML += `<td><i class="fas fa-check check-icon"></i></td>`;
@@ -541,89 +701,79 @@ async function loadTierMatrix() {
     }
 }
 
-    // ==========================================
-    // --- GITHUB AUTO VERSION TRACKER ---
-    // ==========================================
-    async function fetchGitHubVersion() {
-        const flagElement = document.getElementById('gh-version-flag');
-        if (!flagElement) return;
+// ==========================================
+// --- GITHUB AUTO VERSION TRACKER ---
+// ==========================================
+async function fetchGitHubVersion() {
+    const flagElement = document.getElementById('gh-version-flag');
+    if (!flagElement) return;
 
-        // URL da API pública do GitHub apontando para os commits do seu repositório
-        const repoUrl = 'https://api.github.com/repos/ashuhda-tech/TerraConnect_Technologies/commits?per_page=1';
+    const repoUrl = 'https://api.github.com/repos/ashuhda-tech/TerraConnect_Technologies/commits?per_page=1';
 
-        try {
-            const response = await fetch(repoUrl);
+    try {
+        const response = await fetch(repoUrl);
+        
+        if (response.ok) {
+            const data = await response.json();
+            const latestCommit = data[0];
             
-            if (response.ok) {
-                const data = await response.json();
-                const latestCommit = data[0];
-                
-                // Pega os 7 primeiros caracteres do hash do commit (Padrão de versão)
-                const shortSha = latestCommit.sha.substring(0, 7);
-                
-                // Pega a data e formata
-                const commitDate = new Date(latestCommit.commit.author.date);
-                const formattedDate = `${String(commitDate.getDate()).padStart(2, '0')}/${String(commitDate.getMonth() + 1).padStart(2, '0')}/${commitDate.getFullYear()}`;
+            const shortSha = latestCommit.sha.substring(0, 7);
+            const commitDate = new Date(latestCommit.commit.author.date);
+            const formattedDate = `${String(commitDate.getDate()).padStart(2, '0')}/${String(commitDate.getMonth() + 1).padStart(2, '0')}/${commitDate.getFullYear()}`;
 
-                flagElement.innerHTML = `<i class="fas fa-code-branch"></i> Build ${shortSha} (${formattedDate})`;
-            } else {
-                // Se o GitHub limitar as requisições (Rate Limit)
-                flagElement.innerHTML = `<i class="fas fa-code-branch"></i> Live Build`;
-            }
-        } catch (error) {
-            // Se houver erro de rede
-            flagElement.innerHTML = `<i class="fas fa-code-branch"></i> Local Build`;
+            flagElement.innerHTML = `<i class="fas fa-code-branch"></i> Build ${shortSha} (${formattedDate})`;
+        } else {
+            flagElement.innerHTML = `<i class="fas fa-code-branch"></i> Live Build`;
         }
+    } catch (error) {
+        flagElement.innerHTML = `<i class="fas fa-code-branch"></i> Local Build`;
     }
+}
 
-    // ==========================================
-    // --- BUY ME A COFFEE QR HOVER ENGINE ---
-    // ==========================================
-    function initializeQRWidget() {
-        const qrWidget = document.getElementById('qr-widget');
-        const bmcButtons = document.querySelectorAll('.bmc-btn');
-        const qrContainer = document.getElementById('bmc-qrcode');
+// ==========================================
+// --- BUY ME A COFFEE QR HOVER ENGINE ---
+// ==========================================
+function initializeQRWidget() {
+    const qrWidget = document.getElementById('qr-widget');
+    const bmcButtons = document.querySelectorAll('.bmc-btn');
+    const qrContainer = document.getElementById('bmc-qrcode');
 
-        if (!qrWidget || bmcButtons.length === 0) return;
+    if (!qrWidget || bmcButtons.length === 0) return;
 
-        // Automatically Generate the QR Code for the specific link
-        qrContainer.innerHTML = "";
-        new QRCode(qrContainer, {
-            text: "https://buymeacoffee.com/rodrigojuliansantillan",
-            width: 140,
-            height: 140,
-            colorDark: "#000000",
-            colorLight: "#ffffff",
-            correctLevel: QRCode.CorrectLevel.H
-        });
-
-        bmcButtons.forEach(btn => {
-            // Move the widget to follow the cursor
-            btn.addEventListener('mousemove', (e) => {
-                qrWidget.style.left = e.clientX + 'px';
-                qrWidget.style.top = e.clientY + 'px';
-            });
-            
-            // Show widget when mouse enters button
-            btn.addEventListener('mouseenter', () => {
-                qrWidget.style.opacity = '1';
-                qrWidget.style.visibility = 'visible';
-            });
-            
-            // Hide widget when mouse leaves button
-            btn.addEventListener('mouseleave', () => {
-                qrWidget.style.opacity = '0';
-                qrWidget.style.visibility = 'hidden';
-            });
-        });
-    }
-
-    // Ensure all functions execute as soon as the page is ready
-    document.addEventListener('DOMContentLoaded', () => {
-        fetchGitHubVersion();
-        loadTierMatrix(); 
-        initializeQRWidget();
+    qrContainer.innerHTML = "";
+    new QRCode(qrContainer, {
+        text: "https://buymeacoffee.com/rodrigojuliansantillan",
+        width: 140,
+        height: 140,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
     });
-    </script>
+
+    bmcButtons.forEach(btn => {
+        btn.addEventListener('mousemove', (e) => {
+            qrWidget.style.left = e.clientX + 'px';
+            qrWidget.style.top = e.clientY + 'px';
+        });
+        
+        btn.addEventListener('mouseenter', () => {
+            qrWidget.style.opacity = '1';
+            qrWidget.style.visibility = 'visible';
+        });
+        
+        btn.addEventListener('mouseleave', () => {
+            qrWidget.style.opacity = '0';
+            qrWidget.style.visibility = 'hidden';
+        });
+    });
+}
+
+// Ensure all functions execute as soon as the page is ready
+document.addEventListener('DOMContentLoaded', () => {
+    fetchGitHubVersion();
+    loadTierMatrix(); 
+    initializeQRWidget();
+});
+</script>
 </body>
 </html>
