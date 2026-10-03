@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TerraConnect | Public Monitoring</title>
     
-    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/TERRACONNECT_LOGO.png">
-    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/TERRACONNECT_LOGO.png">
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/IMAGE/terraconnect_ICON_no_bkgr.png">
+    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/IMAGE/terraconnect_ICON_no_bkgr.png">
 
     <meta property="og:type" content="website">
     <meta property="og:title" content="TerraConnect Technologies">
     <meta property="og:description" content="Environmental Animal IOT Monitoring Center">
-    <meta property="og:url" content="https://ashuhda-tech.github.io/TerraConnect_Technologies/">
-    <meta property="og:image" content="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/TERRACONNECT_LOGOBRAND.png">
+    <meta property="og:url" content="https://nhanderu-lab.github.io/Tupan/">
+    <meta property="og:image" content="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/TERRACONNECT_LOGOBRAND.png">
 
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -29,7 +29,7 @@
     .loader-visual {width: 100vw; height: 100vh; object-fit: cover;}
 
     /* DEFINIÇÃO DE TODOS OS TEMAS */
-    :root {--bg-dark: #070b14; --sidebar-bg: #0d1117; --accent: #d1b38b; --text-light: #f4e9d8; --gray-panel: #1e1e1e; --border: #2d3139;}
+    :root {--bg-dark: #070b14; --sidebar-bg: #0d1117; --accent: #d1b38b; --text-light: #f4e9d8; --gray-panel: #1e1e1e; --border: #2d3139; --text-muted: #9ca3af;}
     /* TECH SAVVY & FUTURISTIC */
     [data-theme="tech1"] {--bg-dark: #0B1021; --sidebar-bg: #334155; --accent: #87CEFA; --text-light: #CFFAFE; --gray-panel: #E2E8F0; --border: #334155;}
     [data-theme="tech2"] {--bg-dark: #1a1a1d; --sidebar-bg: #4e4e50; --accent: #ffff00; --text-light: #f5f5f5; --gray-panel: #2e2e2e; --border: #95a5a6;}
@@ -80,6 +80,10 @@
     .cam-status-bar { position: absolute; bottom: 0; width: 100%; padding: 10px 20px; background: rgba(0,0,0,0.6); display: flex; justify-content: space-between; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;z-index: 3;}
     .dyn-name {font-family: 'Cinzel', serif; letter-spacing: 2px; font-size: 2.5rem; letter-spacing: 2px;margin: 15px 0 0 0; color: var(--accent);}
     
+    /* --- CAREGUIDE REFERENCE STYLES --- */
+    .guide-ref { font-size: 0.7rem; color: var(--accent); opacity: 0.8; margin-top: 8px; font-style: italic; font-weight: normal; }
+    .guide-ref-vet { background: rgba(163, 177, 138, 0.1); border-left: 3px solid #a3b18a; padding: 10px; margin-bottom: 15px; font-size: 0.8rem; color: var(--text-light); border-radius: 4px;}
+
     /* --- MAIN CONTENT LAYOUT --- */
     .main-content { flex: 1; padding: 40px; overflow-y: auto; background: transparent !important; transition: 0.5s; }
 
@@ -181,7 +185,7 @@
         </header>
 
         <!-- AI SECTION WRAPPER -->
-        <div id="aiSection">
+        <div id="section-ai">
             <h3 class="a70-font" style="font-size: 0.9rem; color: #a3b18a; margin: 30px 0 15px 0; display: flex; align-items: center; justify-content: space-between; width: 100%;">
                 <span><i class="fas fa-brain"></i> AI Insights</span>
                 <button id="btnListenAI" onclick="toggleSpeakAI()" style="background: transparent; border: 1px solid #a3b18a; color: #a3b18a; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; display: none; align-items: center; gap: 6px; font-family: 'Inter', sans-serif;">
@@ -199,12 +203,12 @@
         </div>
         
         <!-- MAIN SENSOR GRID -->
-        <div id="sensor-grid-main">
+        <div id="section-main">
             <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-top: 20px; margin-bottom: 15px;">
                 <i class="fas fa-broadcast-tower"></i> Main Sensor Unit
             </h3>
             
-           <div class="sensor-grid">
+           <div class="sensor-grid" id="sensor-grid-main">
                 <div class="sensor-card" onclick="openChart(3, 'CO2 Concentration')" style="cursor: pointer;">
                     <i class="fas fa-cloud sensor-icon" style="color: #a3b18a;"></i>
                     <div class="sensor-data">
@@ -240,13 +244,6 @@
                         <div class="sensor-val" id="valField5">--<span>%</span></div>
                     </div>
                 </div>
-                <div class="sensor-card" onclick="openChart(6, 'Battery State of Charge')" style="cursor: pointer;">
-                    <i class="fas fa-battery-full sensor-icon" style="color: #6ecc87;"></i>
-                    <div class="sensor-data">
-                        <span class="sensor-label">Battery SOC</span>
-                        <div class="sensor-val" id="valField6">--<span>%</span></div>
-                    </div>
-                </div>
                 <div class="sensor-card" onclick="openChart(7, 'Light Intensity')" style="cursor: pointer;">
                     <i class="fas fa-sun sensor-icon" style="color: #d4a373;"></i>
                     <div class="sensor-data">
@@ -254,23 +251,30 @@
                         <div class="sensor-val" id="valField7">--<span>lx</span></div>
                     </div>
                 </div>
+                <div class="sensor-card" onclick="openChart(6, 'Battery State of Charge')" style="cursor: pointer;">
+                    <i class="fas fa-battery-full sensor-icon" style="color: #6ecc87;"></i>
+                    <div class="sensor-data">
+                        <span class="sensor-label">Battery SOC</span>
+                        <div class="sensor-val" id="valField6">--<span>%</span></div>
+                    </div>
+                </div>
                <div class="sensor-card" onclick="openChart(8, 'Comunication Signal')" style="cursor: pointer;">
                     <i class="fas fa-signal sensor-icon" style="color: #00f2ff;"></i>
                     <div class="sensor-data">
                         <span class="sensor-label">RSSI</span>
-                        <div class="sensor-val" id="valField25">--<span>dBm</span></div>
+                        <div class="sensor-val" id="valField8">--<span>dBm</span></div>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- REMOTE SENSOR GRID -->
-        <div id="sensor-grid-remote">
+        <div id="section-remote">
             <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-top: 20px; margin-bottom: 15px;">
                 <i class="fas fa-broadcast-tower"></i> Remote Sensor Unit
             </h3>
 
-           <div class="sensor-grid">
+           <div class="sensor-grid" id="sensor-grid-remote">
                 <div class="sensor-card-rs" onclick="openChart(21, ' Remote Sensor | Air Temperature')" style="cursor: pointer;">
                     <i class="fas fa-thermometer-half sensor-icon" style="color: #ff5f5f;"></i>
                     <div class="sensor-data">
@@ -311,11 +315,14 @@
 
         <hr style="border: 0.5px solid #eee; margin: 20px 0;">
 
-        <div class="summary-section">
+        <div class="summary-section" id="section-summary">
             <div class="summary-card" id="sumFeeding">
                 <div class="summary-title a70-font"><i class="fas fa-utensils"></i> Last Feeding</div>
                 <div class="summary-main-val" id="sumFeedingVal">--<span>g</span></div>
                 <div class="summary-sub-val" id="sumFeedingDate">--- / --- / ----</div>
+                <div class="summary-sub-val" id="sumFeedingDaysPassed" style="margin-top: 8px; color: var(--accent); font-weight: 600; font-size: 0.75rem;">
+                    <i class="fas fa-clock"></i> -- Days Ago
+                </div>
             </div>
             <div class="summary-card" id="sumWeight">
                 <div class="summary-title a70-font"><i class="fas fa-weight"></i> Body Weight</div>
@@ -328,7 +335,7 @@
                 <div class="summary-sub-val" id="sumSheddingDate">Last: --- / --- / ----</div>
             </div>
             <div class="summary-card" id="sumLength">
-                <div class="summary-title a70-font"><i class="fas fa-ruler-combined"></i> Body Lenght</div>
+                <div class="summary-title a70-font"><i class="fas fa-ruler-combined"></i> Body Length</div>
                 <div class="summary-main-val" id="sumLengthVal">--<span>cm</span></div>
                 <div class="summary-sub-val" id="sumLengthDate">--- / --- / ----</div>
             </div>
@@ -344,26 +351,26 @@
                 <h3 class="a70-font">Feeding History (g)</h3>
                 <canvas id="feedingChart"></canvas>
             </div>
-            <div class="chart-card" id="chart-weight" data-hide-for="FISH">
+            <div class="chart-card" id="chart-weight">
                 <h3 class="a70-font">Weight Evolution (g)</h3>
                 <canvas id="weightChart"></canvas>
             </div>
-            <div class="chart-card" id="chart-shedding" data-show-for="SNAKE, LIZARD">
+            <div class="chart-card" id="chart-shedding">
                 <h3 class="a70-font">Shedding Intervals (Days)</h3>
                 <canvas id="sheddingChart"></canvas>
             </div>
-            <div class="chart-card" id="chart-length" data-hide-for="FISH">
+            <div class="chart-card" id="chart-length">
                 <h3 class="a70-font">Length Measurement (cm)</h3>
                 <canvas id="lengthChart"></canvas>
             </div>
-            <div class="chart-card" id="chart-height" data-hide-for="FISH,SNAKE">
+            <div class="chart-card" id="chart-height">
                 <h3 class="a70-font">Height Measurement (cm)</h3>
                 <canvas id="heightChart"></canvas>
             </div>
         </div>
 
         <!-- CAMERA SECTION WRAPPER -->
-        <div id="camera-card">
+        <div id="section-camera">
             <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin: 30px 0 15px 0;">Live Monitoring | Camera</h3>
             <div class="camera-card">
                 <div id="cameraOverlay" class="camera-overlay">
@@ -393,7 +400,7 @@
                     <table style="width: 100%; border-collapse: collapse; color: var(--text-light); font-size: 0.8rem;">
                         <thead>
                             <tr style="border-bottom: 1px solid var(--border); color: var(--accent);">
-                                <th style="padding: 10px; text-align: left;">Date</th>
+                                <th style="padding: 10px; text-align: left; white-space: nowrap; min-width: 150px;">Date</th>
                                 <th style="padding: 10px; text-align: left;">Type</th>
                                 <th style="padding: 10px; text-align: left;">Result</th>
                                 <th style="padding: 10px; text-align: left;">Observation</th>
@@ -441,18 +448,81 @@
         );
     }
 
-    // VULNERABILITY FIX (Hardcoded Secrets / IDOR Protection / DB Exposure): URLs moved to Base64 decode format and using the App Script API points.
-    const decodeAPI = (b64) => atob(b64);
+    // --- SECURITY PATTERN INTEGRATION (NON-BLOCKING FOR PUBLIC VIEW) ---
+    // If the owner views their own public link, this attaches tokens to authenticate the DB requests seamlessly. 
+    // If a guest views it, it gracefully falls back to public anonymous fetches.
+    function checkSecurity() {
+        const userString = localStorage.getItem('currentUser');
+        const authToken = sessionStorage.getItem('authToken');
+        
+        if (userString && authToken) {
+            const currentUser = JSON.parse(userString);
+            currentUser.authToken = authToken;
+            return currentUser;
+        }
+        return null;
+    }
 
-    const PAGEID_SCRIPT_URL = decodeAPI("aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J3M0xiT1lEcWxqQXhROGpvWVc4eURod2U2bHNpN0FkRkNBb2k0SEcxaVJkZ2xTMGs5LWZJMU9qMmVBMTJlUGM2Zy9leGVj");
-    const BIODATA_SCRIPT_URL = decodeAPI("aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J4bk9jV1NIUnV0QmtIY180NXRTTE9Gam93SlhNZXBsazMzM1RtYWRkcnZmV2dFVGxqYlpaNnNoT3V3WVRJRzRBa0QvZXhlYw==");
-    const ENVIRONMENT_SCRIPT_URL = decodeAPI("aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J6RzJZVmVtOXFHN3NFSzIwbFZ1Um0yQmhqbzEwZGZYUkY5OG1pYlJFYlVabk01b2JUcmIwUXJRREpJR2kwd0ZvRS9leGVj");
-    const VETDATA_SCRIPT_URL = decodeAPI("aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J4eG5seFNmbGhHSGFYOElNY1FqOXk3SDk5YnU0RzlWLVVNOWYtRS1TTGRWMmVMY1VyQnBRV3Z3aDdvNkdITFVYY2EvZXhlYw=="); 
-    const AI_SCRIPT_URL = decodeAPI("aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J4aWduN1l2SVhtQ2lBZ2dLVTlYS2x2ZVdIUV9oUXpZTDY1TUVQM3lFRmUxbGoxZXdQakh1TnpYQmlfUzhKTVRQRS9leGVj");
+    const loggedUser = checkSecurity();
+    const authParams = loggedUser ? `&userID=${encodeURIComponent(loggedUser.userID)}&authToken=${encodeURIComponent(loggedUser.authToken)}&csrfToken=${encodeURIComponent(loggedUser.authToken)}` : "";
+
+    // --- NEW MASTER SCRIPT LOGIC START ---
+    const MASTER_DIRECTORY_B64 = 'aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J6cTRZVWUzWjJQeGNsdlJtRWNxaVF1bk1KRXRXNVE5cmxOV21KOXF6RWdQcWM5OVVlVThud3VjYm91SFdzaE1Bdy9leGVj'; 
+
+    let DB_LOAD_SEQUENCE = [];    
+    let FLAGS_SCRIPT_URL = ""; 
+    let PAGEID_SCRIPT_URL = "";
+    let BIODATA_SCRIPT_URL = "";
+    let ENVIRONMENT_SCRIPT_URL = "";
+    let VETDATA_SCRIPT_URL = "";
+    let AI_SCRIPT_URL = "";
+    let CAREGUIDE_SCRIPT_URL = "";
+
+    function safeParseUrl(val) {
+        if (!val) return "";
+        let str = String(val).trim();
+        if (str.startsWith("http")) return str; 
+        try { return atob(str).trim(); }        
+        catch (e) { return str; }               
+    }
+
+    async function fetchDatabaseRoutes() {
+        console.log("[DEBUG] Fetching routes for Public View...");
+        try {
+            const payload = { pageName: "public_view.html" };
+            const masterUrl = atob(MASTER_DIRECTORY_B64).trim();
+            
+            const response = await fetch(masterUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(payload)
+            });
+            const text = await response.text();
+            
+            if (text.trim().startsWith("<")) return false;
+
+            const result = JSON.parse(text);
+            
+            if (result.status === "success") {
+                DB_LOAD_SEQUENCE = result.sequence || Object.keys(result.data); 
+                FLAGS_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_FLAGS_Dashboard View"]);
+                PAGEID_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_PageID"]);
+                BIODATA_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_BioData"]);
+                ENVIRONMENT_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_Enviromental Setup"]);
+                VETDATA_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_VetData"]);
+                AI_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_AI"]);
+                CAREGUIDE_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_CareGuide"]);
+                return true;
+            } else {
+                return false;
+            }
+        } catch (error) {
+            return false;
+        }
+    }
     
-    // FEATURE FLAGS PRIVACY INTEGRATION
-    const FLAGS_SCRIPT_URL = decodeAPI("aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J5WmFvUXlSaVFEYVRQOUlrYk9LODlBMmw5RHRINnRPdHdMNlRGbjM4eDVOX2dZaWlRYzJPcy1OWjFkdkVzWk1aS0YvZXhlYw==");
-    const CURRENT_PLAN_LEVEL = 2; // Locked strictly to Level 2 for public view
+    // CURRENT_PLAN_LEVEL is enforced explicitly for external public viewers
+    const CURRENT_PLAN_LEVEL = 2; 
    
     let feedingChart, weightChart, sheddingChart, lengthChart, heightChart;
     let tsReadURL = "";
@@ -463,72 +533,142 @@
     let vetMap = null;
     let homeLat = 0;
     let homeLon = 0;
+
+    let currentSpeciesData = null;
+    let animalBirthDate = ""; 
+    let globalAnimalWeight = 0; 
+    let isBioHistoryLoaded = false; 
+    let globalCareGuideContext = "No specific species care guide available.";
     
     function applyUserTheme() {
         document.documentElement.setAttribute('data-theme', 'default');
     }
 
-function removeLoader() {
-    setTimeout(() => {
-        const loader = document.getElementById('page-loader');
-        if (loader) {
-            loader.style.opacity = '0';
-            loader.style.visibility = 'hidden';
-            setTimeout(() => loader.style.display = 'none', 800);
-        }
-    }, 800);
-}
-
-// --- FEATURE FLAGS PROCESSOR ---
-async function applyFeatureFlags(animalType) {
-    try {
-        const response = await fetch(`${FLAGS_SCRIPT_URL}?action=read_public`);
-        const result = await response.json();
-        
-        if (result.status === "success") {
-            const flags = result.data;
-            flags.forEach(flag => {
-                const el = document.getElementById(flag.element);
-                if (!el) return;
-
-                let shouldShow = true;
-
-                if (CURRENT_PLAN_LEVEL < flag.minPlan) {
-                    shouldShow = false;
-                }
-
-                if (shouldShow && flag.allowedAnimals && flag.allowedAnimals.length > 0) {
-                    if (!flag.allowedAnimals.includes('ALL') && !flag.allowedAnimals.includes(animalType.toUpperCase())) {
-                        shouldShow = false;
-                    }
-                }
-
-                if (!shouldShow) {
-                    el.style.display = 'none';
-                }
-            });
-        }
-    } catch (e) {
-        console.error("Feature Flags Sync Error:", e);
+    function removeLoader() {
+        setTimeout(() => {
+            const loader = document.getElementById('page-loader');
+            if (loader) {
+                loader.style.opacity = '0';
+                loader.style.visibility = 'hidden';
+                setTimeout(() => loader.style.display = 'none', 800);
+            }
+        }, 800);
     }
-}
+
+    function cleanUpEmptySections() {
+        const sections = document.querySelectorAll('div[id^="section-"], div#vet-section');
+        sections.forEach(section => {
+            if (section.style.display === 'none') return;
+            const cards = section.querySelectorAll('.sensor-card, .sensor-card-rs, .input-card, .summary-card, .chart-card, .camera-card');
+            if (cards.length > 0) {
+                let anyVisible = false;
+                cards.forEach(card => {
+                    if (card.style.display !== 'none' && window.getComputedStyle(card).display !== 'none') {
+                        anyVisible = true;
+                    }
+                });
+                if (!anyVisible) section.style.display = 'none';
+            }
+        });
+    }
+
+    // --- FEATURE FLAGS PROCESSOR ---
+    async function applyVisibilityRules(animalTypeRaw, userPlan) {
+        if (!FLAGS_SCRIPT_URL || FLAGS_SCRIPT_URL === "") return;
+
+        try {
+            // Uses read_public explicitly if not logged in
+            const fetchUrl = loggedUser ? `${FLAGS_SCRIPT_URL}?${authParams.replace('&', '')}` : `${FLAGS_SCRIPT_URL}?action=read_public`;
+            const response = await fetch(fetchUrl);
+            const jsonResponse = await response.json();
+            
+            if (jsonResponse.status === "success") {
+                const flags = jsonResponse.data;
+                const animalType = String(animalTypeRaw).toUpperCase().trim();
+
+                const smartGroups = {
+                    'Height': ['sumHeight', 'chart-height'],
+                    'Length': ['sumLength', 'chart-length'],
+                    'Weight': ['sumWeight', 'chart-weight'],
+                    'Feeding': ['sumFeeding', 'chart-feeding'],
+                    'Shedding': ['sumShedding', 'chart-shedding']
+                };
+
+                flags.forEach(flag => {
+                    let targetIds = [flag.element];
+
+                    if (smartGroups[flag.element]) {
+                        targetIds = smartGroups[flag.element];
+                    } else {
+                        for (const [groupName, ids] of Object.entries(smartGroups)) {
+                            if (ids.includes(flag.element)) {
+                                targetIds = ids;
+                                break;
+                            }
+                        }
+                    }
+
+                    const minPlan = parseInt(flag.minPlan) || 1;
+                    const allowedStr = Array.isArray(flag.allowedAnimals) ? flag.allowedAnimals.join('|') : String(flag.allowedAnimals);
+                    const allowedKeywords = allowedStr.toUpperCase().split('|').map(s => s.trim()).filter(Boolean);
+
+                    const planOk = userPlan >= minPlan;
+                    const animalOk = allowedKeywords.includes('ALL') || allowedKeywords.some(keyword => {
+                        const kw = keyword.toUpperCase();
+                        const at = animalType.toUpperCase();
+                        const regex = new RegExp(`\\b${kw}\\b`, 'i');
+                        return regex.test(at) || kw === at;
+                    });
+
+                    targetIds.forEach(id => {
+                        let element = document.getElementById(id);
+                        if (element) {
+                            if (element.tagName === 'INPUT') {
+                                const parentCard = element.closest('.input-card');
+                                if (parentCard) element = parentCard;
+                            }
+
+                            if (!planOk || !animalOk) {
+                                element.style.display = 'none';
+                            } else {
+                                element.style.display = '';
+                            }
+                        }
+                    });
+                });
+            }
+        } catch (e) {
+            console.error("Feature Flags Sync Error:", e);
+        }
+    }
 
 async function loadData() {
     if (!currentPageId) return;
+
+    const routesLoaded = await fetchDatabaseRoutes();
+    if (!routesLoaded) {
+        document.getElementById('dynAmbient').innerText = "SYSTEM ERROR";
+        alert("Critical System Error: Failed to load secure routes from Master Directory. Please check console.");
+        removeLoader();
+        return;
+    }
         
     try {
-        const secureUrl = `${PAGEID_SCRIPT_URL}?action=read_public&pageID=${encodeURIComponent(currentPageId)}`;
+        const secureUrl = `${PAGEID_SCRIPT_URL}?action=read_public&pageID=${encodeURIComponent(currentPageId)}${authParams}`;
         const response = await fetch(secureUrl);
         const jsonResponse = await response.json();
 
         if (jsonResponse.status === "success") {
             const data = jsonResponse.data;
 
-            // Bio Info Basics
             document.getElementById('dynName').innerText = data[3] || "---";
             document.getElementById('dynSex').innerText = data[4] || "---";
-            document.getElementById('dynScientific').innerText = data[5] || "---";
+            
+            const scientificNameStr = data[5] || "---";
+            document.getElementById('dynScientific').innerText = scientificNameStr;
+            
             const rawBirthDate = data[6];            
+            animalBirthDate = rawBirthDate;
             
             if (rawBirthDate && rawBirthDate !== "---") {
                 const ageString = getAgeString(rawBirthDate);
@@ -561,14 +701,9 @@ async function loadData() {
             } else {locElement.innerText = "---";}
             document.getElementById('dynAmbient').innerText = String(data[2] || "Ambient").toUpperCase();
             
-            // Layout Filtering and Feature Flags Processing
             const animalTypeRaw = String(data[22] || "DEFAULT");
             document.getElementById('dynAnimal').innerText = animalTypeRaw.toUpperCase();
             
-            filterLayoutByAnimal(animalTypeRaw); // Static DOM fallback
-            await applyFeatureFlags(animalTypeRaw.toUpperCase()); // Dynamic Script API Enforcement
-
-            // Video Logic
             const videoElement = document.getElementById('bgVideo');
             if (videoElement) {
                 const videoSource = videoElement.querySelector('source');
@@ -579,7 +714,6 @@ async function loadData() {
                 videoElement.load();
                 
                 videoElement.play().catch(e => {
-                    console.warn(`Video ${videoFileName} not found. Using fallback.`);
                     videoSource.src = `${videoBaseURL}RIVER_MAINDASHBOARD.mp4`;
                     videoElement.load();
                     videoElement.play();
@@ -587,9 +721,30 @@ async function loadData() {
             }
 
             mainChannelId = data[10];
+            const mainWriteKey = data[11];
             mainReadKey = data[12];
             r1ChannelId = data[13];
+            const r1WriteKey = data[14];
             r1ReadKey = data[15];
+
+            const isConfigured = (val) => val && String(val).trim() !== "" && String(val).trim() !== "---";
+            
+            if (isConfigured(mainChannelId) && isConfigured(mainWriteKey) && isConfigured(mainReadKey)) {
+                if (document.getElementById('section-main').style.display !== 'none') {
+                    document.getElementById('section-main').style.display = 'block';
+                }
+            } else {
+                document.getElementById('section-main').style.display = 'none';
+            }
+            
+            if (isConfigured(r1ChannelId) && isConfigured(r1WriteKey) && isConfigured(r1ReadKey)) {
+                if (document.getElementById('section-remote').style.display !== 'none') {
+                    document.getElementById('section-remote').style.display = 'block';
+                }
+            } else {
+                document.getElementById('section-remote').style.display = 'none';
+            }
+
             document.getElementById('dynChannel').innerText = mainChannelId || "---";
 
             const photoURL = data[19];
@@ -607,10 +762,27 @@ async function loadData() {
             }
 
             updateSensors();
-            loadBiologicalHistory(currentPageId);
-            loadVetVisits(currentPageId);
+            
+            // PRIORITY QUEUE LOGIC
+            for (const dbName of DB_LOAD_SEQUENCE) {
+                try {
+                    if (dbName === "TerraConnect_CareGuide" && scientificNameStr !== "---") {
+                        await loadSpeciesDatabase(scientificNameStr);
+                    } else if (dbName === "TerraConnect_BioData") {
+                        await loadBiologicalHistory(currentPageId);
+                    } else if (dbName === "TerraConnect_VetData") {
+                        await loadVetVisits(currentPageId);
+                    } else if (dbName === "TerraConnect_FLAGS_Dashboard View") {
+                        await applyVisibilityRules(animalTypeRaw, CURRENT_PLAN_LEVEL);
+                    }
+                } catch (queueErr) {
+                    console.error(`[ERROR] Failed to process ${dbName}:`, queueErr);
+                }
+            }
+
             setInterval(updateSensors, 20000);
             
+            cleanUpEmptySections();
             removeLoader();
         } else {
             removeLoader();
@@ -640,6 +812,32 @@ async function loadData() {
         return ageStr ? ageStr.trim() + " | " : "";
     }
     
+    async function loadSpeciesDatabase(scientificName) {
+        if (!scientificName || scientificName === "---") return;
+        
+        try {
+            // Respects authParams if owner views it, otherwise uses read_public fallback
+            const fetchUrl = loggedUser ? `${CAREGUIDE_SCRIPT_URL}?action=get_species_data&scientificName=${encodeURIComponent(scientificName)}${authParams}` : `${CAREGUIDE_SCRIPT_URL}?action=get_species_data_public&scientificName=${encodeURIComponent(scientificName)}`;
+            
+            const response = await fetch(fetchUrl);
+            const json = await response.json();
+
+            if (json.status === "success") {
+                const fetchedData = json.data;
+                const qualityFlag = fetchedData[34] ? String(fetchedData[34]).trim().toUpperCase() : "";
+
+                if (qualityFlag === 'T' || qualityFlag === 'TRUE') {
+                    currentSpeciesData = fetchedData;
+                    applySpeciesGuidance();
+                } else {
+                    currentSpeciesData = null; 
+                }
+            }
+        } catch (e) {
+            console.error("Error fetching species data:", e);
+        }
+    }
+
     async function getGeocodedLocation(lat, lon) {
     try {
         const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10&addressdetails=1`);
@@ -655,18 +853,6 @@ async function loadData() {
         console.warn("Geocoding failed, falling back to raw coordinates.", error);
     }
     return `${lat}, ${lon}`; 
-}
-    
-    function filterLayoutByAnimal(animalType) {
-    const type = animalType.toUpperCase().trim();
-    document.querySelectorAll('[data-hide-for]').forEach(el => {
-        const excludedTypes = el.getAttribute('data-hide-for').toUpperCase().split(',');
-        if (excludedTypes.includes(type)) el.remove();
-    });
-    document.querySelectorAll('[data-show-for]').forEach(el => {
-        const allowedTypes = el.getAttribute('data-show-for').toUpperCase().split(',');
-        if (!allowedTypes.includes(type)) el.remove();
-    });
 }
     
 async function updateSensors() {
@@ -718,7 +904,8 @@ function updateFieldUI(id, val) {
     // --- BIOLOGICAL HISTORY ---
     async function loadBiologicalHistory(id) {
         try {
-            const res = await fetch(`${BIODATA_SCRIPT_URL}?action=read_public&pageId=${encodeURIComponent(id)}`);
+            const fetchUrl = loggedUser ? `${BIODATA_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(id)}${authParams}` : `${BIODATA_SCRIPT_URL}?action=read_public&pageId=${encodeURIComponent(id)}`;
+            const res = await fetch(fetchUrl);
             const json = await res.json();
             const events = json.data || [];
             
@@ -748,14 +935,30 @@ function updateFieldUI(id, val) {
 
             const elFeedingVal = document.getElementById('sumFeedingVal');
             const elFeedingDate = document.getElementById('sumFeedingDate');
+            const elFeedingDaysPassed = document.getElementById('sumFeedingDaysPassed');
+
             if(lastFeeding && elFeedingVal && elFeedingDate) {
                 elFeedingVal.innerHTML = `${lastFeeding[3]}<span> g</span>`;
                 elFeedingDate.innerText = formatDateDisplay(lastFeeding[1]);
+                
+                if (elFeedingDaysPassed) {
+                    const feedDate = new Date(lastFeeding[1]);
+                    const today = new Date();
+                    if (!isNaN(feedDate.getTime())) {
+                        const diffTime = today.getTime() - feedDate.getTime();
+                        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                        const displayDays = diffDays < 0 ? 0 : diffDays; 
+                        elFeedingDaysPassed.innerHTML = `<i class="fas fa-clock"></i> ${displayDays} Days Ago`;
+                    } else {
+                        elFeedingDaysPassed.innerHTML = `<i class="fas fa-clock"></i> -- Days Ago`;
+                    }
+                }
             }
             
             const elWeightVal = document.getElementById('sumWeightVal');
             const elWeightDate = document.getElementById('sumWeightDate');
             if(lastWeight && elWeightVal && elWeightDate) {
+                globalAnimalWeight = parseFloat(lastWeight[3]) || 0;
                 elWeightVal.innerHTML = `${lastWeight[3]}<span> g</span>`;
                 elWeightDate.innerText = formatDateDisplay(lastWeight[1]);
             }
@@ -774,6 +977,9 @@ function updateFieldUI(id, val) {
                 elHeightDate.innerText = formatDateDisplay(lastHeight[1]);
             }
         
+            isBioHistoryLoaded = true;
+            applySpeciesGuidance();
+
             const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
 
             renderFeeding(events, accentColor);
@@ -792,7 +998,7 @@ function updateFieldUI(id, val) {
     }
 
 function generateForecast(dataArray, numPredictions = 2) {
-    if (dataArray.length < 3) return { values: [], type: 'Insufficient Data' };
+    if (dataArray.length < 3) return { values: [], method: 'Insufficient Data' };
 
     const n = dataArray.length;
     let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
@@ -843,7 +1049,13 @@ function renderFeeding(events, color) {
     if(feedingChart) feedingChart.destroy();
     
     const config = buildForecastChartConfig('Feeding (g)', data, color, ctx);
-    const combos = data.map(e => `${(e[4] && e[4].trim() !== "") ? e[4].trim() : 'N/A'} | ${(e[5] && e[5].trim() !== "") ? e[5].trim() : 'N/A'}`);
+    
+    const combos = data.map(e => {
+        const ft = (e[4] && e[4].trim() !== "") ? e[4].trim() : 'N/A';
+        const br = (e[5] && e[5].trim() !== "") ? e[5].trim() : 'N/A';
+        return `${ft} | ${br}`;
+    });
+    
     const uniqueCombos = [...new Set(combos)];
     
     const palette = ['#a3b18a', '#ff9ff3', '#feca57', '#ff6b6b', '#48dbfb', '#1dd1a1', '#5f27cd'];
@@ -910,14 +1122,32 @@ function buildForecastChartConfig(labelString, dataArray, color, ctx) {
     const forecast = generateForecast(realValues, 2);
     
     const paddedRealValues = [...realValues];
-    const forecastValues = new Array(realValues.length - 1).fill(null);
-    if (realValues.length > 0) forecastValues.push(realValues[realValues.length - 1]); 
+    const forecastValues = new Array(Math.max(0, realValues.length - 1)).fill(null);
     
-    if (forecast.values.length > 0) {
-        labels.push(`Predict 1`);
-        labels.push(`Predict 2`);
+    if (realValues.length > 0) {
+        let avgIntervalMs = 0;
+        let parsedDates = labels.map(l => new Date(l).getTime()).filter(t => !isNaN(t));
+        
+        if (parsedDates.length >= 2) {
+            parsedDates.sort((a, b) => a - b);
+            const firstDate = parsedDates[0];
+            const lastDate = parsedDates[parsedDates.length - 1];
+            avgIntervalMs = (lastDate - firstDate) / (parsedDates.length - 1);
+            if (avgIntervalMs < 86400000) avgIntervalMs = 86400000;
+        } else {
+            avgIntervalMs = 7 * 24 * 60 * 60 * 1000;
+        }
+
+        const lastKnownDateObj = parsedDates.length > 0 ? new Date(parsedDates[parsedDates.length - 1]) : new Date();
+
+        for (let i = 1; i <= forecast.values.length; i++) {
+            const nextDate = new Date(lastKnownDateObj.getTime() + (avgIntervalMs * i));
+            labels.push(nextDate.toISOString());
+        }
+        
+        forecastValues.push(realValues[realValues.length - 1]); 
         forecastValues.push(...forecast.values);
-        paddedRealValues.push(null, null); 
+        paddedRealValues.push(...new Array(forecast.values.length).fill(null)); 
     }
 
     const dynamicLabel = forecast.method ? `${labelString} [AI: ${forecast.method}]` : labelString;
@@ -947,7 +1177,7 @@ function buildForecastChartConfig(labelString, dataArray, color, ctx) {
                     title: function(context) {
                         const rawDate = context[0].label;
                         const d = new Date(rawDate);
-                        if (isNaN(d)) return rawDate;
+                        if (isNaN(d.getTime())) return rawDate;
                         const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
                         const day = String(d.getDate()).padStart(2, '0');
                         const month = months[d.getMonth()];
@@ -992,18 +1222,125 @@ function buildForecastChartConfig(labelString, dataArray, color, ctx) {
         document.getElementById('camStatusText').style.color = "#a3b18a";
     }
 
+    function applySpeciesGuidance() {
+        if (!currentSpeciesData || !isBioHistoryLoaded) return;
+
+        const activeWeight = globalAnimalWeight;
+
+        const updateSummaryRef = (cardId, text) => {
+            const card = document.getElementById(cardId);
+            if (!card) return;
+            let refEl = card.querySelector('.guide-ref');
+            if (!refEl) {
+                refEl = document.createElement('div');
+                refEl.className = 'guide-ref';
+                card.appendChild(refEl);
+            }
+            refEl.innerHTML = `<i class="fas fa-book-open"></i> Ref: ${text}`;
+        };
+
+        const data = currentSpeciesData; 
+
+        let ageInMonths = 0;
+        if (animalBirthDate && animalBirthDate !== "---") {
+            const b = new Date(animalBirthDate);
+            const today = new Date();
+            ageInMonths = (today.getFullYear() - b.getFullYear()) * 12 + (today.getMonth() - b.getMonth());
+        }
+
+        let stage = "Adult"; 
+        let feedFreqMin = data[25], feedFreqMax = data[26];
+        let feedWeightMin = data[27], feedWeightMax = data[28];
+
+        const periodBaby = parseFloat(data[29]) || 0;
+        const periodJuv = parseFloat(data[30]) || 0;
+
+        if (ageInMonths <= periodBaby) {
+            stage = "Baby";
+            feedFreqMin = data[17]; feedFreqMax = data[18];
+            feedWeightMin = data[19]; feedWeightMax = data[20];
+        } else if (ageInMonths <= periodJuv) {
+            stage = "Juvenil";
+            feedFreqMin = data[21]; feedFreqMax = data[22];
+            feedWeightMin = data[23]; feedWeightMax = data[24];
+        }
+
+        updateSummaryRef('sumWeight', `Max Adult: ${data[5] || '---'}g`);
+        updateSummaryRef('sumLength', `Max Adult: ${data[3] || '---'}cm`);
+        updateSummaryRef('sumHeight', `Max Adult: ${data[4] || '---'}cm`);
+        
+        let recFeedMin = "---";
+        let recFeedMax = "---";
+        let feedText = "---";
+        
+        const minWVal = parseFloat(feedWeightMin);
+        const maxWVal = parseFloat(feedWeightMax);
+        const hasMinW = !isNaN(minWVal);
+        const hasMaxW = !isNaN(maxWVal);
+
+        if (activeWeight > 0) {
+            if (hasMinW) recFeedMin = ((activeWeight * minWVal) / 100).toFixed(1);
+            if (hasMaxW) recFeedMax = ((activeWeight * maxWVal) / 100).toFixed(1);
+            
+            if (hasMinW && hasMaxW) {
+                feedText = `${recFeedMin}g - ${recFeedMax}g`;
+            } else if (hasMinW) {
+                feedText = `~${recFeedMin}g`;
+            }
+        } else {
+            if (hasMinW && hasMaxW) {
+                feedText = `${minWVal}% - ${maxWVal}% of Body Wgt`;
+            } else if (hasMinW) {
+                feedText = `~${minWVal}% of Body Wgt`;
+            }
+        }
+
+        const fMin = feedFreqMin || '---';
+        const fMax = feedFreqMax || '---';
+
+        updateSummaryRef('sumFeeding', `Ideal (${stage}): ${feedText} | Int: ${fMin} to ${fMax} d`);
+
+        const vetSection = document.getElementById('vet-section');
+        if (vetSection && data[32]) {
+            let vetRefEl = document.getElementById('vetGuideRef');
+            if (!vetRefEl) {
+                vetRefEl = document.createElement('div');
+                vetRefEl.id = 'vetGuideRef';
+                vetRefEl.className = 'guide-ref-vet';
+                const title = vetSection.querySelector('h3');
+                title.insertAdjacentElement('afterend', vetRefEl);
+            }
+            let sourceLink = data[33] ? `<a href="${data[33]}" target="_blank" style="color: var(--accent);"><i class="fas fa-link"></i> Care Guide Manual</a>` : "";
+            vetRefEl.innerHTML = `<b><i class="fas fa-notes-medical"></i> Species Guidance:</b> Max interval without Vet Checkup is ${data[32]} months. ${sourceLink}`;
+        }
+
+        globalCareGuideContext = `
+**Species Care Guide (Reference Only - Do not force strict compliance, treat as a baseline):**
+- Life Stage: ${stage} (Based on age of ${ageInMonths} months)
+- Temp Limits: Min ${data[6] || '---'}°C / Max ${data[7] || '---'}°C
+- Hum Limits: Min ${data[9] || '---'}% / Max ${data[10] || '---'}%
+- Feed Interval: Every ${fMin} to ${fMax} days
+- Target Feed Amount: ${recFeedMin}g to ${recFeedMax}g (based on current weight of ${activeWeight}g and factor for ${stage})
+- Target Adult Max Weight: ${data[5] || '---'}g
+- Target Adult Max Length: ${data[3] || '---'}cm
+- Vet Routine: Max interval checkup is ${data[32] || '---'} months
+        `;
+    }
+
 async function loadVetVisits(id) {
     try {
-        const res = await fetch(`${VETDATA_SCRIPT_URL}?action=read_public&pageId=${encodeURIComponent(id)}`);
+        const fetchUrl = loggedUser ? `${VETDATA_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(id)}&userID=${encodeURIComponent(loggedUser.userID)}${authParams}` : `${VETDATA_SCRIPT_URL}?action=read_public&pageId=${encodeURIComponent(id)}`;
+        
+        const res = await fetch(fetchUrl);
         const json = await res.json();
         const visits = json.data || [];
         
         const tbody = document.getElementById('vetTableBody');
         tbody.innerHTML = '';
 
-        if (visits.length > 0) {
-            let vetLocations = []; 
+        let vetLocations = []; 
 
+        if (visits.length > 0) {
             visits.forEach(v => {
                 let vetFile = "---";
                 if (v[8] && v[8].trim() !== "") { 
@@ -1013,6 +1350,7 @@ async function loadVetVisits(id) {
                     if (safeURL.toLowerCase().startsWith('javascript:')) safeURL = "#";
                     vetFile = `<a href="${safeURL}" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: bold;"><i class="fas fa-link"></i> File</a>`;
                 }
+                
                 let webContent = "---";
                 if (v[12] && v[12].trim() !== "") {
                     let url = v[12].trim();
@@ -1022,9 +1360,36 @@ async function loadVetVisits(id) {
                     webContent = `<a href="${safeURL}" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: bold;"><i class="fas fa-globe"></i> Site</a>`;
                 }
 
+                let formattedDateTime = "---";
+                if (v[1] && v[1].trim() !== "") {
+                    const d = new Date(v[1]);
+                    if (!isNaN(d.getTime())) {
+                        const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+                        const day = String(d.getDate()).padStart(2, '0');
+                        const month = months[d.getMonth()];
+                        const year = d.getFullYear();
+                        
+                        let timeStr = "";
+                        if (v[2] && v[2].trim() !== "") {
+                            let rawTime = v[2].trim();
+                            if (rawTime.includes('T')) {
+                                const timeParts = rawTime.split('T')[1].split(':');
+                                if (timeParts.length >= 2) {
+                                    timeStr = ` - ${timeParts[0]}:${timeParts[1]}`;
+                                }
+                            } else {
+                                timeStr = ` - ${rawTime}`;
+                            }
+                        }
+                        formattedDateTime = `${day} /${month} / ${year}${timeStr}`;
+                    } else {
+                        formattedDateTime = v[1] + (v[2] ? ` - ${v[2]}` : "");
+                    }
+                }
+
                 tbody.innerHTML += `
                     <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                        <td style="padding: 10px;">${escapeHTML(v[1])}</td>
+                        <td style="padding: 10px; white-space: nowrap;">${escapeHTML(formattedDateTime)}</td>
                         <td style="padding: 10px;">${escapeHTML(v[3])}</td>
                         <td style="padding: 10px;">${escapeHTML(v[6])}</td>
                         <td style="padding: 10px;">${escapeHTML(v[7])}</td>
@@ -1040,14 +1405,16 @@ async function loadVetVisits(id) {
                     vetLocations.push(loc.trim());
                 }
             });
-
-            if (vetLocations.length > 0 || (homeLat && homeLon)) {
-                await updateVetMap(vetLocations);
-            }
         } else {
             tbody.innerHTML = '<tr><td colspan="8" style="padding:20px; text-align:center;">No visits registered.</td></tr>';
+        }
+
+        if (vetLocations.length > 0 || (homeLat && homeLon)) {
+            await updateVetMap(vetLocations);
+        } else {
             document.getElementById('vetMapContainer').innerHTML = ''; 
         }
+
     } catch (e) {
         console.error("Error loading Vet Data:", e);
     }
@@ -1059,14 +1426,17 @@ async function updateVetMap(vetLocationsArray) {
     if (typeof vetMap !== 'undefined' && vetMap !== null) vetMap.remove();
     
     mapContainer.innerHTML = "<div id='actualLeafletMap' style='width: 100%; height: 100%; min-height: 300px; border-radius: 10px; z-index: 1;'></div>";
+
     vetMap = L.map('actualLeafletMap');
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; OpenStreetMap &copy; CARTO'
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
+        maxZoom: 16
     }).addTo(vetMap);
 
     let bounds = [];
 
+    // PRIVACIDADE / CONFORMIDADE LEI: MAPA FUZZY 1.5km
     if (typeof homeLat !== 'undefined' && typeof homeLon !== 'undefined' && !isNaN(homeLat) && homeLat !== 0) {
         L.circle([homeLat, homeLon], {
             color: '#a3b18a', fillColor: '#a3b18a', fillOpacity: 0.3, radius: 1500 
@@ -1107,9 +1477,9 @@ async function updateVetMap(vetLocationsArray) {
 }
     
 async function openChart(fieldId, label) {
-    let targetID = (fieldId >= 6) ? r1ChannelId : mainChannelId;
-    let targetKey = (fieldId >= 6) ? r1ReadKey : mainReadKey;
-    let actualField = (fieldId >= 6) ? (fieldId - 5) : fieldId;
+    let targetID = (fieldId >= 21) ? r1ChannelId : mainChannelId;
+    let targetKey = (fieldId >= 21) ? r1ReadKey : mainReadKey;
+    let actualField = (fieldId >= 21) ? (fieldId - 20) : fieldId;
 
     if (!targetID) return alert("Sensor channel not configured.");
 
@@ -1117,10 +1487,30 @@ async function openChart(fieldId, label) {
     document.getElementById('modalChartTitle').innerText = label.toUpperCase();
     modal.style.display = 'flex';
 
+    const sensorConfigMap = {
+        1:  { min: -20, max: 50,    unit: '°C' },  
+        2:  { min: 0,   max: 100,   unit: '%' },   
+        3:  { min: 0,   max: 2000,  unit: 'ppm' }, 
+        4:  { min: 0,   max: 100,   unit: '%' },   
+        5:  { min: 0,   max: 100,   unit: '%' },   
+        6:  { min: 0,   max: 100,   unit: '%' },   
+        7:  { min: 0,   max: 10000, unit: 'lx' },  
+        8:  { min: -100,max: 0,     unit: 'dBm' }, 
+        21: { min: -20, max: 50,    unit: '°C' },  
+        22: { min: 0,   max: 100,   unit: '%' },   
+        23: { min: 0,   max: 100,   unit: '%' },   
+        24: { min: 0,   max: 100,   unit: '%' },   
+        25: { min: -100,max: 0,     unit: 'dBm' }  
+    };
+
+    const currentCfg = sensorConfigMap[fieldId] || { min: undefined, max: undefined, unit: '' };
+
     try {
         const url = `https://api.thingspeak.com/channels/${targetID}/fields/${actualField}.json?api_key=${targetKey}&results=800`;
         const response = await fetch(url);
         const data = await response.json();
+
+        if (!data || !data.feeds) return;
 
         const labels = data.feeds.map(feed => feed.created_at);
         const values = data.feeds.map(feed => feed[`field${actualField}`]);
@@ -1153,13 +1543,28 @@ async function openChart(fieldId, label) {
                         callbacks: {
                             title: (context) => {
                                 const d = new Date(context[0].label);
-                                return isNaN(d.getTime()) ? context[0].label : d.toLocaleTimeString();
+                                if (isNaN(d.getTime())) return context[0].label;
+                                const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+                                const day = String(d.getDate()).padStart(2, '0'); 
+                                return `${day}/${months[d.getMonth()]}/${d.getFullYear()} - ${d.toLocaleTimeString()}`;
+                            },
+                            label: (context) => {
+                                const val = context.parsed.y !== null ? context.parsed.y : '--';
+                                return `${context.dataset.label}: ${val} ${currentCfg.unit}`;
                             }
                         }
                     }
                 },
                 scales: {
-                    y: { grid: { color: '#333' }, ticks: { color: '#fff' } },
+                    y: { 
+                        grid: { color: '#333' }, 
+                        ticks: { 
+                            color: '#fff',
+                            callback: function(value) { return value + ' ' + currentCfg.unit; }
+                        },
+                        min: currentCfg.min,
+                        max: currentCfg.max
+                    },
                     x: { 
                         grid: { display: false }, 
                         ticks: { 
@@ -1190,6 +1595,7 @@ async function openChart(fieldId, label) {
     
     document.addEventListener('DOMContentLoaded', () => {
         applyUserTheme();
+        loadData();
     });
 
     async function generateAIInsight() {
@@ -1197,111 +1603,65 @@ async function openChart(fieldId, label) {
     const textBox = document.getElementById('aiInsightText');
     
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> COMPILING HISTORY...';
-    textBox.innerText = "Coletando toda a série histórica de sensores, biometria e laudos veterinários...";
+    textBox.innerText = "Sincronizando com o backend AI e coletando histórico do ecossistema...";
 
     try {
         const animalName = document.getElementById('dynName').innerText;
         const animalType = document.getElementById('dynAnimal').innerText;
         const scientificName = document.getElementById('dynScientific').innerText; 
         const sex = document.getElementById('dynSex').innerText;
-        const birthDate = document.getElementById('dynBirth').innerText;
         const currentLocation = document.getElementById('dynLoc').innerText; 
         const currTemp = document.getElementById('valField1').innerText;
         const currHum = document.getElementById('valField2').innerText;
-
-        const resBio = await fetch(`${BIODATA_SCRIPT_URL}?action=read_public&pageId=${encodeURIComponent(currentPageId)}`);
+        
+        const fetchBioUrl = loggedUser ? `${BIODATA_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(currentPageId)}${authParams}` : `${BIODATA_SCRIPT_URL}?action=read_public&pageId=${encodeURIComponent(currentPageId)}`;
+        const resBio = await fetch(fetchBioUrl);
         const jsonBio = await resBio.json();
         const bioRows = jsonBio.data || [];
         const bioHistory = bioRows.map(r => `Data: ${r[1]} | Evento: ${r[2]} | Valor: ${r[3]}`).join('\n');
 
-        const resEnv = await fetch(`${ENVIRONMENT_SCRIPT_URL}?action=read_public&pageId=${encodeURIComponent(currentPageId)}`);
+        const fetchEnvUrl = loggedUser ? `${ENVIRONMENT_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(currentPageId)}${authParams}` : `${ENVIRONMENT_SCRIPT_URL}?action=read_public&pageId=${encodeURIComponent(currentPageId)}`;
+        const resEnv = await fetch(fetchEnvUrl);
         const jsonEnv = await resEnv.json();
-        const envRow = jsonEnv.data || null;
+        const envRow = jsonEnv.data;
         const envConfig = envRow ? `Temp Alvo: Min ${envRow[2]}°C / Max ${envRow[1]}°C | Umidade Alvo: Min ${envRow[4]}% / Max ${envRow[3]}%` : "Não configurado.";
 
-        const resVet = await fetch(`${VETDATA_SCRIPT_URL}?action=read_public&pageId=${encodeURIComponent(currentPageId)}`);
+        const fetchVetUrl = loggedUser ? `${VETDATA_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(currentPageId)}&userID=${encodeURIComponent(loggedUser.userID)}${authParams}` : `${VETDATA_SCRIPT_URL}?action=read_public&pageId=${encodeURIComponent(currentPageId)}`;
+        const resVet = await fetch(fetchVetUrl);
         const jsonVet = await resVet.json();
         const vetRows = jsonVet.data || [];
         const vetHistory = vetRows.map(r => `Data: ${r[1]} | Tipo de exame: ${r[3]} | Resultados: ${r[6] || 'Nenhum'} | Observações: ${r[7] || 'Nenhuma'}`).join('\n');
         
-                let tsHistory = "No telemetry data available.";
-                if (mainChannelId && mainReadKey) {
-                    try {
-                        const tsUrl = `https://api.thingspeak.com/channels/${mainChannelId}/feeds.json?api_key=${mainReadKey}&results=100`;
-                        const tsRes = await fetch(tsUrl);
-                        const tsJson = await tsRes.json();
-                        
-                        if (tsJson.feeds && tsJson.feeds.length > 0) {
-                            tsHistory = tsJson.feeds.map(f => {
-                                const date = new Date(f.created_at).toLocaleString('en-US');
-                                return `[${date}] Air Temperature of Main sensor: ${f.field1 || '--'}°C | Air Humidity of Main sensor: ${f.field2 || '--'}% | CO2: ${f.field3 || '--'}ppm | Ground Humidity of Main sensor: ${f.field4 || '--'}% | Light intensity of Main sensor: ${f.field7 || '--'}lx`;
-                            }).join('\n');
-                        }
-                    } catch(e) {
-                        console.warn("Failed to fetch ThingSpeak history for AI", e);
-                        tsHistory = "Error retrieving telemetry.";
-                    }
-                }
-                let rsHistory = "No telemetry data available for Remote Sensor.";
-                if (r1ChannelId && r1ReadKey) {
-                    try {
-                        const rsUrl = `https://api.thingspeak.com/channels/${r1ChannelId}/feeds.json?api_key=${r1ReadKey}&results=100`;
-                        const rsRes = await fetch(rsUrl);
-                        const rsJson = await rsRes.json();
-                        
-                        if (rsJson.feeds && rsJson.feeds.length > 0) {
-                            rsHistory = rsJson.feeds.map(f => {
-                                const date = new Date(f.created_at).toLocaleString('en-US');
-                                return `[${date}] Air Temperature of Remote sensor: ${f.field1 || '--'}°C | Air Humidity of Remote sensor: ${f.field2 || '--'}% | Ground Humidity of remote sensor: ${f.field3 || '--'}%`;
-                            }).join('\n');
-                        }
-                    } catch(e) {
-                        console.warn("Failed to fetch Remote ThingSpeak history for AI", e);
-                        rsHistory = "Error retrieving remote telemetry.";
-                    }
-                }
-
-        const superPrompt = `
-[STRICT SYSTEM INSTRUCTION: YOUR ENTIRE RESPONSE MUST BE EXCLUSIVELY IN ENGLISH. Do not output any word in Portuguese or any other language. If the provided context data is in another language, you must translate the insights internally and provide the final output ONLY in English.]
-
-Please analyze the data correlation for the following animal monitored by the TerraConnect IoT system.
-
-**Profile:**
-- Name: ${animalName} (${animalType} | Scientific Name: ${scientificName} | Sex: ${sex})
-- Enclosure Physical Location: ${currentLocation}
-- Current Terrarium Conditions: Temp ${currTemp} | Humidity ${currHum}
-- Ideal Limits Configuration: ${envConfig}
-
-**Environmental Telemetry History (Last 100 readings from IoT Sensors):**
-${tsHistory}
-
-**Remote Sensor Telemetry History (Warm Zone / Thermal Regulation) - Last 100 readings:**
-${rsHistory}
-
-**Biological History Series (Weight, Feeding, Molting):**
-${bioHistory || "No biological records."}
-
-**Veterinary History Series (Consultations and Examinations):**
-${vetHistory || "No veterinary records."}
-
-**Task:**
-
-Reference the environmental data with the biological and veterinary data. Is there any weight stagnation? Is the feeding frequency correlated with problems described in veterinary visits? Submit 3 topics:
-
-1) General Health Analysis
-2) Identified Correlations (Cause/Effect)
-3) Management Recommendations
-
-[FINAL RULE: REMEMBER TO GENERATE THE ENTIRE RESPONSE IN ENGLISH ONLY. BE EXTREMELY CONCISE. NO INTRODUCTORY OR CONCLUDING REMARKS. SKIP THE SPECIFICATIONS, JUST GIVE ME THE BOTTOM LINE]
-`;
-
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ANALYZING COMPLEX DATA...';
-        textBox.innerText = "Série histórica construída. Enviando para o Google Gemini 1.5 Flash...";
+        textBox.innerText = "Database gathered. AI Core processing on Google Servers...";
+
+        const payload = {
+            action: "generate_insight",
+            pageId: currentPageId,
+            animalName: animalName,
+            animalType: animalType,
+            scientificName: scientificName,
+            sex: sex,
+            currentLocation: currentLocation,
+            currTemp: currTemp,
+            currHum: currHum,
+            envConfig: envConfig,
+            careGuide: globalCareGuideContext,
+            mainChannelId: mainChannelId,
+            mainReadKey: mainReadKey,
+            r1ChannelId: r1ChannelId,
+            r1ReadKey: r1ReadKey,
+            bioHistory: bioHistory,
+            vetHistory: vetHistory,
+            // Attach CSRF tokens if owner is currently visiting their public link
+            csrfToken: loggedUser ? sessionStorage.getItem('authToken') : "",
+            authToken: loggedUser ? sessionStorage.getItem('authToken') : ""
+        };
 
         const response = await fetch(AI_SCRIPT_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ prompt: superPrompt })
+            body: JSON.stringify(payload)
         });
         
         const json = await response.json();
@@ -1311,15 +1671,15 @@ Reference the environmental data with the biological and veterinary data. Is the
                 .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
                 .replace(/\*(.*?)\*/g, '<i>$1</i>')
                 .replace(/\n/g, '<br>');
+            
             document.getElementById('btnListenAI').style.display = 'inline-flex';
-            } 
-        else {
-            textBox.innerText = "Falha na análise: " + json.message;
+        } else {
+            textBox.innerText = "Analysis Failure: " + json.message;
         }
 
     } catch (e) {
         console.error(e);
-        textBox.innerText = "Erro ao conectar com o Núcleo de IA.";
+        textBox.innerText = "Error when connecting with the AI pattern model.";
     } finally {
         btn.innerHTML = '<i class="fas fa-magic"></i> RE-RUN ANALYSIS';
     }
