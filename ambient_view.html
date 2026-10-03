@@ -744,6 +744,12 @@
 
 // Roda a verificação imediatamente e gera o prefixo seguro de URL para ser utilizado em todo o script
 const loggedUser = checkSecurity();
+
+// FIX: Normalize the ID property name so the rest of the script doesn't fail
+if (loggedUser && !loggedUser.id && loggedUser.userID) {
+    loggedUser.id = loggedUser.userID; 
+}
+
 console.log("[DIAGNOSTIC] loggedUser populated:", loggedUser);
 const authParams = loggedUser ? `&authToken=${encodeURIComponent(loggedUser.authToken)}&csrfToken=${encodeURIComponent(loggedUser.authToken)}` : "";
 
