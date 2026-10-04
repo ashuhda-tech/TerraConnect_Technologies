@@ -5,19 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TerraConnect | Monitoring</title>
     
-    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/assets/IMAGE/terraconnect%20ICON_no%20bkgr.png">
-    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/assets/IMAGE/terraconnect%20ICON_no%20bkgr.png">
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/IMAGE/terraconnect_ICON_no_bkgr.png">
+    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/IMAGE/terraconnect_ICON_no_bkgr.png">
     
     <meta property="og:type" content="website">
     <meta property="og:title" content="TerraConnect Technologies">
     <meta property="og:description" content="Environmental Animal IOT Monitoring Center">
     <meta property="og:url" content="https://ashuhda-tech.github.io/TerraConnect_Technologies/">
 
-    <meta property="og:image" content="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/TERRACONNECT_LOGOBRAND.png">
+    <meta property="og:image" content="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/TERRACONNECT_LOGOBRAND.png">
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="TerraConnect Technologies">
-    <meta name="twitter:image" content="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/TERRACONNECT_LOGOBRAND.png">
+    <meta name="twitter:image" content="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/TERRACONNECT_LOGOBRAND.png">
 
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -755,6 +755,7 @@ let BIODATA_SCRIPT_URL = "";
 let ENVIRONMENT_SCRIPT_URL = "";
 let VETDATA_SCRIPT_URL = "";
 let AI_SCRIPT_URL = "";
+let AIFEEDBACK_SCRIPT_URL = "";
 let EDU_SCRIPT_URL = "";
 let CAREGUIDE_SCRIPT_URL = "";
 
@@ -796,7 +797,8 @@ async function fetchDatabaseRoutes() {
             BIODATA_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_BioData"]);
             ENVIRONMENT_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_Enviromental Setup"]);
             VETDATA_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_VetData"]);
-            AI_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_AI"]);
+            AI_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_AI_And_Feedback"]);
+            AIFEEDBACK_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_AI_And_Feedback"]);
             EDU_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_Educational Training"]);
             CAREGUIDE_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_CareGuide"]);
             return true;
@@ -2571,17 +2573,18 @@ function applySpeciesGuidance() {
             currHum: currHum,
             envConfig: envConfig,
             careGuide: globalCareGuideContext,
-            // Pass the API Keys so the backend can fetch ThingSpeak securely
             mainChannelId: mainChannelId,
             mainReadKey: mainReadKey,
             r1ChannelId: r1ChannelId,
             r1ReadKey: r1ReadKey,
             bioHistory: bioHistory,
             vetHistory: vetHistory,
+            appSource: window.location.origin, // Added Origin Security Check
             csrfToken: sessionStorage.getItem('authToken'),
             authToken: sessionStorage.getItem('authToken')
         };
-
+        
+        // Use AI_SCRIPT_URL (or AIFEEDBACK_SCRIPT_URL as both point to the unified endpoint)
         const response = await fetch(AI_SCRIPT_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -2589,20 +2592,21 @@ function applySpeciesGuidance() {
         });
         
         const json = await response.json();
-
+        
         if(json.status === "success") {
             textBox.innerHTML = json.insight
                 .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
                 .replace(/\*(.*?)\*/g, '<i>$1</i>')
                 .replace(/\n/g, '<br>');
-            
-            // Show action buttons
+        
             document.getElementById('btnListenAI').style.display = 'inline-flex';
             document.getElementById('aiFeedbackContainer').style.display = 'flex';
-            
-            // Save Insight ID for feedback tracking
+        
             currentInsightId = json.insightId;
-        } else {
+            currentModelUsed = json.model_used; // Save exact model returned
+        } 
+        
+        else {
             textBox.innerText = "Analysis Failure: " + json.message;
         }
 
@@ -2618,27 +2622,44 @@ function applySpeciesGuidance() {
    window.aiSpeechUtterances = [];
 
     let currentInsightId = ""; // Tracked per generation
+    let currentModelUsed = ""; // Track exact model returned by AI ladder
 
     async function submitAIFeedback(rating) {
-        const comment = document.getElementById('feedbackComment') ? document.getElementById('feedbackComment').value : "";
-        
-        const payload = {
-            action: "log_feedback",
-            pageId: currentPageId,
-            insightId: currentInsightId,
-            rating: rating, // +1 or -1
-            comment: comment,
-            authToken: sessionStorage.getItem('authToken')
-        };
-    
-        await fetch(AI_SCRIPT_URL, {
+    const comment = document.getElementById('feedbackComment') ? document.getElementById('feedbackComment').value : "";
+
+    const payload = {
+        action: "log_feedback",
+        pageId: currentPageId,
+        insightId: currentInsightId,
+        modelUsed: currentModelUsed || "Unknown", // Pass exact model used
+        rating: rating, 
+        comment: comment,
+        appSource: window.location.origin, // Added Origin Security Check
+        authToken: sessionStorage.getItem('authToken')
+    };
+
+    try {
+        await fetch(AIFEEDBACK_SCRIPT_URL, { 
             method: 'POST',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify(payload)
         });
-    
+
         closeFeedbackModal();
         alert("Thank you! Your feedback helps train our monitoring models.");
+    } catch (e) {
+        console.error("Feedback submission error:", e);
+    }
+}
+    function openNegativeFeedbackModal() {
+        document.getElementById('feedbackModal').style.display = 'block';
+    }
+    
+    function closeFeedbackModal() {
+        document.getElementById('feedbackModal').style.display = 'none';
+        if(document.getElementById('feedbackComment')) {
+            document.getElementById('feedbackComment').value = ''; // Clear text on close
+        }
     }
 
     function toggleSpeakAI() {
