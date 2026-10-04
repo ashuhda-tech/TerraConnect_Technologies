@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TerraConnect | Cultivating Synergy</title>
+    <title>Nhanderu | Cultivating Synergy</title>
     
-    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/TERRACONNECT_LOGO.png">
+    <!-- You can update this favicon to a Nhanderu logo later -->
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/IMAGE/terraconnect_ICON_no_bkgr.png">
     
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -14,7 +15,7 @@
         :root {
             --bg-color: #0a0c10;
             --card-bg: rgba(7, 11, 20, 0.75);
-            --card-border: rgba(209, 179, 139, 0.2); /* Subtle gold tint for borders */
+            --card-border: rgba(209, 179, 139, 0.2);
             --accent-dark: #d1b38b;
             --accent-light: #f4e9d8;
             --text-main: #f4e9d8;
@@ -36,7 +37,7 @@
         /* ----- HEADER ----- */
         header { padding: 30px 50px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); background: rgba(10, 12, 16, 0.5); backdrop-filter: blur(10px); position: fixed; width: 100%; top: 0; z-index: 100; transition: background 0.3s; }
         .logo-area h1 { font-family: var(--font-title); color: var(--accent-dark); font-size: 1.8rem; letter-spacing: 2px; text-transform: uppercase; }
-        .btn-back { text-decoration: none; color: var(--accent-dark); border: 1px solid var(--accent-dark); padding: 8px 20px; border-radius: 5px; font-size: 0.85rem; transition: 0.4s ease; font-family: var(--font-title); text-transform: uppercase; font-weight: bold; }
+        .btn-back { text-decoration: none; color: var(--accent-dark); border: 1px solid var(--accent-dark); padding: 8px 20px; border-radius: 5px; font-size: 0.85rem; transition: 0.4s ease; font-family: var(--font-title); text-transform: uppercase; font-weight: bold; display: flex; align-items: center; gap: 8px;}
         .btn-back:hover { background: var(--accent-dark); color: var(--bg-color); }
         
         /* ----- HERO SECTION ----- */
@@ -64,13 +65,16 @@
         /* ----- BOTTOM IMAGE PANEL ----- */
         .image-panel-container { width: 100%; background: var(--bg-color); padding: 80px 20px; position: relative; z-index: 2; border-top: 1px solid var(--card-border); }
         .image-panel { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-        .image-wrapper { overflow: hidden; border-radius: var(--border-radius); border: 1px solid var(--card-border); aspect-ratio: 16/9; position: relative; }
+        
+        /* Changed wrapper to display as block so entire card is clickable */
+        .image-wrapper { display: block; overflow: hidden; border-radius: var(--border-radius); border: 1px solid var(--card-border); aspect-ratio: 16/9; position: relative; text-decoration: none; cursor: pointer; }
         .image-wrapper img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s ease, filter 0.8s ease; filter: grayscale(60%) brightness(0.8); }
         .image-wrapper:hover img { transform: scale(1.05); filter: grayscale(0%) brightness(1); }
         
         /* Image Overlay Text */
-        .image-overlay { position: absolute; bottom: 0; left: 0; width: 100%; background: linear-gradient(transparent, rgba(10, 12, 16, 0.9)); padding: 20px; color: var(--accent-light); font-family: var(--font-title); font-size: 0.9rem; letter-spacing: 2px; text-transform: uppercase; transform: translateY(100%); transition: transform 0.4s ease; }
+        .image-overlay { position: absolute; bottom: 0; left: 0; width: 100%; background: linear-gradient(transparent, rgba(10, 12, 16, 0.95)); padding: 25px 20px 20px 20px; color: var(--accent-light); font-family: var(--font-title); font-size: 1.1rem; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; transform: translateY(100%); transition: transform 0.4s ease; display: flex; justify-content: space-between; align-items: center; }
         .image-wrapper:hover .image-overlay { transform: translateY(0); }
+        .image-overlay i { font-size: 1rem; color: var(--accent-dark); }
 
         /* Footer */
         footer { background: var(--bg-color); text-align: center; padding: 40px 20px; color: var(--text-muted); font-size: 0.85rem; z-index: 2; position: relative; }
@@ -97,9 +101,12 @@
 <!-- HEADER -->
 <header>
     <div class="logo-area">
-        <h1>TerraConnect</h1>
+        <h1>Nhanderu</h1>
     </div>
-    <a href="index.html" class="btn-back"><i class="fas fa-arrow-left"></i> Return Home</a>
+    <!-- Directly links to the TerraConnect GitHub Pages index -->
+    <a href="https://ashuhda-tech.github.io/TerraConnect_Technologies/index.html" class="btn-back">
+        TerraConnect Portal <i class="fas fa-arrow-right"></i>
+    </a>
 </header>
 
 <!-- HERO SECTION -->
@@ -115,15 +122,15 @@
     <!-- THE VISION -->
     <div class="philosophy-card">
         <h2 class="section-title">The Vision</h2>
-        <p>To cultivate a highly conscious world where technology and nature operate in perfect synergy, guided by a deep respect for the whole.</p>
-        <p>We envision a future of decentralized stewardship, where society is so ecologically and socially responsible that harmony is a natural byproduct of our collective awareness. In this future, the barriers between human, animal, and environment dissolve into a cohesive, supportive ecosystem. Terraconnect exists to reflect this utopian potential—proving that when humans are empowered with transparent, high-quality information, they naturally choose empathy, respect, and balance.</p>
+        <p>To cultivate a highly conscious world where technology and nature operate in perfect synergy, guided by a profound respect for the whole.</p>
+        <p>We envision a future of decentralized self-governance, where society is so socially and ecologically conscious and responsible that collective harmony—and harmony with the surrounding environment—becomes a natural byproduct of our collective consciousness. In this future, the barriers between humans, animals, and the environment dissolve into a cohesive, harmonious ecosystem. Nhanderu exists to reflect this utopian potential through technological development; we believe that when human beings are equipped with educational information, transparency, and high-quality solutions, they naturally choose collective empathy, respect, and balance with their surroundings.</p>
     </div>
 
     <!-- THE MISSION -->
     <div class="philosophy-card">
         <h2 class="section-title">The Mission</h2>
-        <p>To democratize open, high-quality environmental data and automation, bridging the gap between human awareness and natural habitats to foster profound mutual respect.</p>
-        <p>As a non-profit initiative, our goal is not to extract value from users or nature, but to generate synergy between them. Step by step, micro-ecosystem by micro-ecosystem, we provide the open-source tools and transparent knowledge required to perfectly understand the environments we interact with. We are building a foundation of freely shared data that empowers individuals to become conscious stewards of the natural world.</p>
+        <p>To democratize high-quality environmental data management tools and automation, bridging the knowledge gap between human awareness and natural habitats in order to foster a profound balance and collective respect among living beings and their environments.</p>
+        <p>As a non-profit initiative, our goal is not to extract value from users or nature; rather, operating at cost and leveraging technology and communities, we aim to generate synergy among them. Step by step—micro-ecosystem by micro-ecosystem—we provide the open-source tools and collective knowledge needed to deepen our understanding of the environments with which we interact. We are building a freely shared database—while respecting data protection laws—to empower individuals to become conscious stewards of their natural world.</p>
     </div>
 
     <!-- CORE VALUES -->
@@ -132,47 +139,60 @@
         <div class="values-grid">
             <div class="value-item">
                 <h3>Radical Transparency</h3>
-                <p>We operate with open books and open source code. Trust is not requested; it is freely given through the unhindered sharing of our knowledge, designs, and intentions.</p>
+                <p>We operate with a commitment to legal responsibility, aiming for maximum transparency regarding knowledge, usability, and open-source principles. High trust is the core systemic value of our operations; it is freely fostered through unrestricted access to our shared knowledge, projects, and intentions, with the goal of building a community based on deep mutual trust.</p>
             </div>
             <div class="value-item">
                 <h3>Decentralized Stewardship</h3>
-                <p>We believe in the power of the educated individual. By providing accessible, high-quality information, we remove the need for centralized control, empowering a self-governing community of responsible caretakers.</p>
+                <p>We believe in the power of the informed individual to create collective value. By making the systemic flow of information and the process of ensuring its quality transparent, we eliminate the need for centralized control, empowering a self-governing, value-adding community of responsible caregivers.</p>
             </div>
             <div class="value-item">
                 <h3>Synergy Over Profit</h3>
-                <p>We are driven by the cohesive function of society and nature. Every piece of hardware built and line of code written is measured by its ability to improve the whole, rather than its ability to generate capital.</p>
+                <p>We are driven by the cohesive functioning of society and nature. Every piece of hardware built and every line of code written is evaluated by its capacity to improve the social fabric, rather than by its potential to generate capital.</p>
             </div>
             <div class="value-item">
                 <h3>Reverence for the Whole</h3>
-                <p>We recognize that the observer, the tool, and the habitat are one interconnected system. Our technology is designed to respect and elevate all three simultaneously.</p>
+                <p>We recognize that the observer, the tool, and the habitat form an interconnected system. Our technology aims to serve as a bridge for connection, respecting and valuing all three simultaneously.</p>
             </div>
         </div>
     </div>
 </div>
 
-<!-- BOTTOM IMAGE PANEL -->
+<!-- BOTTOM IMAGE PANEL (PROJECT CARDS) -->
 <div class="image-panel-container">
     <div class="image-panel">
-        <!-- Image 1 -->
-        <div class="image-wrapper">
-            <img src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/WALLPAPER_MAINDASHBOARD.png" alt="TerraConnect Interface">
-            <div class="image-overlay">Transparent Data</div>
-        </div>
-        <!-- Image 2 (Placeholder: Replace URL with actual Github asset) -->
-        <div class="image-wrapper">
-            <img src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/WALLPAPER_MAINDASHBOARD.png" alt="Hardware Architecture">
-            <div class="image-overlay">Open Architecture</div>
-        </div>
-        <!-- Image 3 (Placeholder: Replace URL with actual Github asset) -->
-        <div class="image-wrapper">
-            <img src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/WALLPAPER_MAINDASHBOARD.png" alt="Ecosystem Harmony">
-            <div class="image-overlay">Ecosystem Harmony</div>
-        </div>
+        
+        <!-- Project 1: Rudá -->
+        <a href="#ruda-project" class="image-wrapper">
+            <img src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/WALLPAPER_MAINDASHBOARD.png" alt="Rudá Initiative">
+            <div class="image-overlay">
+                <span>Rudá</span>
+                <i class="fas fa-arrow-right"></i>
+            </div>
+        </a>
+
+        <!-- Project 2: Guaraci (Links to TerraConnect Portal) -->
+        <a href="https://ashuhda-tech.github.io/TerraConnect_Technologies/index.html" class="image-wrapper">
+            <img src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/IMAGE/terraconnect%20logo.png" alt="Guaraci System - TerraConnect">
+            <div class="image-overlay">
+                <span>Guaraci</span>
+                <i class="fas fa-link"></i>
+            </div>
+        </a>
+
+        <!-- Project 3: Sumé -->
+        <a href="#sume-project" class="image-wrapper">
+            <img src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/WALLPAPER_MAINDASHBOARD.png" alt="Sumé Architecture">
+            <div class="image-overlay">
+                <span>Sumé</span>
+                <i class="fas fa-arrow-right"></i>
+            </div>
+        </a>
+
     </div>
 </div>
 
 <footer>
-    <p>Copyright &copy; 2026 TerraConnect Technologies. Engineered for the Whole.</p>
+    <p>Copyright &copy; 2026 Nhanderu. Engineered for the Earth.</p>
 </footer>
 
 </body>
