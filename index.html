@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TerraConnect | Authentication</title>
+    <title>GUARACÍ | Authentication</title>
     
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/IMAGE/GUARACI_LOGO_NO_BKGRD.png">
     <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/IMAGE/GUARACI_LOGO_NO_BKGRD.png">
@@ -20,23 +20,41 @@
     <style>
         @font-face {font-family: 'A760-Roman-Smc';src: url('A760-Roman-Smc Regular.ttf') format('truetype'); font-weight: normal;font-style: normal;}
         :root {--bg-color: #0a0c10;--card-bg: rgba(7, 11, 20, 0.85);--card-hover: rgba(17, 24, 39, 0.9);--card-border: rgba(31, 41, 55, 0.5);--accent-dark: #d1b38b;--accent-light: #f4e9d8;--text-main: #f4e9d8;--text-muted: #d1b38b;--border-radius: 10px;--status-ok: #48bb3a;--status-error: #ef4e4e;--font-standard: 'Inter', sans-serif;}
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        /* HIDDEN NATIVE CURSOR */
+        * { box-sizing: border-box; margin: 0; padding: 0; cursor: none; }
 
         body {background-color: var(--bg-color);color: var(--text-main);font-family: var(--font-standard);display: flex;flex-direction: column; min-height: 100vh;overflow: hidden;}
+        
+        /* ----- CUSTOM CURSOR ----- */
+        .cursor-dot { width: 5px; height: 5px; background-color: var(--accent-light); position: fixed; top: 0; left: 0; transform: translate(-50%, -50%); border-radius: 50%; z-index: 99999; pointer-events: none; }
+        .cursor-outline { width: 30px; height: 30px; border: 1px solid var(--accent-dark); position: fixed; top: 0; left: 0; transform: translate(-50%, -50%); border-radius: 50%; z-index: 99998; pointer-events: none; transition: transform 0.2s ease-out, background-color 0.2s ease-out; }
+
         #intro-overlay {position: fixed;top: 0;left: 0;width: 100%;height: 100%;background-color: #000;z-index: 9999;display: flex;justify-content: center;align-items: center;transition: opacity 1s ease-out;}
         #intro-overlay video {width: 100%;height: 100%;object-fit: cover;}
         .app-version-flag {position: fixed;bottom: 10px;left: 10px;background: rgba(0, 0, 0, 0.6);color: rgba(255, 255, 255, 0.3);padding: 4px 8px;border-radius: 4px;font-size: 0.55rem;font-family: 'Inter', monospace;z-index: 99999;pointer-events: none;border: 1px solid rgba(255, 255, 255, 0.1);backdrop-filter: blur(2px);transition: opacity 0.5s;}
         
-        .skip-btn { position: absolute; bottom: 40px; right: 40px; background: rgba(0, 0, 0, 0.4); color: rgba(255, 255, 255, 0.6); border: 1px solid rgba(255, 255, 255, 0.3); padding: 8px 16px; border-radius: 6px; cursor: pointer; z-index: 10000; font-family: var(--font-standard); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; backdrop-filter: blur(5px); }
+        .skip-btn { position: absolute; bottom: 40px; right: 40px; background: rgba(0, 0, 0, 0.4); color: rgba(255, 255, 255, 0.6); border: 1px solid rgba(255, 255, 255, 0.3); padding: 8px 16px; border-radius: 6px; z-index: 10000; font-family: var(--font-standard); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; backdrop-filter: blur(5px); }
         .skip-btn:hover { background: rgba(255, 255, 255, 0.1); color: #fff; border-color: #fff;}
         .video-bg-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; overflow: hidden; }
         .video-bg-container video { min-width: 100%; min-height: 100%; width: auto; height: auto; position: absolute; top: 50%; left: 50%;transform: translate(-50%, -50%);object-fit: cover; }
         .video-overlay {position: fixed;top: 0; left: 0;width: 100%;height: 100%;background: rgba(0, 0, 0, 0.6);  z-index: -1; }
         
-        .container { flex-grow: 1; display: flex;  justify-content: center; align-items: center;width: 100%;padding: 20px; z-index: 1; overflow-y: auto;}
+        /* ----- HEADER (TOP RIBBON) ----- */
+        header { padding: 25px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); background: rgba(10, 12, 16, 0.5); backdrop-filter: blur(10px); position: fixed; width: 100%; top: 0; z-index: 900; transition: background 0.3s; }
+        .logo-area { display: flex; align-items: center; gap: 15px; }
+        .logo-area img { height: 40px; width: auto; object-fit: contain; }
+        .logo-area h1 { font-family: 'A760-Roman-Smc', serif; color: var(--accent-dark); font-size: 1.5rem; letter-spacing: 2px; text-transform: uppercase; margin: 0; }
+        
+        .nav-area { display: flex; gap: 15px; align-items: center; }
+        .floating-nav-btn {background: rgba(7, 11, 20, 0.6);border: 1px solid var(--accent-dark);color: var(--accent-dark);padding: 8px 18px;border-radius: 30px;text-decoration: none;font-family: var(--font-standard);font-size: 0.85rem;font-weight: bold;display: flex;align-items: center;gap: 8px;backdrop-filter: blur(5px);transition: all 0.3s ease;text-transform: uppercase;letter-spacing: 1px;}
+        .floating-nav-btn:hover {background: var(--accent-dark);color: var(--bg-color);transform: scale(1.05);box-shadow: 0 4px 15px rgba(209, 179, 139, 0.2);}
+
+        /* ----- MAIN CONTAINER ----- */
+        .container { flex-grow: 1; display: flex; justify-content: center; align-items: center; width: 100%; padding: 120px 20px 40px 20px; z-index: 1; overflow-y: auto;}
         .auth-card { background-color: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--border-radius); padding: 40px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7); transition: all 0.3s ease; width: 100%; max-width: 450px; backdrop-filter: blur(10px);  }
         .auth-card:hover { background-color: var(--card-hover); border-color: var(--accent-dark); }
-        h1 {font-family: 'A760-Roman-Smc', sans-serif; font-size: 2.2rem;text-align: center;margin-bottom: 10px;color: var(--accent-light);text-transform: uppercase; letter-spacing: 2px; line-height: 1.2; word-wrap: break-word;}
+        h1.auth-title {font-family: 'A760-Roman-Smc', sans-serif; font-size: 2.2rem;text-align: center;margin-bottom: 10px;color: var(--accent-light);text-transform: uppercase; letter-spacing: 2px; line-height: 1.2; word-wrap: break-word;}
         
         p.subtitle { text-align: center; color: var(--text-muted); font-size: 0.9rem;  margin-bottom: 30px;}
         .auth-form { display: flex; flex-direction: column; gap: 15px; }
@@ -44,41 +62,48 @@
         label { font-size: 0.85rem; color: var(--text-muted); }
         input {background-color: rgba(17, 24, 39, 0.8);border: 1px solid var(--card-border);border-radius: 6px;padding: 12px;color: var(--text-main);font-family: var(--font-standard);outline: none; transition: border-color 0.3s;}
         input:focus { border-color: var(--accent-dark); }
-        input:disabled { opacity: 0.5; cursor: not-allowed; }
-        .btn-primary {background-color: var(--accent-dark);color: var(--card-bg);border: none;border-radius: 6px;padding: 12px; font-weight: bold;cursor: pointer; transition: background-color 0.3s, transform 0.1s; margin-top: 10px;  }
+        input:disabled { opacity: 0.5; }
+        .btn-primary {background-color: var(--accent-dark);color: var(--card-bg);border: none;border-radius: 6px;padding: 12px; font-weight: bold; transition: background-color 0.3s, transform 0.1s; margin-top: 10px;  }
         .btn-primary:hover:not(:disabled) { background-color: var(--accent-light); }
         .btn-primary:active:not(:disabled) { transform: scale(0.98); }
-        .btn-primary:disabled { background-color: #555; color: #888; cursor: not-allowed; }
+        .btn-primary:disabled { background-color: #555; color: #888; }
         .divider { display: flex; align-items: center; text-align: center; margin: 25px 0; color: var(--card-border);}
         .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid var(--card-border); }
         .divider span { padding: 0 10px; font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); }
         .social-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .btn-social { background-color: transparent; border: 1px solid var(--card-border); border-radius: 6px;padding: 10px; color: var(--text-main); cursor: pointer; font-size: 1.2rem; display: flex; justify-content: center; align-items: center;}
+        .btn-social { background-color: transparent; border: 1px solid var(--card-border); border-radius: 6px;padding: 10px; color: var(--text-main); font-size: 1.2rem; display: flex; justify-content: center; align-items: center;}
         .btn-social:hover { border-color: var(--accent-dark); background-color: rgba(209, 179, 139, 0.1); }
         .footer-link { margin-top: 25px; text-align: center; font-size: 0.85rem; color: var(--text-muted); }
         .footer-link a { color: var(--accent-dark); text-decoration: none; font-weight: bold; }
         .footer-link a:hover { text-decoration: underline; }
-
-        .top-nav-ribbon {position: fixed;top: 30px;right: 40px;display: flex;gap: 15px;z-index: 1000;}
-        .floating-nav-btn {background: rgba(7, 11, 20, 0.6);border: 1px solid var(--accent-dark);color: var(--accent-dark);padding: 10px 20px;border-radius: 30px;text-decoration: none;font-family: var(--font-standard);font-size: 0.85rem;font-weight: bold;display: flex;align-items: center;gap: 8px;backdrop-filter: blur(5px);transition: all 0.3s ease;text-transform: uppercase;letter-spacing: 1px;}
-        .floating-nav-btn:hover {background: var(--accent-dark);color: var(--bg-color);transform: scale(1.05);box-shadow: 0 4px 15px rgba(209, 179, 139, 0.2);}
-        
-        @media (max-width: 600px) {
-            .top-nav-ribbon {top: 20px;right: 20px;gap: 10px;}
-            .floating-nav-btn {padding: 8px 15px;font-size: 0.75rem;}
-        }
 
         .message { font-size: 0.8rem; text-align: center; margin-top: 10px; min-height: 1.2rem; }
         .error { color: var(--status-error); }
         .success { color: var(--status-ok); }
         .hidden { display: none; }
 
-        footer {width: 100%;text-align: center;padding: 15px;background: rgba(10, 12, 16, 0.8);backdrop-filter: blur(10px);border-top: 1px solid var(--card-border);position: relative;z-index: 100;flex-shrink: 0; }
-        .footer-text {font-size: 0.8rem; color: var(--text-muted); font-family: var(--font-standard); letter-spacing: 0.5px;}
-        .footer-text a {color: var(--accent-dark); text-decoration: none; font-weight: 600; transition: color 0.3s ease; margin-left: 5px;}
-        .footer-text a:hover {color: var(--text-main); }
+        /* ----- FOOTER (BOTTOM RIBBON) ----- */
+        .footer-wrapper { background: var(--bg-color); width: 100%; position: relative; z-index: 2; border-top: 1px solid var(--card-border); display: flex; flex-direction: column; justify-content: space-between; flex-shrink: 0;}
+        .site-footer { color: var(--text-muted); padding: 40px; font-family: var(--font-standard); width: 100%; }
+        .footer-logo-center { text-align: center; margin-bottom: 20px; }
+        .footer-logo-center img { height: 40px; filter: grayscale(100%) brightness(0.8); margin-bottom: 15px; }
+        .footer-logo-center h2 { font-family: 'A760-Roman-Smc', serif; font-size: 1.2rem; color: var(--text-muted); letter-spacing: 4px; text-transform: uppercase; font-weight: normal; }
+        .footer-copyright { text-align: center; font-size: 0.8rem; color: rgba(156, 163, 175, 0.8); letter-spacing: 1px; }
+        .footer-copyright a { color: var(--accent-dark); text-decoration: none; font-weight: 600; margin-left: 5px; transition: 0.3s; }
+        .footer-copyright a:hover { color: var(--text-main); }
         
-        @media (max-width: 480px) {.auth-card { padding: 30px 20px; } h1 { font-size: 1.8rem; }}
+        @media (max-width: 600px) {
+            header { padding: 20px; flex-direction: column; gap: 15px; }
+            .nav-area { width: 100%; justify-content: center; }
+            .container { padding-top: 150px; }
+            .cursor-dot, .cursor-outline { display: none; } 
+            * { cursor: auto; } 
+        }
+        
+        @media (max-width: 480px) {
+            .auth-card { padding: 30px 20px; } 
+            h1.auth-title { font-size: 1.8rem; }
+        }
     </style>
 
     <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -86,35 +111,46 @@
 </head>
 <body>
 
+<!-- CUSTOM CURSOR -->
+<div class="cursor-dot"></div>
+<div class="cursor-outline"></div>
+
 <div id="intro-overlay">
     <video id="introVideo" autoplay muted playsinline>
-        <source src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/f70df67cca55c92bceca21a167087da798258b65/assets/VIDEO/GUARACI_INTRO.mp4" type="video/mp4">
+        <source src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/VIDEO/GUARACI_INTRO.mp4" type="video/mp4">
     </video>
     <button class="skip-btn" onclick="finishIntro()">Skip Intro</button>
 </div>
 
 <div class="video-bg-container">
     <video autoplay loop muted playsinline 
-           poster="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/b1c4c1f080d96ec1c35ff823176f214b761eb6a6/assets/WALLPAPER_MAINDASHBOARD.png">
-        <source src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/b1c4c1f080d96ec1c35ff823176f214b761eb6a6/assets/VIDEO/RIVER_MAINDASHBOARD.mp4" type="video/mp4">
-        <img src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/b1c4c1f080d96ec1c35ff823176f214b761eb6a6/assets/WALLPAPER_MAINDASHBOARD.png" title="Seu navegador não suporta vídeos.">
+           poster="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/WALLPAPER_MAINDASHBOARD.png">
+        <source src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/VIDEO/RIVER_MAINDASHBOARD.mp4" type="video/mp4">
+        <img src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/WALLPAPER_MAINDASHBOARD.png" title="Seu navegador não suporta vídeos.">
     </video>
 </div>
 <div class="video-overlay"></div>
 
-<div class="top-nav-ribbon">
-    <a href="about_us.html" class="floating-nav-btn" title="Discover Our Vision">
-        <i class="fas fa-seedling"></i> About Us
-    </a>
-    <a href="store.html" class="floating-nav-btn" title="View Hardware & Subscriptions">
-        <i class="fas fa-store"></i> Store & Plans
-    </a>
-</div>
+<!-- TOP RIBBON HEADER -->
+<header>
+    <div class="logo-area">
+        <img src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/IMAGE/GUARACI_LOGO_NO_BKGRD.png" alt="Guarací Logo">
+        <h1>GUARACÍ</h1>
+    </div>
+    <div class="nav-area">
+        <a href="about_us.html" class="floating-nav-btn" title="Discover Our Vision">
+            <i class="fas fa-seedling"></i> About Us
+        </a>
+        <a href="store.html" class="floating-nav-btn" title="View Hardware & Subscriptions">
+            <i class="fas fa-store"></i> Store & Plans
+        </a>
+    </div>
+</header>
 
 <div class="container">
     <div class="auth-card">
         <div id="login-section">
-            <h1>GUARACÍ</h1>
+            <h1 class="auth-title">GUARACÍ</h1>
             <p class="subtitle">Access your sensor hub</p>
             
             <form class="auth-form" id="loginForm">
@@ -140,7 +176,7 @@
         </div>
 
         <div id="signup-section" class="hidden">
-            <h1>Create Account</h1>
+            <h1 class="auth-title">Create Account</h1>
             <p class="subtitle">Register for the client portal</p>
             
             <form class="auth-form" id="signupForm">
@@ -157,8 +193,8 @@
                     <input type="password" id="regPass" placeholder="Create a strong password" required disabled>
                 </div>
                 <div class="input-group" style="display: flex; align-items: flex-start; gap: 10px; margin-top: 15px; margin-bottom: 25px; text-align: left;">
-                    <input type="checkbox" id="aiConsent" style="width: 20px; height: 20px; flex-shrink: 0; cursor: pointer; accent-color: var(--accent-dark); margin-top: 2px;">
-                    <label for="aiConsent" style="font-size: 0.75rem; color: var(--text-main); line-height: 1.5; text-transform: none; cursor: pointer;">
+                    <input type="checkbox" id="aiConsent" style="width: 20px; height: 20px; flex-shrink: 0; accent-color: var(--accent-dark); margin-top: 2px;">
+                    <label for="aiConsent" style="font-size: 0.75rem; color: var(--text-main); line-height: 1.5; text-transform: none;">
                         I agree to the <a href="https://ashuhda-tech.github.io/TerraConnect_Technologies/privacy.html" onclick="alert('Place your Privacy Policy Modal or Link here.')" style="color: var(--accent-dark); text-decoration: underline;">Terms of Service & Privacy Policy</a>, and I explicitly consent to my IoT telemetry and animal data being processed by third-party AI services to generate health insights.
                     </label>
                 </div>
@@ -178,14 +214,54 @@
     </div>
 </div>
 
-<footer>
-    <div class="footer-text">
-        Copyright &copy; 2026 GUARACÍ. All Rights Reserved. | 
-        <a href="license.html"><i class="fas fa-balance-scale"></i> Open-Use License</a>
-    </div>
-</footer>
+<!-- BOTTOM RIBBON FOOTER -->
+<div class="footer-wrapper">
+    <footer class="site-footer">
+        <div class="footer-logo-center">
+            <img src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/IMAGE/GUARACI_LOGO_NO_BKGRD.png" alt="Guarací Logo">
+            <h2>GUARACÍ</h2>
+        </div>
+        <div class="footer-copyright">
+            Copyright &copy; 2026 GUARACÍ. All Rights Reserved. | 
+            <a href="license.html"><i class="fas fa-balance-scale"></i> Open-Use License</a>
+        </div>
+    </footer>
+</div>
 
 <script>
+    // ----- CUSTOM CURSOR LOGIC -----
+    const cursorDot = document.querySelector('.cursor-dot');
+    const cursorOutline = document.querySelector('.cursor-outline');
+
+    window.addEventListener('mousemove', function(e) {
+        const posX = e.clientX;
+        const posY = e.clientY;
+
+        // Move the dot instantly
+        cursorDot.style.left = `${posX}px`;
+        cursorDot.style.top = `${posY}px`;
+
+        // Move the outline with a trailing effect
+        cursorOutline.animate({
+            left: `${posX}px`,
+            top: `${posY}px`
+        }, { duration: 500, fill: "forwards" });
+    });
+
+    // Add expansion hover effect to links and buttons
+    const clickables = document.querySelectorAll('a, button, input[type="submit"], input[type="checkbox"], label');
+    clickables.forEach(el => {
+        el.addEventListener('mouseenter', () => {
+            cursorOutline.style.transform = 'translate(-50%, -50%) scale(1.8)';
+            cursorOutline.style.backgroundColor = 'rgba(209, 179, 139, 0.15)'; 
+        });
+        el.addEventListener('mouseleave', () => {
+            cursorOutline.style.transform = 'translate(-50%, -50%) scale(1)';
+            cursorOutline.style.backgroundColor = 'transparent';
+        });
+    });
+
+    // ----- ORIGINAL LOGIC RETAINED -----
     const introOverlay = document.getElementById('intro-overlay');
     const introVideo = document.getElementById('introVideo');
 
@@ -336,7 +412,6 @@
         }
     });
 
-    // --- SIGN UP LOGIC (Updated for Dual Registration) ---
     document.getElementById('signupForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const consentBox = document.getElementById('aiConsent');
@@ -353,13 +428,13 @@
             name: document.getElementById('regName').value,
             email: document.getElementById('regEmail').value.toLowerCase().trim(),
             pass: document.getElementById('regPass').value,
-            userID: newUserID, // STANDARDIZED
+            userID: newUserID, 
             appSource: window.location.origin 
         };
 
         const payloadPageID = {
             action: 'init_user_page',
-            userID: newUserID, // STANDARDIZED
+            userID: newUserID, 
             appSource: window.location.origin 
         };
 
@@ -367,7 +442,6 @@
             msg.className = "message";
             msg.innerText = "Registering user profile...";
             
-            // 1. Send data to Sign Up Database
             const authResponse = await fetch(authScriptUrl, { 
                 method: 'POST', 
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -376,11 +450,9 @@
             
             const authResult = await authResponse.json();
 
-            // 2. Only proceed if the user registration was successful
             if (authResult.status === "success") {
                 msg.innerText = "Initializing secure environment...";
                 
-                // Send data to Page ID Database
                 const pageIdResponse = await fetch(pageIdScriptUrl, { 
                     method: 'POST', 
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -464,7 +536,6 @@
         });
     }
 
-    // --- GOOGLE SIGN-IN & REGISTRATION LOGIC ---
     async function handleGoogleCredentialResponse(response) {
         const userProfile = parseJwt(response.credential);
         if (!userProfile) {
@@ -493,12 +564,11 @@
             const result = await res.json();
 
             if (result.status === "success") {
-                // Determine if this is a new registration based on the server response
                 if (result.isNewUser) {
                     msg.innerText = "Initializing new user environment...";
                      const payloadPageID = {
                         action: 'init_user_page',
-                        userID: result.user.userID, // STANDARDIZED
+                        userID: result.user.userID, 
                         appSource: window.location.origin 
                     };
                     
