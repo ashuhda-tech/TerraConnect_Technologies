@@ -24,7 +24,7 @@
         /* HIDDEN NATIVE CURSOR */
         * { box-sizing: border-box; margin: 0; padding: 0; cursor: none; }
 
-        body {background-color: var(--bg-color);color: var(--text-main);font-family: var(--font-standard);display: flex;flex-direction: column; min-height: 100vh;overflow: hidden;}
+        body {background-color: var(--bg-color);color: var(--text-main);font-family: var(--font-standard);display: flex;flex-direction: column; min-height: 100vh;overflow-x: hidden;}
         
         /* ----- CUSTOM CURSOR ----- */
         .cursor-dot { width: 5px; height: 5px; background-color: var(--accent-light); position: fixed; top: 0; left: 0; transform: translate(-50%, -50%); border-radius: 50%; z-index: 99999; pointer-events: none; }
@@ -51,8 +51,8 @@
         .floating-nav-btn:hover {background: var(--accent-dark);color: var(--bg-color);transform: scale(1.05);box-shadow: 0 4px 15px rgba(209, 179, 139, 0.2);}
 
         /* ----- MAIN CONTAINER ----- */
-        .container { flex-grow: 1; display: flex; justify-content: center; align-items: center; width: 100%; padding: 120px 20px 40px 20px; z-index: 1; overflow-y: auto;}
-        .auth-card { background-color: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--border-radius); padding: 40px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7); transition: all 0.3s ease; width: 100%; max-width: 450px; backdrop-filter: blur(10px);  }
+        .container { flex-grow: 1; display: flex; justify-content: center; align-items: center; width: 100%; padding: 120px 20px 80px 20px; z-index: 1; overflow-y: auto;}
+        .auth-card { background-color: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--border-radius); padding: 40px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7); transition: all 0.3s ease; width: 100%; max-width: 450px; backdrop-filter: blur(10px); margin: auto; }
         .auth-card:hover { background-color: var(--card-hover); border-color: var(--accent-dark); }
         h1.auth-title {font-family: 'A760-Roman-Smc', sans-serif; font-size: 2.2rem;text-align: center;margin-bottom: 10px;color: var(--accent-light);text-transform: uppercase; letter-spacing: 2px; line-height: 1.2; word-wrap: break-word;}
         
@@ -83,15 +83,39 @@
         .hidden { display: none; }
 
         /* ----- FOOTER (BOTTOM RIBBON) ----- */
-        .footer-wrapper { background: var(--bg-color); width: 100%; position: relative; z-index: 2; border-top: 1px solid var(--card-border); display: flex; flex-direction: column; justify-content: space-between; flex-shrink: 0;}
-        .site-footer { color: var(--text-muted); padding: 40px; font-family: var(--font-standard); width: 100%; }
-        .footer-logo-center { text-align: center; margin-bottom: 20px; }
+        .footer-wrapper { background: var(--bg-color); width: 100%; position: relative; z-index: 2; border-top: 1px solid var(--card-border); display: flex; flex-direction: column; justify-content: space-between;}
+        
+        .cultural-attribution { max-width: 1000px; margin: 0 auto; padding: 40px 20px 20px 20px; text-align: center; }
+        .cultural-attribution p { font-size: 0.8rem; line-height: 1.6; color: rgba(156, 163, 175, 0.6); font-weight: 300; }
+        .cultural-attribution strong { color: rgba(209, 179, 139, 0.7); font-weight: 500; text-transform: uppercase; letter-spacing: 1px;}
+
+        .site-footer { color: var(--text-muted); padding: 20px 40px 40px 40px; font-family: var(--font-standard); width: 100%; }
+        .footer-logo-center { text-align: center; margin-bottom: 40px; }
         .footer-logo-center img { height: 40px; filter: grayscale(100%) brightness(0.8); margin-bottom: 15px; }
         .footer-logo-center h2 { font-family: 'A760-Roman-Smc', serif; font-size: 1.2rem; color: var(--text-muted); letter-spacing: 4px; text-transform: uppercase; font-weight: normal; }
-        .footer-copyright { text-align: center; font-size: 0.8rem; color: rgba(156, 163, 175, 0.8); letter-spacing: 1px; }
-        .footer-copyright a { color: var(--accent-dark); text-decoration: none; font-weight: 600; margin-left: 5px; transition: 0.3s; }
-        .footer-copyright a:hover { color: var(--text-main); }
+        .footer-content { max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; flex-wrap: wrap; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 30px; gap: 40px; }
+        .footer-links-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; flex-grow: 1; }
+        .footer-col { display: flex; flex-direction: column; gap: 15px; }
+        .footer-col a, .footer-col span { text-decoration: none; color: var(--text-main); font-size: 0.75rem; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500; transition: color 0.3s; }
+        .footer-col a:hover { color: var(--accent-dark); }
         
+        .language-selector { display: flex; align-items: center; gap: 6px; margin-top: 5px; flex-wrap: wrap;}
+        .language-selector span { color: var(--text-muted); margin-right: 5px; }
+        .language-selector button { background: none; border: none; color: var(--text-muted); font-size: 0.75rem; letter-spacing: 1.5px; font-weight: 500; text-transform: uppercase; transition: color 0.3s; }
+        .language-selector button:hover { color: var(--accent-dark); }
+        .language-selector button.active { color: var(--text-main); font-weight: bold; }
+
+        .footer-social { display: flex; gap: 20px; align-items: flex-start; justify-content: flex-end; min-width: 200px; }
+        .footer-social a { color: var(--text-muted); font-size: 1.2rem; transition: color 0.3s; }
+        .footer-social a:hover { color: var(--accent-dark); }
+        .footer-copyright { text-align: center; margin-top: 40px; font-size: 0.75rem; color: rgba(156, 163, 175, 0.5); letter-spacing: 1px; }
+
+        @media (max-width: 1024px) { 
+            .footer-content { flex-direction: column; } 
+            .footer-links-grid { grid-template-columns: repeat(2, 1fr); } 
+            .footer-social { justify-content: flex-start; margin-top: 20px; } 
+        }
+
         @media (max-width: 600px) {
             header { padding: 20px; flex-direction: column; gap: 15px; }
             .nav-area { width: 100%; justify-content: center; }
@@ -103,7 +127,15 @@
         @media (max-width: 480px) {
             .auth-card { padding: 30px 20px; } 
             h1.auth-title { font-size: 1.8rem; }
+            .footer-links-grid { grid-template-columns: 1fr; } 
         }
+
+        /* ----- COMPLETELY OBLITERATE GOOGLE TRANSLATE UI ----- */
+        .goog-te-banner-frame, .goog-te-banner-frame.skiptranslate, iframe.goog-te-banner-frame { display: none !important; visibility: hidden !important; opacity: 0 !important; z-index: -100000 !important; }
+        html, body { top: 0 !important; margin-top: 0 !important; }
+        #goog-gt-tt, .goog-te-balloon-frame { display: none !important; visibility: hidden !important; }
+        .goog-text-highlight { background: transparent !important; box-shadow: none !important; }
+        #google_translate_element { position: absolute; left: -9999px; top: -9999px; opacity: 0; pointer-events: none; z-index: -9999; }
     </style>
 
     <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -214,19 +246,73 @@
     </div>
 </div>
 
-<!-- BOTTOM RIBBON FOOTER -->
+<!-- BOTTOM FOOTNOTE WRAPPER -->
 <div class="footer-wrapper">
+    <!-- CULTURAL ACKNOWLEDGMENT -->
+    <div class="cultural-attribution">
+        <p><strong>Cultural Acknowledgment:</strong> The titles Nhanderu, Guaraci, Rudá, and Sumé originate from Tupi-Guarani cosmology. As a non-profit open-source initiative, we use these names with deep reverence to honor the indigenous heritage of the Brazilian territory and to reflect our core mission of synergy. We claim no ownership over these sacred cultural concepts.</p>
+    </div>
+
+    <!-- SITE FOOTER -->
     <footer class="site-footer">
         <div class="footer-logo-center">
-            <img src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/IMAGE/GUARACI_LOGO_NO_BKGRD.png" alt="Guarací Logo">
-            <h2>GUARACÍ</h2>
+            <img src="https://raw.githubusercontent.com/nhanderu-lab/Tupan/main/assets/IMAGE/HARPIA_LOGO_NO_BKGRD.png" alt="Nhanderu Logo">
+            <h2>Nhanderu</h2>
         </div>
+
+        <div class="footer-content">
+            <div class="footer-links-grid">
+                <div class="footer-col">
+                    <a href="#pressclub">Pressclub</a>
+                    <a href="#faqs">FAQs</a>
+                    <a href="#sitemap">Site Map</a>
+                    <div class="language-selector">
+                        <span>Language</span> 
+                        <button data-lang="en" class="lang-btn active">EN</button> | 
+                        <button data-lang="pt" class="lang-btn">PT</button> | 
+                        <button data-lang="nh" class="lang-btn">NH</button> |
+                        <button data-lang="es" class="lang-btn">ES</button> |
+                        <button data-lang="it" class="lang-btn">IT</button> |
+                        <button data-lang="sv" class="lang-btn">SV</button>
+                    </div>
+                </div>
+
+                <div class="footer-col">
+                    <a href="#complaints">Complaints</a>
+                    <a href="#contact">Contact</a>
+                    <a href="license.html">Terms</a>
+                </div>
+
+                <div class="footer-col">
+                    <a href="#find-dealer">Find your Solution</a>
+                    <a href="#privacy">Privacy</a>
+                    <a href="#donotsell">Do not Sell</a>
+                </div>
+
+                <div class="footer-col">
+                    <a href="#join">Join Us</a>
+                    <a href="#disconnect">Disconnect Resources Access</a>
+                </div>
+            </div>
+
+            <div class="footer-social">
+                <a href="#youtube" title="YouTube"><i class="fab fa-youtube"></i></a>
+                <a href="#facebook" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="#instagram" title="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="#linkedin" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                <a href="#x" title="X (Twitter)"><i class="fa-brands fa-x-twitter"></i></a>
+            </div>
+        </div>
+
         <div class="footer-copyright">
-            Copyright &copy; 2026 GUARACÍ. All Rights Reserved. | 
-            <a href="license.html"><i class="fas fa-balance-scale"></i> Open-Use License</a>
+            <p>Copyright &copy; 2026 Nhanderu. Engineered for the Earth.</p>
         </div>
     </footer>
 </div>
+
+<!-- HIDDEN GOOGLE TRANSLATE ELEMENT -->
+<div id="google_translate_element"></div>
+<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
 <script>
     // ----- CUSTOM CURSOR LOGIC -----
@@ -249,7 +335,7 @@
     });
 
     // Add expansion hover effect to links and buttons
-    const clickables = document.querySelectorAll('a, button, input[type="submit"], input[type="checkbox"], label');
+    const clickables = document.querySelectorAll('a, button, input[type="submit"], input[type="checkbox"], label, .lang-btn');
     clickables.forEach(el => {
         el.addEventListener('mouseenter', () => {
             cursorOutline.style.transform = 'translate(-50%, -50%) scale(1.8)';
@@ -258,6 +344,47 @@
         el.addEventListener('mouseleave', () => {
             cursorOutline.style.transform = 'translate(-50%, -50%) scale(1)';
             cursorOutline.style.backgroundColor = 'transparent';
+        });
+    });
+
+    // ----- TRANSLATION ENGINE LOGIC -----
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({
+            pageLanguage: 'en',
+            includedLanguages: 'en,pt,es,it,sv', 
+            autoDisplay: false
+        }, 'google_translate_element');
+    }
+
+    const langButtons = document.querySelectorAll('.lang-btn');
+    
+    langButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            langButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const langCode = btn.getAttribute('data-lang');
+
+            if (langCode === 'nh') {
+                window.location.href = 'index_nh.html';
+                return;
+            }
+
+            const selectField = document.querySelector('select.goog-te-combo');
+            
+            if (selectField) {
+                selectField.value = langCode;
+                selectField.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
+                
+                if (langCode === 'en') {
+                    document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                    document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; domain=" + window.location.hostname + "; path=/;";
+                }
+            } else {
+                console.warn("Google Translate widget hasn't fully loaded yet.");
+            }
         });
     });
 
