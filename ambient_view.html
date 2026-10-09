@@ -56,6 +56,27 @@
 
     * { box-sizing: border-box; }
 
+    /* --- MOUSE ELEGANT SELECTION CSS --- */
+    * { cursor: none; } 
+
+    .cursor-dot {
+        width: 5px; height: 5px; background-color: var(--accent);
+        position: fixed; top: 0; left: 0; transform: translate(-50%, -50%);
+        border-radius: 50%; z-index: 999999; pointer-events: none;
+    }
+    .cursor-outline {
+        width: 30px; height: 30px; border: 1px solid var(--accent);
+        position: fixed; top: 0; left: 0; transform: translate(-50%, -50%);
+        border-radius: 50%; z-index: 999998; pointer-events: none;
+        transition: transform 0.2s ease-out, background-color 0.2s ease-out;
+    }
+
+    @media (max-width: 768px) {
+        .cursor-dot, .cursor-outline { display: none; } 
+        * { cursor: auto; } 
+    }
+    /* --------------------------------- */
+
     body {   background-color: var(--bg-dark); color: var(--text-light); font-family: 'Inter', sans-serif;  margin: 0;   display: flex; height: 100vh; overflow: hidden; transition: background 0.5s, color 0.5s;}
 
     /* --- APP VERSION FLAG --- */
@@ -184,6 +205,10 @@
 
 </head>
 <body>
+    <!-- MOUSE ELEGANT SELECTION ELEMENTS -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+
     <div id="page-loader">
         <video autoplay muted loop playsinline class="loader-visual">
             <source src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/VIDEO/LOADING.mp4" type="video/mp4">
@@ -702,6 +727,46 @@
 </div>
 
 <script>
+    // --- MOUSE ELEGANT SELECTION JAVASCRIPT ---
+    const cursorDot = document.querySelector('.cursor-dot');
+    const cursorOutline = document.querySelector('.cursor-outline');
+
+    window.addEventListener('mousemove', function(e) {
+        const posX = e.clientX;
+        const posY = e.clientY;
+
+        cursorDot.style.left = `${posX}px`;
+        cursorDot.style.top = `${posY}px`;
+
+        cursorOutline.animate({
+            left: `${posX}px`,
+            top: `${posY}px`
+        }, { duration: 500, fill: "forwards" });
+    });
+
+    function attachCursorHoverEffects() {
+        const clickables = document.querySelectorAll('a, button, .sensor-card, .sensor-card-rs, .sos-btn');
+        clickables.forEach(el => {
+            el.removeEventListener('mouseenter', handleMouseEnter);
+            el.removeEventListener('mouseleave', handleMouseLeave);
+            el.addEventListener('mouseenter', handleMouseEnter);
+            el.addEventListener('mouseleave', handleMouseLeave);
+        });
+    }
+
+    function handleMouseEnter() {
+        cursorOutline.style.transform = 'translate(-50%, -50%) scale(1.8)';
+        cursorOutline.style.backgroundColor = 'rgba(209, 179, 139, 0.15)'; 
+    }
+
+    function handleMouseLeave() {
+        cursorOutline.style.transform = 'translate(-50%, -50%) scale(1)';
+        cursorOutline.style.backgroundColor = 'transparent';
+    }
+
+    document.addEventListener('DOMContentLoaded', attachCursorHoverEffects);
+    // ----------------------------------------
+
     const urlParams = new URLSearchParams(window.location.search);
     const currentPageId = urlParams.get('id');
 
@@ -1195,6 +1260,7 @@ async function loadData() {
             
             // Remove loader se tudo deu certo
             removeLoader();
+            attachCursorHoverEffects();
             
         } else {
             // Remove loader mesmo se o login falhar
@@ -2027,6 +2093,8 @@ async function loadVetVisits(id) {
             document.getElementById('vetMapContainer').innerHTML = ''; 
         }
 
+        attachCursorHoverEffects();
+
     } catch (e) {
         console.error("Error loading Vet Data:", e);
     }
@@ -2372,6 +2440,8 @@ async function openChart(fieldId, label) {
         if (eduSection) {
             eduSection.style.display = hasEducationalData ? 'block' : 'none';
         }
+        
+        attachCursorHoverEffects();
     }
 
 
