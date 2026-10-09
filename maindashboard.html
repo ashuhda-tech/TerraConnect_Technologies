@@ -38,6 +38,27 @@
         [data-theme="nature2"] {--bg-dark: #322D29; --sidebar-bg: #72383D; --accent: #AC9C8D; --text-light: #EFE9E1; --gray-panel: #D1C7BD; --border: #D9D9D9;}
         [data-theme="nature3"] {--bg-dark: #3b4d7b; --sidebar-bg: #1a2a4d; --accent: #c0c0e0; --text-light: #fef9e7; --gray-panel: #804040; --border: #e6b0aa;}
 
+        /* --- MOUSE ELEGANT SELECTION CSS --- */
+        * { cursor: none; } 
+        
+        .cursor-dot {
+            width: 5px; height: 5px; background-color: var(--accent);
+            position: fixed; top: 0; left: 0; transform: translate(-50%, -50%);
+            border-radius: 50%; z-index: 99999; pointer-events: none;
+        }
+        .cursor-outline {
+            width: 30px; height: 30px; border: 1px solid var(--accent);
+            position: fixed; top: 0; left: 0; transform: translate(-50%, -50%);
+            border-radius: 50%; z-index: 99998; pointer-events: none;
+            transition: transform 0.2s ease-out, background-color 0.2s ease-out;
+        }
+        
+        @media (max-width: 768px) {
+            .cursor-dot, .cursor-outline { display: none; } 
+            * { cursor: auto; } 
+        }
+        /* --------------------------------- */
+
         body {background-color: var(--bg-dark); color: var(--text-light); font-family: 'Inter', sans-serif; margin: 0; display: flex; height: 100vh; overflow: hidden; transition: 0.5s;}
         .a70-font {font-family: 'Cinzel', serif; letter-spacing: 1px;}
 
@@ -52,13 +73,13 @@
         /* AMBIENT CARDS & NEW LEAF TOGGLE */
         .ambient-card-wrapper { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
         
-        .ambient-card {flex-grow: 1; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); padding: 12px 15px; border-radius: 4px; display: flex; align-items: center; gap: 15px; cursor: pointer; transition: all 0.3s; text-decoration: none; color: var(--text-light); font-size: 0.85rem;}
+        .ambient-card {flex-grow: 1; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); padding: 12px 15px; border-radius: 4px; display: flex; align-items: center; gap: 15px; transition: all 0.3s; text-decoration: none; color: var(--text-light); font-size: 0.85rem;}
         .ambient-card i {font-size: 1.1rem; color: var(--accent); width: 20px; text-align: center;}
         .ambient-card:hover {background: var(--accent); color: var(--bg-dark); transform: translateX(3px);}
         .ambient-card:hover i { color: var(--bg-dark); }
         
         /* THE LEAF NOTIFICATION BUTTON & CUSTOM ICON */
-        .env-toggle-btn { background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); padding: 12px 15px; border-radius: 4px; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; width: 50px;}
+        .env-toggle-btn { background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); padding: 12px 15px; border-radius: 4px; transition: all 0.3s; display: flex; align-items: center; justify-content: center; width: 50px;}
         .env-toggle-btn:hover { background: rgba(255, 255, 255, 0.1); }
         .env-toggle-btn.active { border-color: #d1b38b; background: rgba(209, 179, 139, 0.1); box-shadow: 0 0 10px rgba(209, 179, 139, 0.3);}
         
@@ -80,7 +101,7 @@
         .theme-row { display: flex; justify-content: space-between; align-items: center; }
         .theme-row span { font-size: 0.55rem; opacity: 0.7; width: 60px; }
         .theme-options { display: flex; gap: 8px; flex-grow: 1; justify-content: flex-end; }
-        .theme-dot { width: 18px; height: 18px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; transition: 0.3s; }
+        .theme-dot { width: 18px; height: 18px; border-radius: 50%; border: 2px solid transparent; transition: 0.3s; }
         .theme-dot:hover { transform: scale(1.3); }
         .theme-dot.active { border-color: var(--text-light); }
 
@@ -90,7 +111,7 @@
         .user-card .name { font-weight: bold; font-size: 0.9rem; margin-top: 5px; display: block; }
         .user-card .id { font-family: monospace; font-size: 0.6rem; color: var(--accent); word-break: break-all; margin-top: 5px; display: block; }
 
-        .btn-exit { background: transparent; border: 1px solid #ef4e4e; color: #ef4e4e; padding: 8px; border-radius: 4px; cursor: pointer; width: 100%; font-size: 0.8rem; transition: 0.3s; }
+        .btn-exit { background: transparent; border: 1px solid #ef4e4e; color: #ef4e4e; padding: 8px; border-radius: 4px; width: 100%; font-size: 0.8rem; transition: 0.3s; }
         .btn-exit:hover { background: #ef4e4e; color: white; }
 
         /* MAIN CONTENT */
@@ -111,6 +132,10 @@
     </style>
 </head>
 <body>
+
+    <!-- MOUSE ELEGANT SELECTION ELEMENTS -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
 
     <div class="sidebar">
         <div class="nav-section" id="navSection">
@@ -206,18 +231,57 @@
     </div>
 
     <script>
+        // --- MOUSE ELEGANT SELECTION JAVASCRIPT ---
+        const cursorDot = document.querySelector('.cursor-dot');
+        const cursorOutline = document.querySelector('.cursor-outline');
+
+        window.addEventListener('mousemove', function(e) {
+            const posX = e.clientX;
+            const posY = e.clientY;
+            
+            cursorDot.style.left = `${posX}px`;
+            cursorDot.style.top = `${posY}px`;
+            
+            cursorOutline.animate({
+                left: `${posX}px`,
+                top: `${posY}px`
+            }, { duration: 500, fill: "forwards" });
+        });
+
+        // Function to re-apply hover effects to newly loaded DOM elements
+        function attachCursorHoverEffects() {
+            const clickables = document.querySelectorAll('a, button, .theme-dot, .ambient-card, .env-toggle-btn');
+            clickables.forEach(el => {
+                // Prevent duplicate listeners
+                el.removeEventListener('mouseenter', handleMouseEnter);
+                el.removeEventListener('mouseleave', handleMouseLeave);
+                
+                el.addEventListener('mouseenter', handleMouseEnter);
+                el.addEventListener('mouseleave', handleMouseLeave);
+            });
+        }
+
+        function handleMouseEnter() {
+            cursorOutline.style.transform = 'translate(-50%, -50%) scale(1.8)';
+            cursorOutline.style.backgroundColor = 'rgba(209, 179, 139, 0.15)'; 
+        }
+
+        function handleMouseLeave() {
+            cursorOutline.style.transform = 'translate(-50%, -50%) scale(1)';
+            cursorOutline.style.backgroundColor = 'transparent';
+        }
+
+        // Run once on load for static elements
+        document.addEventListener('DOMContentLoaded', attachCursorHoverEffects);
+        // ----------------------------------------
+
         const user = JSON.parse(localStorage.getItem('currentUser'));
         const authToken = sessionStorage.getItem('authToken');
         
-        // Define Icon String Constant
         const CUSTOM_LEAF_ICON = '<img src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/cc120b1c202fed01c4b4050d916d1e9ef5937a15/assets/IMAGE/terraconnect%20ICON_no%20bkgr.png" class="custom-leaf-icon">';
 
-        // Determine correct standardized User ID (Fallback to legacy id if needed)
         const actualUserID = user ? (user.userID || user.id) : null;
 
-        // ==========================================
-        // VULNERABILITY FIX 1: Strict Token Enforcement
-        // ==========================================
         if (!user || !authToken || !actualUserID) { 
             window.location.replace('index.html'); 
         } else {
@@ -225,7 +289,6 @@
             document.getElementById('userId').innerText = `ID: ${actualUserID}`;
         }
 
-        // Master Directory URL encoded in Base64
         const MASTER_DIRECTORY_B64 = 'aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J6cTRZVWUzWjJQeGNsdlJtRWNxaVF1bk1KRXRXNVE5cmxOV21KOXF6RWdQcWM5OVVlVThud3VjYm91SFdzaE1Bdy9leGVj'; 
 
         let pageIdScriptUrl = "";
@@ -243,8 +306,8 @@
                 const result = await response.json();
                 
                 if (result.status === "success") {
-                    // Removed atob() decoding; expecting plain-text URLs from backend now
                     pageIdScriptUrl = result.data["TerraConnect_PageID"] || ""; 
+                    // FIXED: Corrected key name to match the Master Spreadsheet index
                     themeScriptUrl = result.data["TerraConnect_FLAGS_Dashboard View"] || "";
                     routinesScriptUrl = result.data["TerraConnect_Routines"] || "";
                     return true;
@@ -376,6 +439,9 @@
                     if (firstThemeToApply && !localStorage.getItem(`theme_${actualUserID}`)) {
                         setTheme(firstThemeToApply);
                     }
+                    
+                    // Apply hover effects to the newly created ambient cards and buttons
+                    attachCursorHoverEffects();
 
                 } else {
                     navSection.innerHTML = '<span class="loading-text" style="color:#ef4e4e;">No environments found. Register one below.</span>';
