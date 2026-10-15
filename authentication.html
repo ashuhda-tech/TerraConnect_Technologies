@@ -416,7 +416,7 @@
 
     async function fetchDatabaseRoutes() {
         try {
-            const payload = { pageName: "index.html", appSource: window.location.origin };
+            const payload = { pageName: "authentication.html", appSource: window.location.origin };
             const response = await fetch(MASTER_DIRECTORY_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
