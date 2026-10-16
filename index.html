@@ -49,7 +49,7 @@
         
         html { 
             scroll-behavior: smooth; 
-            scroll-snap-type: y proximity;
+            scroll-snap-type: y mandatory;
         }
         
         body { 
@@ -340,7 +340,7 @@
             <p style="text-align: left; margin-bottom: 10px; font-size: 0.95rem;">True synergy with the natural world requires profound respect for the communities that have historically safeguarded it. We highly encourage using the interactive IPEA database map below to filter by your region or specific cause to find and support localized initiatives, or explore the highlighted institutions below.</p>
 
             <div class="map-wrapper">
-                <iframe src="https://mapaosc.ipea.gov.br/mapa" title="IPEA Mapa das OSCs" loading="lazy"></iframe>
+                <iframe src="https://mapaosc.ipea.gov.br/mapa" title="IPEA Mapa das OSCs" loading="lazy" sandbox="allow-scripts allow-same-origin"></iframe>
             </div>
             
             <div class="map-actions">
@@ -452,7 +452,7 @@
                 Radical Transparency: In commitment to open data and community trust, real-time website usage and ecosystem activity metrics are publicly shared below.
             </p>
 
-            <div class="map-wrapper" style="height: 65vh; min-height: 500px;">
+            <div class="map-wrapper" style="height: 55vh; min-height: 400px; overflow-anchor: none;">
                 <iframe 
                     src="https://datastudio.google.com/embed/reporting/e7bf394b-e0c6-458d-80d3-4729e0ab20a3/page/kIV1C" 
                     title="TerraConnect Public Analytics Dashboard"
