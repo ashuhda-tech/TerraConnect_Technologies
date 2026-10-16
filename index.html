@@ -192,6 +192,7 @@
         .footer-social a { color: var(--text-muted); font-size: 1.2rem; transition: color 0.3s; }
         .footer-social a:hover { color: var(--accent-dark); }
         .footer-copyright { text-align: center; margin-top: 40px; font-size: 0.75rem; color: rgba(156, 163, 175, 0.5); letter-spacing: 1px; }
+        .app-version-flag {position: fixed;bottom: 10px;left: 10px;background: rgba(0, 0, 0, 0.6);color: rgba(255, 255, 255, 0.3);padding: 4px 8px;border-radius: 4px;font-size: 0.55rem;font-family: 'Inter', monospace;z-index: 99999;pointer-events: none;border: 1px solid rgba(255, 255, 255, 0.1);backdrop-filter: blur(2px);transition: opacity 0.5s;}
 
         /* Make sure the map card doesn't overflow on small height screens */
         @media (max-height: 900px) {
@@ -340,7 +341,7 @@
             <p style="text-align: left; margin-bottom: 10px; font-size: 0.95rem;">True synergy with the natural world requires profound respect for the communities that have historically safeguarded it. We highly encourage using the interactive IPEA database map below to filter by your region or specific cause to find and support localized initiatives, or explore the highlighted institutions below.</p>
 
             <div class="map-wrapper">
-                <iframe src="https://mapaosc.ipea.gov.br/mapa" title="IPEA Mapa das OSCs" sandbox="allow-scripts allow-same-origin"></iframe>
+                <iframe class="lazy-iframe" data-src="https://mapaosc.ipea.gov.br/mapa" title="IPEA Mapa das OSCs" sandbox="allow-scripts allow-same-origin" style="width: 100%; height: 100%; border: none;"></iframe>
             </div>
             
             <div class="map-actions">
@@ -454,7 +455,8 @@
 
             <div class="map-wrapper" style="height: 55vh; min-height: 400px; overflow-anchor: none;">
                 <iframe 
-                    src="https://datastudio.google.com/embed/reporting/e7bf394b-e0c6-458d-80d3-4729e0ab20a3/page/kIV1C" 
+                    class="lazy-iframe"
+                    data-src="https://datastudio.google.com/embed/reporting/e7bf394b-e0c6-458d-80d3-4729e0ab20a3/page/kIV1C" 
                     title="TerraConnect Public Analytics Dashboard"
                     style="width: 100%; height: 100%; border: none; filter: invert(0.9) hue-rotate(180deg);" 
                     allowfullscreen 
@@ -668,28 +670,55 @@
         });
     });
 
-    // 5. PREVENT IFRAME AUTOFOCUS JUMP
-    // Force the browser to start at the absolute top on every refresh
+    // 5. PREVENT IFRAME JUMPS & LAZY LOAD BOTH MODULES
     if ('scrollRestoration' in history) {
         history.scrollRestoration = 'manual';
     }
     window.scrollTo(0, 0);
 
-    // Only load the map when the user actually scrolls to Page 3
-    const ipeaIframe = document.getElementById('ipea-iframe');
-    if (ipeaIframe) {
+    const lazyIframes = document.querySelectorAll('.lazy-iframe');
+    if (lazyIframes.length > 0) {
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    ipeaIframe.src = ipeaIframe.getAttribute('data-src');
-                    observer.unobserve(ipeaIframe);
+                    const iframe = entry.target;
+                    iframe.src = iframe.getAttribute('data-src');
+                    observer.unobserve(iframe); // Stop observing once loaded
                 }
             });
-        }, { rootMargin: "200px" }); // Starts loading slightly before you reach it
+        }, { rootMargin: "100px" }); 
         
-        observer.observe(ipeaIframe);
+        lazyIframes.forEach(iframe => observer.observe(iframe));
     }
+
+    // 6. GITHUB VERSION CONTROL
+    async function fetchGitHubVersion() {
+        const flagElement = document.getElementById('gh-version-flag');
+        if (!flagElement) return;
+        
+        // Fetching from the WorldConnect repo
+        const repoUrl = 'https://api.github.com/repos/ashuhda-tech/WorldConnect_Technologies/commits?per_page=1';
+        try {
+            const response = await fetch(repoUrl);
+            if (response.ok) {
+                const data = await response.json();
+                const latestCommit = data[0];
+                const shortSha = latestCommit.sha.substring(0, 7);
+                const commitDate = new Date(latestCommit.commit.author.date);
+                const formattedDate = `${String(commitDate.getDate()).padStart(2, '0')}/${String(commitDate.getMonth() + 1).padStart(2, '0')}/${commitDate.getFullYear()}`;
+                flagElement.innerHTML = `<i class="fas fa-code-branch"></i> Build ${shortSha} (${formattedDate})`;
+            } else {
+                flagElement.innerHTML = `<i class="fas fa-code-branch"></i> Live Build`;
+            }
+        } catch (error) {
+            flagElement.innerHTML = `<i class="fas fa-code-branch"></i> Local Build`;
+        }
+    }
+    document.addEventListener('DOMContentLoaded', fetchGitHubVersion);
 </script>
 
+<div id="gh-version-flag" class="app-version-flag">
+        <i class="fas fa-spinner fa-spin"></i> Fetching Build...
+    </div>
 </body>
 </html>
