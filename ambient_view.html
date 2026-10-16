@@ -327,9 +327,6 @@
         </div>
 
         <div id="section-main">
-            <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-top: 20px; margin-bottom: 15px;">
-                <i class="fas fa-broadcast-tower"></i> Clima Station
-            </h3>
             <div id="section-inmet">
             <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-top: 20px; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between;">
                 <span><i class="fas fa-cloud-sun"></i> External Environment (INMET)</span>
@@ -1409,7 +1406,7 @@ async function loadExternalINMETData(targetLat, targetLon) {
 
     try {
         // 1. Fetch all automatic INMET stations across Brazil
-        const stationsRes = await fetch('https://apitempo.inmet.gov.br/estacoes/T');
+        const stationsRes = await fetch('https://corsproxy.io/?https://apitempo.inmet.gov.br/estacoes/T');
         const stations = await stationsRes.json();
 
         // 2. Find the closest station using the Haversine distance formula
