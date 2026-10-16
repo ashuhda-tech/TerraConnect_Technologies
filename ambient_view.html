@@ -328,6 +328,33 @@
 
         <div id="section-main">
             <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-top: 20px; margin-bottom: 15px;">
+                <i class="fas fa-broadcast-tower"></i> Clima Station
+            </h3>
+            <div id="section-inmet">
+            <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-top: 20px; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between;">
+                <span><i class="fas fa-cloud-sun"></i> External Environment (INMET)</span>
+                <span id="inmetStationName" style="font-size: 0.7rem; color: var(--text-muted); font-family: 'Inter', sans-serif;">Locating nearest station...</span>
+            </h3>
+            <div class="sensor-grid" id="sensor-grid-inmet">
+                <div class="sensor-card-rs" style="cursor: default;">
+                    <i class="fas fa-thermometer-half sensor-icon" style="color: #ff9ff3;"></i>
+                    <div class="sensor-data">
+                        <span class="sensor-label">External Temperature</span>
+                        <div class="sensor-val" id="valFieldInmetTemp">--<span>°C</span></div>
+                    </div>
+                </div>
+                <div class="sensor-card-rs" style="cursor: default;">
+                    <i class="fas fa-tint sensor-icon" style="color: #48dbfb;"></i>
+                    <div class="sensor-data">
+                        <span class="sensor-label">External Humidity</span>
+                        <div class="sensor-val" id="valFieldInmetHum">--<span>%</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+            
+            <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-top: 20px; margin-bottom: 15px;">
                 <i class="fas fa-broadcast-tower"></i> Main Sensor Unit
             </h3>
             <div class="sensor-grid" id="sensor-grid-main">
@@ -1145,6 +1172,8 @@ async function loadData() {
                 locElement.innerText = "Locating..."; 
                 getGeocodedLocation(lat, lon).then(locationString => {
                     locElement.innerText = locationString;});
+                // TRIGGER EXTERNAL INMET WEATHER API
+                loadExternalINMETData(homeLat, homeLon);
             } else {locElement.innerText = "---";}
             document.getElementById('dynAmbient').innerText = String(data[2] || "Ambient").toUpperCase();
             
@@ -1367,6 +1396,78 @@ async function loadSpeciesDatabase(scientificName) {
         console.warn("Geocoding failed, falling back to raw coordinates.", error);
     }
     return `${lat},${lon}`; 
+}
+
+    // ==========================================
+// --- INMET EXTERNAL METEOROLOGY API ---
+// ==========================================
+async function loadExternalINMETData(targetLat, targetLon) {
+    if (!targetLat || !targetLon || isNaN(targetLat) || isNaN(targetLon) || targetLat === 0) {
+        document.getElementById('inmetStationName').innerText = "Location not available";
+        return;
+    }
+
+    try {
+        // 1. Fetch all automatic INMET stations across Brazil
+        const stationsRes = await fetch('https://apitempo.inmet.gov.br/estacoes/T');
+        const stations = await stationsRes.json();
+
+        // 2. Find the closest station using the Haversine distance formula
+        let closestStation = null;
+        let minDistance = Infinity;
+        const toRad = (value) => value * Math.PI / 180;
+        
+        stations.forEach(station => {
+            const stLat = parseFloat(station.VL_LATITUDE);
+            const stLon = parseFloat(station.VL_LONGITUDE);
+            if (!isNaN(stLat) && !isNaN(stLon)) {
+                const dLat = toRad(stLat - targetLat);
+                const dLon = toRad(stLon - targetLon);
+                const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(toRad(targetLat)) * Math.cos(toRad(stLat)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+                const distance = 6371 * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))); // Earth radius = 6371 km
+                
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    closestStation = station;
+                }
+            }
+        });
+
+        if (!closestStation) {
+            document.getElementById('inmetStationName').innerText = "No station found";
+            return;
+        }
+
+        document.getElementById('inmetStationName').innerHTML = `<i class="fas fa-map-marker-alt"></i> ${closestStation.DC_NOME} (${minDistance.toFixed(1)} km)`;
+
+        // 3. Fetch hourly data for the closest station (Querying yesterday to today to avoid timezone gaps)
+        const today = new Date();
+        const yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
+        const formatDate = (date) => date.toISOString().split('T')[0];
+
+        const dataRes = await fetch(`https://apitempo.inmet.gov.br/estacao/${formatDate(yesterday)}/${formatDate(today)}/${closestStation.CD_ESTACAO}`);
+        const historicalData = await dataRes.json();
+
+        // 4. Iterate backwards to find the most recent valid readings
+        if (historicalData && historicalData.length > 0) {
+            let recentTemp = null;
+            let recentHum = null;
+
+            for (let i = historicalData.length - 1; i >= 0; i--) {
+                const reading = historicalData[i];
+                if (recentTemp === null && reading.TEM_INS) recentTemp = reading.TEM_INS;
+                if (recentHum === null && reading.UMD_INS) recentHum = reading.UMD_INS;
+                if (recentTemp !== null && recentHum !== null) break; // Stop once we have both
+            }
+
+            if (recentTemp) document.getElementById('valFieldInmetTemp').innerHTML = `${parseFloat(recentTemp).toFixed(1)}<span>°C</span>`;
+            if (recentHum) document.getElementById('valFieldInmetHum').innerHTML = `${parseFloat(recentHum).toFixed(1)}<span>%</span>`;
+        }
+    } catch (e) {
+        console.warn("Failed to fetch INMET API data:", e);
+        document.getElementById('inmetStationName').innerText = "API Connection Failed";
+    }
 }
     
 async function updateSensors() {
