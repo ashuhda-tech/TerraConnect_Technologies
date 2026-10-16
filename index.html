@@ -340,7 +340,7 @@
             <p style="text-align: left; margin-bottom: 10px; font-size: 0.95rem;">True synergy with the natural world requires profound respect for the communities that have historically safeguarded it. We highly encourage using the interactive IPEA database map below to filter by your region or specific cause to find and support localized initiatives, or explore the highlighted institutions below.</p>
 
             <div class="map-wrapper">
-                <iframe src="https://mapaosc.ipea.gov.br/mapa" title="IPEA Mapa das OSCs" loading="lazy" sandbox="allow-scripts allow-same-origin"></iframe>
+                <iframe src="https://mapaosc.ipea.gov.br/mapa" title="IPEA Mapa das OSCs" sandbox="allow-scripts allow-same-origin"></iframe>
             </div>
             
             <div class="map-actions">
@@ -667,6 +667,28 @@
             }
         });
     });
+
+    // 5. PREVENT IFRAME AUTOFOCUS JUMP
+    // Force the browser to start at the absolute top on every refresh
+    if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+    }
+    window.scrollTo(0, 0);
+
+    // Only load the map when the user actually scrolls to Page 3
+    const ipeaIframe = document.getElementById('ipea-iframe');
+    if (ipeaIframe) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    ipeaIframe.src = ipeaIframe.getAttribute('data-src');
+                    observer.unobserve(ipeaIframe);
+                }
+            });
+        }, { rootMargin: "200px" }); // Starts loading slightly before you reach it
+        
+        observer.observe(ipeaIframe);
+    }
 </script>
 
 </body>
