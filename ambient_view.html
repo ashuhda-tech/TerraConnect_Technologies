@@ -1395,7 +1395,7 @@ async function loadSpeciesDatabase(scientificName) {
     return `${lat},${lon}`; 
 }
 
-    // ==========================================
+// ==========================================
 // --- INMET EXTERNAL METEOROLOGY API ---
 // ==========================================
 async function loadExternalINMETData(targetLat, targetLon) {
@@ -1405,9 +1405,15 @@ async function loadExternalINMETData(targetLat, targetLon) {
     }
 
     try {
-        // 1. Fetch all automatic INMET stations across Brazil
-        const stationsRes = await fetch('https://corsproxy.io/?https://apitempo.inmet.gov.br/estacoes/T');
+        // 1. Fetch all automatic INMET stations using AllOrigins raw proxy to bypass CORS
+        const proxyUrl = 'https://api.allorigins.win/raw?url=';
+        const stationsRes = await fetch(proxyUrl + encodeURIComponent('https://apitempo.inmet.gov.br/estacoes/T'));
         const stations = await stationsRes.json();
+
+        // Safety check to prevent the script from crashing if the proxy fails
+        if (!Array.isArray(stations)) {
+            throw new Error("Invalid data format received from INMET stations API.");
+        }
 
         // 2. Find the closest station using the Haversine distance formula
         let closestStation = null;
@@ -1431,23 +1437,24 @@ async function loadExternalINMETData(targetLat, targetLon) {
         });
 
         if (!closestStation) {
-            document.getElementById('inmetStationName').innerText = "No station found";
+            document.getElementById('inmetStationName').innerText = "No station found nearby";
             return;
         }
 
         document.getElementById('inmetStationName').innerHTML = `<i class="fas fa-map-marker-alt"></i> ${closestStation.DC_NOME} (${minDistance.toFixed(1)} km)`;
 
-        // 3. Fetch hourly data for the closest station (Querying yesterday to today to avoid timezone gaps)
+        // 3. Fetch hourly data for the closest station (via proxy)
         const today = new Date();
         const yesterday = new Date(today);
         yesterday.setDate(yesterday.getDate() - 1);
         const formatDate = (date) => date.toISOString().split('T')[0];
 
-        const dataRes = await fetch(`https://apitempo.inmet.gov.br/estacao/${formatDate(yesterday)}/${formatDate(today)}/${closestStation.CD_ESTACAO}`);
+        const stationDataUrl = `https://apitempo.inmet.gov.br/estacao/${formatDate(yesterday)}/${formatDate(today)}/${closestStation.CD_ESTACAO}`;
+        const dataRes = await fetch(proxyUrl + encodeURIComponent(stationDataUrl));
         const historicalData = await dataRes.json();
 
         // 4. Iterate backwards to find the most recent valid readings
-        if (historicalData && historicalData.length > 0) {
+        if (Array.isArray(historicalData) && historicalData.length > 0) {
             let recentTemp = null;
             let recentHum = null;
 
@@ -1460,6 +1467,8 @@ async function loadExternalINMETData(targetLat, targetLon) {
 
             if (recentTemp) document.getElementById('valFieldInmetTemp').innerHTML = `${parseFloat(recentTemp).toFixed(1)}<span>°C</span>`;
             if (recentHum) document.getElementById('valFieldInmetHum').innerHTML = `${parseFloat(recentHum).toFixed(1)}<span>%</span>`;
+        } else {
+            throw new Error("No recent historical data available for this station.");
         }
     } catch (e) {
         console.warn("Failed to fetch INMET API data:", e);
