@@ -327,28 +327,30 @@
         </div>
 
         <div id="section-main">
+            
             <div id="section-inmet">
-            <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-top: 20px; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between;">
-                <span><i class="fas fa-cloud-sun"></i> External Environment (INMET)</span>
-                <span id="inmetStationName" style="font-size: 0.7rem; color: var(--text-muted); font-family: 'Inter', sans-serif;">Locating nearest station...</span>
-            </h3>
-            <div class="sensor-grid" id="sensor-grid-inmet">
-                <div class="sensor-card-rs" style="cursor: default;">
-                    <i class="fas fa-thermometer-half sensor-icon" style="color: #ff9ff3;"></i>
-                    <div class="sensor-data">
-                        <span class="sensor-label">External Temperature</span>
-                        <div class="sensor-val" id="valFieldInmetTemp">--<span>°C</span></div>
+                <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-top: 20px; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between;">
+                    <span><i class="fas fa-cloud-sun"></i> External Environment (Open-Meteo)</span>
+                    <span id="inmetStationName" style="font-size: 0.7rem; color: var(--text-muted); font-family: 'Inter', sans-serif;">Locating...</span>
+                </h3>
+                <div class="sensor-grid" id="sensor-grid-inmet">
+                    <!-- AGORA COM ONCLICK PARA ABRIR O GRÁFICO -->
+                    <div class="sensor-card-rs" onclick="openChart(101, 'External Temperature')" style="cursor: pointer;">
+                        <i class="fas fa-thermometer-half sensor-icon" style="color: #ff9ff3;"></i>
+                        <div class="sensor-data">
+                            <span class="sensor-label">External Temperature</span>
+                            <div class="sensor-val" id="valFieldInmetTemp">--<span>°C</span></div>
+                        </div>
                     </div>
-                </div>
-                <div class="sensor-card-rs" style="cursor: default;">
-                    <i class="fas fa-tint sensor-icon" style="color: #48dbfb;"></i>
-                    <div class="sensor-data">
-                        <span class="sensor-label">External Humidity</span>
-                        <div class="sensor-val" id="valFieldInmetHum">--<span>%</span></div>
+                    <div class="sensor-card-rs" onclick="openChart(102, 'External Humidity')" style="cursor: pointer;">
+                        <i class="fas fa-tint sensor-icon" style="color: #48dbfb;"></i>
+                        <div class="sensor-data">
+                            <span class="sensor-label">External Humidity</span>
+                            <div class="sensor-val" id="valFieldInmetHum">--<span>%</span></div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
             
             <h3 class="a70-font" style="font-size: 0.9rem; color: var(--accent); margin-top: 20px; margin-bottom: 15px;">
@@ -1396,82 +1398,33 @@ async function loadSpeciesDatabase(scientificName) {
 }
 
 // ==========================================
-// --- INMET EXTERNAL METEOROLOGY API ---
+// --- OPEN-METEO EXTERNAL METEOROLOGY API ---
 // ==========================================
 async function loadExternalINMETData(targetLat, targetLon) {
     if (!targetLat || !targetLon || isNaN(targetLat) || isNaN(targetLon) || targetLat === 0) {
-        document.getElementById('inmetStationName').innerText = "Location not available";
+        document.getElementById('inmetStationName').innerText = "Coordinates not available";
         return;
     }
 
     try {
-        // 1. Fetch all automatic INMET stations using AllOrigins raw proxy to bypass CORS
-        const proxyUrl = 'https://api.allorigins.win/raw?url=';
-        const stationsRes = await fetch(proxyUrl + encodeURIComponent('https://apitempo.inmet.gov.br/estacoes/T'));
-        const stations = await stationsRes.json();
+        // Fetch current weather data from Open-Meteo
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${targetLat}&longitude=${targetLon}&current=temperature_2m,relative_humidity_2m`;
+        const res = await fetch(url);
+        const weatherData = await res.json();
 
-        // Safety check to prevent the script from crashing if the proxy fails
-        if (!Array.isArray(stations)) {
-            throw new Error("Invalid data format received from INMET stations API.");
-        }
+        if (weatherData && weatherData.current) {
+            const temp = weatherData.current.temperature_2m;
+            const hum = weatherData.current.relative_humidity_2m;
 
-        // 2. Find the closest station using the Haversine distance formula
-        let closestStation = null;
-        let minDistance = Infinity;
-        const toRad = (value) => value * Math.PI / 180;
-        
-        stations.forEach(station => {
-            const stLat = parseFloat(station.VL_LATITUDE);
-            const stLon = parseFloat(station.VL_LONGITUDE);
-            if (!isNaN(stLat) && !isNaN(stLon)) {
-                const dLat = toRad(stLat - targetLat);
-                const dLon = toRad(stLon - targetLon);
-                const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(toRad(targetLat)) * Math.cos(toRad(stLat)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-                const distance = 6371 * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))); // Earth radius = 6371 km
-                
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    closestStation = station;
-                }
-            }
-        });
+            document.getElementById('inmetStationName').innerHTML = `<i class="fas fa-check-circle" style="color:#a3b18a"></i> Open-Meteo Live`;
 
-        if (!closestStation) {
-            document.getElementById('inmetStationName').innerText = "No station found nearby";
-            return;
-        }
-
-        document.getElementById('inmetStationName').innerHTML = `<i class="fas fa-map-marker-alt"></i> ${closestStation.DC_NOME} (${minDistance.toFixed(1)} km)`;
-
-        // 3. Fetch hourly data for the closest station (via proxy)
-        const today = new Date();
-        const yesterday = new Date(today);
-        yesterday.setDate(yesterday.getDate() - 1);
-        const formatDate = (date) => date.toISOString().split('T')[0];
-
-        const stationDataUrl = `https://apitempo.inmet.gov.br/estacao/${formatDate(yesterday)}/${formatDate(today)}/${closestStation.CD_ESTACAO}`;
-        const dataRes = await fetch(proxyUrl + encodeURIComponent(stationDataUrl));
-        const historicalData = await dataRes.json();
-
-        // 4. Iterate backwards to find the most recent valid readings
-        if (Array.isArray(historicalData) && historicalData.length > 0) {
-            let recentTemp = null;
-            let recentHum = null;
-
-            for (let i = historicalData.length - 1; i >= 0; i--) {
-                const reading = historicalData[i];
-                if (recentTemp === null && reading.TEM_INS) recentTemp = reading.TEM_INS;
-                if (recentHum === null && reading.UMD_INS) recentHum = reading.UMD_INS;
-                if (recentTemp !== null && recentHum !== null) break; // Stop once we have both
-            }
-
-            if (recentTemp) document.getElementById('valFieldInmetTemp').innerHTML = `${parseFloat(recentTemp).toFixed(1)}<span>°C</span>`;
-            if (recentHum) document.getElementById('valFieldInmetHum').innerHTML = `${parseFloat(recentHum).toFixed(1)}<span>%</span>`;
+            if (temp !== undefined) document.getElementById('valFieldInmetTemp').innerHTML = `${parseFloat(temp).toFixed(1)}<span>°C</span>`;
+            if (hum !== undefined) document.getElementById('valFieldInmetHum').innerHTML = `${parseFloat(hum).toFixed(1)}<span>%</span>`;
         } else {
-            throw new Error("No recent historical data available for this station.");
+            throw new Error("Invalid response from Open-Meteo");
         }
     } catch (e) {
-        console.warn("Failed to fetch INMET API data:", e);
+        console.warn("Failed to fetch Open-Meteo API data:", e);
         document.getElementById('inmetStationName').innerText = "API Connection Failed";
     }
 }
@@ -2308,7 +2261,83 @@ async function updateVetMap(vetLocationsArray, gpsData = null) {
     
     
 
-async function openChart(fieldId, label) {
+    async function openChart(fieldId, label) {
+    
+    // --- INTERCEPT OPEN-METEO HISTORICAL CHARTS (IDs 101 & 102) ---
+    if (fieldId === 101 || fieldId === 102) {
+        if (!homeLat || !homeLon) return alert("Location coordinates not available for historical data.");
+        
+        const modal = document.getElementById('chartModal');
+        document.getElementById('modalChartTitle').innerText = label.toUpperCase();
+        modal.style.display = 'flex';
+        
+        try {
+            // Pega os últimos 10 dias usando a API de previsão (que inclui dados recentes)
+            const variable = fieldId === 101 ? 'temperature_2m' : 'relative_humidity_2m';
+            const unit = fieldId === 101 ? '°C' : '%';
+            
+            const url = `https://api.open-meteo.com/v1/forecast?latitude=${homeLat}&longitude=${homeLon}&past_days=10&hourly=${variable}`;
+            const res = await fetch(url);
+            const data = await res.json();
+            
+            if (!data || !data.hourly) {
+                console.error("No historical data returned from Open-Meteo");
+                return;
+            }
+
+            const labels = data.hourly.time;
+            const values = data.hourly[variable];
+            const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+            
+            if (myChart) myChart.destroy();
+            const ctx = document.getElementById('customChart').getContext('2d');
+            
+            myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: label,
+                        data: values,
+                        borderColor: accentColor,
+                        backgroundColor: accentColor + '33',
+                        borderWidth: 1,
+                        pointRadius: 0, // Esconde os pontos por ter muitos dados horários
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { 
+                            grid: { color: '#333' }, 
+                            ticks: { color: '#fff', callback: (value) => value + ' ' + unit } 
+                        },
+                        x: { 
+                            grid: { display: false }, 
+                            ticks: { 
+                                color: '#fff', 
+                                maxTicksLimit: 6,
+                                callback: function(val) {
+                                    const d = new Date(this.getLabelForValue(val));
+                                    return `${d.getDate()}/${d.getMonth()+1}`;
+                                }
+                            } 
+                        }
+                    }
+                }
+            });
+        } catch (e) {
+            console.error("Open-Meteo Chart error:", e);
+        }
+        return; // Sai da função para não rodar a lógica do ThingSpeak
+    }
+    // --- END OPEN-METEO INTERCEPT ---
+
+    
     // --- FIX: Targeting Walk Sensor properly (IDs 31+), then Remote sensors (IDs 21+) ---
     let targetID = (fieldId >= 31) ? gpsChannelId : ((fieldId >= 21) ? r1ChannelId : mainChannelId);
     let targetKey = (fieldId >= 31) ? gpsReadKey : ((fieldId >= 21) ? r1ReadKey : mainReadKey);
