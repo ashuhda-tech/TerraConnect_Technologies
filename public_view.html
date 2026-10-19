@@ -23,7 +23,7 @@
     <meta property="og:type" content="website">
     <meta property="og:title" content="TerraConnect Technologies">
     <meta property="og:description" content="Environmental Animal IOT Monitoring Center">
-    <meta property="og:url" content="https://ashuhda-tech.github.io/TerraConnect_Technologies/">
+    <meta property="og:url" content="https://aiterraconnect.com.br/">
     <meta property="og:image" content="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/TERRACONNECT_LOGOBRAND.png">
 
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
@@ -177,8 +177,9 @@
 
         <div class="sidebar-bottom">
             <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 30px;">
-                <a href="https://ashuhda-tech.github.io/TerraConnect_Technologies/" class="btn-back a70-font" style="margin-bottom: 0; width: 100%; box-sizing: border-box; display: flex; justify-content: center; align-items: center; gap: 8px;">
-                    <i class="fas fa-leaf"></i> POWERED BY TERRACONNECT
+                <a href="https://aiterraconnect.com.br/" class="btn-back a70-font" style="margin-bottom: 0; width: 100%; box-sizing: border-box; display: flex; justify-content: center; align-items: center; gap: 8px;">
+                    <img src="https://raw.githubusercontent.com/ashuhda-tech/WorldConnect_Technologies/main/assets/IMAGE/HARPIA_LOGO_NO_BKGRD.png" alt="WorldConnect Logo" style="height: 16px; width: auto;">
+                    WORLDCONNECT
                 </a>
             </div>
         </div>
@@ -1665,7 +1666,7 @@ async function openChart(fieldId, label) {
             r1ReadKey: r1ReadKey,
             bioHistory: bioHistory,
             vetHistory: vetHistory,
-            // Attach CSRF tokens if owner is currently visiting their public link
+            appSource: window.location.origin, // ADICIONE ESTA LINHA PARA SEGURANÇA
             csrfToken: loggedUser ? sessionStorage.getItem('authToken') : "",
             authToken: loggedUser ? sessionStorage.getItem('authToken') : ""
         };
