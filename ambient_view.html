@@ -250,17 +250,21 @@
             </div>
         </div>
 
+
         <div class="sidebar-bottom">
             
             <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 30px;">
                 <a href="#" id="editLink" class="btn-edit" style="margin-top: 0;">
                     <i class="fa fa-edit"></i> Edit Registry Data
                 </a>
-                
                 <button onclick="sharePublicLink()" class="btn-share">
                     <i class="fas fa-link"></i> Share Public View
                 </button>
-                
+                <!-- NOVO BOTÃO: Toggle de Public View com Logo Guarací -->
+                <button id="btnPublicViewToggle" onclick="togglePublicView()" class="btn-share" style="margin-top: 10px; border-color: var(--border); color: var(--text-muted); transition: 0.3s;">
+                    <img src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/IMAGE/GUARACI_LOGO_NO_BKGRD.png" id="publicViewIcon" alt="Guarací" style="height: 16px; margin-right: 8px; filter: grayscale(100%) opacity(0.5); transition: 0.3s;">
+                    <span id="publicViewText">Public View: OFF</span>
+                </button>
                 <a href="maindashboard.html" class="btn-back a70-font" style="margin-bottom: 0; width: 100%; box-sizing: border-box; display: flex; justify-content: center; align-items: center; gap: 8px;">
                     <i class="fas fa-arrow-left"></i> BACK TO DASHBOARD
                 </a>
@@ -862,6 +866,7 @@ let AIFEEDBACK_SCRIPT_URL = "";
 let EDU_SCRIPT_URL = "";
 let CAREGUIDE_SCRIPT_URL = "";
 
+
 // Safe URL parser: Returns standard URLs as-is, decodes if Base64
 function safeParseUrl(val) {
     if (!val) return "";
@@ -939,6 +944,7 @@ async function fetchDatabaseRoutes() {
     let globalAnimalWeight = 0; 
     let isBioHistoryLoaded = false; 
     let globalCareGuideContext = "No specific species care guide available.";
+    let isPublicViewActive = false;
     
     function applyUserTheme() {
         const user = JSON.parse(localStorage.getItem('currentUser'));
@@ -981,6 +987,9 @@ async function fetchDatabaseRoutes() {
             
             if (jsonResponse.status === "success") {
                 const flags = jsonResponse.data;
+                // Verifica o estado da coluna Public View (índice 33 = Coluna 34 no Apps Script)
+                isPublicViewActive = (String(data[33]).trim().toUpperCase() === "TRUE");
+                updatePublicViewButtonUI();
                 const animalType = String(animalTypeRaw).toUpperCase().trim();
 
                 // --- UI ELEMENT LOGGING FOR DEBUGGING ---
@@ -3100,6 +3109,66 @@ function applySpeciesGuidance() {
             speakCommand(finalVoiceSpeak, speechDelayMs, pitch);
         }
     }
+
+    function updatePublicViewButtonUI() {
+    const btn = document.getElementById('btnPublicViewToggle');
+    const icon = document.getElementById('publicViewIcon');
+    const text = document.getElementById('publicViewText');
+    if (!btn) return;
+
+    if (isPublicViewActive) {
+        btn.style.borderColor = "#a3b18a";
+        btn.style.color = "#a3b18a";
+        icon.style.filter = "none";
+        text.innerText = "Public View: ON";
+    } else {
+        btn.style.borderColor = "var(--border)";
+        btn.style.color = "var(--text-muted)";
+        icon.style.filter = "grayscale(100%) opacity(0.5)";
+        text.innerText = "Public View: OFF";
+    }
+}
+
+async function togglePublicView() {
+    if (!currentPageId || !loggedUser || !loggedUser.userID) return;
+    
+    const btn = document.getElementById('btnPublicViewToggle');
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> UPDATING...';
+    
+    // Altera otimisticamente a UI para sensação de instantaneidade
+    isPublicViewActive = !isPublicViewActive;
+    const newValue = isPublicViewActive ? "TRUE" : "FALSE";
+
+    const payload = {
+        action: "update_public_view",
+        pageID: currentPageId,
+        userID: loggedUser.userID,
+        publicView: newValue,
+        csrfToken: sessionStorage.getItem('authToken'),
+        authToken: sessionStorage.getItem('authToken'),
+        appSource: window.location.origin
+    };
+
+    try {
+        const response = await fetch(PAGEID_SCRIPT_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(payload)
+        });
+        const json = await response.json();
+        
+        if (json.status !== "success") {
+            alert("Falha ao atualizar Public View: " + json.message);
+            isPublicViewActive = !isPublicViewActive; // Reverte estado se falhou
+        }
+    } catch (e) {
+        console.error("Erro ao alterar visualização pública:", e);
+        alert("Erro de conexão ao atualizar.");
+        isPublicViewActive = !isPublicViewActive; // Reverte estado se falhou
+    }
+    
+    updatePublicViewButtonUI(); // Reflete resultado
+}
     
     // ==========================================
     // --- GITHUB AUTO VERSION TRACKER ---
@@ -3138,6 +3207,9 @@ function applySpeciesGuidance() {
 
     // Chama a função assim que a página carrega
     document.addEventListener('DOMContentLoaded', fetchGitHubVersion);
+
+
+    
     </script>
 <div id="gh-version-flag" class="app-version-flag">
         <i class="fas fa-spinner fa-spin"></i> Fetching Build...
