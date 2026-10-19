@@ -1559,8 +1559,8 @@ async function sendDeviceConfig() {
     // Inherit the active theme's accent color for the QR code
     const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || "#2c3e50"; 
     
-    // Construct the public view URL
-    const publicUrl = `https://ashuhda-tech.github.io/TerraConnect_Technologies/public_view.html?id=${currentPageId}`;
+    // Construct the public view URL dynamically based on current domain
+    const publicUrl = `${window.location.origin}/public_view.html?id=${currentPageId}`;
 
     // Render the QR Code
     new QRCode(qrContainer, {
@@ -2948,7 +2948,7 @@ function applySpeciesGuidance() {
             return;
         }
         
-        const shareUrl = `https://ashuhda-tech.github.io/TerraConnect_Technologies/public_view.html?id=${currentPageId}`;
+        const shareUrl = `${window.location.origin}/public_view.html?id=${currentPageId}`;
         
         if (navigator.share) {
             navigator.share({
