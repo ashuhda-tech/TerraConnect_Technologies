@@ -2812,7 +2812,11 @@ function applySpeciesGuidance() {
         const json = await response.json();
         
         if(json.status === "success") {
-            textBox.innerHTML = json.insight
+            // Insere o UUID formatado no topo do bloco de texto, seguido pela resposta da IA
+            textBox.innerHTML = `<span style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 12px; font-family: monospace; border-bottom: 1px dashed var(--border); padding-bottom: 5px;">
+                <i class="fas fa-fingerprint" style="color: var(--accent);"></i> Analysis ID: ${json.insightId}
+            </span>` + 
+            json.insight
                 .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
                 .replace(/\*(.*?)\*/g, '<i>$1</i>')
                 .replace(/\n/g, '<br>');
@@ -2822,7 +2826,7 @@ function applySpeciesGuidance() {
         
             currentInsightId = json.insightId;
             currentModelUsed = json.model_used; // Save exact model returned
-        } 
+        }
         
         else {
             textBox.innerText = "Analysis Failure: " + json.message;
