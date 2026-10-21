@@ -641,6 +641,12 @@
                         <button class="btn-send" onclick="sendToCloud('Length', 'inLength')"><i class="fas fa-plus"></i></button>
                     </div>
                 </div>
+                <div class="input-card" id="inNoteWrapper" style="gap: 8px;">
+                    <div class="input-header"><i class="fas fa-eye"></i> Add Observation</div>
+                    <input type="text" id="inNote" class="input-field" placeholder="Behavior, health, environment state, animal visible details...">
+                    <button class="btn-send" onclick="sendNoteToCloud()" style="margin-top: 5px; justify-content: center;">
+                        <i class="fas fa-plus"></i></button>
+                </div>
             </div>
 
             <div class="charts-section">
@@ -855,6 +861,7 @@ let FLAGS_SCRIPT_URL = "";
 let PAGEID_SCRIPT_URL = "";
 let THEME_SCRIPT_URL = "";
 let BIODATA_SCRIPT_URL = "";
+let NOTES_SCRIPT_URL = "";
 let ENVIRONMENT_SCRIPT_URL = "";
 let VETDATA_SCRIPT_URL = "";
 let AI_SCRIPT_URL = "";
@@ -898,6 +905,7 @@ async function fetchDatabaseRoutes() {
             PAGEID_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_PageID"]);
             THEME_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_Themes"]);
             BIODATA_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_BioData"]);
+            NOTES_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_AnimalNotes"]);
             ENVIRONMENT_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_Enviromental Setup"]);
             VETDATA_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_VetData"]);
             AI_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_AI_And_Feedback"]);
@@ -999,7 +1007,8 @@ async function fetchDatabaseRoutes() {
                     'Length': ['inLength', 'sumLength', 'chart-length'],
                     'Weight': ['inWeight', 'sumWeight', 'chart-weight'],
                     'Feeding': ['inFeed', 'sumFeeding', 'chart-feeding'],
-                    'Shedding': ['inShed', 'sumShedding', 'chart-shedding']
+                    'Shedding': ['inShed', 'sumShedding', 'chart-shedding'],
+                    'Observation': ['inNote', 'inNoteWrapper']
                 };
 
                 flags.forEach(flag => {
@@ -2023,6 +2032,53 @@ function buildForecastChartConfig(labelString, dataArray, color, ctx) {
             alert("Technical error sending data.");
         }
     }
+
+    async function sendNoteToCloud() {
+    const inputElement = document.getElementById('inNote');
+    const inputValue = inputElement.value;
+    
+    if (!inputValue) {
+        alert("Please enter an observation note.");
+        return;
+    }
+
+    const today = new Date();
+    const dateStr = (today.getMonth() + 1) + "/" + today.getDate() + "/" + today.getFullYear();
+    
+    const payload = {
+        action: "write",
+        pageId: currentPageId,
+        date: dateStr,
+        observationNote: inputValue,
+        csrfToken: sessionStorage.getItem('authToken'), // Token for CSRF protection[cite: 49]
+        authToken: sessionStorage.getItem('authToken')
+    };
+
+    const btn = inputElement.nextElementSibling;
+    const originalBtnHTML = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    btn.disabled = true;
+
+    try {
+        console.log(`[FLAG] sendNoteToCloud: Posting observation data...`);
+        // Posts directly to the new Apps Script deployment using no-cors[cite: 49]
+        await fetch(NOTES_SCRIPT_URL, { 
+            method: 'POST', 
+            mode: 'no-cors',
+            body: JSON.stringify(payload),
+            headers: { 'Content-Type': 'application/json' }
+        });
+        
+        alert("Success: Observation Note registered!");
+        inputElement.value = "";
+    } catch (e) {
+        console.error(e);
+        alert("Technical error sending observation note.");
+    } finally {
+        btn.innerHTML = originalBtnHTML;
+        btn.disabled = false;
+    }
+}
 
 
     function showCamOverlay() {
