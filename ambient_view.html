@@ -641,11 +641,10 @@
                         <button class="btn-send" onclick="sendToCloud('Length', 'inLength')"><i class="fas fa-plus"></i></button>
                     </div>
                 </div>
-                <div class="input-card" id="inNoteWrapper" style="gap: 8px;">
+                <div class="input-card" id="inNoteWrapper" style="gap: 8px; column-span: all;">
                     <div class="input-header"><i class="fas fa-eye"></i> Add Observation</div>
-                    <input type="text" id="inNote" class="input-field" placeholder="Behavior, health, environment state, animal visible details...">
-                    <button class="btn-send" onclick="sendNoteToCloud()" style="margin-top: 5px; justify-content: center;">
-                        <i class="fas fa-plus"></i></button>
+                    <textarea id="inNote" class="input-field" placeholder="Behavior, health, environment state, animal visible details..." style="resize: vertical; min-height: 100px; font-family: inherit; line-height: 1.4;"></textarea>
+                    <button class="btn-send" onclick="sendNoteToCloud()"><i class="fas fa-plus"></i></button>
                 </div>
             </div>
 
