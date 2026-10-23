@@ -1436,43 +1436,6 @@ async function loadExternalINMETData(targetLat, targetLon) {
         document.getElementById('inmetStationName').innerText = "API Connection Failed";
     }
 }
-
-    function getOpenMeteoHistory(lat, lon, birthDateStr) {
-  if (!lat || !lon) return "Location coordinates missing for weather history.";
-  try {
-    var endDate = new Date();
-    var startDate = new Date(birthDateStr);
-    
-    // Safety check: If birth date is missing, invalid, or incredibly old, default to 1 year ago 
-    // to prevent Google Apps Script from timing out during massive downloads.
-    if (isNaN(startDate.getTime()) || startDate.getFullYear() < 2010) {
-        startDate = new Date();
-        startDate.setFullYear(endDate.getFullYear() - 1); 
-    }
-    
-    var startStr = Utilities.formatDate(startDate, "GMT", "yyyy-MM-dd");
-    var endStr = Utilities.formatDate(endDate, "GMT", "yyyy-MM-dd");
-    
-    // Uses the Open-Meteo Archive API to gather historical data since the animal was born
-    var url = "https://archive-api.open-meteo.com/v1/archive?latitude=" + lat + "&longitude=" + lon + "&start_date=" + startStr + "&end_date=" + endStr + "&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,relative_humidity_2m_mean&timezone=auto";
-    
-    var response = UrlFetchApp.fetch(url, { muteHttpExceptions: true });
-    if (response.getResponseCode() !== 200) {
-        return "Weather Archive API unavailable for these dates. Check coordinates.";
-    }
-    
-    var data = JSON.parse(response.getContentText());
-    if (!data.daily || !data.daily.time) return "No historical weather data found.";
-    
-    var history = [];
-    for (var i = 0; i < data.daily.time.length; i++) {
-        history.push("[" + data.daily.time[i] + "] Max Temp: " + data.daily.temperature_2m_max[i] + "°C | Min Temp: " + data.daily.temperature_2m_min[i] + "°C | Avg Hum: " + data.daily.relative_humidity_2m_mean[i] + "% | Precip: " + data.daily.precipitation_sum[i] + "mm");
-    }
-    return history.join("\n");
-  } catch(e) {
-    return "Failed to fetch Open-Meteo history: " + e.toString();
-  }
-}
     
 async function updateSensors() {
     if (mainChannelId && mainReadKey) {
@@ -3202,7 +3165,7 @@ function applySpeciesGuidance() {
             speakCommand(finalVoiceSpeak, speechDelayMs, pitch);
         }
     }
-    
+
     // ==========================================
     // --- GITHUB AUTO VERSION TRACKER ---
     // ==========================================
