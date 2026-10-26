@@ -108,107 +108,19 @@
         .tc-bracket-col {display: flex;align-items: stretch;padding: 60px 0;}
         .tc-bracket {width: 25px;border: 3px solid var(--accent-dark);border-right: none;border-radius: 15px 0 0 15px;position: relative;margin-left: 20px;}
         .tc-bracket::before {content: '';position: absolute;top: 50%;left: -25px;width: 25px;height: 3px;background-color: var(--accent-dark);transform: translateY(-50%);}
+        .tc-products-col {display: flex;flex-direction: column;justify-content: space-between;gap: 30px;flex: 1;}
+        .tc-product-row {display: flex;align-items: stretch;gap: 30px;width: 100%;}
+        .tc-icon-ring {width: 100px;height: 100px;border: 3px solid var(--accent-dark);border-radius: 50%;display: flex;justify-content: center;align-items: center;flex-shrink: 0;background: rgba(10, 12, 16, 0.5);align-self: center;overflow: hidden;padding: 15px;}
+        .tc-icon-ring img {width: 100%;height: 100%;object-fit: contain;}
 
-        /* RIGHT: Products Column */
-        .tc-products-col {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            gap: 30px;
-            flex: 1;
-        }
-
-        .tc-product-row {
-            display: flex;
-            align-items: stretch;
-            gap: 30px;
-            width: 100%;
-        }
-
-        /* Circular Icons */
-        .tc-icon-ring {
-            width: 100px;
-            height: 100px;
-            border: 3px solid var(--accent-dark);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-shrink: 0;
-            background: rgba(10, 12, 16, 0.5);
-            align-self: center;
-            overflow: hidden;
-            padding: 15px;
-        }
-
-        .tc-icon-ring img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            /* Filter para deixar a imagem SVG com a cor accent-dark (Opcional, se a imagem já for creme, pode remover) */
-            /* filter: invert(80%) sepia(20%) saturate(300%) hue-rotate(350deg); */
-        }
-
-        .tc-icon-ring i {
-            font-size: 3rem;
-            color: var(--accent-light);
-        }
-
-        /* Product Cards */
-        .tc-card {
-            display: flex;
-            background: rgba(30, 30, 30, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 0; /* Quadradões conforme a imagem */
-            overflow: hidden;
-            flex: 1;
-            backdrop-filter: blur(10px);
-            transition: border-color 0.4s ease, background 0.4s ease;
-        }
-
-        .tc-card:hover {
-            border-color: rgba(209, 179, 139, 0.4);
-            background: rgba(40, 40, 40, 0.6);
-        }
-
-        .tc-card-img {
-            width: 250px;
-            background: rgba(10, 10, 10, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            flex-shrink: 0;
-        }
-
-        .tc-card-img img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        .tc-card-content {
-            padding: 30px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .tc-card-content h3 {
-            font-family: var(--font-title);
-            color: var(--accent-light);
-            font-size: 1.35rem;
-            margin-bottom: 15px;
-            letter-spacing: 1px;
-            line-height: 1.4;
-        }
-
-        .tc-card-content p {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-            line-height: 1.6;
-            font-weight: 300;
-        }
+        .tc-icon-ring i {font-size: 3rem;color: var(--accent-light);}
+        .tc-card { display: flex;background: rgba(30, 30, 30, 0.4);border: 1px solid rgba(255, 255, 255, 0.05);border-radius: 0; overflow: hidden;flex: 1; backdrop-filter: blur(10px);transition: border-color 0.4s ease, background 0.4s ease; }
+        .tc-card:hover {border-color: rgba(209, 179, 139, 0.4);background: rgba(40, 40, 40, 0.6);}
+        .tc-card-img {width: 250px;background: rgba(10, 10, 10, 0.5);display: flex;justify-content: center;align-items: center;padding: 20px;flex-shrink: 0;}
+        .tc-card-img img {width: 100%;height: 100%;object-fit: contain;}
+        .tc-card-content {padding: 30px;display: flex;flex-direction: column;justify-content: center;}
+        .tc-card-content h3 {font-family: var(--font-title);color: var(--accent-light);font-size: 1.35rem;margin-bottom: 15px;letter-spacing: 1px;line-height: 1.4;}
+        .tc-card-content p {color: var(--text-muted);font-size: 0.95rem;line-height: 1.6;font-weight: 300;}
 
         /* ----- BOTTOM FOOTNOTE WRAPPER ----- */
         .footer-wrapper { background: var(--bg-color); width: 100%; position: relative; z-index: 2; border-top: 1px solid var(--card-border); display: flex; flex-direction: column; justify-content: space-between;}
@@ -311,7 +223,7 @@
     <div class="tc-brand-col">
         <div class="tc-brand-emblem">
             <!-- COLOQUE O LINK DA IMAGEM DA LOGO PRINCIPAL (O SÍMBOLO REDONDO) AQUI -->
-            <img src="https://raw.githubusercontent.com/ashuhda-tech/WorldConnect_Technologies/main/assets/IMAGE/TC_MAIN_EMBLEM_PLACEHOLDER.png" alt="TerraConnect Emblem" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <img src="https://raw.githubusercontent.com/ashuhda-tech/WorldConnect_Technologies/main/assets/IMAGE/GUARACI_LOGO_NO_BKGRD.png" alt="TerraConnect Emblem" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
             <!-- Fallback Icon caso a imagem não carregue -->
             <i class="fas fa-microchip" style="font-size: 5rem; color: var(--accent-light); display: none;"></i>
         </div>
@@ -330,13 +242,13 @@
         <div class="tc-product-row">
             <div class="tc-icon-ring">
                 <!-- ÍCONE DA COBRA: Substitua o src pela sua imagem/ícone -->
-                <img src="URL_DO_ICONE_COBRA.png" alt="Jörmungandr Icon" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <img src="https://raw.githubusercontent.com/ashuhda-tech/WorldConnect_Technologies/main/assets/IMAGE/LOGOS OROBORO_NO_BKGRD---accent.png" alt="Jörmungandr Icon" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                 <i class="fas fa-wave-square" style="display: none;"></i> <!-- Fallback -->
             </div>
             <div class="tc-card">
                 <div class="tc-card-img">
                     <!-- RENDER 3D JÖRMUNGANDR -->
-                    <img src="URL_DA_IMAGEM_JORMUNGANDR.png" alt="Jörmungandr Render" onerror="this.style.display='none';">
+                    <img src="https://raw.githubusercontent.com/ashuhda-tech/WorldConnect_Technologies/main/assets/IMAGE/HARDWARE/MS1_AU.png" alt="Jörmungandr Render" onerror="this.style.display='none';">
                 </div>
                 <div class="tc-card-content">
                     <h3>Jörmungandr (MS-1) | Actuator (AUnit)</h3>
@@ -349,13 +261,13 @@
         <div class="tc-product-row">
             <div class="tc-icon-ring">
                 <!-- ÍCONE DA PLANTA: Substitua o src pela sua imagem/ícone -->
-                <img src="URL_DO_ICONE_PLANTA.png" alt="Plant Icon" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <img src="https://raw.githubusercontent.com/ashuhda-tech/WorldConnect_Technologies/main/assets/IMAGE/LEAF_LOGO---accent.png" alt="Plant Icon" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                 <i class="fas fa-seedling" style="display: none;"></i> <!-- Fallback -->
             </div>
             <div class="tc-card">
                 <div class="tc-card-img">
                     <!-- RENDER 3D REMOTE SENSOR -->
-                    <img src="URL_DA_IMAGEM_REMOTE_SENSOR.png" alt="Remote Sensor Unit Render" onerror="this.style.display='none';">
+                    <img src="https://raw.githubusercontent.com/ashuhda-tech/WorldConnect_Technologies/main/assets/IMAGE/HARDWARE/RS-removebg-preview.png" alt="Remote Sensor Unit Render" onerror="this.style.display='none';">
                 </div>
                 <div class="tc-card-content">
                     <h3>Remote Sensor Unit (RS-1)</h3>
@@ -368,13 +280,13 @@
         <div class="tc-product-row">
             <div class="tc-icon-ring">
                 <!-- ÍCONE DO LOBO: Substitua o src pela sua imagem/ícone -->
-                <img src="URL_DO_ICONE_LOBO.png" alt="Wolf Icon" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <img src="https://raw.githubusercontent.com/ashuhda-tech/WorldConnect_Technologies/main/assets/IMAGE/WOLF1_NO_BACKGROUND---accent.png" alt="Wolf Icon" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                 <i class="fas fa-paw" style="display: none;"></i> <!-- Fallback -->
             </div>
             <div class="tc-card">
                 <div class="tc-card-img">
                     <!-- RENDER 3D FENRIR -->
-                    <img src="URL_DA_IMAGEM_FENRIR.png" alt="Fenrir Render" onerror="this.style.display='none';">
+                    <img src="https://raw.githubusercontent.com/ashuhda-tech/WorldConnect_Technologies/main/assets/IMAGE/HARDWARE/2-removebg-preview.png" alt="Fenrir Render" onerror="this.style.display='none';">
                 </div>
                 <div class="tc-card-content">
                     <h3>Fenrir (W-1)</h3>
