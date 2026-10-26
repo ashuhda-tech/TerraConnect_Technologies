@@ -100,7 +100,7 @@
         /* ----- TERRACONNECT SOLUTIONS SHOWCASE LAYOUT (NEW) ------ */
         /* ========================================================= */
         
-        .tc-showcase-container {display: flex;align-items: stretch;justify-content: center;gap: 40px;max-width: 1400px;margin: 0 auto;padding: 150px 20px 80px 20px;min-height: 80vh;}
+        .tc-showcase-container {display: flex;align-items: center;justify-content: center;gap: 30px;max-width: 1200px;margin: 0 auto;padding: 120px 20px 60px 20px;min-height: auto;}
         .tc-brand-col {display: flex;flex-direction: column;justify-content: center;align-items: center;width: 250px;flex-shrink: 0; text-align: center;}
         .tc-brand-emblem {width: 220px;height: 220px;border-radius: 50%;margin-bottom: 25px;display: flex;justify-content: center;align-items: center;overflow: hidden;background: rgba(0, 0, 0, 0.2); }
         .tc-brand-emblem img {width: 100%;height: 100%;object-fit: contain;}
@@ -222,9 +222,7 @@
     <!-- LEFT: Main Brand -->
     <div class="tc-brand-col">
         <div class="tc-brand-emblem">
-            <!-- COLOQUE O LINK DA IMAGEM DA LOGO PRINCIPAL (O SÍMBOLO REDONDO) AQUI -->
             <img src="https://raw.githubusercontent.com/ashuhda-tech/WorldConnect_Technologies/main/assets/IMAGE/GUARACI_LOGO_NO_BKGRD.png" alt="TerraConnect Emblem" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-            <!-- Fallback Icon caso a imagem não carregue -->
             <i class="fas fa-microchip" style="font-size: 5rem; color: var(--accent-light); display: none;"></i>
         </div>
         <h2>TERRACONNECT</h2>
@@ -241,13 +239,12 @@
         <!-- ROW 1: Jörmungandr -->
         <div class="tc-product-row">
             <div class="tc-icon-ring">
-                <!-- ÍCONE DA COBRA: Substitua o src pela sua imagem/ícone -->
-                <img src="https://raw.githubusercontent.com/ashuhda-tech/WorldConnect_Technologies/main/assets/IMAGE/LOGOS OROBORO_NO_BKGRD---accent.png" alt="Jörmungandr Icon" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                <i class="fas fa-wave-square" style="display: none;"></i> <!-- Fallback -->
+                <!-- NOTA: Adicionado %20 no lugar do espaço para a URL funcionar -->
+                <img src="https://raw.githubusercontent.com/ashuhda-tech/WorldConnect_Technologies/main/assets/IMAGE/LOGOS%20OROBORO_NO_BKGRD---accent.png" alt="Jörmungandr Icon" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <i class="fas fa-wave-square" style="display: none;"></i> 
             </div>
             <div class="tc-card">
                 <div class="tc-card-img">
-                    <!-- RENDER 3D JÖRMUNGANDR -->
                     <img src="https://raw.githubusercontent.com/ashuhda-tech/WorldConnect_Technologies/main/assets/IMAGE/HARDWARE/MS1_AU.png" alt="Jörmungandr Render" onerror="this.style.display='none';">
                 </div>
                 <div class="tc-card-content">
@@ -260,13 +257,11 @@
         <!-- ROW 2: Remote Sensor Unit -->
         <div class="tc-product-row">
             <div class="tc-icon-ring">
-                <!-- ÍCONE DA PLANTA: Substitua o src pela sua imagem/ícone -->
                 <img src="https://raw.githubusercontent.com/ashuhda-tech/WorldConnect_Technologies/main/assets/IMAGE/LEAF_LOGO---accent.png" alt="Plant Icon" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                <i class="fas fa-seedling" style="display: none;"></i> <!-- Fallback -->
+                <i class="fas fa-seedling" style="display: none;"></i> 
             </div>
             <div class="tc-card">
                 <div class="tc-card-img">
-                    <!-- RENDER 3D REMOTE SENSOR -->
                     <img src="https://raw.githubusercontent.com/ashuhda-tech/WorldConnect_Technologies/main/assets/IMAGE/HARDWARE/RS-removebg-preview.png" alt="Remote Sensor Unit Render" onerror="this.style.display='none';">
                 </div>
                 <div class="tc-card-content">
@@ -279,13 +274,11 @@
         <!-- ROW 3: Fenrir -->
         <div class="tc-product-row">
             <div class="tc-icon-ring">
-                <!-- ÍCONE DO LOBO: Substitua o src pela sua imagem/ícone -->
                 <img src="https://raw.githubusercontent.com/ashuhda-tech/WorldConnect_Technologies/main/assets/IMAGE/WOLF1_NO_BACKGROUND---accent.png" alt="Wolf Icon" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                <i class="fas fa-paw" style="display: none;"></i> <!-- Fallback -->
+                <i class="fas fa-paw" style="display: none;"></i>
             </div>
             <div class="tc-card">
                 <div class="tc-card-img">
-                    <!-- RENDER 3D FENRIR -->
                     <img src="https://raw.githubusercontent.com/ashuhda-tech/WorldConnect_Technologies/main/assets/IMAGE/HARDWARE/2-removebg-preview.png" alt="Fenrir Render" onerror="this.style.display='none';">
                 </div>
                 <div class="tc-card-content">
@@ -294,10 +287,10 @@
                 </div>
             </div>
         </div>
-
     </div>
 </div>
 
+    
 <!-- PAGE 6: FOOTNOTE WRAPPER -->
 <div class="footer-wrapper">
     <footer class="site-footer">
