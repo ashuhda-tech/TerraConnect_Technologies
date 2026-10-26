@@ -51,12 +51,7 @@
             scroll-behavior: smooth; 
         }
         
-        body { 
-            background-color: var(--bg-color); 
-            color: var(--text-main); 
-            font-family: var(--font-standard); 
-            overflow-x: hidden; 
-        }
+        body { background-color: var(--bg-color); color: var(--text-main); font-family: var(--font-standard); overflow-x: hidden; display: flex;flex-direction: column;min-height: 100vh;}
         
         /* ----- CUSTOM CURSOR ----- */
         .cursor-dot { width: 5px; height: 5px; background-color: var(--accent-light); position: fixed; top: 0; left: 0; transform: translate(-50%, -50%); border-radius: 50%; z-index: 9999; pointer-events: none; }
@@ -100,7 +95,7 @@
         /* ----- TERRACONNECT SOLUTIONS SHOWCASE LAYOUT (NEW) ------ */
         /* ========================================================= */
         
-        .tc-showcase-container {display: flex;align-items: stretch;justify-content: center;gap: 40px;max-width: 1400px;margin: 0 auto;padding: 150px 20px 80px 20px;min-height: 40vh;}
+        .tc-showcase-container {display: flex;align-items: center; justify-content: center;gap: 30px;max-width: 1200px; width: 100%;margin: 0 auto;padding: 120px 20px 60px 20px;flex-grow: 1; }
         .tc-brand-col {display: flex;flex-direction: column;justify-content: center;align-items: center;width: 250px;flex-shrink: 0; text-align: center;}
         .tc-brand-emblem {width: 220px;height: 220px;border-radius: 50%;margin-bottom: 25px;display: flex;justify-content: center;align-items: center;overflow: hidden;background: rgba(0, 0, 0, 0.2); }
         .tc-brand-emblem img {width: 100%;height: 100%;object-fit: contain;}
@@ -186,10 +181,11 @@
 <div class="video-overlay"></div>
 
 <header>
-    <div class="logo-area">
+    <!-- Adicionado o link para index.html -->
+    <a href="index.html" class="logo-area" style="text-decoration: none;">
         <img src="https://raw.githubusercontent.com/ashuhda-tech/WorldConnect_Technologies/main/assets/IMAGE/HARPIA_LOGO_NO_BKGRD.png" alt="HARPIA WORLDCONNECT Logo">
         <h1>HARPIA WORLDCONNECT</h1>
-    </div>
+    </a>
     <div class="nav-area">
         <button class="menu-toggle" id="menuToggle" aria-label="Open Navigation Menu">
             <span></span>
@@ -221,10 +217,11 @@
     
     <!-- LEFT: Main Brand -->
     <div class="tc-brand-col">
-        <div class="tc-brand-emblem">
+        <!-- Substitua a URL_EXTERNA_AQUI pelo link do site TerraConnect -->
+        <a href="URL_EXTERNA_AQUI" class="tc-brand-emblem" style="text-decoration: none;">
             <img src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/IMAGE/GUARACI_LOGO_NO_BKGRD.png" alt="TerraConnect Emblem" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
             <i class="fas fa-microchip" style="font-size: 5rem; color: var(--accent-light); display: none;"></i>
-        </div>
+        </a>
         <h2>TERRACONNECT</h2>
     </div>
 
@@ -239,11 +236,11 @@
         <!-- ROW 1: Jörmungandr -->
         <div class="tc-product-row">
             <div class="tc-icon-ring">
-                <!-- NOTA: Adicionado %20 no lugar do espaço para a URL funcionar -->
                 <img src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/IMAGE/LOGOS%20OROBORO_NO_BKGRD---accent.png" alt="Jörmungandr Icon" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                 <i class="fas fa-wave-square" style="display: none;"></i> 
             </div>
-            <div class="tc-card">
+            <!-- Modificado para link <a>. Substitua URL_DO_PRODUTO_AQUI -->
+            <a href="URL_DO_PRODUTO_AQUI" class="tc-card">
                 <div class="tc-card-img">
                     <img src="https://raw.githubusercontent.com/ashuhda-tech/WorldConnect_Technologies/main/assets/IMAGE/HARDWARE/MS1_AU.png" alt="Jörmungandr Render" onerror="this.style.display='none';">
                 </div>
@@ -251,7 +248,7 @@
                     <h3>Jörmungandr (MS-1) | Actuator (AUnit)</h3>
                     <p>The core brain of your terrarium. Monitors ambient air temperature, humidity and CO2 concentration, soil humidity and water reservoir level on-time. Wi-Fi enabled.</p>
                 </div>
-            </div>
+            </a>
         </div>
 
         <!-- ROW 2: Remote Sensor Unit -->
@@ -260,7 +257,8 @@
                 <img src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/IMAGE/LEAF_LOGO---accent.png" alt="Plant Icon" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                 <i class="fas fa-seedling" style="display: none;"></i> 
             </div>
-            <div class="tc-card">
+            <!-- Modificado para link <a>. Substitua URL_DO_PRODUTO_AQUI -->
+            <a href="URL_DO_PRODUTO_AQUI" class="tc-card">
                 <div class="tc-card-img">
                     <img src="https://raw.githubusercontent.com/ashuhda-tech/WorldConnect_Technologies/main/assets/IMAGE/HARDWARE/RS-removebg-preview.png" alt="Remote Sensor Unit Render" onerror="this.style.display='none';">
                 </div>
@@ -268,7 +266,7 @@
                     <h3>Remote Sensor Unit (RS-1)</h3>
                     <p>Perfect for establishing thermal gradients. Place this to track localized air temperature and humidity, and Soil humidity.</p>
                 </div>
-            </div>
+            </a>
         </div>
 
         <!-- ROW 3: Fenrir -->
@@ -277,7 +275,8 @@
                 <img src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/IMAGE/WOLF1_NO_BACKGROUND---accent.png" alt="Wolf Icon" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                 <i class="fas fa-paw" style="display: none;"></i>
             </div>
-            <div class="tc-card">
+            <!-- Modificado para link <a>. Substitua URL_DO_PRODUTO_AQUI -->
+            <a href="URL_DO_PRODUTO_AQUI" class="tc-card">
                 <div class="tc-card-img">
                     <img src="https://raw.githubusercontent.com/ashuhda-tech/WorldConnect_Technologies/main/assets/IMAGE/HARDWARE/2-removebg-preview.png" alt="Fenrir Render" onerror="this.style.display='none';">
                 </div>
@@ -285,18 +284,19 @@
                     <h3>Fenrir (W-1)</h3>
                     <p>Training sound clickers, LEDs with exercise monitoring and safety feature for lost and runway Pet.</p>
                 </div>
-            </div>
+            </a>
         </div>
     </div>
 </div>
-
     
 <!-- PAGE 6: FOOTNOTE WRAPPER -->
 <div class="footer-wrapper">
     <footer class="site-footer">
         <div class="footer-logo-center">
-            <img src="https://raw.githubusercontent.com/ashuhda-tech/WorldConnect_Technologies/main/assets/IMAGE/HARPIA_LOGO_NO_BKGRD.png" alt="HARPIA WorldConnect Logo">
-            <h2>HARPIA WorldConnect</h2>
+            <a href="index.html" style="text-decoration: none; display: inline-block;">
+                <img src="https://raw.githubusercontent.com/ashuhda-tech/WorldConnect_Technologies/main/assets/IMAGE/HARPIA_LOGO_NO_BKGRD.png" alt="HARPIA WorldConnect Logo">
+                <h2>HARPIA WorldConnect</h2>
+            </a>
         </div>
 
         <div class="footer-content">
