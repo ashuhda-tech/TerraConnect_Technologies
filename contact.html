@@ -596,6 +596,63 @@
         });
     });
 
+    // 5. FORM SUBMISSION HANDLER (AJAX)
+    const contactForm = document.getElementById('harpia-contact-form');
+    const submitBtn = contactForm.querySelector('.btn-submit');
+    
+    // COLE A SUA URL DO APPS SCRIPT AQUI:
+    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxw7VmkLzkGOEN4CoevgYqCKKN3n9fzcMpKWvR2CfOGEQQfbj_AhLcV86IwAVAzv3E/exec';
+
+    contactForm.addEventListener('submit', function(e) {
+        e.preventDefault(); // Impede o recarregamento da página
+        
+        // Altera o botão para estado de carregamento
+        const originalBtnText = submitBtn.innerText;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> SENDING...';
+        submitBtn.style.pointerEvents = 'none';
+        submitBtn.style.opacity = '0.7';
+
+        const formData = new FormData(contactForm);
+
+        fetch(WEB_APP_URL, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.result === 'success') {
+                // Sucesso: Limpa o formulário e avisa o usuário
+                contactForm.reset();
+                submitBtn.innerHTML = '<i class="fas fa-check"></i> REQUEST SENT SUCCESSFULLY';
+                submitBtn.style.backgroundColor = '#2e7d32'; // Verde sutil
+                submitBtn.style.color = '#fff';
+                
+                // Retorna o botão ao normal após 4 segundos
+                setTimeout(() => {
+                    submitBtn.innerText = originalBtnText;
+                    submitBtn.style.backgroundColor = '';
+                    submitBtn.style.color = '';
+                    submitBtn.style.pointerEvents = 'auto';
+                    submitBtn.style.opacity = '1';
+                }, 4000);
+            } else {
+                throw new Error('Script execution failed');
+            }
+        })
+        .catch(error => {
+            console.error('Error!', error.message);
+            submitBtn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> ERROR. PLEASE TRY AGAIN.';
+            submitBtn.style.backgroundColor = '#c62828'; // Vermelho sutil
+            
+            setTimeout(() => {
+                submitBtn.innerText = originalBtnText;
+                submitBtn.style.backgroundColor = '';
+                submitBtn.style.pointerEvents = 'auto';
+                submitBtn.style.opacity = '1';
+            }, 4000);
+        });
+    });
+
 </script>
 </body>
 </html>
