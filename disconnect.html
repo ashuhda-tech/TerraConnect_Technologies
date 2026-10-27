@@ -410,20 +410,37 @@
     if(bgVideo) bgVideo.playbackRate = 0.5;
 
     // 2. CUSTOM CURSOR
-    const cursorDot = document.querySelector('.cursor-dot');
-    const cursorOutline = document.querySelector('.cursor-outline');
+const cursorDot = document.querySelector('.cursor-dot');
+const cursorOutline = document.querySelector('.cursor-outline');
+
+if (cursorDot && cursorOutline) {
     window.addEventListener('mousemove', function(e) {
-        const posX = e.clientX; const posY = e.clientY;
-        cursorDot.style.left = `${posX}px`; cursorDot.style.top = `${posY}px`;
-        cursorOutline.animate({ left: `${posX}px`, top: `${posY}px` }, { duration: 500, fill: "forwards" });
+        const posX = e.clientX;
+        const posY = e.clientY;
+        
+        cursorDot.style.left = `${posX}px`;
+        cursorDot.style.top = `${posY}px`;
+        
+        cursorOutline.animate({
+            left: `${posX}px`,
+            top: `${posY}px`
+        }, { duration: 400, fill: "forwards" });
     });
-    
-    // Add hover effects
-    const clickables = document.querySelectorAll('a, button, input, select, .menu-toggle, .close-btn, .panel-link, .checkbox-group');
+
+    const clickables = document.querySelectorAll('a, button, input, select, textarea, .menu-toggle, .close-btn, .panel-link, .checkbox-group');
     clickables.forEach(el => {
-        el.addEventListener('mouseenter', () => { cursorOutline.style.transform = 'translate(-50%, -50%) scale(1.8)'; cursorOutline.style.backgroundColor = 'rgba(229, 115, 115, 0.15)'; border-color: '#e57373'; });
-        el.addEventListener('mouseleave', () => { cursorOutline.style.transform = 'translate(-50%, -50%) scale(1)'; cursorOutline.style.backgroundColor = 'transparent'; });
+        el.addEventListener('mouseenter', () => { 
+            cursorOutline.style.transform = 'translate(-50%, -50%) scale(1.8)'; 
+            cursorOutline.style.backgroundColor = 'rgba(209, 179, 139, 0.15)'; 
+            cursorOutline.style.borderColor = '#d1b38b';
+        });
+        el.addEventListener('mouseleave', () => { 
+            cursorOutline.style.transform = 'translate(-50%, -50%) scale(1)'; 
+            cursorOutline.style.backgroundColor = 'transparent'; 
+            cursorOutline.style.borderColor = 'var(--accent-dark)';
+        });
     });
+}
 
     // 3. SIDE NAVIGATION PANEL LOGIC
     const menuToggle = document.getElementById('menuToggle');
