@@ -15,89 +15,253 @@
     
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TerraConnect | License & Open-Use Policy</title>
+    <title>HARPIA WorldConnect | License & Open-Use Policy</title>
     
-    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/78ffcf4a572347f28b01389a97030d0b88dc6b0f/TERRACONNECT_LOGO.png">
-    
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/ashuhda-tech/WorldConnect_Technologies/main/assets/IMAGE/HARPIA_LOGO_NO_BKGRD.png">
+
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
+        @font-face {font-family: 'A760-Roman-Smc';src: url('A760-Roman-Smc Regular.ttf') format('truetype'); font-weight: normal;font-style: normal;}
+        
         :root {
             --bg-color: #0a0c10;
-            --card-bg: rgba(7, 11, 20, 0.85);
-            --card-border: rgba(31, 41, 55, 0.5);
+            --card-bg: rgba(7, 11, 20, 0.75);
+            --card-border: rgba(209, 179, 139, 0.2);
             --accent-dark: #d1b38b;
             --accent-light: #f4e9d8;
             --text-main: #f4e9d8;
             --text-muted: #9ca3af;
-            --border-radius: 12px;
+            --border-radius: 4px; 
             --font-standard: 'Inter', sans-serif;
-            --font-title: 'Cinzel', serif;
+            --font-title: 'A760-Roman-Smc', serif;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-
-        body { background-color: var(--bg-color); color: var(--text-main); font-family: var(--font-standard); display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
+        * { box-sizing: border-box; margin: 0; padding: 0; cursor: none; }
         
+        html { scroll-behavior: smooth; }
+        
+        body { background-color: var(--bg-color); color: var(--text-main); font-family: var(--font-standard); overflow-x: hidden; display: flex; flex-direction: column; min-height: 100vh; }
+        
+        /* ----- CUSTOM CURSOR ----- */
+        .cursor-dot { width: 5px; height: 5px; background-color: var(--accent-light); position: fixed; top: 0; left: 0; transform: translate(-50%, -50%); border-radius: 50%; z-index: 9999; pointer-events: none; }
+        .cursor-outline { width: 30px; height: 30px; border: 1px solid var(--accent-dark); position: fixed; top: 0; left: 0; transform: translate(-50%, -50%); border-radius: 50%; z-index: 9998; pointer-events: none; transition: transform 0.2s ease-out, background-color 0.2s ease-out; }
+
         /* ----- BACKGROUND VIDEO ----- */
         .video-bg-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; overflow: hidden; }
         .video-bg-container video { min-width: 100%; min-height: 100%; width: auto; height: auto; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); object-fit: cover; filter: brightness(0.25); }
-        .video-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: -1; }
+        .video-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(10, 12, 16, 0.6) 0%, rgba(10, 12, 16, 0.9) 100%); z-index: -1; }
         
-        /* ----- HEADER ----- */
-        header { padding: 30px 50px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); background: rgba(10, 12, 16, 0.8); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100; }
+        /* ----- HEADER & MENU TOGGLE ----- */
+        header { padding: 30px 50px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); background: rgba(10, 12, 16, 0.5); backdrop-filter: blur(10px); position: fixed; width: 100%; top: 0; z-index: 900; transition: background 0.3s; }
+        .logo-area { display: flex; align-items: center; gap: 15px; }
+        .logo-area img { height: 45px; width: auto; object-fit: contain; }
         .logo-area h1 { font-family: var(--font-title); color: var(--accent-dark); font-size: 1.8rem; letter-spacing: 2px; text-transform: uppercase; }
-        .btn-back { text-decoration: none; color: var(--accent-dark); border: 1px solid var(--accent-dark); padding: 8px 20px; border-radius: 5px; font-size: 0.85rem; transition: 0.3s; font-family: var(--font-title); text-transform: uppercase; font-weight: bold; }
-        .btn-back:hover { background: var(--accent-dark); color: var(--bg-color); }
         
-        /* ----- PRIVACY / LICENSE CARD ----- */
-        .container { width: 100%; max-width: 900px; margin: 50px auto; padding: 0 20px; display: flex; justify-content: center; z-index: 1; flex: 1; }
-        .privacy-card { background-color: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--border-radius); padding: 50px 60px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8); width: 100%; backdrop-filter: blur(15px); }
+        .menu-toggle { display: flex; flex-direction: column; justify-content: center; align-items: flex-end; gap: 8px; width: 40px; height: 40px; background: transparent; border: none; z-index: 1001; }
+        .menu-toggle span { display: block; width: 30px; height: 2px; background-color: var(--accent-dark); transition: 0.3s ease; }
+        .menu-toggle:hover span { background-color: var(--accent-light); width: 35px; }
+
+        /* ----- SIDE NAVIGATION PANEL ----- */
+        .side-panel-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 999; opacity: 0; visibility: hidden; transition: all 0.4s ease; }
+        .side-panel-overlay.active { opacity: 1; visibility: visible; }
         
-        h1.page-title { font-family: var(--font-title); font-size: 2.2rem; text-align: center; margin-bottom: 30px; color: var(--accent-light); text-transform: uppercase; letter-spacing: 2px; border-bottom: 1px solid var(--card-border); padding-bottom: 20px; }
+        .side-panel { position: fixed; top: 0; right: -450px; width: 400px; max-width: 100%; height: 100vh; background: rgba(10, 12, 16, 0.95); border-left: 1px solid var(--card-border); z-index: 1000; transition: right 0.5s cubic-bezier(0.77, 0, 0.175, 1); display: flex; flex-direction: column; padding: 40px; overflow-y: auto; }
+        .side-panel.active { right: 0; }
+        
+        .close-btn { align-self: flex-start; color: var(--text-muted); font-size: 1.5rem; background: none; border: none; margin-bottom: 50px; transition: color 0.3s ease; }
+        .close-btn:hover { color: var(--accent-light); }
+        
+        .panel-nav { display: flex; flex-direction: column; gap: 20px; }
+        .panel-category { font-family: var(--font-standard); font-size: 1.1rem; color: var(--text-main); font-weight: 600; text-transform: uppercase; letter-spacing: 2px; margin-top: 20px; margin-bottom: 10px; }
+        
+        .panel-link { display: flex; justify-content: space-between; align-items: center; text-decoration: none; color: var(--text-muted); font-size: 0.95rem; font-weight: 400; letter-spacing: 1px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); transition: all 0.3s ease; }
+        .panel-link i { font-size: 0.7rem; opacity: 0; transform: translateX(-10px); transition: all 0.3s ease; color: var(--accent-dark); }
+        .panel-link:hover { color: var(--accent-light); padding-left: 10px; }
+        .panel-link:hover i { opacity: 1; transform: translateX(0); }
+
+        /* ========================================================= */
+        /* -------------- LICENSE CONTENT LAYOUT ------------------- */
+        /* ========================================================= */
+        
+        .license-container {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            width: 100%;
+            padding: 160px 20px 80px 20px;
+            flex-grow: 1;
+        }
+
+        .license-box {
+            width: 100%;
+            max-width: 900px;
+            background: rgba(10, 12, 16, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            padding: 60px 70px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            border-radius: var(--border-radius);
+        }
+
+        h1.page-title { 
+            font-family: var(--font-title); 
+            font-size: 2.2rem; 
+            text-align: center; 
+            margin-bottom: 40px; 
+            color: var(--accent-light); 
+            text-transform: uppercase; 
+            letter-spacing: 2px; 
+            border-bottom: 1px solid rgba(209, 179, 139, 0.2); 
+            padding-bottom: 25px; 
+        }
         
         .content-body { text-align: left; }
-        h2 { font-size: 1.2rem; color: var(--accent-dark); margin: 35px 0 15px 0; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; font-family: var(--font-title); }
-        p { font-size: 0.95rem; line-height: 1.8; color: rgba(244, 233, 216, 0.85); margin-bottom: 15px; }
-        ul { margin-left: 20px; margin-bottom: 20px; color: rgba(244, 233, 216, 0.85); font-size: 0.95rem; line-height: 1.8; }
-        li { margin-bottom: 10px; }
         
-        .notice-box { background: rgba(209, 179, 139, 0.08); border-left: 4px solid var(--accent-dark); padding: 20px; margin: 25px 0; border-radius: 0 6px 6px 0; }
-        .notice-box strong { color: var(--accent-light); display: block; margin-bottom: 8px; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; font-family: var(--font-title); }
-        .notice-box p { margin-bottom: 0; font-size: 0.9rem; }
+        .content-body h2 { 
+            font-size: 1.2rem; 
+            color: var(--accent-dark); 
+            margin: 45px 0 20px 0; 
+            font-weight: normal; 
+            letter-spacing: 2px; 
+            text-transform: uppercase; 
+            font-family: var(--font-title); 
+        }
+        
+        .content-body p { 
+            font-size: 0.95rem; 
+            line-height: 1.8; 
+            color: rgba(244, 233, 216, 0.85); 
+            margin-bottom: 20px; 
+            font-weight: 300;
+        }
+        
+        .content-body ul { 
+            margin-left: 20px; 
+            margin-bottom: 25px; 
+            color: rgba(244, 233, 216, 0.85); 
+            font-size: 0.95rem; 
+            line-height: 1.8; 
+            font-weight: 300;
+        }
+        
+        .content-body li { margin-bottom: 12px; }
+        
+        .notice-box { 
+            background: rgba(209, 179, 139, 0.05); 
+            border-left: 4px solid var(--accent-dark); 
+            padding: 25px; 
+            margin: 35px 0; 
+            border-radius: 0 var(--border-radius) var(--border-radius) 0; 
+        }
+        
+        .notice-box strong { 
+            color: var(--accent-light); 
+            display: block; 
+            margin-bottom: 12px; 
+            font-size: 1.1rem; 
+            text-transform: uppercase; 
+            letter-spacing: 2px; 
+            font-family: var(--font-title); 
+            font-weight: normal;
+        }
+        
+        .notice-box p { margin-bottom: 0; font-size: 0.95rem; }
         
         /* Specific License Highlights */
         .highlight-green { color: #a3b18a; font-weight: 600; }
-        .highlight-red { color: #ff5f5f; font-weight: 600; }
+        .highlight-red { color: #e57373; font-weight: 600; }
 
-        @media (max-width: 600px) {
-            header { padding: 20px; flex-direction: column; gap: 15px; }
-            .privacy-card { padding: 30px 20px; }
+        /* ----- BOTTOM FOOTNOTE WRAPPER ----- */
+        .footer-wrapper { background: var(--bg-color); width: 100%; position: relative; z-index: 2; border-top: 1px solid var(--card-border); display: flex; flex-direction: column; justify-content: space-between;}
+        
+        .site-footer { color: var(--text-muted); padding: 60px 40px 40px 40px; font-family: var(--font-standard); width: 100%; }
+        .footer-logo-center { text-align: center; margin-bottom: 40px; }
+        .footer-logo-center img { height: 40px; filter: grayscale(100%) brightness(0.8); margin-bottom: 15px; }
+        .footer-logo-center h2 { font-family: var(--font-title); font-size: 1.2rem; color: var(--text-muted); letter-spacing: 4px; text-transform: uppercase; font-weight: normal; }
+        .footer-content { max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; flex-wrap: wrap; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 30px; gap: 40px; }
+        .footer-links-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; flex-grow: 1; }
+        .footer-col { display: flex; flex-direction: column; gap: 15px; }
+        .footer-col a, .footer-col span { text-decoration: none; color: var(--text-main); font-size: 0.75rem; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500; transition: color 0.3s; }
+        .footer-col a:hover { color: var(--accent-dark); }
+        
+        .language-selector { display: flex; align-items: center; gap: 6px; margin-top: 5px; flex-wrap: wrap;}
+        .language-selector span { color: var(--text-muted); margin-right: 5px; }
+        .language-selector button { background: none; border: none; color: var(--text-muted); font-size: 0.75rem; letter-spacing: 1.5px; font-weight: 500; text-transform: uppercase; transition: color 0.3s; }
+        .language-selector button:hover { color: var(--accent-dark); }
+        .language-selector button.active { color: var(--text-main); font-weight: bold; }
+
+        .footer-social { display: flex; gap: 20px; align-items: flex-start; justify-content: flex-end; min-width: 200px; }
+        .footer-social a { color: var(--text-muted); font-size: 1.2rem; transition: color 0.3s; }
+        .footer-social a:hover { color: var(--accent-dark); }
+        .footer-copyright { text-align: center; margin-top: 40px; font-size: 0.75rem; color: rgba(156, 163, 175, 0.5); letter-spacing: 1px; }
+
+        /* Mobile / Tablet Responsiveness */
+        @media (max-width: 768px) { 
+            header { padding: 20px; } 
+            .footer-links-grid { grid-template-columns: 1fr; } 
+            .side-panel { width: 85%; right: -100%; }
+            .cursor-dot, .cursor-outline { display: none; } * { cursor: auto; } 
+            .license-container { padding: 120px 20px 60px 20px; }
+            .license-box { padding: 40px 25px; }
             h1.page-title { font-size: 1.5rem; }
-            h2 { font-size: 1.05rem; }
-            p, ul { font-size: 0.9rem; }
         }
+
+        /* ----- COMPLETELY OBLITERATE GOOGLE TRANSLATE UI ----- */
+        .goog-te-banner-frame, .goog-te-banner-frame.skiptranslate, iframe.goog-te-banner-frame { display: none !important; visibility: hidden !important; opacity: 0 !important; z-index: -100000 !important; }
+        html, body { top: 0 !important; margin-top: 0 !important; }
+        #goog-gt-tt, .goog-te-balloon-frame { display: none !important; visibility: hidden !important; }
+        .goog-text-highlight { background: transparent !important; box-shadow: none !important; }
+        #google_translate_element { position: absolute; left: -9999px; top: -9999px; opacity: 0; pointer-events: none; z-index: -9999; }
     </style>
 </head>
 <body>
 
+<div class="cursor-dot"></div>
+<div class="cursor-outline"></div>
+
 <div class="video-bg-container">
-    <video autoplay loop muted playsinline poster="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/WALLPAPER_MAINDASHBOARD.png">
-        <source src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/VIDEO/RIVER_MAINDASHBOARD.mp4" type="video/mp4">
+    <video id="bg-video" autoplay loop muted playsinline poster="https://raw.githubusercontent.com/ashuhda-tech/WorldConnect_Technologies/main/assets/MAIN_WALLPAPER.png">
+        <source src="https://raw.githubusercontent.com/ashuhda-tech/WorldConnect_Technologies/main/assets/VIDEO/MAIN_WALLPAPER.mp4" type="video/mp4">
     </video>
 </div>
 <div class="video-overlay"></div>
 
 <header>
-    <div class="logo-area">
-        <h1>TerraConnect</h1>
+    <a href="index.html" class="logo-area" style="text-decoration: none;">
+        <img src="https://raw.githubusercontent.com/ashuhda-tech/WorldConnect_Technologies/main/assets/IMAGE/HARPIA_LOGO_NO_BKGRD.png" alt="HARPIA WORLDCONNECT Logo">
+        <h1>HARPIA WORLDCONNECT</h1>
+    </a>
+    <div class="nav-area">
+        <button class="menu-toggle" id="menuToggle" aria-label="Open Navigation Menu">
+            <span></span>
+            <span></span>
+        </button>
     </div>
-    <a href="index.html" class="btn-back"><i class="fas fa-arrow-left"></i> Return Home</a>
 </header>
 
-<div class="container">
-    <div class="privacy-card">
+<!-- SIDE NAVIGATION PANEL -->
+<div class="side-panel-overlay" id="panelOverlay"></div>
+<nav class="side-panel" id="sideNav">
+    <button class="close-btn" id="closePanelBtn"><i class="fas fa-times"></i></button>
+    
+    <div class="panel-nav">
+        <div class="panel-category">Philosophy</div>
+        <a href="https://aiterraconnect.com.br/index.html#about" class="panel-link">About Us <i class="fas fa-chevron-right"></i></a>
+        <a href="https://aiterraconnect.com.br/index.html#solidarity" class="panel-link">Solidarity <i class="fas fa-chevron-right"></i></a>
+        <a href="https://aiterraconnect.com.br/index.html#analytics-section" class="panel-link">Public Analytics <i class="fas fa-chevron-right"></i></a>
+        
+        <div class="panel-category" style="margin-top: 30px;">Technological Solutions</div>
+        <a href="https://aiterraconnect.com.br/index.html#solutions" class="panel-link">GenomaConnect Initiative <i class="fas fa-chevron-right"></i></a>
+        <a href="https://aiterraconnect.com.br/index.html#solutions" class="panel-link">TerraConnect Technologies <i class="fas fa-chevron-right"></i></a>
+        <a href="https://aiterraconnect.com.br/index.html#solutions" class="panel-link">FarmConnect Architecture <i class="fas fa-chevron-right"></i></a>
+    </div>
+</nav>
+
+<!-- LICENSE CONTENT SECTION -->
+<div class="license-container">
+    <div class="license-box">
         <h1 class="page-title">Open-Use & Non-Commercial License</h1>
         
         <div class="content-body">
@@ -135,8 +299,8 @@
             <h2>5. Disclaimer of Liability</h2>
             <p>The TerraConnect architecture is provided "as is," without any warranty of any kind. The creators assume no liability for any damages, legal repercussions, or hardware failures that occur from utilizing these Materials.</p>
             
-            <div style="text-align: center; margin-top: 50px;">
-                <p style="font-size: 0.85rem; color: var(--text-muted); font-style: italic;">
+            <div style="text-align: center; margin-top: 60px; padding-top: 30px; border-top: 1px solid rgba(255, 255, 255, 0.05);">
+                <p style="font-size: 0.85rem; color: var(--text-muted); font-style: italic; margin-bottom: 0;">
                     Last Updated: August 2026<br>
                     Copyright &copy; 2026 TerraConnect Technologies. All Rights Reserved.
                 </p>
@@ -145,5 +309,155 @@
     </div>
 </div>
 
+<!-- PAGE FOOTER WRAPPER -->
+<div class="footer-wrapper">
+    <footer class="site-footer">
+        <div class="footer-logo-center">
+            <a href="index.html" style="text-decoration: none; display: inline-block;">
+                <img src="https://raw.githubusercontent.com/ashuhda-tech/WorldConnect_Technologies/main/assets/IMAGE/HARPIA_LOGO_NO_BKGRD.png" alt="HARPIA WorldConnect Logo">
+                <h2>HARPIA WorldConnect</h2>
+            </a>
+        </div>
+
+        <div class="footer-content">
+            <div class="footer-links-grid">
+                <div class="footer-col">
+                    <a href="https://aiterraconnect.com.br/pressclub.html">Pressclub</a>
+                    <a href="https://aiterraconnect.com.br/faqs.html">FAQs</a>
+                    <a href="https://aiterraconnect.com.br/sitemap.html">Site Map</a>
+                    <div class="language-selector">
+                        <span>Language</span> 
+                        <button data-lang="en" class="lang-btn active">EN</button> | 
+                        <button data-lang="pt" class="lang-btn">PT</button> | 
+                        <button data-lang="nh" class="lang-btn">NH</button> |
+                        <button data-lang="es" class="lang-btn">ES</button> |
+                        <button data-lang="it" class="lang-btn">IT</button> |
+                        <button data-lang="sv" class="lang-btn">SV</button>
+                    </div>
+                </div>
+
+                <div class="footer-col">
+                    <a href="https://aiterraconnect.com.br/contact.html">Contact</a>
+                    <a href="https://aiterraconnect.com.br/license.html">Terms</a>
+                </div>
+
+                <div class="footer-col">
+                    <a href="https://aiterraconnect.com.br/solutions.html">Find your Solution</a>
+                    <a href="https://aiterraconnect.com.br/privacy.html">Privacy</a>
+                </div>
+
+                <div class="footer-col">
+                    <a href="https://aiterraconnect.com.br/partnership.html">Join Us</a>
+                    <a href="https://aiterraconnect.com.br/disconnect.html">Disconnect From Us</a>
+                </div>
+            </div>
+
+            <div class="footer-social">
+                <a href="#youtube" title="YouTube"><i class="fab fa-youtube"></i></a>
+                <a href="#facebook" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://www.instagram.com/ai_terraconnect" title="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="#linkedin" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                <a href="#x" title="X (Twitter)"><i class="fa-brands fa-x-twitter"></i></a>
+            </div>
+        </div>
+
+        <div class="footer-copyright">
+            <p>Copyright &copy; 2026 HARPIA WorldConnect. Engineered for the Earth.</p>
+        </div>
+    </footer>
+</div>
+
+<!-- HIDDEN GOOGLE TRANSLATE ELEMENT -->
+<div id="google_translate_element"></div>
+<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+<script>
+    // 1. VIDEO SPEED
+    const bgVideo = document.getElementById('bg-video');
+    if(bgVideo) bgVideo.playbackRate = 0.5;
+
+    // 2. CUSTOM CURSOR
+    const cursorDot = document.querySelector('.cursor-dot');
+    const cursorOutline = document.querySelector('.cursor-outline');
+    window.addEventListener('mousemove', function(e) {
+        const posX = e.clientX; const posY = e.clientY;
+        cursorDot.style.left = `${posX}px`; cursorDot.style.top = `${posY}px`;
+        cursorOutline.animate({ left: `${posX}px`, top: `${posY}px` }, { duration: 500, fill: "forwards" });
+    });
+    
+    // Add hover effects
+    const clickables = document.querySelectorAll('a, button, .menu-toggle, .close-btn, .panel-link');
+    clickables.forEach(el => {
+        el.addEventListener('mouseenter', () => { cursorOutline.style.transform = 'translate(-50%, -50%) scale(1.8)'; cursorOutline.style.backgroundColor = 'rgba(209, 179, 139, 0.15)'; });
+        el.addEventListener('mouseleave', () => { cursorOutline.style.transform = 'translate(-50%, -50%) scale(1)'; cursorOutline.style.backgroundColor = 'transparent'; });
+    });
+
+    // 3. SIDE NAVIGATION PANEL LOGIC
+    const menuToggle = document.getElementById('menuToggle');
+    const sideNav = document.getElementById('sideNav');
+    const panelOverlay = document.getElementById('panelOverlay');
+    const closePanelBtn = document.getElementById('closePanelBtn');
+    const panelLinks = document.querySelectorAll('.panel-link');
+
+    function openPanel() {
+        sideNav.classList.add('active');
+        panelOverlay.classList.add('active');
+    }
+
+    function closePanel() {
+        sideNav.classList.remove('active');
+        panelOverlay.classList.remove('active');
+    }
+
+    menuToggle.addEventListener('click', openPanel);
+    closePanelBtn.addEventListener('click', closePanel);
+    panelOverlay.addEventListener('click', closePanel);
+    
+    panelLinks.forEach(link => {
+        link.addEventListener('click', closePanel);
+    });
+
+    // 4. AUTOMATED TRANSLATION ENGINE (USING GOOGLE)
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({
+            pageLanguage: 'en',
+            includedLanguages: 'en,pt,es,it,sv', 
+            autoDisplay: false
+        }, 'google_translate_element');
+    }
+
+    const langButtons = document.querySelectorAll('.lang-btn');
+    
+    langButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            langButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const langCode = btn.getAttribute('data-lang');
+
+            if (langCode === 'nh') {
+                window.location.href = 'index_nh.html';
+                return;
+            }
+
+            const selectField = document.querySelector('select.goog-te-combo');
+            
+            if (selectField) {
+                selectField.value = langCode;
+                selectField.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
+                
+                if (langCode === 'en') {
+                    document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                    document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; domain=" + window.location.hostname + "; path=/;";
+                }
+            } else {
+                console.warn("Google Translate widget hasn't fully loaded yet.");
+            }
+        });
+    });
+
+</script>
 </body>
 </html>
