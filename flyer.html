@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TerraConnect - Laser Engraving Flyer</title>
+    <title>HARPIA WorldConnect - Laser Engraving Flyer</title>
     
     <!-- Fonts used in the Harpia WorldConnect ecosystem -->
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Inter:wght@600;800&display=swap" rel="stylesheet">
@@ -36,7 +36,6 @@
 
         /* 
            WOODEN PLAQUE PROPORTIONS (Approx 4x6 inches or A5)
-           Adjust width/height if your wood blanks are a different aspect ratio.
         */
         .flyer-canvas {
             width: 1200px;
@@ -76,13 +75,21 @@
         .corner-accent.bottom-left { bottom: 40px; left: 40px; }
         .corner-accent.bottom-right { bottom: 40px; right: 40px; }
 
-        /* Typography */
+        /* Branding */
+        .brand-logo {
+            width: 220px;
+            height: auto;
+            margin-top: 40px;
+            /* CRITICAL FOR LASER: Forces the transparent PNG to be solid pure black */
+            filter: brightness(0); 
+        }
+
         .brand-title {
             font-family: 'Cinzel', serif;
             font-size: 85px;
             font-weight: 700;
             letter-spacing: 5px;
-            margin-top: 60px;
+            margin-top: 15px;
             text-transform: uppercase;
             line-height: 1.1;
         }
@@ -103,9 +110,9 @@
         }
 
         .hook-text {
-            font-size: 42px;
+            font-size: 38px;
             font-weight: 800;
-            margin: 60px 0;
+            margin: 50px 0;
             line-height: 1.4;
             text-transform: uppercase;
         }
@@ -115,7 +122,7 @@
             display: grid;
             grid-template-columns: 1fr;
             gap: 40px;
-            width: 75%;
+            width: 80%;
             margin: 0 auto;
             text-align: left;
         }
@@ -124,7 +131,7 @@
             display: flex;
             align-items: center;
             gap: 30px;
-            font-size: 36px;
+            font-size: 32px;
             font-weight: 800;
             text-transform: uppercase;
         }
@@ -137,7 +144,7 @@
 
         /* Call To Action & QR */
         .qr-section {
-            margin-top: 60px;
+            margin-top: 50px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -191,11 +198,13 @@
         <div class="corner-accent bottom-right"></div>
 
         <div style="width: 100%; z-index: 10;">
-            <div class="brand-title">TerraConnect</div>
-            <div class="brand-subtitle">Technologies</div>
+            <!-- Source:[cite: 2] -->
+            <img src="https://raw.githubusercontent.com/ashuhda-tech/WorldConnect_Technologies/main/assets/IMAGE/HARPIA_LOGO_NO_BKGRD.png" class="brand-logo" alt="Harpia Logo">
+            <div class="brand-title">HARPIA</div>
+            <div class="brand-subtitle">WORLDCONNECT</div>
             
             <div class="hook-text">
-                Connect With Your<br>Pet's Micro-Ecosystem
+                Track Your Pet's Evolution<br>& Health With Precision
             </div>
 
             <div class="features-grid">
@@ -204,12 +213,12 @@
                     <span>Live Environment Monitoring</span>
                 </div>
                 <div class="feature-item">
-                    <i class="fas fa-brain"></i>
-                    <span>AI-Driven Health Insights</span>
+                    <i class="fas fa-chart-line"></i>
+                    <span>Growth & Clinical Data Logging</span>
                 </div>
                 <div class="feature-item">
-                    <i class="fas fa-satellite-dish"></i>
-                    <span>GPS Telemetry Tracking</span>
+                    <i class="fas fa-brain"></i>
+                    <span>AI-Driven Health Insights</span>
                 </div>
             </div>
         </div>
@@ -225,14 +234,11 @@
     </div>
 
     <script>
-        // Generate the QR Code dynamically
-        // Using high correctLevel (H) ensures the QR code is still scannable 
-        // even if the laser engraving burns slightly unevenly on the wood grain.
         window.onload = function() {
             new QRCode(document.getElementById("qrcode"), {
                 text: "https://aiterraconnect.com.br/",
-                width: 350,
-                height: 350,
+                width: 330,
+                height: 330,
                 colorDark : "#000000",
                 colorLight : "#FFFFFF",
                 correctLevel : QRCode.CorrectLevel.H
