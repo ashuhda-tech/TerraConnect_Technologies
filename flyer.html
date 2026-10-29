@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TerraConnect - Laser Engraving Flyer</title>
+    
+    <!-- Fonts used in the Harpia WorldConnect ecosystem -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Inter:wght@600;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for solid, engraver-friendly icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- QR Code Generator -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <style>
+        /* 
+           LASER ENGRAVING OPTIMIZATION:
+           - Strictly #000000 (Black) and #FFFFFF (White)
+           - No anti-aliasing tricks that create gray pixels
+           - Thick font weights (600+) so the laser doesn't burn away thin lines
+        */
+        :root {
+            --black: #000000;
+            --white: #FFFFFF;
+        }
+
+        body {
+            background-color: #e0e0e0; /* Just for web preview background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* 
+           WOODEN PLAQUE PROPORTIONS (Approx 4x6 inches or A5)
+           Adjust width/height if your wood blanks are a different aspect ratio.
+        */
+        .flyer-canvas {
+            width: 1200px;
+            height: 1600px;
+            background-color: var(--white);
+            color: var(--black);
+            padding: 80px;
+            box-sizing: border-box;
+            position: relative;
+            border: 2px solid #ccc; /* Web preview border, won't print black */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            text-align: center;
+        }
+
+        /* Geometric Tech Borders */
+        .inner-border {
+            position: absolute;
+            top: 40px;
+            left: 40px;
+            right: 40px;
+            bottom: 40px;
+            border: 8px solid var(--black);
+            pointer-events: none;
+        }
+
+        .corner-accent {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background-color: var(--black);
+        }
+        .corner-accent.top-left { top: 40px; left: 40px; }
+        .corner-accent.top-right { top: 40px; right: 40px; }
+        .corner-accent.bottom-left { bottom: 40px; left: 40px; }
+        .corner-accent.bottom-right { bottom: 40px; right: 40px; }
+
+        /* Typography */
+        .brand-title {
+            font-family: 'Cinzel', serif;
+            font-size: 85px;
+            font-weight: 700;
+            letter-spacing: 5px;
+            margin-top: 60px;
+            text-transform: uppercase;
+            line-height: 1.1;
+        }
+
+        .brand-subtitle {
+            font-family: 'Inter', sans-serif;
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: 12px;
+            margin-top: 15px;
+            text-transform: uppercase;
+            border-top: 4px solid var(--black);
+            border-bottom: 4px solid var(--black);
+            padding: 15px 0;
+            width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hook-text {
+            font-size: 42px;
+            font-weight: 800;
+            margin: 60px 0;
+            line-height: 1.4;
+            text-transform: uppercase;
+        }
+
+        /* Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 40px;
+            width: 75%;
+            margin: 0 auto;
+            text-align: left;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            font-size: 36px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .feature-item i {
+            font-size: 50px;
+            width: 70px;
+            text-align: center;
+        }
+
+        /* Call To Action & QR */
+        .qr-section {
+            margin-top: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .qr-wrapper {
+            padding: 20px;
+            border: 8px solid var(--black);
+            background-color: var(--white);
+            margin-bottom: 30px;
+        }
+
+        .cta-text {
+            font-family: 'Cinzel', serif;
+            font-size: 45px;
+            font-weight: 700;
+            letter-spacing: 3px;
+        }
+
+        .footer-text {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: 6px;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+        }
+
+        /* Print setup to export clean PDF or Image for the laser */
+        @media print {
+            body {
+                background-color: var(--white);
+                margin: 0;
+                padding: 0;
+            }
+            .flyer-canvas {
+                border: none;
+                width: 100%;
+                height: 100%;
+                page-break-after: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="flyer-canvas">
+        <div class="inner-border"></div>
+        <div class="corner-accent top-left"></div>
+        <div class="corner-accent top-right"></div>
+        <div class="corner-accent bottom-left"></div>
+        <div class="corner-accent bottom-right"></div>
+
+        <div style="width: 100%; z-index: 10;">
+            <div class="brand-title">TerraConnect</div>
+            <div class="brand-subtitle">Technologies</div>
+            
+            <div class="hook-text">
+                Connect With Your<br>Pet's Micro-Ecosystem
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-item">
+                    <i class="fas fa-temperature-half"></i>
+                    <span>Live Environment Monitoring</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-brain"></i>
+                    <span>AI-Driven Health Insights</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-satellite-dish"></i>
+                    <span>GPS Telemetry Tracking</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="qr-section" style="z-index: 10;">
+            <div class="qr-wrapper" id="qrcode"></div>
+            <div class="cta-text">SCAN TO EXPLORE</div>
+        </div>
+
+        <div class="footer-text" style="z-index: 10;">
+            OPEN-SOURCE HARDWARE & SOFTWARE
+        </div>
+    </div>
+
+    <script>
+        // Generate the QR Code dynamically
+        // Using high correctLevel (H) ensures the QR code is still scannable 
+        // even if the laser engraving burns slightly unevenly on the wood grain.
+        window.onload = function() {
+            new QRCode(document.getElementById("qrcode"), {
+                text: "https://aiterraconnect.com.br/",
+                width: 350,
+                height: 350,
+                colorDark : "#000000",
+                colorLight : "#FFFFFF",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+        };
+    </script>
+</body>
+</html>
