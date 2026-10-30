@@ -64,7 +64,9 @@
         
         /* ----- HEADER & NAVIGATION ----- */
         header {padding: 30px 50px;display: flex;justify-content: space-between;align-items: center;border-bottom: 1px solid var(--card-border);background: rgba(10, 12, 16, 0.8);backdrop-filter: blur(10px);position: sticky;top: 0;z-index: 100;}
-        .logo-area h1 {font-family: var(--font-title);color: var(--accent);font-size: 1.8rem;letter-spacing: 2px;}
+        .logo-area { display: flex; align-items: center; gap: 15px; text-decoration: none; }
+        .logo-area img { height: 40px; width: auto; object-fit: contain; }
+        .logo-area h1 {font-family: 'A760-Roman-Smc', serif;color: var(--accent);font-size: 1.8rem;letter-spacing: 2px; text-transform: uppercase; margin: 0;}
         .btn-back {text-decoration: none;color: var(--accent);border: 1px solid var(--accent);padding: 8px 20px;border-radius: 5px;font-size: 0.85rem;transition: 0.3s;font-family: var(--font-title);text-transform: uppercase;}
         .btn-back:hover {background: var(--accent);color: var(--bg-color);}
         
@@ -184,25 +186,50 @@
             letter-spacing: 1px;
         }
 
-        /* ----- GLOBAL FOOTER ----- */
-        footer {
-            width: 100%;
-            text-align: center;
-            padding: 20px;
-            background: rgba(10, 12, 16, 0.8);
-            backdrop-filter: blur(10px);
-            border-top: 1px solid var(--card-border);
-            position: relative;
-            z-index: 100;
-            flex-shrink: 0; 
+        /* ----- FOOTER (BOTTOM RIBBON) ----- */
+        .footer-wrapper { background: var(--bg-color); width: 100%; position: relative; z-index: 2; border-top: 1px solid var(--card-border); display: flex; flex-direction: column; justify-content: space-between;}
+        
+        .site-footer { color: var(--text-muted); padding: 20px 40px 40px 40px; font-family: var(--font-standard); width: 100%; }
+        .footer-logo-center { text-align: center; margin-bottom: 40px; }
+        .footer-logo-center img { height: 40px; filter: grayscale(100%) brightness(0.8); margin-bottom: 15px; }
+        .footer-logo-center h2 { font-family: 'A760-Roman-Smc', serif; font-size: 1.2rem; color: var(--text-muted); letter-spacing: 4px; text-transform: uppercase; font-weight: normal; }
+        .footer-content { max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; flex-wrap: wrap; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 30px; gap: 40px; }
+        .footer-links-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; flex-grow: 1; }
+        .footer-col { display: flex; flex-direction: column; gap: 15px; }
+        .footer-col a, .footer-col span { text-decoration: none; color: var(--text-main); font-size: 0.75rem; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500; transition: color 0.3s; }
+        .footer-col a:hover { color: var(--accent); }
+        
+        .language-selector { display: flex; align-items: center; gap: 6px; margin-top: 5px; flex-wrap: wrap;}
+        .language-selector span { color: var(--text-muted); margin-right: 5px; }
+        .language-selector button { background: none; border: none; color: var(--text-muted); font-size: 0.75rem; letter-spacing: 1.5px; font-weight: 500; text-transform: uppercase; transition: color 0.3s; cursor: pointer; }
+        .language-selector button:hover { color: var(--accent); }
+        .language-selector button.active { color: var(--text-main); font-weight: bold; }
+
+        .footer-social { display: flex; gap: 20px; align-items: flex-start; justify-content: flex-end; min-width: 200px; }
+        .footer-social a { color: var(--text-muted); font-size: 1.2rem; transition: color 0.3s; }
+        .footer-social a:hover { color: var(--accent); }
+        .footer-copyright { text-align: center; margin-top: 40px; font-size: 0.75rem; color: rgba(156, 163, 175, 0.5); letter-spacing: 1px; }
+
+        /* ----- COMPLETELY OBLITERATE GOOGLE TRANSLATE UI ----- */
+        .goog-te-banner-frame, .goog-te-banner-frame.skiptranslate, iframe.goog-te-banner-frame { display: none !important; visibility: hidden !important; opacity: 0 !important; z-index: -100000 !important; }
+        html, body { top: 0 !important; margin-top: 0 !important; }
+        #goog-gt-tt, .goog-te-balloon-frame { display: none !important; visibility: hidden !important; }
+        .goog-text-highlight { background: transparent !important; box-shadow: none !important; }
+        #google_translate_element { position: absolute; left: -9999px; top: -9999px; opacity: 0; pointer-events: none; z-index: -9999; }
+
+        @media (max-width: 1024px) { 
+            .footer-content { flex-direction: column; } 
+            .footer-links-grid { grid-template-columns: repeat(2, 1fr); } 
+            .footer-social { justify-content: flex-start; margin-top: 20px; } 
         }
-        .footer-text {font-size: 0.8rem; color: var(--text-muted); font-family: var(--font-standard); letter-spacing: 0.5px;}
-        .footer-link {color: var(--accent); text-decoration: none; font-weight: 600; transition: color 0.3s ease; margin-left: 5px;}
-        .footer-link:hover {color: var(--text-main); }
 
         @media (max-width: 768px) {
             header { padding: 20px; flex-direction: column; gap: 15px; }
             .pricing-grid, .product-grid, .tier-grid, .charts-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 480px) {
+            .footer-links-grid { grid-template-columns: 1fr; } 
         }
     </style>
 </head>
@@ -217,9 +244,10 @@
 
 <!-- Header -->
 <header>
-    <div class="logo-area">
-        <h1>TerraConnect</h1>
-    </div>
+    <a href="authentication.html" class="logo-area" style="text-decoration: none;">
+        <img src="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/IMAGE/GUARACI_LOGO_NO_BKGRD.png" alt="Guaraci Logo">
+        <h1>TERRACONNECT</h1>
+    </a>
     <a href="index.html" class="btn-back"><i class="fas fa-arrow-left"></i> Return to Portal</a>
 </header>
 
@@ -443,13 +471,64 @@
 
 </div>
 
-<!-- GLOBAL FOOTER -->
-<footer>
-    <div class="footer-text">
-        Copyright &copy; 2026 TerraConnect Technologies. All Rights Reserved. | 
-        <a href="license.html" class="footer-link"><i class="fas fa-balance-scale"></i> Open-Use License</a>
-    </div>
-</footer>
+
+<!-- PAGE FOOTER WRAPPER -->
+<div class="footer-wrapper">
+    <footer class="site-footer">
+        <div class="footer-logo-center">
+            <a href="index.html" style="text-decoration: none; display: inline-block;">
+                <img src="https://raw.githubusercontent.com/ashuhda-tech/WorldConnect_Technologies/main/assets/IMAGE/HARPIA_LOGO_NO_BKGRD.png" alt="HARPIA WorldConnect Logo">
+                <h2>HARPIA WorldConnect</h2>
+            </a>
+        </div>
+
+        <div class="footer-content">
+            <div class="footer-links-grid">
+                <div class="footer-col">
+                    <a href="https://aiterraconnect.com.br/pressclub.html">Pressclub</a>
+                    <a href="https://aiterraconnect.com.br/faqs.html">FAQs</a>
+                    <a href="https://aiterraconnect.com.br/sitemap.html">Site Map</a>
+                    <div class="language-selector">
+                        <span>Language</span> 
+                        <button data-lang="en" class="lang-btn active">EN</button> | 
+                        <button data-lang="pt" class="lang-btn">PT</button> | 
+                        <button data-lang="nh" class="lang-btn">NH</button> |
+                        <button data-lang="es" class="lang-btn">ES</button> |
+                        <button data-lang="it" class="lang-btn">IT</button> |
+                        <button data-lang="sv" class="lang-btn">SV</button>
+                    </div>
+                </div>
+
+                <div class="footer-col">
+                    <a href="https://aiterraconnect.com.br/contact.html">Contact</a>
+                    <a href="https://aiterraconnect.com.br/license.html">Terms</a>
+                </div>
+
+                <div class="footer-col">
+                    <a href="https://aiterraconnect.com.br/solutions.html">Find your Solution</a>
+                    <a href="https://aiterraconnect.com.br/privacy.html">Privacy</a>
+                </div>
+
+                <div class="footer-col">
+                    <a href="https://aiterraconnect.com.br/partnership.html">Join Us</a>
+                    <a href="https://aiterraconnect.com.br/disconnect.html">Disconnect From Us</a>
+                </div>
+            </div>
+
+            <div class="footer-social">
+                <a href="#youtube" title="YouTube"><i class="fab fa-youtube"></i></a>
+                <a href="#facebook" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://www.instagram.com/ai_terraconnect" title="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="#linkedin" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                <a href="#x" title="X (Twitter)"><i class="fa-brands fa-x-twitter"></i></a>
+            </div>
+        </div>
+
+        <div class="footer-copyright">
+            <p>Copyright &copy; 2026 HARPIA WorldConnect. Engineered for the Earth.</p>
+        </div>
+    </footer>
+</div>
 
 <!-- QR CODE HOVER WIDGET -->
 <div id="qr-widget">
@@ -462,7 +541,53 @@
     <i class="fas fa-spinner fa-spin"></i> Fetching Build...
 </div>
 
+<!-- HIDDEN GOOGLE TRANSLATE ELEMENT -->
+<div id="google_translate_element"></div>
+<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
 <script>
+// ==========================================
+// --- TRANSLATION ENGINE LOGIC ---
+// ==========================================
+function googleTranslateElementInit() {
+    new google.translate.TranslateElement({
+        pageLanguage: 'en',
+        includedLanguages: 'en,pt,es,it,sv', 
+        autoDisplay: false
+    }, 'google_translate_element');
+}
+
+const langButtons = document.querySelectorAll('.lang-btn');
+langButtons.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        
+        langButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const langCode = btn.getAttribute('data-lang');
+
+        if (langCode === 'nh') {
+            window.location.href = 'index_nh.html';
+            return;
+        }
+
+        const selectField = document.querySelector('select.goog-te-combo');
+        
+        if (selectField) {
+            selectField.value = langCode;
+            selectField.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
+            
+            if (langCode === 'en') {
+                document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; domain=" + window.location.hostname + "; path=/;";
+            }
+        } else {
+            console.warn("Google Translate widget hasn't fully loaded yet.");
+        }
+    });
+});
+
 // ==========================================
 // --- SECURE ROUTING SYSTEM (WITH DIAGNOSTICS) ---
 // ==========================================
@@ -517,7 +642,7 @@ async function fetchDatabaseRoutes() {
         if (result.status === "success") {
             FLAGS_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_FLAGS_Dashboard View"]);
             
-            // Extracts the newly created AIFeedback database reference (Index 19)[cite: 11]
+            // Extracts the newly created AIFeedback database reference (Index 19)
             AIFEEDBACK_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_AI_And_Feedback"]); 
             
             console.log("✅ Master Directory Routing Successful!");
