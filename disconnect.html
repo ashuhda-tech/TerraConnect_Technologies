@@ -635,29 +635,27 @@ document.addEventListener('DOMContentLoaded', async () => {
         const formData = new FormData(disconnectForm);
 
         try {
-            const response = await fetch(DISCONNECT_SCRIPT_URL, {
+            // Adicionamos mode: 'no-cors' para o navegador não bloquear a requisição do Google
+            await fetch(DISCONNECT_SCRIPT_URL, {
                 method: 'POST',
+                mode: 'no-cors',
                 body: formData
             });
             
-            const data = await response.json();
+            // Como o 'no-cors' gera uma resposta opaca, assumimos o sucesso se não houver falha de rede
+            disconnectForm.reset();
+            submitBtn.innerHTML = '<i class="fas fa-check"></i> REQUEST QUEUED SECURELY';
+            submitBtn.style.backgroundColor = '#e57373'; 
+            submitBtn.style.color = '#fff';
             
-            if (data.result === 'success') {
-                disconnectForm.reset();
-                submitBtn.innerHTML = '<i class="fas fa-check"></i> REQUEST QUEUED SECURELY';
-                submitBtn.style.backgroundColor = '#e57373'; 
-                submitBtn.style.color = '#fff';
-                
-                setTimeout(() => {
-                    submitBtn.innerHTML = originalBtnText;
-                    submitBtn.style.backgroundColor = '';
-                    submitBtn.style.color = '';
-                    submitBtn.style.pointerEvents = 'auto';
-                    submitBtn.style.opacity = '1';
-                }, 5000);
-            } else {
-                throw new Error('Database rejection');
-            }
+            setTimeout(() => {
+                submitBtn.innerHTML = originalBtnText;
+                submitBtn.style.backgroundColor = '';
+                submitBtn.style.color = '';
+                submitBtn.style.pointerEvents = 'auto';
+                submitBtn.style.opacity = '1';
+            }, 5000);
+            
         } catch (error) {
             console.error('Error!', error.message);
             alert("System Error: Could not reach the server. Please check your connection.");
