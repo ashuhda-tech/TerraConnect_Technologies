@@ -195,5 +195,118 @@
     <p>Copyright &copy; 2026 Nhanderu. Engineered for the Earth.</p>
 </footer>
 
+
+<!-- HIDDEN GOOGLE TRANSLATE ELEMENT -->
+<div id="google_translate_element"></div>
+<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+<script>
+// ==========================================
+// --- TRANSLATION ENGINE & AUTO-IP LOGIC ---
+// ==========================================
+
+// 1. Inicializa o Google Translate (Obrigatório)
+function googleTranslateElementInit() {
+    new google.translate.TranslateElement({
+        pageLanguage: 'en',
+        includedLanguages: 'en,pt,es,it,sv', 
+        autoDisplay: false
+    }, 'google_translate_element');
+}
+
+// 2. Lógica Mestra de Detecção e Persistência
+document.addEventListener('DOMContentLoaded', async () => {
+    const langButtons = document.querySelectorAll('.lang-btn');
+    
+    // Mapeamento de País (ISO 3166-1) para Idioma Suportado
+    // Você pode adicionar mais países do mundo hispânico ou lusófono aqui se desejar
+    const countryToLang = {
+        'BR': 'pt', 'PT': 'pt', 'AO': 'pt', 'MZ': 'pt', // Países de língua portuguesa
+        'ES': 'es', 'MX': 'es', 'AR': 'es', 'CO': 'es', 'CL': 'es', 'PE': 'es', // Países de língua espanhola
+        'IT': 'it', // Itália
+        'SE': 'sv'  // Suécia
+    };
+
+    // Lê a memória do navegador para ver se o usuário JÁ escolheu um idioma antes
+    let savedLang = localStorage.getItem('harpia_lang');
+
+    // Se NÃO houver idioma salvo (Primeira visita ao site)
+    if (!savedLang) {
+        try {
+            // API gratuita e rápida para detectar o país pelo IP do visitante
+            const response = await fetch('https://get.geojs.io/v1/ip/country.json');
+            const data = await response.json();
+            
+            // Verifica se o país do IP está no nosso mapeamento. Se não estiver, o padrão é Inglês ('en')
+            savedLang = countryToLang[data.country] || 'en';
+            
+            // Salva a detecção no navegador para que a navegação nas próximas páginas seja instantânea
+            localStorage.setItem('harpia_lang', savedLang);
+            console.log(`[Auto-Translation] IP localizado em ${data.country}. Idioma setado para: ${savedLang}`);
+        } catch (error) {
+            console.warn("Erro ao detectar IP. Adotando Inglês como segurança.", error);
+            savedLang = 'en';
+            localStorage.setItem('harpia_lang', savedLang);
+        }
+    }
+
+    // Aplica o idioma (seja o recém detectado por IP ou o que já estava salvo)
+    applyLanguage(savedLang);
+
+    // Função centralizada para injetar o idioma no Google Translate e atualizar o Menu
+    function applyLanguage(langCode) {
+        // Atualiza a barra de botões visualmente (marca o botão ativo)
+        langButtons.forEach(b => b.classList.remove('active'));
+        const activeBtn = document.querySelector(`.lang-btn[data-lang="${langCode}"]`);
+        if (activeBtn) activeBtn.classList.add('active');
+
+        // Tratamento especial de redirecionamento para Nhanderu
+        if (langCode === 'nh') {
+            if(!window.location.href.includes('index_nh.html')){
+                window.location.href = 'index_nh.html';
+            }
+            return;
+        }
+
+        // Aguarda até que o widget oculto do Google Translate seja renderizado na página
+        const checkGTranslate = setInterval(() => {
+            const selectField = document.querySelector('select.goog-te-combo');
+            if (selectField) {
+                clearInterval(checkGTranslate); // Para de procurar
+                
+                if (langCode === 'en') {
+                    // Reseta para o HTML original em Inglês
+                    selectField.value = ''; 
+                    selectField.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
+                    
+                    // Limpa os cookies nativos do Google para não forçar a barra superior
+                    const domain = window.location.hostname;
+                    document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                    document.cookie = `googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; domain=${domain}; path=/;`;
+                } else {
+                    // Força a seleção do idioma e aciona o evento de troca
+                    selectField.value = langCode;
+                    selectField.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
+                }
+            }
+        }, 300); // Tenta encontrar o menu do Google a cada 300 milissegundos
+    }
+
+    // 3. Listener para quando o usuário clicar manualmente na barra de idiomas
+    langButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const langCode = btn.getAttribute('data-lang');
+            
+            // Sobrescreve a memória com a nova escolha manual do usuário
+            localStorage.setItem('harpia_lang', langCode);
+            
+            // Dispara a tradução
+            applyLanguage(langCode);
+        });
+    });
+});
+</script>
+    
 </body>
 </html>
