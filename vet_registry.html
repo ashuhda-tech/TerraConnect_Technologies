@@ -69,6 +69,19 @@
         /* Custom styling for the new location button */
         .btn-icon { width: auto; margin-top: 0; padding: 12px 20px; background-color: transparent; border: 1px solid var(--accent); color: var(--accent); font-size: 1.1rem; }
         .btn-icon:hover:not(:disabled) { background-color: var(--accent); color: var(--bg-dark); }
+        
+        /* ----- OBLITERAR TOTALMENTE A UI DO GOOGLE TRANSLATE ----- */
+        .goog-te-banner-frame, 
+        .goog-te-balloon-frame, 
+        #goog-gt-tt { display: none !important; visibility: hidden !important; }
+        html, body { top: 0 !important; margin-top: 0 !important; }
+        .goog-text-highlight { background: none !important; box-shadow: none !important; }
+        
+        /* Esconde a div principal e qualquer widget injetado direto no body */
+        #google_translate_element, 
+        .skiptranslate.goog-te-gadget, body > 
+        .skiptranslate { position: absolute !important; left: -9999px !important; top: -9999px !important; opacity: 0 !important; pointer-events: none !important; z-index: -9999 !important; display: none !important; }
+
     </style>
 </head>
 <body>
@@ -273,6 +286,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     });
 });
+
+
 // ==========================================
 // --- SECURE ROUTING SYSTEM (WITH DIAGNOSTICS) ---
 // ==========================================
@@ -281,6 +296,34 @@ document.addEventListener('DOMContentLoaded', async () => {
         let VETDATA_SCRIPT_URL = "";
         let PAGEID_SCRIPT_URL = "";
         let targetPageID = null;
+
+
+        // 1. Verificação de Segurança (Requer Token de Sessão)
+        function checkSecurity() {
+            const userString = localStorage.getItem('currentUser');
+            const authToken = sessionStorage.getItem('authToken');
+            
+            // Se faltar o usuário ou o token, bloqueia a página
+            if (!userString || !authToken) {
+                alert("Acesso Negado: Sessão expirada ou inválida. Faça login novamente.");
+                window.location.href = "authentication.html"; 
+                return null;
+            }
+        
+            const currentUser = JSON.parse(userString);
+            currentUser.authToken = authToken;
+            return currentUser;
+        }
+        
+        const loggedUser = checkSecurity();
+        
+        // 2. Parâmetros de Autenticação Globais
+        // Isso garante que o userID e os tokens de segurança viajem em TODAS as requisições
+        const authParams = loggedUser ? `&userID=${encodeURIComponent(loggedUser.userID)}&authToken=${encodeURIComponent(loggedUser.authToken)}&csrfToken=${encodeURIComponent(loggedUser.authToken)}` : "";
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentPageId = urlParams.get('pageID'); // Certifique-se de que a variável de URL está correta (pageID ou id)
+            
 
         // Safe URL parser: Returns standard URLs as-is, decodes if Base64
         function safeParseUrl(val) {
