@@ -15,7 +15,7 @@
     
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TerraConnect | Site Map</title>
+    <title>TerraConnect | Site Map - Tree Diagram</title>
     
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/IMAGE/terraconnect_ICON_no_bkgr.png">
 
@@ -25,8 +25,8 @@
     <style>
         :root {
             --bg-color: #070b14;
-            --card-bg: rgba(13, 17, 23, 0.75);
-            --card-border: rgba(209, 179, 139, 0.2);
+            --card-bg: rgba(13, 17, 23, 0.85);
+            --card-border: rgba(209, 179, 139, 0.3);
             --accent-dark: #d1b38b;
             --accent-light: #f4e9d8;
             --text-main: #f4e9d8;
@@ -86,20 +86,21 @@
         .panel-link:hover i { opacity: 1; transform: translateX(0); }
 
         /* ========================================================= */
-        /* ------------- SITEMAP CONTAINER & DIAGRAM --------------- */
+        /* ------------- TRUE TREE DIAGRAM STRUCTURE --------------- */
         /* ========================================================= */
         
         .sitemap-container {
             width: 100%;
-            max-width: 1200px;
+            max-width: 1300px;
             margin: 0 auto;
             padding: 160px 20px 80px 20px;
             flex-grow: 1;
+            overflow-x: auto;
         }
 
         .sitemap-header {
             text-align: center;
-            margin-bottom: 50px;
+            margin-bottom: 60px;
         }
 
         .sitemap-header h2 {
@@ -118,84 +119,203 @@
             letter-spacing: 0.5px;
         }
 
-        /* Tree Diagram Grid Layout */
-        .sitemap-tree {
+        /* Tree Root Style */
+        .tree-root-wrapper {
             display: flex;
             flex-direction: column;
-            gap: 40px;
+            align-items: center;
             position: relative;
         }
 
-        .tree-branch {
+        .tree-root-node {
             background: var(--card-bg);
-            border: 1px solid var(--card-border);
+            border: 2px solid var(--accent-dark);
             backdrop-filter: blur(15px);
             border-radius: var(--border-radius);
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            padding: 20px 40px;
+            text-align: center;
+            text-decoration: none;
+            box-shadow: 0 10px 30px rgba(209, 179, 139, 0.15);
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+
+        .tree-root-node:hover {
+            background: rgba(209, 179, 139, 0.1);
+            transform: scale(1.05);
+        }
+
+        .root-title {
+            font-family: var(--font-title);
+            font-size: 1.3rem;
+            color: var(--accent-light);
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+
+        .root-desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+
+        /* Vertical Line from Root */
+        .tree-vertical-line {
+            width: 2px;
+            height: 40px;
+            background-color: var(--card-border);
+        }
+
+        /* Horizontal Branch Connector Bar */
+        .tree-branch-bar {
+            width: 80%;
+            max-width: 900px;
+            height: 2px;
+            background-color: var(--card-border);
             position: relative;
         }
 
-        .branch-title {
-            font-family: var(--font-title);
-            font-size: 1.2rem;
-            color: var(--accent-dark);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 20px;
+        /* Branches Container */
+        .tree-branches-container {
             display: flex;
-            align-items: center;
-            gap: 10px;
-            border-bottom: 1px solid rgba(209, 179, 139, 0.15);
-            padding-bottom: 10px;
+            justify-content: space-around;
+            width: 100%;
+            max-width: 1100px;
+            gap: 30px;
+            margin-top: 0px;
         }
 
-        .branch-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 20px;
-        }
-
-        .node-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: var(--border-radius);
-            padding: 20px;
-            text-decoration: none;
-            transition: all 0.3s ease;
+        .tree-branch-column {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            align-items: center;
+            flex: 1;
             position: relative;
         }
 
-        .node-card:hover {
-            border-color: var(--accent-dark);
-            background: rgba(209, 179, 139, 0.05);
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(209, 179, 139, 0.1);
+        /* Vertical Connector to Branch Header */
+        .tree-branch-column::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 30px;
+            background-color: var(--card-border);
         }
 
-        .node-title {
+        /* Branch Header Node */
+        .branch-header-node {
+            background: rgba(13, 17, 23, 0.9);
+            border: 1px solid var(--card-border);
+            border-radius: var(--border-radius);
+            padding: 15px 20px;
+            text-align: center;
+            margin-top: 30px;
+            margin-bottom: 25px;
+            width: 100%;
+            max-width: 300px;
+            z-index: 2;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+
+        .branch-header-title {
             font-family: var(--font-title);
             font-size: 1rem;
+            color: var(--accent-dark);
+            letter-spacing: 1.5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-transform: uppercase;
+        }
+
+        /* Leaf Nodes Container */
+        .branch-leaves {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+            align-items: center;
+            position: relative;
+        }
+
+        /* Vertical connector down through leaves */
+        .branch-leaves::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 100%;
+            background-color: rgba(209, 179, 139, 0.15);
+            z-index: 0;
+        }
+
+        .leaf-node {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: var(--border-radius);
+            padding: 15px 20px;
+            width: 100%;
+            max-width: 280px;
+            text-decoration: none;
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .leaf-node:hover {
+            border-color: var(--accent-dark);
+            background: rgba(209, 179, 139, 0.08);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(209, 179, 139, 0.15);
+        }
+
+        .leaf-title {
+            font-family: var(--font-title);
+            font-size: 0.9rem;
             color: var(--text-main);
             letter-spacing: 1px;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            margin-bottom: 4px;
         }
 
-        .node-title i {
+        .leaf-title i {
             color: var(--accent-dark);
-            font-size: 0.85rem;
+            font-size: 0.75rem;
         }
 
-        .node-desc {
-            font-size: 0.8rem;
+        .leaf-desc {
+            font-size: 0.75rem;
             color: var(--text-muted);
-            line-height: 1.4;
+            line-height: 1.3;
             font-weight: 300;
+        }
+
+        /* Responsive Tree adjustment for mobile */
+        @media (max-width: 900px) {
+            .tree-branches-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            .tree-branch-bar {
+                display: none;
+            }
+            .tree-branch-column::before {
+                display: none;
+            }
+            .tree-branch-column {
+                width: 100%;
+                max-width: 350px;
+                margin-bottom: 20px;
+            }
         }
 
         /* ----- BOTTOM FOOTNOTE WRAPPER ----- */
@@ -222,7 +342,6 @@
         .footer-social a:hover { color: var(--accent-dark); }
         .footer-copyright { text-align: center; margin-top: 40px; font-size: 0.75rem; color: rgba(156, 163, 175, 0.5); letter-spacing: 1px; }
 
-        /* Mobile / Tablet Responsiveness */
         @media (max-width: 768px) { 
             header { padding: 20px; } 
             .footer-links-grid { grid-template-columns: 1fr; } 
@@ -285,98 +404,111 @@
     </div>
 </nav>
 
-<!-- SITEMAP CONTENT SECTION -->
+<!-- SITEMAP TREE DIAGRAM CONTENT SECTION -->
 <div class="sitemap-container">
     <div class="sitemap-header">
-        <h2>Repository Site Map</h2>
-        <p>Interactive structural diagram of all HTML pages and navigation nodes across the ecosystem.</p>
+        <h2>Repository Tree Diagram</h2>
+        <p>Hierarchical tree structure mapping all repository navigation nodes and endpoints.</p>
     </div>
 
-    <div class="sitemap-tree">
-        
-        <!-- BRANCH 1: CORE PORTAL & PUBLIC PAGES -->
-        <div class="tree-branch">
-            <div class="branch-title">
-                <i class="fas fa-globe"></i> Core Portal & Public Access
-            </div>
-            <div class="branch-grid">
-                <a href="index.html" class="node-card">
-                    <div class="node-title">index.html <i class="fas fa-arrow-right"></i></div>
-                    <div class="node-desc">Main Landing Page & Ecosystem Overview.</div>
-                </a>
-                <a href="index_nh.html" class="node-card">
-                    <div class="node-title">index_nh.html <i class="fas fa-arrow-right"></i></div>
-                    <div class="node-desc">Localized cultural or heritage alternative landing view.</div>
-                </a>
-                <a href="public_view.html" class="node-card">
-                    <div class="node-title">public_view.html <i class="fas fa-arrow-right"></i></div>
-                    <div class="node-desc">Shared public telemetry and open terrarium observation view.</div>
-                </a>
-                <a href="contact.html" class="node-card">
-                    <div class="node-title">contact.html <i class="fas fa-arrow-right"></i></div>
-                    <div class="node-desc">Information request and direct messaging portal.</div>
-                </a>
-            </div>
-        </div>
+    <div class="tree-root-wrapper">
+        <!-- ROOT NODE -->
+        <a href="index.html" class="tree-root-node">
+            <div class="root-title"><i class="fas fa-sitemap"></i> Ecosystem Root</div>
+            <div class="root-desc">TerraConnect / Harpia WorldConnect Hub</div>
+        </a>
 
-        <!-- BRANCH 2: DASHBOARD & MONITORING ECOSYSTEM -->
-        <div class="tree-branch">
-            <div class="branch-title">
-                <i class="fas fa-desktop"></i> Dashboard & IoT Telemetry
-            </div>
-            <div class="branch-grid">
-                <a href="maindashboard.html" class="node-card">
-                    <div class="node-title">maindashboard.html <i class="fas fa-arrow-right"></i></div>
-                    <div class="node-desc">Central hub for managing connected devices and animal profiles.</div>
-                </a>
-                <a href="ambient_view.html" class="node-card">
-                    <div class="node-title">ambient_view.html <i class="fas fa-arrow-right"></i></div>
-                    <div class="node-desc">Real-time sensor graphs, live stream camera, and AI analytics center.</div>
-                </a>
-                <a href="register_ambient.html" class="node-card">
-                    <div class="node-title">register_ambient.html <i class="fas fa-arrow-right"></i></div>
-                    <div class="node-desc">Interface to register or update animal specifications and hardware endpoints.</div>
-                </a>
-                <a href="vet_registry.html" class="node-card">
-                    <div class="node-title">vet_registry.html <i class="fas fa-arrow-right"></i></div>
-                    <div class="node-desc">Veterinary check-up logs, medical records, and GPS tracking history.</div>
-                </a>
-            </div>
-        </div>
+        <!-- CONNECTOR LINE -->
+        <div class="tree-vertical-line"></div>
+        <div class="tree-branch-bar"></div>
 
-        <!-- BRANCH 3: INSTITUTIONAL & COMPLIANCE -->
-        <div class="tree-branch">
-            <div class="branch-title">
-                <i class="fas fa-balance-scale"></i> Institutional & Legal Compliance
+        <!-- BRANCHES CONTAINER -->
+        <div class="tree-branches-container">
+            
+            <!-- BRANCH 1: CORE PORTAL -->
+            <div class="tree-branch-column">
+                <div class="branch-header-node">
+                    <div class="branch-header-title"><i class="fas fa-globe"></i> Core Portal</div>
+                </div>
+                <div class="branch-leaves">
+                    <a href="index.html" class="leaf-node">
+                        <div class="leaf-title">index.html <i class="fas fa-arrow-right"></i></div>
+                        <div class="leaf-desc">Main Landing Page & Overview.</div>
+                    </a>
+                    <a href="index_nh.html" class="leaf-node">
+                        <div class="leaf-title">index_nh.html <i class="fas fa-arrow-right"></i></div>
+                        <div class="leaf-desc">Localized cultural heritage view.</div>
+                    </a>
+                    <a href="public_view.html" class="leaf-node">
+                        <div class="leaf-title">public_view.html <i class="fas fa-arrow-right"></i></div>
+                        <div class="leaf-desc">Public telemetry & observation.</div>
+                    </a>
+                    <a href="contact.html" class="leaf-node">
+                        <div class="leaf-title">contact.html <i class="fas fa-arrow-right"></i></div>
+                        <div class="leaf-desc">Enquiry request portal.</div>
+                    </a>
+                </div>
             </div>
-            <div class="branch-grid">
-                <a href="license.html" class="node-card">
-                    <div class="node-title">license.html <i class="fas fa-arrow-right"></i></div>
-                    <div class="node-desc">Open-use license framework, copyright guidelines, and ethical terms.</div>
-                </a>
-                <a href="privacy.html" class="node-card">
-                    <div class="node-title">privacy.html <i class="fas fa-arrow-right"></i></div>
-                    <div class="node-desc">Data sovereignty and user privacy protection policy.</div>
-                </a>
-                <a href="pressclub.html" class="node-card">
-                    <div class="node-title">pressclub.html <i class="fas fa-arrow-right"></i></div>
-                    <div class="node-desc">Press releases, media assets, and institutional announcements.</div>
-                </a>
-                <a href="faqs.html" class="node-card">
-                    <div class="node-title">faqs.html <i class="fas fa-arrow-right"></i></div>
-                    <div class="node-desc">Frequently asked questions regarding hardware setup and software usage.</div>
-                </a>
-                <a href="partnership.html" class="node-card">
-                    <div class="node-title">partnership.html <i class="fas fa-arrow-right"></i></div>
-                    <div class="node-desc">Collaboration pathways for institutes, researchers, and suppliers.</div>
-                </a>
-                <a href="disconnect.html" class="node-card">
-                    <div class="node-title">disconnect.html <i class="fas fa-arrow-right"></i></div>
-                    <div class="node-desc">Data removal, account disconnection, and session clearance protocol.</div>
-                </a>
-            </div>
-        </div>
 
+            <!-- BRANCH 2: IOT TELEMETRY -->
+            <div class="tree-branch-column">
+                <div class="branch-header-node">
+                    <div class="branch-header-title"><i class="fas fa-desktop"></i> IoT Telemetry</div>
+                </div>
+                <div class="branch-leaves">
+                    <a href="maindashboard.html" class="leaf-node">
+                        <div class="leaf-title">maindashboard.html <i class="fas fa-arrow-right"></i></div>
+                        <div class="leaf-desc">Device & profile manager hub.</div>
+                    </a>
+                    <a href="ambient_view.html" class="leaf-node">
+                        <div class="leaf-title">ambient_view.html <i class="fas fa-arrow-right"></i></div>
+                        <div class="leaf-desc">Graphs, streaming & AI analytics.</div>
+                    </a>
+                    <a href="register_ambient.html" class="leaf-node">
+                        <div class="leaf-title">register_ambient.html <i class="fas fa-arrow-right"></i></div>
+                        <div class="leaf-desc">Hardware specs & registration.</div>
+                    </a>
+                    <a href="vet_registry.html" class="leaf-node">
+                        <div class="leaf-title">vet_registry.html <i class="fas fa-arrow-right"></i></div>
+                        <div class="leaf-desc">Vet records & GPS tracking logs.</div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- BRANCH 3: COMPLIANCE & LEGAL -->
+            <div class="tree-branch-column">
+                <div class="branch-header-node">
+                    <div class="branch-header-title"><i class="fas fa-balance-scale"></i> Compliance</div>
+                </div>
+                <div class="branch-leaves">
+                    <a href="license.html" class="leaf-node">
+                        <div class="leaf-title">license.html <i class="fas fa-arrow-right"></i></div>
+                        <div class="leaf-desc">Open-use copyright framework.</div>
+                    </a>
+                    <a href="privacy.html" class="leaf-node">
+                        <div class="leaf-title">privacy.html <i class="fas fa-arrow-right"></i></div>
+                        <div class="leaf-desc">Data sovereignty & privacy.</div>
+                    </a>
+                    <a href="pressclub.html" class="leaf-node">
+                        <div class="leaf-title">pressclub.html <i class="fas fa-arrow-right"></i></div>
+                        <div class="leaf-desc">Media assets & announcements.</div>
+                    </a>
+                    <a href="faqs.html" class="leaf-node">
+                        <div class="leaf-title">faqs.html <i class="fas fa-arrow-right"></i></div>
+                        <div class="leaf-desc">Frequently asked questions.</div>
+                    </a>
+                    <a href="partnership.html" class="leaf-node">
+                        <div class="leaf-title">partnership.html <i class="fas fa-arrow-right"></i></div>
+                        <div class="leaf-desc">Collaboration & institute pathways.</div>
+                    </a>
+                    <a href="disconnect.html" class="leaf-node">
+                        <div class="leaf-title">disconnect.html <i class="fas fa-arrow-right"></i></div>
+                        <div class="leaf-desc">Data removal & session clearance.</div>
+                    </a>
+                </div>
+            </div>
+
+        </div>
     </div>
 </div>
 
@@ -488,7 +620,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    const clickables = document.querySelectorAll('a, button, .menu-toggle, .close-btn, .panel-link, .node-card');
+    const clickables = document.querySelectorAll('a, button, .menu-toggle, .close-btn, .panel-link, .tree-root-node, .leaf-node');
     clickables.forEach(el => {
         el.removeEventListener('mouseenter', handleMouseEnter);
         el.removeEventListener('mouseleave', handleMouseLeave);
