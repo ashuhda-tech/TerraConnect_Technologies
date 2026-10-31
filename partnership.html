@@ -368,6 +368,7 @@
                         <thead>
                             <tr>
                                 <th>Registry Date</th>
+                                <th>Partner</th>
                                 <th>Partnership Scope</th>
                                 <th>Status</th>
                             </tr>
@@ -658,7 +659,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             processData(csvText);
         } catch (error) {
             console.warn("Could not load secure public sheet data.", error);
-            document.getElementById('partner-table-body').innerHTML = `<tr><td colspan="3" style="text-align:center;">Awaiting initial secure dashboard sync...</td></tr>`;
+            document.getElementById('partner-table-body').innerHTML = `<tr><td colspan="4" style="text-align:center;">Awaiting initial secure dashboard sync...</td></tr>`;
         }
     }
 
@@ -672,9 +673,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             
             const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(col => col.replace(/(^"|"$)/g, '').trim());
             
-            const dateStr = cols[0] ? cols[0].split(' ')[0] : 'Unknown'; 
-            const category = cols[1] || 'Partner';
-            const statusRaw = cols[2] || 'Pending'; 
+            const dateStr = cols[0] ? cols[0].split(' ')[0] : 'Unknown';
+            const partner = cols[1] || 'Unknown Partner';
+            const category = cols[7] || 'Scope';
+            const statusRaw = cols[9] || 'Pending'; 
             
             let statusClass = 'pending';
             let statusText = 'Pending Approval';
@@ -689,14 +691,15 @@ document.addEventListener('DOMContentLoaded', async () => {
             tableHTML += `
                 <tr>
                     <td>${escapeHTML(dateStr)}</td>
-                    <td><strong>${escapeHTML(category)}</strong></td>
+                    <td><strong>${escapeHTML(partner)}</strong></td>
+                    <td>${escapeHTML(category)}</td>
                     <td><span class="badge ${escapeHTML(statusClass)}">${escapeHTML(statusText)}</span></td>
                 </tr>
             `;
         });
 
         document.getElementById('kpi-total').innerText = totalActive;
-        document.getElementById('partner-table-body').innerHTML = tableHTML || `<tr><td colspan="3" style="text-align:center;">No active partners yet.</td></tr>`;
+        document.getElementById('partner-table-body').innerHTML = tableHTML || `<tr><td colspan="4" style="text-align:center;">No active partners yet.</td></tr>`;
     }
 </script>
 </body>
