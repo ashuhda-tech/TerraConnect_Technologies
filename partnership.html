@@ -91,30 +91,12 @@
         /* ----------- PARTNERSHIP FORM & DASHBOARD ---------------- */
         /* ========================================================= */
         
-        .partnership-container {
-            display: flex;
-            align-items: flex-start;
-            justify-content: center;
-            width: 100%;
-            padding: 160px 20px 80px 20px;
-            flex-grow: 1;
-        }
+        .partnership-container {display: flex;align-items: flex-start;justify-content: center;width: 100%;padding: 160px 20px 80px 20px;flex-grow: 1;}
 
-        .container-wrapper {
-            width: 100%;
-            max-width: 900px;
-            transition: max-width 0.5s ease;
-        }
+        .container-wrapper {width: 100%;max-width: 900px;transition: max-width 0.5s ease;}
         .container-wrapper.dashboard-active { max-width: 1200px; }
 
-        .form-card {
-            background: rgba(10, 12, 16, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(15px);
-            padding: 60px 50px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            border-radius: var(--border-radius);
-        }
+        .form-card {background: rgba(10, 12, 16, 0.4);border: 1px solid rgba(255, 255, 255, 0.05);backdrop-filter: blur(15px);padding: 60px 50px;box-shadow: 0 20px 50px rgba(0,0,0,0.5);border-radius: var(--border-radius);}
 
         .section-title { font-family: var(--font-title); font-size: 2rem; color: var(--accent-light); margin-bottom: 15px; text-align: center; text-transform: uppercase; letter-spacing: 2px; font-weight: normal;}
         .section-subtitle { text-align: center; color: var(--text-muted); margin-bottom: 30px; font-size: 0.95rem; line-height: 1.6; font-weight: 300;}
@@ -211,12 +193,18 @@
             .section-title { font-size: 1.5rem; }
         }
 
-        /* ----- COMPLETELY OBLITERATE GOOGLE TRANSLATE UI ----- */
-        .goog-te-banner-frame, .goog-te-banner-frame.skiptranslate, iframe.goog-te-banner-frame { display: none !important; visibility: hidden !important; opacity: 0 !important; z-index: -100000 !important; }
+        /* ----- OBLITERAR TOTALMENTE A UI DO GOOGLE TRANSLATE ----- */
+        .goog-te-banner-frame, 
+        .goog-te-balloon-frame, 
+        #goog-gt-tt { display: none !important; visibility: hidden !important; }
         html, body { top: 0 !important; margin-top: 0 !important; }
-        #goog-gt-tt, .goog-te-balloon-frame { display: none !important; visibility: hidden !important; }
-        .goog-text-highlight { background: transparent !important; box-shadow: none !important; }
-        #google_translate_element { position: absolute; left: -9999px; top: -9999px; opacity: 0; pointer-events: none; z-index: -9999; }
+        .goog-text-highlight { background: none !important; box-shadow: none !important; }
+        
+        /* Esconde a div principal e qualquer widget injetado direto no body */
+        #google_translate_element, 
+        .skiptranslate.goog-te-gadget, body > 
+        .skiptranslate { position: absolute !important; left: -9999px !important; top: -9999px !important; opacity: 0 !important; pointer-events: none !important; z-index: -9999 !important; display: none !important; }
+
     </style>
 </head>
 <body>
