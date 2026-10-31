@@ -103,19 +103,6 @@
         .badge.implemented { background: rgba(163, 177, 138, 0.2); color: var(--status-implemented); border: 1px solid var(--status-implemented); }
         .badge.canceled { background: rgba(255, 95, 95, 0.2); color: var(--status-canceled); border: 1px solid var(--status-canceled); }
 
-        /* ----- OBLITERAR TOTALMENTE A UI DO GOOGLE TRANSLATE ----- */
-        .goog-te-banner-frame, 
-        .goog-te-balloon-frame, 
-        #goog-gt-tt { display: none !important; visibility: hidden !important; }
-        html, body { top: 0 !important; margin-top: 0 !important; }
-        .goog-text-highlight { background: none !important; box-shadow: none !important; }
-        
-        /* Esconde a div principal e qualquer widget injetado direto no body */
-        #google_translate_element, 
-        .skiptranslate.goog-te-gadget, body > 
-        .skiptranslate { position: absolute !important; left: -9999px !important; top: -9999px !important; opacity: 0 !important; pointer-events: none !important; z-index: -9999 !important; display: none !important; }
-
-
         @media (max-width: 768px) {
             header { padding: 20px; flex-direction: column; gap: 15px; }
             .charts-grid { grid-template-columns: 1fr; }
@@ -345,49 +332,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         }, 300); // Tenta encontrar o menu do Google a cada 300 milissegundos
     }
 
-// 3. Listener para quando o usuário clicar manualmente na barra de idiomas
+    // 3. Listener para quando o usuário clicar manualmente na barra de idiomas
     langButtons.forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.preventDefault();
-            
-            // Remove a classe ativa de todos e coloca no clicado
-            langButtons.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-
             const langCode = btn.getAttribute('data-lang');
             
-            // Tratamento especial para o idioma Nhanderu (Redirecionamento)
-            if (langCode === 'nh') {
-                if(!window.location.href.includes('index_nh.html')){
-                    window.location.href = 'index_nh.html';
-                }
-                return;
-            }
-
-            // Sobrescreve a memória com a nova escolha (se você estiver usando a lógica de persistência)
+            // Sobrescreve a memória com a nova escolha manual do usuário
             localStorage.setItem('harpia_lang', langCode);
             
-            // LÓGICA DE REVERSÃO PARA INGLÊS (ORIGINAL)
-            if (langCode === 'en') {
-                const domain = window.location.hostname;
-                // Extermina todos os cookies do Google Translate (raiz e subdomínios)
-                document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-                document.cookie = `googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; domain=${domain}; path=/;`;
-                document.cookie = `googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; domain=.${domain}; path=/;`;
-                
-                // Recarrega a página instantaneamente para trazer o HTML puro
-                window.location.reload();
-                return; 
-            }
-
-            // Para os demais idiomas (pt, es, it, sv), aciona a troca no select oculto
-            const selectField = document.querySelector('select.goog-te-combo');
-            if (selectField) {
-                selectField.value = langCode;
-                selectField.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
-            }
+            // Dispara a tradução
+            applyLanguage(langCode);
         });
     });
+});
     // ==========================================
     // 1. SECURE DATABASE ROUTING (BASE 64)
     // ==========================================
