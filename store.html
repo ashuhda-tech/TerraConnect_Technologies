@@ -44,16 +44,7 @@
         :root {--bg-color: #0a0c10;--card-bg: rgba(30, 30, 30, 0.7);--card-border: rgba(31, 41, 55, 0.5);--accent: #d1b38b;--accent-hover: #e5cba7;--text-main: #f4e9d8;--text-muted: #9ca3af;--border-radius: 15px;--font-standard: 'Inter', sans-serif;--font-title: 'Cinzel', serif;}
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: var(--font-standard);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column; 
-            overflow-x: hidden;
-            overflow-y: auto;
-        }
+        body {background-color: var(--bg-color);color: var(--text-main);font-family: var(--font-standard);min-height: 100vh;display: flex;flex-direction: column; overflow-x: hidden;overflow-y: auto;}
         
         /* --- APP VERSION FLAG --- */
         .app-version-flag {position: fixed;bottom: 10px;left: 10px;background: rgba(0, 0, 0, 0.6);color: rgba(255, 255, 255, 0.3);padding: 4px 8px;border-radius: 4px;font-size: 0.55rem;font-family: 'Inter', monospace;z-index: 99999;pointer-events: none;border: 1px solid rgba(255, 255, 255, 0.1);backdrop-filter: blur(2px);transition: opacity 0.5s;}
@@ -71,13 +62,7 @@
         .btn-back:hover {background: var(--accent);color: var(--bg-color);}
         
         /* ----- PAGE CONTAINER ----- */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 50px 20px;
-            flex-grow: 1;
-            width: 100%;
-        }
+        .container {max-width: 1200px;margin: 0 auto;padding: 50px 20px;flex-grow: 1;width: 100%;}
         
         .section-title {text-align: center;font-family: var(--font-title);font-size: 2.2rem;color: var(--text-main);margin-bottom: 10px;letter-spacing: 1px; }
         .section-subtitle {text-align: center;color: var(--text-muted);margin-bottom: 50px;font-size: 1rem;}
@@ -128,23 +113,13 @@
         .btn-action:hover, .card-highlight .btn-action {background: var(--accent);color: var(--bg-color);}
 
         /* ----- INVERTED CARD (JOIN US) ----- */
-        .card-inverted {
-            background: var(--accent);
-            border-color: var(--accent);
-            color: var(--bg-color);
-        }
+        .card-inverted {background: var(--accent);border-color: var(--accent);color: var(--bg-color);}
         .card-inverted .product-icon i { color: var(--bg-color); }
         .card-inverted .product-title { color: var(--bg-color); font-weight: 700; }
         .card-inverted .product-desc { color: rgba(10, 12, 16, 0.85); }
         .card-inverted .product-price { color: var(--bg-color); }
-        .card-inverted .btn-action {
-            border-color: var(--bg-color);
-            color: var(--bg-color);
-        }
-        .card-inverted .btn-action:hover {
-            background: var(--bg-color);
-            color: var(--accent);
-        }
+        .card-inverted .btn-action {border-color: var(--bg-color);color: var(--bg-color);}
+        .card-inverted .btn-action:hover {background: var(--bg-color);color: var(--accent);}
 
         /* ----- AI STATS SPECIFICS ----- */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-bottom: 40px; }
@@ -161,30 +136,8 @@
         .footnote { font-size: 0.75rem; color: var(--text-muted); text-align: center; margin-bottom: 80px; font-style: italic; opacity: 0.7; }
 
         /* ----- QR CODE FLOATING WIDGET ----- */
-        #qr-widget {
-            position: fixed;
-            pointer-events: none; 
-            z-index: 99999;
-            background: rgba(10, 12, 16, 0.95);
-            border: 2px solid var(--accent);
-            border-radius: 12px;
-            padding: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
-            opacity: 0;
-            visibility: hidden;
-            transform: translate(15px, 15px); 
-            transition: opacity 0.2s ease, visibility 0.2s ease;
-            text-align: center;
-        }
-        
-        #qr-widget p {
-            margin-top: 10px;
-            font-size: 0.8rem;
-            color: var(--accent);
-            font-family: var(--font-title);
-            font-weight: bold;
-            letter-spacing: 1px;
-        }
+        #qr-widget {position: fixed;pointer-events: none; z-index: 99999;background: rgba(10, 12, 16, 0.95);border: 2px solid var(--accent);border-radius: 12px;padding: 12px;box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);opacity: 0;visibility: hidden;transform: translate(15px, 15px); transition: opacity 0.2s ease, visibility 0.2s ease;text-align: center;}
+        #qr-widget p {margin-top: 10px;font-size: 0.8rem;color: var(--accent);font-family: var(--font-title);font-weight: bold;letter-spacing: 1px;}
 
         /* ----- FOOTER (BOTTOM RIBBON) ----- */
         .footer-wrapper { background: var(--bg-color); width: 100%; position: relative; z-index: 2; border-top: 1px solid var(--card-border); display: flex; flex-direction: column; justify-content: space-between;}
@@ -210,12 +163,18 @@
         .footer-social a:hover { color: var(--accent); }
         .footer-copyright { text-align: center; margin-top: 40px; font-size: 0.75rem; color: rgba(156, 163, 175, 0.5); letter-spacing: 1px; }
 
-        /* ----- COMPLETELY OBLITERATE GOOGLE TRANSLATE UI ----- */
-        .goog-te-banner-frame, .goog-te-banner-frame.skiptranslate, iframe.goog-te-banner-frame { display: none !important; visibility: hidden !important; opacity: 0 !important; z-index: -100000 !important; }
+        /* ----- OBLITERAR TOTALMENTE A UI DO GOOGLE TRANSLATE ----- */
+        .goog-te-banner-frame, 
+        .goog-te-balloon-frame, 
+        #goog-gt-tt { display: none !important; visibility: hidden !important; }
         html, body { top: 0 !important; margin-top: 0 !important; }
-        #goog-gt-tt, .goog-te-balloon-frame { display: none !important; visibility: hidden !important; }
-        .goog-text-highlight { background: transparent !important; box-shadow: none !important; }
-        #google_translate_element { position: absolute; left: -9999px; top: -9999px; opacity: 0; pointer-events: none; z-index: -9999; }
+        .goog-text-highlight { background: none !important; box-shadow: none !important; }
+        
+        /* Esconde a div principal e qualquer widget injetado direto no body */
+        #google_translate_element, 
+        .skiptranslate.goog-te-gadget, body > 
+        .skiptranslate { position: absolute !important; left: -9999px !important; top: -9999px !important; opacity: 0 !important; pointer-events: none !important; z-index: -9999 !important; display: none !important; }
+
 
         @media (max-width: 1024px) { 
             .footer-content { flex-direction: column; } 
