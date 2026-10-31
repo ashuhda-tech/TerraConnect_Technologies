@@ -85,96 +85,20 @@
         /* -------------- POLICY CONTENT LAYOUT -------------------- */
         /* ========================================================= */
         
-        .policy-container {
-            display: flex;
-            align-items: flex-start;
-            justify-content: center;
-            width: 100%;
-            padding: 160px 20px 80px 20px;
-            flex-grow: 1;
-        }
-
-        .policy-box {
-            width: 100%;
-            max-width: 900px;
-            background: rgba(10, 12, 16, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(15px);
-            padding: 60px 70px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            border-radius: var(--border-radius);
-        }
-
-        h1.page-title { 
-            font-family: var(--font-title); 
-            font-size: 2.2rem; 
-            text-align: center; 
-            margin-bottom: 40px; 
-            color: var(--accent-light); 
-            text-transform: uppercase; 
-            letter-spacing: 2px; 
-            border-bottom: 1px solid rgba(209, 179, 139, 0.2); 
-            padding-bottom: 25px; 
-        }
+        .policy-container {display: flex;align-items: flex-start;justify-content: center;width: 100%;padding: 160px 20px 80px 20px;flex-grow: 1;}
+        .policy-box {width: 100%;max-width: 900px;background: rgba(10, 12, 16, 0.4);border: 1px solid rgba(255, 255, 255, 0.05);backdrop-filter: blur(15px);padding: 60px 70px;box-shadow: 0 20px 50px rgba(0,0,0,0.5);border-radius: var(--border-radius);}
+        h1.page-title {font-family: var(--font-title); font-size: 2.2rem; text-align: center; margin-bottom: 40px; color: var(--accent-light); text-transform: uppercase; letter-spacing: 2px; border-bottom: 1px solid rgba(209, 179, 139, 0.2);padding-bottom: 25px; }
         
         .content-body { text-align: left; }
+        .content-body h2 { font-size: 1.2rem; color: var(--accent-dark); margin: 45px 0 20px 0; font-weight: normal; letter-spacing: 2px; text-transform: uppercase; font-family: var(--font-title); }
         
-        .content-body h2 { 
-            font-size: 1.2rem; 
-            color: var(--accent-dark); 
-            margin: 45px 0 20px 0; 
-            font-weight: normal; 
-            letter-spacing: 2px; 
-            text-transform: uppercase; 
-            font-family: var(--font-title); 
-        }
-        
-        .content-body p { 
-            font-size: 0.95rem; 
-            line-height: 1.8; 
-            color: rgba(244, 233, 216, 0.85); 
-            margin-bottom: 20px; 
-            font-weight: 300;
-        }
-        
-        .notice-box { 
-            background: rgba(209, 179, 139, 0.05); 
-            border-left: 4px solid var(--accent-dark); 
-            padding: 25px; 
-            margin: 35px 0; 
-            border-radius: 0 var(--border-radius) var(--border-radius) 0; 
-        }
-        
-        .notice-box strong { 
-            color: var(--accent-light); 
-            display: block; 
-            margin-bottom: 12px; 
-            font-size: 1.1rem; 
-            text-transform: uppercase; 
-            letter-spacing: 2px; 
-            font-family: var(--font-title); 
-            font-weight: normal;
-        }
-        
+        .content-body p { font-size: 0.95rem; line-height: 1.8; color: rgba(244, 233, 216, 0.85); margin-bottom: 20px; font-weight: 300;}
+        .notice-box { background: rgba(209, 179, 139, 0.05); border-left: 4px solid var(--accent-dark);padding: 25px; margin: 35px 0; border-radius: 0 var(--border-radius) var(--border-radius) 0; }
+        .notice-box strong { color: var(--accent-light); display: block; margin-bottom: 12px; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 2px;font-family: var(--font-title); font-weight: normal;}
         .notice-box p { margin-bottom: 0; font-size: 0.95rem; }
 
         /* --- APP VERSION FLAG --- */
-        .app-version-flag {
-            position: fixed;
-            bottom: 10px;
-            left: 10px;
-            background: rgba(0, 0, 0, 0.6);
-            color: rgba(255, 255, 255, 0.3);
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.55rem;
-            font-family: 'Inter', monospace;
-            z-index: 99999;
-            pointer-events: none;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(2px);
-            transition: opacity 0.5s; 
-        }
+        .app-version-flag {position: fixed;bottom: 10px;left: 10px;background: rgba(0, 0, 0, 0.6);color: rgba(255, 255, 255, 0.3);padding: 4px 8px;border-radius: 4px;font-size: 0.55rem;font-family: 'Inter', monospace;z-index: 99999;pointer-events: none;border: 1px solid rgba(255, 255, 255, 0.1);backdrop-filter: blur(2px);transition: opacity 0.5s; }
 
         /* ----- BOTTOM FOOTNOTE WRAPPER ----- */
         .footer-wrapper { background: var(--bg-color); width: 100%; position: relative; z-index: 2; border-top: 1px solid var(--card-border); display: flex; flex-direction: column; justify-content: space-between;}
@@ -211,12 +135,18 @@
             h1.page-title { font-size: 1.5rem; }
         }
 
-        /* ----- COMPLETELY OBLITERATE GOOGLE TRANSLATE UI ----- */
-        .goog-te-banner-frame, .goog-te-banner-frame.skiptranslate, iframe.goog-te-banner-frame { display: none !important; visibility: hidden !important; opacity: 0 !important; z-index: -100000 !important; }
+        /* ----- OBLITERAR TOTALMENTE A UI DO GOOGLE TRANSLATE ----- */
+        .goog-te-banner-frame, 
+        .goog-te-balloon-frame, 
+        #goog-gt-tt { display: none !important; visibility: hidden !important; }
         html, body { top: 0 !important; margin-top: 0 !important; }
-        #goog-gt-tt, .goog-te-balloon-frame { display: none !important; visibility: hidden !important; }
-        .goog-text-highlight { background: transparent !important; box-shadow: none !important; }
-        #google_translate_element { position: absolute; left: -9999px; top: -9999px; opacity: 0; pointer-events: none; z-index: -9999; }
+        .goog-text-highlight { background: none !important; box-shadow: none !important; }
+        
+        /* Esconde a div principal e qualquer widget injetado direto no body */
+        #google_translate_element, 
+        .skiptranslate.goog-te-gadget, body > 
+        .skiptranslate { position: absolute !important; left: -9999px !important; top: -9999px !important; opacity: 0 !important; pointer-events: none !important; z-index: -9999 !important; display: none !important; }
+
     </style>
 </head>
 <body>
