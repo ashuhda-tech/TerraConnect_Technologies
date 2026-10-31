@@ -648,20 +648,49 @@ document.addEventListener('DOMContentLoaded', async () => {
         }, 300); // Tenta encontrar o menu do Google a cada 300 milissegundos
     }
 
-    // Listener para quando o usuário clicar manualmente na barra de idiomas
+// 3. Listener para quando o usuário clicar manualmente na barra de idiomas
     langButtons.forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.preventDefault();
+            
+            // Remove a classe ativa de todos e coloca no clicado
+            langButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
             const langCode = btn.getAttribute('data-lang');
             
-            // Sobrescreve a memória com a nova escolha manual do usuário
+            // Tratamento especial para o idioma Nhanderu (Redirecionamento)
+            if (langCode === 'nh') {
+                if(!window.location.href.includes('index_nh.html')){
+                    window.location.href = 'index_nh.html';
+                }
+                return;
+            }
+
+            // Sobrescreve a memória com a nova escolha (se você estiver usando a lógica de persistência)
             localStorage.setItem('harpia_lang', langCode);
             
-            // Dispara a tradução
-            applyLanguage(langCode);
+            // LÓGICA DE REVERSÃO PARA INGLÊS (ORIGINAL)
+            if (langCode === 'en') {
+                const domain = window.location.hostname;
+                // Extermina todos os cookies do Google Translate (raiz e subdomínios)
+                document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                document.cookie = `googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; domain=${domain}; path=/;`;
+                document.cookie = `googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; domain=.${domain}; path=/;`;
+                
+                // Recarrega a página instantaneamente para trazer o HTML puro
+                window.location.reload();
+                return; 
+            }
+
+            // Para os demais idiomas (pt, es, it, sv), aciona a troca no select oculto
+            const selectField = document.querySelector('select.goog-te-combo');
+            if (selectField) {
+                selectField.value = langCode;
+                selectField.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
+            }
         });
     });
-});
 
     // 5. FORM SUBMISSION HANDLER (AJAX)
     const contactForm = document.getElementById('harpia-contact-form');
