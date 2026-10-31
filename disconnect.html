@@ -306,6 +306,10 @@
         <div class="warning-box">
             <strong>Irreversible Action Warning</strong>
             <p>Submitting this form will queue your user ID for disconnection based on the scope selected below. Once processed by our system, this action cannot be undone.</p>
+            <!-- MENSAGEM DE 1 SEMANA ADICIONADA AQUI -->
+            <p style="margin-top: 15px; color: #ffeb3b; font-weight: 600; font-size: 0.8rem;">
+                <i class="fas fa-clock" style="margin-right: 5px;"></i> Note: It will take up to 1 week for the deletion to be fully completed due to a manual process to certify no potential problems.
+            </p>
         </div>
 
         <!-- Action para o script do Google Forms / Sheets -->
@@ -579,62 +583,88 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 });
 
-    // 5. FORM SUBMISSION HANDLER (AJAX)
+    // 5. MASTER DIRECTORY & FORM SUBMISSION LOGIC
+    const MASTER_DIRECTORY_B64 = 'aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J6cTRZVWUzWjJQeGNsdlJtRWNxaVF1bk1KRXRXNVE5cmxOV21KOXF6RWdQcWM5OVVlVThud3VjYm91SFdzaE1Bdy9leGVj'; 
+    let DISCONNECT_SCRIPT_URL = "";
+
+    function safeParseUrl(val) {
+        if (!val) return "";
+        let str = String(val).trim();
+        if (str.startsWith("http")) return str; 
+        try { return atob(str).trim(); }        
+        catch (e) { return str; }               
+    }
+
+    // Busca a URL da base de dados de Disconnect automaticamente assim que a página carrega
+    document.addEventListener('DOMContentLoaded', async () => {
+        try {
+            const masterUrl = atob(MASTER_DIRECTORY_B64).trim();
+            const response = await fetch(masterUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ pageName: "disconnect.html" })
+            });
+            const text = await response.text();
+            const result = JSON.parse(text);
+            
+            if (result.status === "success") {
+                DISCONNECT_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_Disconnect"]);
+                console.log("Secure Routing Estabelecido!");
+            }
+        } catch (error) {
+            console.error("Falha ao carregar Master Directory:", error);
+        }
+    });
+
     const disconnectForm = document.getElementById('harpia-disconnect-form');
     const submitBtn = disconnectForm.querySelector('.btn-danger');
-    
-    // ATUALIZE COM A SUA URL DO APPS SCRIPT DE DISCONNECT AQUI:
-    const WEB_APP_URL = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
 
-    disconnectForm.addEventListener('submit', function(e) {
+    disconnectForm.addEventListener('submit', async function(e) {
         e.preventDefault(); 
         
-        const originalBtnText = submitBtn.innerText;
+        if (!DISCONNECT_SCRIPT_URL) {
+            alert("Security Error: Secure database route not established yet. Please wait a moment and try again.");
+            return;
+        }
+
+        const originalBtnText = submitBtn.innerHTML;
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> PROCESSING REQUEST...';
         submitBtn.style.pointerEvents = 'none';
         submitBtn.style.opacity = '0.7';
 
         const formData = new FormData(disconnectForm);
 
-        fetch(WEB_APP_URL, {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
+        try {
+            const response = await fetch(DISCONNECT_SCRIPT_URL, {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await response.json();
+            
             if (data.result === 'success') {
                 disconnectForm.reset();
-                submitBtn.innerHTML = '<i class="fas fa-check"></i> DISCONNECT INITIATED';
+                submitBtn.innerHTML = '<i class="fas fa-check"></i> REQUEST QUEUED SECURELY';
                 submitBtn.style.backgroundColor = '#e57373'; 
                 submitBtn.style.color = '#fff';
                 
                 setTimeout(() => {
-                    submitBtn.innerText = originalBtnText;
+                    submitBtn.innerHTML = originalBtnText;
                     submitBtn.style.backgroundColor = '';
                     submitBtn.style.color = '';
                     submitBtn.style.pointerEvents = 'auto';
                     submitBtn.style.opacity = '1';
-                }, 4000);
+                }, 5000);
             } else {
-                throw new Error('Script execution failed');
+                throw new Error('Database rejection');
             }
-        })
-        .catch(error => {
+        } catch (error) {
             console.error('Error!', error.message);
-            // Even if the script URL isn't set up yet, simulate the UI behavior for frontend testing
-            submitBtn.innerHTML = '<i class="fas fa-check"></i> REQUEST QUEUED (FRONTEND TEST)';
-            submitBtn.style.backgroundColor = '#e57373';
-            submitBtn.style.color = '#fff';
-            
-            setTimeout(() => {
-                submitBtn.innerText = originalBtnText;
-                submitBtn.style.backgroundColor = '';
-                submitBtn.style.color = '';
-                submitBtn.style.pointerEvents = 'auto';
-                submitBtn.style.opacity = '1';
-                disconnectForm.reset();
-            }, 4000);
-        });
+            alert("System Error: Could not reach the server. Please check your connection.");
+            submitBtn.innerHTML = originalBtnText;
+            submitBtn.style.pointerEvents = 'auto';
+            submitBtn.style.opacity = '1';
+        }
     });
 
 </script>
