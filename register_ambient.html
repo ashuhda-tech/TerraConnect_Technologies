@@ -358,18 +358,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         function encodeBase64(str) { return btoa(unescape(encodeURIComponent(str || ''))); }
         function decodeBase64(str) { try { return decodeURIComponent(escape(atob(str))); } catch(e) { return str || ''; } }
 
-            // 1. Verificação de Segurança (Requer Token de Sessão)
+        // 1. Verificação de Segurança (Requer Token de Sessão)
+        // --- SISTEMA DE VERIFICAÇÃO DE SEGURANÇA E TOKENS ---
         function checkSecurity() {
             const userString = localStorage.getItem('currentUser');
             const authToken = sessionStorage.getItem('authToken');
             
-            // Se faltar o usuário ou o token, bloqueia a página
             if (!userString || !authToken) {
-                alert("Acesso Negado: Sessão expirada ou inválida. Faça login novamente.");
+                alert("Acesso Negado: Faça login para acessar esta página.");
                 window.location.href = "authentication.html"; 
                 return null;
             }
-        
             const currentUser = JSON.parse(userString);
             currentUser.authToken = authToken;
             return currentUser;
@@ -380,7 +379,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         // 2. Parâmetros de Autenticação Globais
         // Isso garante que o userID e os tokens de segurança viajem em TODAS as requisições
         const authParams = loggedUser ? `&userID=${encodeURIComponent(loggedUser.userID)}&authToken=${encodeURIComponent(loggedUser.authToken)}&csrfToken=${encodeURIComponent(loggedUser.authToken)}` : "";
-        
+       
         const urlParams = new URLSearchParams(window.location.search);
         const currentPageId = urlParams.get('pageID'); // Certifique-se de que a variável de URL está correta (pageID ou id)
     
@@ -502,6 +501,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 action: isEditMode ? "update" : "create",
                 userID: user.id,
                 // VULNERABILITY FIX (Hardcoded Secrets): Adding Origin and Auth properties for backend verification
+                csrfToken: sessionStorage.getItem('authToken'),
                 authToken: sessionStorage.getItem('authToken'),
                 appSource: window.location.origin,
                 pageID: pageId,
