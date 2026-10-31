@@ -103,6 +103,19 @@
         .badge.implemented { background: rgba(163, 177, 138, 0.2); color: var(--status-implemented); border: 1px solid var(--status-implemented); }
         .badge.canceled { background: rgba(255, 95, 95, 0.2); color: var(--status-canceled); border: 1px solid var(--status-canceled); }
 
+        /* ----- OBLITERAR TOTALMENTE A UI DO GOOGLE TRANSLATE ----- */
+        .goog-te-banner-frame, 
+        .goog-te-balloon-frame, 
+        #goog-gt-tt { display: none !important; visibility: hidden !important; }
+        html, body { top: 0 !important; margin-top: 0 !important; }
+        .goog-text-highlight { background: none !important; box-shadow: none !important; }
+        
+        /* Esconde a div principal e qualquer widget injetado direto no body */
+        #google_translate_element, 
+        .skiptranslate.goog-te-gadget, body > 
+        .skiptranslate { position: absolute !important; left: -9999px !important; top: -9999px !important; opacity: 0 !important; pointer-events: none !important; z-index: -9999 !important; display: none !important; }
+
+
         @media (max-width: 768px) {
             header { padding: 20px; flex-direction: column; gap: 15px; }
             .charts-grid { grid-template-columns: 1fr; }
