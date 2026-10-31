@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-29L48K7ZCY"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-29L48K7ZCY', {
+        'send_page_view': true
+      });
+    </script>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TerraConnect | Site Map</title>
+    
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/ashuhda-tech/TerraConnect_Technologies/main/assets/IMAGE/terraconnect_ICON_no_bkgr.png">
+
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-color: #070b14;
+            --card-bg: rgba(13, 17, 23, 0.75);
+            --card-border: rgba(209, 179, 139, 0.2);
+            --accent-dark: #d1b38b;
+            --accent-light: #f4e9d8;
+            --text-main: #f4e9d8;
+            --text-muted: #9ca3af;
+            --border-radius: 6px;
+            --font-standard: 'Inter', sans-serif;
+            --font-title: 'Cinzel', serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        html { scroll-behavior: smooth; }
+        
+        body { background-color: var(--bg-color); color: var(--text-main); font-family: var(--font-standard); overflow-x: hidden; display: flex; flex-direction: column; min-height: 100vh; }
+        
+        /* ----- CUSTOM CURSOR ----- */
+        * { cursor: none; } 
+        .cursor-dot { width: 5px; height: 5px; background-color: var(--accent-light); position: fixed; top: 0; left: 0; transform: translate(-50%, -50%); border-radius: 50%; z-index: 999999; pointer-events: none; }
+        .cursor-outline { width: 30px; height: 30px; border: 1px solid var(--accent-dark); position: fixed; top: 0; left: 0; transform: translate(-50%, -50%); border-radius: 50%; z-index: 999998; pointer-events: none; transition: transform 0.2s ease-out, background-color 0.2s ease-out; }
+
+        @media (max-width: 768px) {
+            .cursor-dot, .cursor-outline { display: none; } 
+            * { cursor: auto; } 
+        }
+
+        /* ----- BACKGROUND VIDEO ----- */
+        .video-bg-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; overflow: hidden; }
+        .video-bg-container video { min-width: 100%; min-height: 100%; width: auto; height: auto; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); object-fit: cover; filter: brightness(0.25); }
+        .video-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(7, 11, 20, 0.6) 0%, rgba(7, 11, 20, 0.9) 100%); z-index: -1; }
+        
+        /* ----- HEADER & MENU TOGGLE ----- */
+        header { padding: 30px 50px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); background: rgba(10, 12, 16, 0.5); backdrop-filter: blur(10px); position: fixed; width: 100%; top: 0; z-index: 900; transition: background 0.3s; }
+        .logo-area { display: flex; align-items: center; gap: 15px; text-decoration: none; }
+        .logo-area img { height: 45px; width: auto; object-fit: contain; }
+        .logo-area h1 { font-family: var(--font-title); color: var(--accent-dark); font-size: 1.8rem; letter-spacing: 2px; text-transform: uppercase; }
+        
+        .menu-toggle { display: flex; flex-direction: column; justify-content: center; align-items: flex-end; gap: 8px; width: 40px; height: 40px; background: transparent; border: none; z-index: 1001; }
+        .menu-toggle span { display: block; width: 30px; height: 2px; background-color: var(--accent-dark); transition: 0.3s ease; }
+        .menu-toggle:hover span { background-color: var(--accent-light); width: 35px; }
+
+        /* ----- SIDE NAVIGATION PANEL ----- */
+        .side-panel-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 999; opacity: 0; visibility: hidden; transition: all 0.4s ease; }
+        .side-panel-overlay.active { opacity: 1; visibility: visible; }
+        
+        .side-panel { position: fixed; top: 0; right: -450px; width: 400px; max-width: 100%; height: 100vh; background: rgba(10, 12, 16, 0.95); border-left: 1px solid var(--card-border); z-index: 1000; transition: right 0.5s cubic-bezier(0.77, 0, 0.175, 1); display: flex; flex-direction: column; padding: 40px; overflow-y: auto; }
+        .side-panel.active { right: 0; }
+        
+        .close-btn { align-self: flex-start; color: var(--text-muted); font-size: 1.5rem; background: none; border: none; margin-bottom: 50px; transition: color 0.3s ease; }
+        .close-btn:hover { color: var(--accent-light); }
+        
+        .panel-nav { display: flex; flex-direction: column; gap: 20px; }
+        .panel-category { font-family: var(--font-standard); font-size: 1.1rem; color: var(--text-main); font-weight: 600; text-transform: uppercase; letter-spacing: 2px; margin-top: 20px; margin-bottom: 10px; }
+        
+        .panel-link { display: flex; justify-content: space-between; align-items: center; text-decoration: none; color: var(--text-muted); font-size: 0.95rem; font-weight: 400; letter-spacing: 1px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); transition: all 0.3s ease; }
+        .panel-link i { font-size: 0.7rem; opacity: 0; transform: translateX(-10px); transition: all 0.3s ease; color: var(--accent-dark); }
+        .panel-link:hover { color: var(--accent-light); padding-left: 10px; }
+        .panel-link:hover i { opacity: 1; transform: translateX(0); }
+
+        /* ========================================================= */
+        /* ------------- SITEMAP CONTAINER & DIAGRAM --------------- */
+        /* ========================================================= */
+        
+        .sitemap-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 160px 20px 80px 20px;
+            flex-grow: 1;
+        }
+
+        .sitemap-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .sitemap-header h2 {
+            font-family: var(--font-title);
+            font-size: 2.5rem;
+            color: var(--accent-light);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            font-weight: normal;
+            margin-bottom: 15px;
+        }
+
+        .sitemap-header p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+        }
+
+        /* Tree Diagram Grid Layout */
+        .sitemap-tree {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+            position: relative;
+        }
+
+        .tree-branch {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(15px);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            position: relative;
+        }
+
+        .branch-title {
+            font-family: var(--font-title);
+            font-size: 1.2rem;
+            color: var(--accent-dark);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid rgba(209, 179, 139, 0.15);
+            padding-bottom: 10px;
+        }
+
+        .branch-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+        }
+
+        .node-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            position: relative;
+        }
+
+        .node-card:hover {
+            border-color: var(--accent-dark);
+            background: rgba(209, 179, 139, 0.05);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(209, 179, 139, 0.1);
+        }
+
+        .node-title {
+            font-family: var(--font-title);
+            font-size: 1rem;
+            color: var(--text-main);
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .node-title i {
+            color: var(--accent-dark);
+            font-size: 0.85rem;
+        }
+
+        .node-desc {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+            font-weight: 300;
+        }
+
+        /* ----- BOTTOM FOOTNOTE WRAPPER ----- */
+        .footer-wrapper { background: var(--bg-color); width: 100%; position: relative; z-index: 2; border-top: 1px solid var(--card-border); display: flex; flex-direction: column; justify-content: space-between;}
+        
+        .site-footer { color: var(--text-muted); padding: 60px 40px 40px 40px; font-family: var(--font-standard); width: 100%; }
+        .footer-logo-center { text-align: center; margin-bottom: 40px; }
+        .footer-logo-center img { height: 40px; filter: grayscale(100%) brightness(0.8); margin-bottom: 15px; }
+        .footer-logo-center h2 { font-family: var(--font-title); font-size: 1.2rem; color: var(--text-muted); letter-spacing: 4px; text-transform: uppercase; font-weight: normal; }
+        .footer-content { max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; flex-wrap: wrap; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 30px; gap: 40px; }
+        .footer-links-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; flex-grow: 1; }
+        .footer-col { display: flex; flex-direction: column; gap: 15px; }
+        .footer-col a, .footer-col span { text-decoration: none; color: var(--text-main); font-size: 0.75rem; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500; transition: color 0.3s; }
+        .footer-col a:hover { color: var(--accent-dark); }
+        
+        .language-selector { display: flex; align-items: center; gap: 6px; margin-top: 5px; flex-wrap: wrap;}
+        .language-selector span { color: var(--text-muted); margin-right: 5px; }
+        .language-selector button { background: none; border: none; color: var(--text-muted); font-size: 0.75rem; letter-spacing: 1.5px; font-weight: 500; text-transform: uppercase; transition: color 0.3s; }
+        .language-selector button:hover { color: var(--accent-dark); }
+        .language-selector button.active { color: var(--text-main); font-weight: bold; }
+
+        .footer-social { display: flex; gap: 20px; align-items: flex-start; justify-content: flex-end; min-width: 200px; }
+        .footer-social a { color: var(--text-muted); font-size: 1.2rem; transition: color 0.3s; }
+        .footer-social a:hover { color: var(--accent-dark); }
+        .footer-copyright { text-align: center; margin-top: 40px; font-size: 0.75rem; color: rgba(156, 163, 175, 0.5); letter-spacing: 1px; }
+
+        /* Mobile / Tablet Responsiveness */
+        @media (max-width: 768px) { 
+            header { padding: 20px; } 
+            .footer-links-grid { grid-template-columns: 1fr; } 
+            .side-panel { width: 85%; right: -100%; }
+        }
+
+        /* ----- OBLITERAR TOTALMENTE A UI DO GOOGLE TRANSLATE ----- */
+        .goog-te-banner-frame, 
+        .goog-te-balloon-frame, 
+        #goog-gt-tt { display: none !important; visibility: hidden !important; }
+        html, body { top: 0 !important; margin-top: 0 !important; }
+        .goog-text-highlight { background: none !important; box-shadow: none !important; }
+        
+        #google_translate_element, 
+        .skiptranslate.goog-te-gadget, body > 
+        .skiptranslate { position: absolute !important; left: -9999px !important; top: -9999px !important; opacity: 0 !important; pointer-events: none !important; z-index: -9999 !important; display: none !important; }
+
+    </style>
+</head>
+<body>
+
+<div class="cursor-dot"></div>
+<div class="cursor-outline"></div>
+
+<div class="video-bg-container">
+    <video id="bg-video" autoplay loop muted playsinline poster="https://raw.githubusercontent.com/ashuhda-tech/WorldConnect_Technologies/main/assets/MAIN_WALLPAPER.png">
+        <source src="https://raw.githubusercontent.com/ashuhda-tech/WorldConnect_Technologies/main/assets/VIDEO/MAIN_WALLPAPER.mp4" type="video/mp4">
+    </video>
+</div>
+<div class="video-overlay"></div>
+
+<header>
+    <a href="index.html" class="logo-area">
+        <img src="https://raw.githubusercontent.com/ashuhda-tech/WorldConnect_Technologies/main/assets/IMAGE/HARPIA_LOGO_NO_BKGRD.png" alt="HARPIA WORLDCONNECT Logo">
+        <h1>HARPIA WORLDCONNECT</h1>
+    </a>
+    <div class="nav-area">
+        <button class="menu-toggle" id="menuToggle" aria-label="Open Navigation Menu">
+            <span></span>
+            <span></span>
+        </button>
+    </div>
+</header>
+
+<!-- SIDE NAVIGATION PANEL -->
+<div class="side-panel-overlay" id="panelOverlay"></div>
+<nav class="side-panel" id="sideNav">
+    <button class="close-btn" id="closePanelBtn"><i class="fas fa-times"></i></button>
+    
+    <div class="panel-nav">
+        <div class="panel-category">Philosophy</div>
+        <a href="index.html#about" class="panel-link">About Us <i class="fas fa-chevron-right"></i></a>
+        <a href="index.html#solidarity" class="panel-link">Solidarity <i class="fas fa-chevron-right"></i></a>
+        <a href="index.html#analytics-section" class="panel-link">Public Analytics <i class="fas fa-chevron-right"></i></a>
+        
+        <div class="panel-category" style="margin-top: 30px;">Technological Solutions</div>
+        <a href="index.html#solutions" class="panel-link">GenomaConnect Initiative <i class="fas fa-chevron-right"></i></a>
+        <a href="index.html#solutions" class="panel-link">TerraConnect Technologies <i class="fas fa-chevron-right"></i></a>
+        <a href="index.html#solutions" class="panel-link">FarmConnect Architecture <i class="fas fa-chevron-right"></i></a>
+    </div>
+</nav>
+
+<!-- SITEMAP CONTENT SECTION -->
+<div class="sitemap-container">
+    <div class="sitemap-header">
+        <h2>Repository Site Map</h2>
+        <p>Interactive structural diagram of all HTML pages and navigation nodes across the ecosystem.</p>
+    </div>
+
+    <div class="sitemap-tree">
+        
+        <!-- BRANCH 1: CORE PORTAL & PUBLIC PAGES -->
+        <div class="tree-branch">
+            <div class="branch-title">
+                <i class="fas fa-globe"></i> Core Portal & Public Access
+            </div>
+            <div class="branch-grid">
+                <a href="index.html" class="node-card">
+                    <div class="node-title">index.html <i class="fas fa-arrow-right"></i></div>
+                    <div class="node-desc">Main Landing Page & Ecosystem Overview.</div>
+                </a>
+                <a href="index_nh.html" class="node-card">
+                    <div class="node-title">index_nh.html <i class="fas fa-arrow-right"></i></div>
+                    <div class="node-desc">Localized cultural or heritage alternative landing view.</div>
+                </a>
+                <a href="public_view.html" class="node-card">
+                    <div class="node-title">public_view.html <i class="fas fa-arrow-right"></i></div>
+                    <div class="node-desc">Shared public telemetry and open terrarium observation view.</div>
+                </a>
+                <a href="contact.html" class="node-card">
+                    <div class="node-title">contact.html <i class="fas fa-arrow-right"></i></div>
+                    <div class="node-desc">Information request and direct messaging portal.</div>
+                </a>
+            </div>
+        </div>
+
+        <!-- BRANCH 2: DASHBOARD & MONITORING ECOSYSTEM -->
+        <div class="tree-branch">
+            <div class="branch-title">
+                <i class="fas fa-desktop"></i> Dashboard & IoT Telemetry
+            </div>
+            <div class="branch-grid">
+                <a href="maindashboard.html" class="node-card">
+                    <div class="node-title">maindashboard.html <i class="fas fa-arrow-right"></i></div>
+                    <div class="node-desc">Central hub for managing connected devices and animal profiles.</div>
+                </a>
+                <a href="ambient_view.html" class="node-card">
+                    <div class="node-title">ambient_view.html <i class="fas fa-arrow-right"></i></div>
+                    <div class="node-desc">Real-time sensor graphs, live stream camera, and AI analytics center.</div>
+                </a>
+                <a href="register_ambient.html" class="node-card">
+                    <div class="node-title">register_ambient.html <i class="fas fa-arrow-right"></i></div>
+                    <div class="node-desc">Interface to register or update animal specifications and hardware endpoints.</div>
+                </a>
+                <a href="vet_registry.html" class="node-card">
+                    <div class="node-title">vet_registry.html <i class="fas fa-arrow-right"></i></div>
+                    <div class="node-desc">Veterinary check-up logs, medical records, and GPS tracking history.</div>
+                </a>
+            </div>
+        </div>
+
+        <!-- BRANCH 3: INSTITUTIONAL & COMPLIANCE -->
+        <div class="tree-branch">
+            <div class="branch-title">
+                <i class="fas fa-balance-scale"></i> Institutional & Legal Compliance
+            </div>
+            <div class="branch-grid">
+                <a href="license.html" class="node-card">
+                    <div class="node-title">license.html <i class="fas fa-arrow-right"></i></div>
+                    <div class="node-desc">Open-use license framework, copyright guidelines, and ethical terms.</div>
+                </a>
+                <a href="privacy.html" class="node-card">
+                    <div class="node-title">privacy.html <i class="fas fa-arrow-right"></i></div>
+                    <div class="node-desc">Data sovereignty and user privacy protection policy.</div>
+                </a>
+                <a href="pressclub.html" class="node-card">
+                    <div class="node-title">pressclub.html <i class="fas fa-arrow-right"></i></div>
+                    <div class="node-desc">Press releases, media assets, and institutional announcements.</div>
+                </a>
+                <a href="faqs.html" class="node-card">
+                    <div class="node-title">faqs.html <i class="fas fa-arrow-right"></i></div>
+                    <div class="node-desc">Frequently asked questions regarding hardware setup and software usage.</div>
+                </a>
+                <a href="partnership.html" class="node-card">
+                    <div class="node-title">partnership.html <i class="fas fa-arrow-right"></i></div>
+                    <div class="node-desc">Collaboration pathways for institutes, researchers, and suppliers.</div>
+                </a>
+                <a href="disconnect.html" class="node-card">
+                    <div class="node-title">disconnect.html <i class="fas fa-arrow-right"></i></div>
+                    <div class="node-desc">Data removal, account disconnection, and session clearance protocol.</div>
+                </a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- PAGE FOOTER WRAPPER -->
+<div class="footer-wrapper">
+    <footer class="site-footer">
+        <div class="footer-logo-center">
+            <a href="index.html" style="text-decoration: none; display: inline-block;">
+                <img src="https://raw.githubusercontent.com/ashuhda-tech/WorldConnect_Technologies/main/assets/IMAGE/HARPIA_LOGO_NO_BKGRD.png" alt="HARPIA WorldConnect Logo">
+                <h2>HARPIA WorldConnect</h2>
+            </a>
+        </div>
+
+        <div class="footer-content">
+            <div class="footer-links-grid">
+                <div class="footer-col">
+                    <a href="pressclub.html">Pressclub</a>
+                    <a href="faqs.html">FAQs</a>
+                    <a href="sitemap.html" style="color: var(--accent-dark);">Site Map</a>
+                    <div class="language-selector">
+                        <span>Language</span> 
+                        <button data-lang="en" class="lang-btn active">EN</button> | 
+                        <button data-lang="pt" class="lang-btn">PT</button> | 
+                        <button data-lang="nh" class="lang-btn">NH</button> |
+                        <button data-lang="es" class="lang-btn">ES</button> |
+                        <button data-lang="it" class="lang-btn">IT</button> |
+                        <button data-lang="sv" class="lang-btn">SV</button>
+                    </div>
+                </div>
+
+                <div class="footer-col">
+                    <a href="contact.html">Contact</a>
+                    <a href="license.html">Terms</a>
+                </div>
+
+                <div class="footer-col">
+                    <a href="solutions.html">Find your Solution</a>
+                    <a href="privacy.html">Privacy</a>
+                </div>
+
+                <div class="footer-col">
+                    <a href="partnership.html">Join Us</a>
+                    <a href="disconnect.html">Disconnect From Us</a>
+                </div>
+            </div>
+
+            <div class="footer-social">
+                <a href="#youtube" title="YouTube"><i class="fab fa-youtube"></i></a>
+                <a href="#facebook" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://www.instagram.com/ai_terraconnect" title="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="#linkedin" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                <a href="#x" title="X (Twitter)"><i class="fa-brands fa-x-twitter"></i></a>
+            </div>
+        </div>
+
+        <div class="footer-copyright">
+            <p>Copyright &copy; 2026 HARPIA WorldConnect. Engineered for the Earth.</p>
+        </div>
+    </footer>
+</div>
+
+<!-- HIDDEN GOOGLE TRANSLATE ELEMENT -->
+<div id="google_translate_element"></div>
+<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+<script>
+// ==========================================
+// 1. GOOGLE TRANSLATE INIT
+// ==========================================
+function googleTranslateElementInit() {
+    new google.translate.TranslateElement({
+        pageLanguage: 'en',
+        includedLanguages: 'en,pt,es,it,sv', 
+        autoDisplay: false
+    }, 'google_translate_element');
+}
+
+// ==========================================
+// 2. UNIFIED GLOBAL SCRIPT BLOCK (DOMContentLoaded)
+// ==========================================
+document.addEventListener('DOMContentLoaded', async () => {
+    // 2.1 VIDEO SPEED
+    const bgVideo = document.getElementById('bg-video');
+    if(bgVideo) bgVideo.playbackRate = 0.5;
+
+    // 2.2 CUSTOM CURSOR & HOVER EFFECTS
+    const cursorDot = document.querySelector('.cursor-dot');
+    const cursorOutline = document.querySelector('.cursor-outline');
+    
+    if (cursorDot && cursorOutline) {
+        window.addEventListener('mousemove', function(e) {
+            const posX = e.clientX; const posY = e.clientY;
+            cursorDot.style.left = `${posX}px`; cursorDot.style.top = `${posY}px`;
+            cursorOutline.animate({ left: `${posX}px`, top: `${posY}px` }, { duration: 500, fill: "forwards" });
+        });
+    }
+    
+    function handleMouseEnter() {
+        if(cursorOutline) {
+            cursorOutline.style.transform = 'translate(-50%, -50%) scale(1.8)';
+            cursorOutline.style.backgroundColor = 'rgba(209, 179, 139, 0.15)';
+        }
+    }
+
+    function handleMouseLeave() {
+        if(cursorOutline) {
+            cursorOutline.style.transform = 'translate(-50%, -50%) scale(1)';
+            cursorOutline.style.backgroundColor = 'transparent';
+        }
+    }
+
+    const clickables = document.querySelectorAll('a, button, .menu-toggle, .close-btn, .panel-link, .node-card');
+    clickables.forEach(el => {
+        el.removeEventListener('mouseenter', handleMouseEnter);
+        el.removeEventListener('mouseleave', handleMouseLeave);
+        el.addEventListener('mouseenter', handleMouseEnter);
+        el.addEventListener('mouseleave', handleMouseLeave);
+    });
+
+    // 2.3 SIDE NAVIGATION PANEL LOGIC
+    const menuToggle = document.getElementById('menuToggle');
+    const sideNav = document.getElementById('sideNav');
+    const panelOverlay = document.getElementById('panelOverlay');
+    const closePanelBtn = document.getElementById('closePanelBtn');
+    const panelLinks = document.querySelectorAll('.panel-link');
+
+    function openPanel() {
+        sideNav.classList.add('active');
+        panelOverlay.classList.add('active');
+    }
+
+    function closePanel() {
+        sideNav.classList.remove('active');
+        panelOverlay.classList.remove('active');
+    }
+
+    if(menuToggle) menuToggle.addEventListener('click', openPanel);
+    if(closePanelBtn) closePanelBtn.addEventListener('click', closePanel);
+    if(panelOverlay) panelOverlay.addEventListener('click', closePanel);
+    
+    panelLinks.forEach(link => {
+        link.addEventListener('click', closePanel);
+    });
+
+    // 2.4 LANGUAGE SELECTION & IP DETECTION
+    const langButtons = document.querySelectorAll('.lang-btn');
+    const countryToLang = {
+        'BR': 'pt', 'PT': 'pt', 'AO': 'pt', 'MZ': 'pt',
+        'ES': 'es', 'MX': 'es', 'AR': 'es', 'CO': 'es', 'CL': 'es', 'PE': 'es',
+        'IT': 'it',
+        'SV': 'sv'
+    };
+
+    let savedLang = localStorage.getItem('harpia_lang');
+
+    if (!savedLang) {
+        try {
+            const response = await fetch('https://get.geojs.io/v1/ip/country.json');
+            const data = await response.json();
+            savedLang = countryToLang[data.country] || 'en';
+            localStorage.setItem('harpia_lang', savedLang);
+        } catch (error) {
+            savedLang = 'en';
+            localStorage.setItem('harpia_lang', savedLang);
+        }
+    }
+
+    applyLanguage(savedLang);
+
+    function applyLanguage(langCode) {
+        langButtons.forEach(b => b.classList.remove('active'));
+        const activeBtn = document.querySelector(`.lang-btn[data-lang="${langCode}"]`);
+        if (activeBtn) activeBtn.classList.add('active');
+
+        if (langCode === 'nh') {
+            if(!window.location.href.includes('index_nh.html')){
+                window.location.href = 'index_nh.html';
+            }
+            return;
+        }
+
+        const checkGTranslate = setInterval(() => {
+            const selectField = document.querySelector('select.goog-te-combo');
+            if (selectField) {
+                clearInterval(checkGTranslate);
+                
+                if (langCode === 'en') {
+                    selectField.value = ''; 
+                    selectField.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
+                    const domain = window.location.hostname;
+                    document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                    document.cookie = `googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; domain=${domain}; path=/;`;
+                } else {
+                    selectField.value = langCode;
+                    selectField.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
+                }
+            }
+        }, 300);
+    }
+
+    langButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            langButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const langCode = btn.getAttribute('data-lang');
+            
+            if (langCode === 'nh') {
+                if(!window.location.href.includes('index_nh.html')){
+                    window.location.href = 'index_nh.html';
+                }
+                return;
+            }
+
+            localStorage.setItem('harpia_lang', langCode);
+            
+            if (langCode === 'en') {
+                const domain = window.location.hostname;
+                document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                document.cookie = `googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; domain=${domain}; path=/;`;
+                document.cookie = `googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; domain=.${domain}; path=/;`;
+                window.location.reload();
+                return; 
+            }
+
+            const selectField = document.querySelector('select.goog-te-combo');
+            if (selectField) {
+                selectField.value = langCode;
+                selectField.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
+            }
+        });
+    });
+});
+</script>
+</body>
+</html>
