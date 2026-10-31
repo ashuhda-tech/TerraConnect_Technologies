@@ -228,12 +228,18 @@
             .solution-image { flex: 0 0 100%; width: 100%; }
         }
 
-        /* ----- COMPLETELY OBLITERATE GOOGLE TRANSLATE UI ----- */
-        .goog-te-banner-frame, .goog-te-banner-frame.skiptranslate, iframe.goog-te-banner-frame { display: none !important; visibility: hidden !important; opacity: 0 !important; z-index: -100000 !important; }
+        /* ----- OBLITERAR TOTALMENTE A UI DO GOOGLE TRANSLATE ----- */
+        .goog-te-banner-frame, 
+        .goog-te-balloon-frame, 
+        #goog-gt-tt { display: none !important; visibility: hidden !important; }
         html, body { top: 0 !important; margin-top: 0 !important; }
-        #goog-gt-tt, .goog-te-balloon-frame { display: none !important; visibility: hidden !important; }
-        .goog-text-highlight { background: transparent !important; box-shadow: none !important; }
-        #google_translate_element { position: absolute; left: -9999px; top: -9999px; opacity: 0; pointer-events: none; z-index: -9999; }
+        .goog-text-highlight { background: none !important; box-shadow: none !important; }
+        
+        /* Esconde a div principal e qualquer widget injetado direto no body */
+        #google_translate_element, 
+        .skiptranslate.goog-te-gadget, body > 
+        .skiptranslate { position: absolute !important; left: -9999px !important; top: -9999px !important; opacity: 0 !important; pointer-events: none !important; z-index: -9999 !important; display: none !important; }
+
     </style>
 </head>
 <body>
