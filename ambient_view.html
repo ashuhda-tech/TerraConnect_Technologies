@@ -71,17 +71,8 @@
     /* --- MOUSE ELEGANT SELECTION CSS --- */
     * { cursor: none; } 
 
-    .cursor-dot {
-        width: 5px; height: 5px; background-color: var(--accent);
-        position: fixed; top: 0; left: 0; transform: translate(-50%, -50%);
-        border-radius: 50%; z-index: 999999; pointer-events: none;
-    }
-    .cursor-outline {
-        width: 30px; height: 30px; border: 1px solid var(--accent);
-        position: fixed; top: 0; left: 0; transform: translate(-50%, -50%);
-        border-radius: 50%; z-index: 999998; pointer-events: none;
-        transition: transform 0.2s ease-out, background-color 0.2s ease-out;
-    }
+    .cursor-dot {width: 5px; height: 5px; background-color: var(--accent);position: fixed; top: 0; left: 0; transform: translate(-50%, -50%);border-radius: 50%; z-index: 999999; pointer-events: none;}
+    .cursor-outline {width: 30px; height: 30px; border: 1px solid var(--accent);position: fixed; top: 0; left: 0; transform: translate(-50%, -50%);border-radius: 50%; z-index: 999998; pointer-events: none;transition: transform 0.2s ease-out, background-color 0.2s ease-out; }
 
     @media (max-width: 768px) {
         .cursor-dot, .cursor-outline { display: none; } 
@@ -213,6 +204,18 @@
         .bio-info-list { grid-template-columns: 1fr 1fr; }
         .main-content { padding: 20px; }
     }
+        /* ----- OBLITERAR TOTALMENTE A UI DO GOOGLE TRANSLATE ----- */
+        .goog-te-banner-frame, 
+        .goog-te-balloon-frame, 
+        #goog-gt-tt { display: none !important; visibility: hidden !important; }
+        html, body { top: 0 !important; margin-top: 0 !important; }
+        .goog-text-highlight { background: none !important; box-shadow: none !important; }
+        
+        /* Esconde a div principal e qualquer widget injetado direto no body */
+        #google_translate_element, 
+        .skiptranslate.goog-te-gadget, body > 
+        .skiptranslate { position: absolute !important; left: -9999px !important; top: -9999px !important; opacity: 0 !important; pointer-events: none !important; z-index: -9999 !important; display: none !important; }
+
 </style>
 
 </head>
