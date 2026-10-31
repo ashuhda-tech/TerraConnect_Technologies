@@ -299,24 +299,23 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 
         // 1. Verificação de Segurança (Requer Token de Sessão)
+        // --- SISTEMA DE VERIFICAÇÃO DE SEGURANÇA E TOKENS ---
         function checkSecurity() {
             const userString = localStorage.getItem('currentUser');
             const authToken = sessionStorage.getItem('authToken');
             
-            // Se faltar o usuário ou o token, bloqueia a página
             if (!userString || !authToken) {
-                alert("Acesso Negado: Sessão expirada ou inválida. Faça login novamente.");
+                alert("Acesso Negado: Faça login para acessar esta página.");
                 window.location.href = "authentication.html"; 
                 return null;
             }
-        
             const currentUser = JSON.parse(userString);
             currentUser.authToken = authToken;
             return currentUser;
         }
         
         const loggedUser = checkSecurity();
-        
+                
         // 2. Parâmetros de Autenticação Globais
         // Isso garante que o userID e os tokens de segurança viajem em TODAS as requisições
         const authParams = loggedUser ? `&userID=${encodeURIComponent(loggedUser.userID)}&authToken=${encodeURIComponent(loggedUser.authToken)}&csrfToken=${encodeURIComponent(loggedUser.authToken)}` : "";
@@ -525,7 +524,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 timestamp: new Date().toLocaleString('pt-BR'),
                 // VULNERABILITY FIX (Security Identifiers & Origin Audit Tracking)
                 userID: window.currentUser.id,
-                authToken: authToken,
+                csrfToken: sessionStorage.getItem('authToken'),
+                authToken: sessionStorage.getItem('authToken')
                 appSource: window.location.origin
             };
             
