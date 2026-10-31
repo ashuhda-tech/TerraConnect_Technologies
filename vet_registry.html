@@ -315,6 +315,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
     });
+});
 
 
 // ==========================================
@@ -430,8 +431,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             const user = JSON.parse(userData);
             window.currentUser = user; 
 
-            // Aplicação automática do tema salvo
-            const savedTheme = localStorage.getItem(`theme_${user.id}`) || 'default';
+            // CORREÇÃO 1: user.userID ao invés de user.id
+            const savedTheme = localStorage.getItem(`theme_${user.userID}`) || 'default';
             document.documentElement.setAttribute('data-theme', savedTheme);
             
             // Captura do pageID vindo da URL externa
@@ -454,8 +455,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return;
             }
 
-            // VULNERABILITY FIX (IDOR): Verify if the logged user actually owns this Page ID before allowing entry
-            verifyOwnership(user.id, authToken, targetPageID);
+            // CORREÇÃO 2: Passando user.userID em vez de user.id
+            verifyOwnership(user.userID, authToken, targetPageID);
         });
 
         // Function to verify ownership mapping natively via Secure Auth Token
@@ -552,9 +553,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 vetPlusCode: document.getElementById('vetPlusCode').value,
                 timestamp: new Date().toLocaleString('pt-BR'),
                 // VULNERABILITY FIX (Security Identifiers & Origin Audit Tracking)
-                userID: window.currentUser.id,
+                userID: window.currentUser.userID, // CORREÇÃO: userID ao invés de id
                 csrfToken: sessionStorage.getItem('authToken'),
-                authToken: sessionStorage.getItem('authToken')
+                authToken: sessionStorage.getItem('authToken'), // CORREÇÃO: VÍRGULA FALTAVA AQUI!
                 appSource: window.location.origin
             };
             
