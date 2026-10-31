@@ -375,6 +375,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
     });
+});
     
         // URLs do Backend
         const PAGEID_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw3LbOYDqljAxQ8joYW8yDhwe6lsi7AdFCAoi4HG1iRdglS0k9-fI1Oj2eA12ePc6g/exec";
@@ -420,10 +421,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (!userData || !authToken) { window.location.href = 'index.html'; return; }
             
             const user = JSON.parse(userData);
-            document.getElementById('displayUserId').innerText = user.id;
+            // CORREÇÃO: user.userID ao invés de user.id
+            document.getElementById('displayUserId').innerText = user.userID; 
             window.currentUser = user; 
             
-            const savedTheme = localStorage.getItem(`theme_${user.id}`) || 'default';
+            // CORREÇÃO: user.userID ao invés de user.id
+            const savedTheme = localStorage.getItem(`theme_${user.userID}`) || 'default';
             document.documentElement.setAttribute('data-theme', savedTheme);
             
             const urlParams = new URLSearchParams(window.location.search);
@@ -444,7 +447,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             try {
                 // VULNERABILITY FIX (IDOR & Hardcoded Secrets): Added authToken and appSource verification
                 const authToken = encodeURIComponent(sessionStorage.getItem('authToken'));
-                const response = await fetch(`${PAGEID_SCRIPT_URL}?userID=${encodeURIComponent(window.currentUser.id)}&pageID=${encodeURIComponent(editingPageID)}&authToken=${authToken}`);
+                
+                // CORREÇÃO: window.currentUser.userID ao invés de .id
+                const response = await fetch(`${PAGEID_SCRIPT_URL}?userID=${encodeURIComponent(window.currentUser.userID)}&pageID=${encodeURIComponent(editingPageID)}&authToken=${authToken}`);
                 const json = await response.json();
                 
                 if (json.status === "success" && json.data) {
@@ -528,7 +533,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             const payload = {
                 action: isEditMode ? "update" : "create",
-                userID: user.id,
+                userID: user.userID, // CORREÇÃO AQUI TAMBÉM: user.userID ao invés de user.id
                 // VULNERABILITY FIX (Hardcoded Secrets): Adding Origin and Auth properties for backend verification
                 csrfToken: sessionStorage.getItem('authToken'),
                 authToken: sessionStorage.getItem('authToken'),
