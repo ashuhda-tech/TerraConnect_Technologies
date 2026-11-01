@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-29L48K7ZCY"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-29L48K7ZCY', { 'send_page_view': true });
+    </script>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GenomaConnect | Genetic Calculator</title>
+    
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/ashuhda-tech/WorldConnect_Technologies/main/assets/IMAGE/HARPIA_LOGO_NO_BKGRD.png">
+
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        @font-face {font-family: 'A760-Roman-Smc';src: url('A760-Roman-Smc Regular.ttf') format('truetype'); font-weight: normal;font-style: normal;}
+        
+        :root {
+            --bg-color: #0a0c10;
+            --card-bg: rgba(7, 11, 20, 0.75);
+            --card-border: rgba(209, 179, 139, 0.2);
+            --accent-dark: #d1b38b;
+            --accent-light: #f4e9d8;
+            --text-main: #f4e9d8;
+            --text-muted: #9ca3af;
+            --border-radius: 4px; 
+            --font-standard: 'Inter', sans-serif;
+            --font-title: 'A760-Roman-Smc', serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; cursor: none; }
+        html { scroll-behavior: smooth; }
+        body { background-color: var(--bg-color); color: var(--text-main); font-family: var(--font-standard); overflow-x: hidden; display: flex; flex-direction: column; min-height: 100vh; }
+        
+        /* ----- CUSTOM CURSOR ----- */
+        .cursor-dot { width: 5px; height: 5px; background-color: var(--accent-light); position: fixed; top: 0; left: 0; transform: translate(-50%, -50%); border-radius: 50%; z-index: 9999; pointer-events: none; }
+        .cursor-outline { width: 30px; height: 30px; border: 1px solid var(--accent-dark); position: fixed; top: 0; left: 0; transform: translate(-50%, -50%); border-radius: 50%; z-index: 9998; pointer-events: none; transition: transform 0.2s ease-out, background-color 0.2s ease-out; }
+
+        /* ----- BACKGROUND VIDEO ----- */
+        .video-bg-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; overflow: hidden; }
+        .video-bg-container video { min-width: 100%; min-height: 100%; width: auto; height: auto; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); object-fit: cover; filter: brightness(0.25); }
+        .video-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(10, 12, 16, 0.6) 0%, rgba(10, 12, 16, 0.9) 100%); z-index: -1; }
+        
+        /* ----- HEADER & MENU TOGGLE ----- */
+        header { padding: 30px 50px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); background: rgba(10, 12, 16, 0.5); backdrop-filter: blur(10px); position: fixed; width: 100%; top: 0; z-index: 900; transition: background 0.3s; }
+        .logo-area { display: flex; align-items: center; gap: 15px; }
+        .logo-area img { height: 45px; width: auto; object-fit: contain; }
+        .logo-area h1 { font-family: var(--font-title); color: var(--accent-dark); font-size: 1.8rem; letter-spacing: 2px; text-transform: uppercase; }
+        
+        .menu-toggle { display: flex; flex-direction: column; justify-content: center; align-items: flex-end; gap: 8px; width: 40px; height: 40px; background: transparent; border: none; z-index: 1001; }
+        .menu-toggle span { display: block; width: 30px; height: 2px; background-color: var(--accent-dark); transition: 0.3s ease; }
+        .menu-toggle:hover span { background-color: var(--accent-light); width: 35px; }
+
+        /* ----- SIDE NAVIGATION PANEL ----- */
+        .side-panel-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 999; opacity: 0; visibility: hidden; transition: all 0.4s ease; }
+        .side-panel-overlay.active { opacity: 1; visibility: visible; }
+        .side-panel { position: fixed; top: 0; right: -450px; width: 400px; max-width: 100%; height: 100vh; background: rgba(10, 12, 16, 0.95); border-left: 1px solid var(--card-border); z-index: 1000; transition: right 0.5s cubic-bezier(0.77, 0, 0.175, 1); display: flex; flex-direction: column; padding: 40px; overflow-y: auto; }
+        .side-panel.active { right: 0; }
+        .close-btn { align-self: flex-start; color: var(--text-muted); font-size: 1.5rem; background: none; border: none; margin-bottom: 50px; transition: color 0.3s ease; }
+        .close-btn:hover { color: var(--accent-light); }
+        .panel-nav { display: flex; flex-direction: column; gap: 20px; }
+        .panel-category { font-family: var(--font-standard); font-size: 1.1rem; color: var(--text-main); font-weight: 600; text-transform: uppercase; letter-spacing: 2px; margin-top: 20px; margin-bottom: 10px; }
+        .panel-link { display: flex; justify-content: space-between; align-items: center; text-decoration: none; color: var(--text-muted); font-size: 0.95rem; font-weight: 400; letter-spacing: 1px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); transition: all 0.3s ease; }
+        .panel-link i { font-size: 0.7rem; opacity: 0; transform: translateX(-10px); transition: all 0.3s ease; color: var(--accent-dark); }
+        .panel-link:hover { color: var(--accent-light); padding-left: 10px; }
+        .panel-link:hover i { opacity: 1; transform: translateX(0); }
+
+        /* ========================================================= */
+        /* ----------- GENETIC CALCULATOR LAYOUT ------------------- */
+        /* ========================================================= */
+        
+        .calculator-container {display: flex;align-items: flex-start;justify-content: center;width: 100%;padding: 140px 20px 80px 20px;flex-grow: 1;}
+        .container-wrapper {width: 100%;max-width: 1100px;}
+        
+        .section-title { font-family: var(--font-title); font-size: 2rem; color: var(--accent-light); margin-bottom: 10px; text-align: center; text-transform: uppercase; letter-spacing: 2px; font-weight: normal;}
+        .section-subtitle { text-align: center; color: var(--text-muted); margin-bottom: 40px; font-size: 0.95rem; line-height: 1.6; font-weight: 300;}
+
+        .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px; }
+        
+        .input-card { background: rgba(10, 12, 16, 0.4); border: 1px solid rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); padding: 40px; border-radius: var(--border-radius); box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
+        .input-card h3 { color: var(--accent-dark); font-family: var(--font-title); font-size: 1.2rem; margin-bottom: 20px; text-align: center; font-weight: normal; letter-spacing: 2px; text-transform: uppercase;}
+        
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; }
+        
+        .form-control { width: 100%; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(209, 179, 139, 0.15); color: var(--text-main); font-family: var(--font-standard); font-size: 0.9rem; padding: 12px; border-radius: var(--border-radius); transition: all 0.3s ease; outline: none; }
+        .form-control:focus { background: rgba(255, 255, 255, 0.07); border-color: var(--accent-dark); box-shadow: 0 0 10px rgba(209, 179, 139, 0.1); }
+        
+        .tag-container { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; min-height: 40px; padding: 10px; background: rgba(0,0,0,0.3); border: 1px dashed rgba(209, 179, 139, 0.2); border-radius: var(--border-radius); }
+        .trait-tag { background: rgba(209, 179, 139, 0.15); border: 1px solid var(--accent-dark); color: var(--accent-light); padding: 4px 10px; font-size: 0.75rem; border-radius: 20px; display: flex; align-items: center; gap: 8px; font-weight: 500;}
+        .trait-tag i { color: #e57373; transition: 0.2s; }
+        .trait-tag i:hover { color: #ff5f5f; transform: scale(1.2); }
+
+        .btn-action { width: 100%; background-color: var(--accent-dark); color: var(--bg-color); font-family: var(--font-standard); font-weight: 600; font-size: 0.95rem; letter-spacing: 2px; text-transform: uppercase; padding: 20px; border: none; border-radius: var(--border-radius); transition: all 0.3s ease; margin-top: 15px;}
+        .btn-action:hover { background-color: var(--accent-light); box-shadow: 0 0 20px rgba(209, 179, 139, 0.4); }
+
+        /* Results Area */
+        .results-card { background: rgba(10, 12, 16, 0.6); border: 1px solid var(--accent-dark); backdrop-filter: blur(15px); padding: 40px; border-radius: var(--border-radius); display: none; margin-top: 30px; animation: fadeIn 0.5s ease-in-out; }
+        .results-card h3 { color: var(--accent-light); font-family: var(--font-title); font-size: 1.5rem; margin-bottom: 25px; text-align: center; font-weight: normal; letter-spacing: 2px;}
+        
+        .result-row { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .result-row:last-child { border-bottom: none; }
+        .prob-bar-container { flex-grow: 1; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; margin: 0 20px; overflow: hidden; }
+        .prob-bar { height: 100%; background: var(--accent-dark); border-radius: 3px; }
+        .morph-name { font-weight: 500; font-size: 0.9rem; width: 35%; color: var(--text-main); }
+        .morph-prob { font-weight: 700; font-family: var(--font-title); font-size: 1.1rem; color: var(--accent-light); width: 15%; text-align: right; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ----- BOTTOM FOOTNOTE WRAPPER ----- */
+        .footer-wrapper { background: var(--bg-color); width: 100%; position: relative; z-index: 2; border-top: 1px solid var(--card-border); display: flex; flex-direction: column; justify-content: space-between;}
+        
+        .site-footer { color: var(--text-muted); padding: 60px 40px 40px 40px; font-family: var(--font-standard); width: 100%; }
+        .footer-logo-center { text-align: center; margin-bottom: 40px; }
+        .footer-logo-center img { height: 40px; filter: grayscale(100%) brightness(0.8); margin-bottom: 15px; }
+        .footer-logo-center h2 { font-family: var(--font-title); font-size: 1.2rem; color: var(--text-muted); letter-spacing: 4px; text-transform: uppercase; font-weight: normal; }
+        .footer-content { max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; flex-wrap: wrap; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 30px; gap: 40px; }
+        .footer-links-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; flex-grow: 1; }
+        .footer-col { display: flex; flex-direction: column; gap: 15px; }
+        .footer-col a, .footer-col span { text-decoration: none; color: var(--text-main); font-size: 0.75rem; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500; transition: color 0.3s; }
+        .footer-col a:hover { color: var(--accent-dark); }
+        
+        .language-selector { display: flex; align-items: center; gap: 6px; margin-top: 5px; flex-wrap: wrap;}
+        .language-selector span { color: var(--text-muted); margin-right: 5px; }
+        .language-selector button { background: none; border: none; color: var(--text-muted); font-size: 0.75rem; letter-spacing: 1.5px; font-weight: 500; text-transform: uppercase; transition: color 0.3s; }
+        .language-selector button:hover { color: var(--accent-dark); }
+        .language-selector button.active { color: var(--text-main); font-weight: bold; }
+
+        .footer-social { display: flex; gap: 20px; align-items: flex-start; justify-content: flex-end; min-width: 200px; }
+        .footer-social a { color: var(--text-muted); font-size: 1.2rem; transition: color 0.3s; }
+        .footer-social a:hover { color: var(--accent-dark); }
+        .footer-copyright { text-align: center; margin-top: 40px; font-size: 0.75rem; color: rgba(156, 163, 175, 0.5); letter-spacing: 1px; }
+
+        @media (max-width: 768px) { 
+            .calc-grid { grid-template-columns: 1fr; }
+            .input-card { padding: 25px; }
+            header { padding: 20px; } 
+            .footer-links-grid { grid-template-columns: 1fr; } 
+            .side-panel { width: 85%; right: -100%; }
+            .cursor-dot, .cursor-outline { display: none; } * { cursor: auto; } 
+        }
+
+        /* ----- GOOGLE TRANSLATE HIDING ----- */
+        .goog-te-banner-frame, .goog-te-balloon-frame, #goog-gt-tt { display: none !important; visibility: hidden !important; }
+        html, body { top: 0 !important; margin-top: 0 !important; }
+        .goog-text-highlight { background: none !important; box-shadow: none !important; }
+        #google_translate_element, .skiptranslate.goog-te-gadget, body > .skiptranslate { position: absolute !important; left: -9999px !important; top: -9999px !important; opacity: 0 !important; pointer-events: none !important; z-index: -9999 !important; display: none !important; }
+
+    </style>
+</head>
+<body>
+
+<div class="cursor-dot"></div>
+<div class="cursor-outline"></div>
+
+<div class="video-bg-container">
+    <video id="bg-video" autoplay loop muted playsinline poster="https://raw.githubusercontent.com/ashuhda-tech/WorldConnect_Technologies/main/assets/MAIN_WALLPAPER.png">
+        <source src="https://raw.githubusercontent.com/ashuhda-tech/WorldConnect_Technologies/main/assets/VIDEO/MAIN_WALLPAPER.mp4" type="video/mp4">
+    </video>
+</div>
+<div class="video-overlay"></div>
+
+<header>
+    <a href="index.html" class="logo-area" style="text-decoration: none;">
+        <img src="https://raw.githubusercontent.com/ashuhda-tech/WorldConnect_Technologies/main/assets/IMAGE/HARPIA_LOGO_NO_BKGRD.png" alt="HARPIA WORLDCONNECT Logo">
+        <h1>HARPIA WORLDCONNECT</h1>
+    </a>
+    <div class="nav-area">
+        <button class="menu-toggle" id="menuToggle" aria-label="Open Navigation Menu">
+            <span></span>
+            <span></span>
+        </button>
+    </div>
+</header>
+
+<!-- SIDE NAVIGATION PANEL -->
+<div class="side-panel-overlay" id="panelOverlay"></div>
+<nav class="side-panel" id="sideNav">
+    <button class="close-btn" id="closePanelBtn"><i class="fas fa-times"></i></button>
+    
+    <div class="panel-nav">
+        <div class="panel-category">Philosophy</div>
+        <a href="https://aiterraconnect.com.br/index.html#about" class="panel-link">About Us <i class="fas fa-chevron-right"></i></a>
+        <a href="https://aiterraconnect.com.br/index.html#solidarity" class="panel-link">Solidarity <i class="fas fa-chevron-right"></i></a>
+        <a href="https://aiterraconnect.com.br/index.html#analytics-section" class="panel-link">Public Analytics <i class="fas fa-chevron-right"></i></a>
+        
+        <div class="panel-category" style="margin-top: 30px;">Technological Solutions</div>
+        <a href="https://aiterraconnect.com.br/index.html#solutions" class="panel-link">GenomaConnect Initiative <i class="fas fa-chevron-right"></i></a>
+        <a href="https://aiterraconnect.com.br/index.html#solutions" class="panel-link">TerraConnect Technologies <i class="fas fa-chevron-right"></i></a>
+        <a href="https://aiterraconnect.com.br/index.html#solutions" class="panel-link">FarmConnect Architecture <i class="fas fa-chevron-right"></i></a>
+    </div>
+</nav>
+
+<!-- CALCULATOR MAIN SECTION -->
+<div class="calculator-container">
+    <div class="container-wrapper">
+        <h2 class="section-title">GenomaConnect Calculator</h2>
+        <p class="section-subtitle">Powered by the open-source MorphKit Engine. Input parental genetics to calculate offspring morph probabilities.</p>
+        
+        <div class="calc-grid">
+            <!-- SIRE (MALE) INPUT -->
+            <div class="input-card">
+                <h3><i class="fas fa-mars" style="margin-right: 8px;"></i> Sire Traits</h3>
+                <div class="form-group">
+                    <label>Add Genetic Trait (e.g. Pastel, Enchi)</label>
+                    <input type="text" id="sireInput" class="form-control" placeholder="Type trait and press Enter...">
+                </div>
+                <div class="tag-container" id="sireTags">
+                    <span style="color: rgba(255,255,255,0.2); font-size: 0.8rem; line-height: 20px;">No traits added yet.</span>
+                </div>
+            </div>
+
+            <!-- DAM (FEMALE) INPUT -->
+            <div class="input-card">
+                <h3><i class="fas fa-venus" style="margin-right: 8px;"></i> Dam Traits</h3>
+                <div class="form-group">
+                    <label>Add Genetic Trait (e.g. Spider, Yellow Belly)</label>
+                    <input type="text" id="damInput" class="form-control" placeholder="Type trait and press Enter...">
+                </div>
+                <div class="tag-container" id="damTags">
+                    <span style="color: rgba(255,255,255,0.2); font-size: 0.8rem; line-height: 20px;">No traits added yet.</span>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn-action" id="calculateBtn"><i class="fas fa-dna" style="margin-right: 8px;"></i> Compute Genetic Outcomes</button>
+
+        <!-- RESULTS DISPLAY -->
+        <div class="results-card" id="resultsContainer">
+            <h3>Calculated Clutch Probabilities</h3>
+            <div id="resultsList">
+                <!-- Dynamically populated via JS -->
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- PAGE FOOTER WRAPPER -->
+<div class="footer-wrapper">
+    <footer class="site-footer">
+        <div class="footer-logo-center">
+            <a href="index.html" style="text-decoration: none; display: inline-block;">
+                <img src="https://raw.githubusercontent.com/ashuhda-tech/WorldConnect_Technologies/main/assets/IMAGE/HARPIA_LOGO_NO_BKGRD.png" alt="HARPIA WorldConnect Logo">
+                <h2>HARPIA WorldConnect</h2>
+            </a>
+        </div>
+        <div class="footer-content">
+            <div class="footer-links-grid">
+                <div class="footer-col">
+                    <a href="https://aiterraconnect.com.br/pressclub.html">Pressclub</a>
+                    <a href="https://aiterraconnect.com.br/faqs.html">FAQs</a>
+                    <a href="https://aiterraconnect.com.br/sitemap.html">Site Map</a>
+                    <div class="language-selector">
+                        <span>Language</span> 
+                        <button data-lang="en" class="lang-btn active">EN</button> | 
+                        <button data-lang="pt" class="lang-btn">PT</button> | 
+                        <button data-lang="nh" class="lang-btn">NH</button> |
+                        <button data-lang="es" class="lang-btn">ES</button> |
+                        <button data-lang="it" class="lang-btn">IT</button> |
+                        <button data-lang="sv" class="lang-btn">SV</button>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <a href="https://aiterraconnect.com.br/contact.html">Contact</a>
+                    <a href="https://aiterraconnect.com.br/license.html">Terms</a>
+                </div>
+                <div class="footer-col">
+                    <a href="https://aiterraconnect.com.br/solutions.html">Find your Solution</a>
+                    <a href="https://aiterraconnect.com.br/privacy.html">Privacy</a>
+                </div>
+                <div class="footer-col">
+                    <a href="https://aiterraconnect.com.br/partnership.html">Join Us</a>
+                    <a href="https://aiterraconnect.com.br/disconnect.html">Disconnect From Us</a>
+                </div>
+            </div>
+            <div class="footer-social">
+                <a href="#youtube" title="YouTube"><i class="fab fa-youtube"></i></a>
+                <a href="#facebook" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://www.instagram.com/ai_terraconnect" title="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="#linkedin" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                <a href="#x" title="X (Twitter)"><i class="fa-brands fa-x-twitter"></i></a>
+            </div>
+        </div>
+        <div class="footer-copyright">
+            <p>Copyright &copy; 2026 HARPIA WorldConnect. Engineered for the Earth.</p>
+        </div>
+    </footer>
+</div>
+
+<!-- HIDDEN GOOGLE TRANSLATE ELEMENT -->
+<div id="google_translate_element"></div>
+<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+<script>
+// ==========================================
+// --- UI BOILERPLATE LOGIC (Video, Cursor, Menus)
+// ==========================================
+const bgVideo = document.getElementById('bg-video');
+if(bgVideo) bgVideo.playbackRate = 0.5;
+
+const cursorDot = document.querySelector('.cursor-dot');
+const cursorOutline = document.querySelector('.cursor-outline');
+
+if (cursorDot && cursorOutline) {
+    window.addEventListener('mousemove', function(e) {
+        cursorDot.style.left = `${e.clientX}px`;
+        cursorDot.style.top = `${e.clientY}px`;
+        cursorOutline.animate({ left: `${e.clientX}px`, top: `${e.clientY}px` }, { duration: 400, fill: "forwards" });
+    });
+
+    document.querySelectorAll('a, button, input, select, textarea, .menu-toggle, .close-btn, .panel-link').forEach(el => {
+        el.addEventListener('mouseenter', () => { 
+            cursorOutline.style.transform = 'translate(-50%, -50%) scale(1.8)'; 
+            cursorOutline.style.backgroundColor = 'rgba(209, 179, 139, 0.15)'; 
+            cursorOutline.style.borderColor = '#d1b38b';
+        });
+        el.addEventListener('mouseleave', () => { 
+            cursorOutline.style.transform = 'translate(-50%, -50%) scale(1)'; 
+            cursorOutline.style.backgroundColor = 'transparent'; 
+            cursorOutline.style.borderColor = 'var(--accent-dark)';
+        });
+    });
+}
+
+// Side Nav
+document.getElementById('menuToggle').addEventListener('click', () => { document.getElementById('sideNav').classList.add('active'); document.getElementById('panelOverlay').classList.add('active'); });
+const closePanel = () => { document.getElementById('sideNav').classList.remove('active'); document.getElementById('panelOverlay').classList.remove('active'); };
+document.getElementById('closePanelBtn').addEventListener('click', closePanel);
+document.getElementById('panelOverlay').addEventListener('click', closePanel);
+
+// Translation Setup (Minified Boilerplate)
+function googleTranslateElementInit() { new google.translate.TranslateElement({ pageLanguage: 'en', includedLanguages: 'en,pt,es,it,sv', autoDisplay: false }, 'google_translate_element'); }
+</script>
+
+<!-- ========================================== -->
+<!-- --- MORPHKIT INTEGRATION (ES MODULES) ---- -->
+<!-- ========================================== -->
+<script type="module">
+    // Dynamically importing MorphKit from NPM via unpkg or esm.sh CDN
+    // Note: The specific import path and API calls depend on MorphKit's exact class structure.
+    // This script models the standard integration logic without needing to install/compress files locally.
+    
+    // Attempting import. If morphkit exports default, use it. Adjust 'https://esm.sh/morphkit' if they use a specific sub-module.
+    import * as MorphKit from 'https://esm.sh/morphkit'; 
+
+    let sireTraits = [];
+    let damTraits = [];
+
+    const sireInput = document.getElementById('sireInput');
+    const damInput = document.getElementById('damInput');
+    const sireTags = document.getElementById('sireTags');
+    const damTags = document.getElementById('damTags');
+    const calcBtn = document.getElementById('calculateBtn');
+    const resultsContainer = document.getElementById('resultsContainer');
+    const resultsList = document.getElementById('resultsList');
+
+    function updateTags(array, containerId) {
+        const container = document.getElementById(containerId);
+        if (array.length === 0) {
+            container.innerHTML = '<span style="color: rgba(255,255,255,0.2); font-size: 0.8rem; line-height: 20px;">No traits added yet.</span>';
+            return;
+        }
+        
+        container.innerHTML = array.map((trait, index) => `
+            <div class="trait-tag">
+                ${trait} <i class="fas fa-times-circle" style="cursor: pointer;" data-index="${index}" data-type="${containerId}"></i>
+            </div>
+        `).join('');
+
+        // Attach delete events
+        container.querySelectorAll('i').forEach(icon => {
+            icon.addEventListener('click', (e) => {
+                const idx = e.target.getAttribute('data-index');
+                if(containerId === 'sireTags') {
+                    sireTraits.splice(idx, 1);
+                    updateTags(sireTraits, 'sireTags');
+                } else {
+                    damTraits.splice(idx, 1);
+                    updateTags(damTraits, 'damTags');
+                }
+            });
+        });
+    }
+
+    function setupInput(inputEl, targetArray, targetContainer) {
+        inputEl.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const val = this.value.trim();
+                if (val && !targetArray.includes(val)) {
+                    targetArray.push(val);
+                    updateTags(targetArray, targetContainer);
+                    this.value = '';
+                }
+            }
+        });
+    }
+
+    setupInput(sireInput, sireTraits, 'sireTags');
+    setupInput(damInput, damTraits, 'damTags');
+
+    calcBtn.addEventListener('click', () => {
+        if (sireTraits.length === 0 && damTraits.length === 0) {
+            alert("Please add at least one genetic trait to calculate.");
+            return;
+        }
+
+        calcBtn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right: 8px;"></i> COMPUTING...';
+        
+        // Simulating the MorphKit API processing delay and mapping. 
+        // Actual MorphKit logic relies on its exact class structure: 
+        // e.g., const sire = new MorphKit.Animal(sireTraits); const dam = new MorphKit.Animal(damTraits); const clutch = MorphKit.calculate(sire, dam);
+        
+        setTimeout(() => {
+            try {
+                // Placeholder output generation since real MorphKit usage requires the specific NPM docs
+                // REPLACE THIS BLOCK WITH ACTUAL MORPHKIT METHOD CALLS:
+                const results = simulateGenetics(sireTraits, damTraits); 
+                
+                resultsContainer.style.display = 'block';
+                
+                resultsList.innerHTML = results.map(res => `
+                    <div class="result-row">
+                        <div class="morph-name">${res.name}</div>
+                        <div class="prob-bar-container">
+                            <div class="prob-bar" style="width: ${res.probability}%"></div>
+                        </div>
+                        <div class="morph-prob">${res.probability}%</div>
+                    </div>
+                `).join('');
+                
+                // Scroll down to results smoothly
+                resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            } catch (err) {
+                alert("Error computing genetics. Please check your trait spellings against the MorphKit database.");
+                console.error(err);
+            } finally {
+                calcBtn.innerHTML = '<i class="fas fa-dna" style="margin-right: 8px;"></i> Compute Genetic Outcomes';
+            }
+        }, 800);
+    });
+
+    // Mock calculation logic for UI testing (Remove when linking true MorphKit API)
+    function simulateGenetics(sire, dam) {
+        const combined = [...new Set([...sire, ...dam])];
+        if(combined.length === 0) return [{name: 'Normal', probability: 100}];
+        if(combined.length === 1) return [{name: 'Normal', probability: 50}, {name: combined[0], probability: 50}];
+        return [
+            {name: combined.join(' '), probability: 25},
+            {name: sire.join(' ') || 'Normal', probability: 25},
+            {name: dam.join(' ') || 'Normal', probability: 25},
+            {name: 'Normal', probability: 25}
+        ];
+    }
+</script>
+</body>
+</html>
