@@ -666,6 +666,13 @@
             </div>
 
             <div class="charts-section">
+                <!-- NOVO: Gráfico de Timeline Ocupando a Largura Total -->
+                <div class="chart-card" id="chart-timeline" style="grid-column: 1 / -1; height: 350px;">
+                    <h3 class="a70-font"><i class="fas fa-camera-retro"></i> Media Timeline</h3>
+                    <div style="position: relative; width: 100%; height: 85%;">
+                        <canvas id="timelineChart"></canvas>
+                    </div>
+                </div>
                 <div class="chart-card" id="chart-feeding">
                     <h3 class="a70-font">Feeding History (g)</h3>
                     <canvas id="feedingChart"></canvas>
@@ -1418,7 +1425,9 @@ async function loadData() {
                         await loadBiologicalHistory(currentPageId);
                     } else if (dbName === "TerraConnect_VetData") {
                         await loadVetVisits(currentPageId);
-                    } else if (dbName === "TerraConnect_Enviromental Setup") {
+                    } else if (dbName === "TerraConnect_ImageDB") {
+                        await loadMediaTimeline(currentPageId);
+                    }else if (dbName === "TerraConnect_Enviromental Setup") {
                         if (typeof loadExistingConfig === "function") await loadExistingConfig();
                     } else if (dbName === "TerraConnect_FLAGS_Dashboard View") {
                         // THIS NOW RUNS LAST - applying filters safely to fully built elements!
@@ -2043,6 +2052,137 @@ function buildForecastChartConfig(labelString, dataArray, color, ctx) {
         },
         options: commonOptions() 
     };
+}
+
+let timelineChart;
+// Busca os dados da Media API
+async function loadMediaTimeline(id) {
+    try {
+        console.log("[FLAG] loadMediaTimeline: Buscando histórico de mídia...");
+        const res = await fetch(`${MEDIA_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(id)}${authParams}`);
+        const json = await res.json();
+        
+        if (json.status === 'success' && json.data.length > 0) {
+            const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+            renderMediaTimeline(json.data, accentColor);
+        } else {
+            document.getElementById('chart-timeline').style.display = 'none'; // Esconde se não houver imagens
+        }
+    } catch (e) {
+        console.error("Erro ao carregar a Timeline de Mídia:", e);
+    }
+}
+
+// Constrói a linha plana (Y = 0) com pontos marcadores
+function renderMediaTimeline(events, color) {
+    const canvas = document.getElementById('timelineChart');
+    if(!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    // Ordena pelo Timestamp (Coluna 3) para garantir que a linha do tempo fique cronológica
+    events.sort((a, b) => a[3] - b[3]);
+
+    const labels = [];
+    const dataY = [];
+    const imageUrls = [];
+
+    events.forEach(e => {
+        labels.push(formatDateDisplay(e[1])); 
+        dataY.push(0); // Força a linha a ficar 100% reta no meio do gráfico
+        imageUrls.push(e[2]);
+    });
+
+    if(timelineChart) timelineChart.destroy();
+
+    timelineChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Registro Visual',
+                data: dataY,
+                imageUrls: imageUrls, // Injetamos as URLs dentro do Dataset para o Tooltip ler depois
+                borderColor: color,
+                backgroundColor: color,
+                borderWidth: 2,
+                pointRadius: 8,
+                pointHoverRadius: 14,
+                pointBackgroundColor: '#ffffff',
+                pointBorderColor: color,
+                pointBorderWidth: 3,
+                fill: false,
+                tension: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    enabled: false, // Desliga o tooltip feio padrão
+                    external: customImageTooltip // Aciona nossa função injetora de HTML
+                }
+            },
+            scales: {
+                y: {
+                    display: false, // Oculta o eixo Y (já que tudo é zero) criando a ilusão de varal
+                    min: -1,
+                    max: 1
+                },
+                x: {
+                    grid: { display: false, drawBorder: false },
+                    ticks: { color: '#9ca3af', font: { size: 10 } }
+                }
+            }
+        }
+    });
+}
+
+// Gera a janela flutuante elegante que segue o mouse
+function customImageTooltip(context) {
+    let tooltipEl = document.getElementById('chartjs-image-tooltip');
+
+    // Inicialização da DOM se não existir
+    if (!tooltipEl) {
+        tooltipEl = document.createElement('div');
+        tooltipEl.id = 'chartjs-image-tooltip';
+        tooltipEl.innerHTML = `
+            <div class="tooltip-inner" style="background: rgba(10, 12, 16, 0.95); backdrop-filter: blur(10px); border: 2px solid var(--accent); border-radius: 12px; padding: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); text-align: center; display: flex; flex-direction: column; gap: 8px;">
+                <span id="tooltip-date" style="font-family: 'Cinzel', serif; color: var(--accent); font-size: 0.85rem; letter-spacing: 1px; font-weight: bold;"></span>
+                <img id="tooltip-img" style="width: 250px; height: 250px; border-radius: 8px; object-fit: cover; display: block; border: 1px solid rgba(255,255,255,0.1);">
+            </div>`;
+        tooltipEl.style.position = 'absolute';
+        tooltipEl.style.pointerEvents = 'none';
+        tooltipEl.style.transition = 'opacity 0.2s ease, transform 0.1s ease'; // Movimento suave do mouse
+        tooltipEl.style.zIndex = 99999;
+        document.body.appendChild(tooltipEl);
+    }
+
+    const tooltipModel = context.tooltip;
+    
+    // Oculta se o mouse saiu da bolinha
+    if (tooltipModel.opacity === 0) {
+        tooltipEl.style.opacity = 0;
+        return;
+    }
+
+    // Injeta a foto certa com base no ponto onde o mouse está
+    if (tooltipModel.body) {
+        const dataIndex = tooltipModel.dataPoints[0].dataIndex;
+        const datasetIndex = tooltipModel.dataPoints[0].datasetIndex;
+        const chartData = context.chart.data.datasets[datasetIndex];
+        
+        document.getElementById('tooltip-img').src = chartData.imageUrls[dataIndex];
+        document.getElementById('tooltip-date').innerText = context.chart.data.labels[dataIndex];
+    }
+
+    // Posiciona fisicamente o balão centralizado acima da bolinha do gráfico
+    const position = context.chart.canvas.getBoundingClientRect();
+    tooltipEl.style.opacity = 1;
+    tooltipEl.style.left = position.left + window.scrollX + tooltipModel.caretX + 'px';
+    tooltipEl.style.top = position.top + window.scrollY + tooltipModel.caretY - 20 + 'px';
+    tooltipEl.style.transform = 'translate(-50%, -100%)';
 }
 
 async function processAndUploadImage() {
