@@ -2261,6 +2261,9 @@ async function processAndUploadImage() {
                 alert("Success: Image scrubbed and saved to timeline!");
                 fileInput.value = "";
                 dateInput.value = "";
+                if (typeof loadMediaTimeline === "function") {
+                    setTimeout(() => loadMediaTimeline(currentPageId), 1500); // 1.5s delay allows Google Drive to index the file
+                }
             } catch (e) {
                 alert("Technical error during image upload.");
                 console.error(e);
