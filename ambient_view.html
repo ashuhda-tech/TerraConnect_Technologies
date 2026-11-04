@@ -644,6 +644,20 @@
                         <button class="btn-send" onclick="sendToCloud('Length', 'inLength')"><i class="fas fa-plus"></i></button>
                     </div>
                 </div>
+                <div class="input-card" id="inImageWrapper" style="gap: 8px;">
+                    <div class="input-header"><i class="fas fa-camera"></i> Picture Upload</div>
+                    <div class="input-group" style="padding: 0;">
+                        <input type="date" id="imgUserDate" class="input-field" required>
+                    </div>
+                    <div class="input-group" style="padding: 0;">
+                        <input type="file" id="imgFileInput" class="input-field" accept="image/*" style="font-size: 0.75rem; padding: 6px;">
+                    </div>
+                    <button class="btn-send" id="btnUploadImg" onclick="processAndUploadImage()" style="margin-top: 5px; justify-content: center;">
+                        <i class="fas fa-upload"></i> UPLOAD
+                    </button>
+                    <!-- Canvas invisível usado apenas para higienizar e comprimir a imagem -->
+                    <canvas id="hiddenImageCanvas" style="display:none;"></canvas>
+                </div>
                 <div class="input-card" id="inNoteWrapper" style="gap: 8px; column-span: all;">
                     <div class="input-header"><i class="fas fa-eye"></i> Add Observation</div>
                     <textarea id="inNote" class="input-field" placeholder="Behavior, health, environment state, animal visible details..." style="resize: vertical; min-height: 100px; font-family: inherit; line-height: 1.4;"></textarea>
@@ -980,7 +994,8 @@ let AI_SCRIPT_URL = "";
 let AIFEEDBACK_SCRIPT_URL = "";
 let EDU_SCRIPT_URL = "";
 let CAREGUIDE_SCRIPT_URL = "";
-
+let MEDIA_SCRIPT_URL = "";
+    
 // Safe URL parser: Returns standard URLs as-is, decodes if Base64
 function safeParseUrl(val) {
     if (!val) return "";
@@ -1024,6 +1039,7 @@ async function fetchDatabaseRoutes() {
             AIFEEDBACK_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_AI_And_Feedback"]);
             EDU_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_Educational Training"]);
             CAREGUIDE_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_CareGuide"]);
+            MEDIA_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_Media_API"]);
             return true;
         } else {
             console.error("[ERROR] Route fetch failed:", result.message);
@@ -2028,6 +2044,96 @@ function buildForecastChartConfig(labelString, dataArray, color, ctx) {
         options: commonOptions() 
     };
 }
+
+async function processAndUploadImage() {
+    const fileInput = document.getElementById('imgFileInput');
+    const dateInput = document.getElementById('imgUserDate');
+    const btn = document.getElementById('btnUploadImg');
+
+    if (!fileInput.files || fileInput.files.length === 0) {
+        alert("Please select an image file.");
+        return;
+    }
+    if (!dateInput.value) {
+        alert("Please set a date for the timeline.");
+        return;
+    }
+
+    const file = fileInput.files[0];
+    const originalBtnText = btn.innerHTML;
+    
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> SCRUBBING METADATA...';
+    btn.disabled = true;
+
+    const reader = new FileReader();
+    reader.onload = function(event) {
+        const img = new Image();
+        img.onload = async function() {
+            const canvas = document.getElementById('hiddenImageCanvas');
+            const ctx = canvas.getContext('2d');
+
+            // Limite de 800px para garantir upload rápido e não lotar o Drive
+            const MAX_SIZE = 800;
+            let width = img.width;
+            let height = img.height;
+
+            if (width > height) {
+                if (width > MAX_SIZE) {
+                    height *= MAX_SIZE / width;
+                    width = MAX_SIZE;
+                }
+            } else {
+                if (height > MAX_SIZE) {
+                    width *= MAX_SIZE / height;
+                    height = MAX_SIZE;
+                }
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+            
+            // Desenhar no canvas remove fisicamente qualquer EXIF (GPS, Data do Celular, Fabricante)
+            ctx.drawImage(img, 0, 0, width, height);
+
+            // Exporta a imagem limpa para Base64 (Qualidade JPEG em 80%)
+            const cleanBase64 = canvas.toDataURL('image/jpeg', 0.8);
+
+            const payload = {
+                action: "upload_image",
+                pageId: currentPageId, // Usa o pageId que já existe globalmente no seu código
+                userDate: dateInput.value,
+                imageData: cleanBase64,
+                csrfToken: sessionStorage.getItem('authToken'),
+                authToken: sessionStorage.getItem('authToken')
+            };
+
+            try {
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> UPLOADING TO DRIVE...';
+                
+                // Envio cego 'no-cors' idêntico à sua arquitetura de segurança atual
+                await fetch(MEDIA_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: JSON.stringify(payload),
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                alert("Success: Image scrubbed and saved to timeline!");
+                fileInput.value = "";
+                dateInput.value = "";
+            } catch (e) {
+                alert("Technical error during image upload.");
+                console.error(e);
+            } finally {
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+            }
+        };
+        img.src = event.target.result;
+    };
+    reader.readAsDataURL(file);
+}
+    
     function commonOptions() {
     return {
         responsive: true,
