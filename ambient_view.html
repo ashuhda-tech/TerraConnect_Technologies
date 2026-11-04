@@ -2065,6 +2065,8 @@ async function loadMediaTimeline(id) {
         if (json.status === 'success' && json.data.length > 0) {
             const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
             renderMediaTimeline(json.data, accentColor);
+            // --- NEW LINE: Enforce visibility after the chart is actually rendered ---
+        document.getElementById('chart-timeline').style.display = 'block'; 
         } else {
             document.getElementById('chart-timeline').style.display = 'none'; // Esconde se não houver imagens
         }
