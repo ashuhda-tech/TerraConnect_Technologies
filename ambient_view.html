@@ -2081,8 +2081,8 @@ function renderMediaTimeline(events, color) {
     if(!canvas) return;
     const ctx = canvas.getContext('2d');
 
-    // Ordena pelo Timestamp (Coluna 3) para garantir que a linha do tempo fique cronológica
-    events.sort((a, b) => a[3] - b[3]);
+    // Ordena pela data (Coluna 1) para garantir a ordem da mais antiga para a mais nova
+    events.sort((a, b) => new Date(a[1]) - new Date(b[1]));
 
     const labels = [];
     const dataY = [];
