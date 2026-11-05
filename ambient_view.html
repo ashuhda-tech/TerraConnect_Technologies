@@ -1425,7 +1425,7 @@ async function loadData() {
                         await loadBiologicalHistory(currentPageId);
                     } else if (dbName === "TerraConnect_VetData") {
                         await loadVetVisits(currentPageId);
-                    } else if (dbName === "TerraConnect_ImageDB") {
+                    } else if (dbName === "TerraConnect_Media_API") {
                         await loadMediaTimeline(currentPageId);
                     }else if (dbName === "TerraConnect_Enviromental Setup") {
                         if (typeof loadExistingConfig === "function") await loadExistingConfig();
