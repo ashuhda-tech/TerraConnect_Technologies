@@ -670,6 +670,10 @@
                 <div class="chart-card" id="chart-timeline" style="grid-column: 1 / -1; height: 350px;">
                     <h3 class="a70-font"><i class="fas fa-camera-retro"></i> Media Timeline</h3>
                     <div style="position: relative; width: 100%; height: 85%;">
+                        <div id="timeline-loading" style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--accent); gap: 10px; font-size: 0.85rem; opacity: 0.8;">
+                            <i class="fas fa-spinner fa-spin" style="font-size: 1.5rem;"></i>
+                            <span>Syncing media timeline...</span>
+                        </div>
                         <canvas id="timelineChart"></canvas>
                     </div>
                 </div>
@@ -2061,21 +2065,28 @@ let activeHoverKey = null;
 // Busca os dados da Media API
 // 1. Fetch ONLY lightweight metadata (no heavy image strings)
 async function loadMediaTimeline(id) {
+    const timelineCard = document.getElementById('chart-timeline');
+    const loadingEl = document.getElementById('timeline-loading');
+
     try {
         console.log("[FLAG] loadMediaTimeline: Fetching lightweight timeline metadata...");
         const res = await fetch(`${MEDIA_SCRIPT_URL}?action=read_metadata&pageId=${encodeURIComponent(id)}${authParams}`);
         const json = await res.json();
-        
+
+        console.log("[FLAG] loadMediaTimeline: Response received ->", json);
+
         if (json.status === 'success' && Array.isArray(json.data) && json.data.length > 0) {
+            if (loadingEl) loadingEl.style.display = 'none';
             const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
             renderMediaTimeline(json.data, accentColor);
-            document.getElementById('chart-timeline').style.display = 'block';
+            if (timelineCard) timelineCard.style.display = 'block';
         } else {
-            document.getElementById('chart-timeline').style.display = 'none';
+            console.warn("[FLAG] loadMediaTimeline: No media records or backend warning ->", json.message || "0 items");
+            if (timelineCard) timelineCard.style.display = 'none';
         }
     } catch (e) {
-        console.error("Error loading Media Timeline metadata:", e);
-        document.getElementById('chart-timeline').style.display = 'none';
+        console.error("[FLAG] loadMediaTimeline: Connection/Parse error ->", e);
+        if (timelineCard) timelineCard.style.display = 'none';
     }
 }
 
