@@ -1426,7 +1426,7 @@ async function loadData() {
                     } else if (dbName === "TerraConnect_VetData") {
                         await loadVetVisits(currentPageId);
                     } else if (dbName === "TerraConnect_Media_API") {
-                        await loadMediaTimeline(currentPageId);
+                        loadMediaTimeline(currentPageId);
                     }else if (dbName === "TerraConnect_Enviromental Setup") {
                         if (typeof loadExistingConfig === "function") await loadExistingConfig();
                     } else if (dbName === "TerraConnect_FLAGS_Dashboard View") {
@@ -2055,55 +2055,105 @@ function buildForecastChartConfig(labelString, dataArray, color, ctx) {
 }
 
 let timelineChart;
+const mediaImageCache = new Map(); // Stores loaded Base64/URLs by unique pointKey
+let hoverFetchTimer = null;
+let activeHoverKey = null;
 // Busca os dados da Media API
+// 1. Fetch ONLY lightweight metadata (no heavy image strings)
 async function loadMediaTimeline(id) {
     try {
-        console.log("[FLAG] loadMediaTimeline: Buscando histórico de mídia...");
-        const res = await fetch(`${MEDIA_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(id)}${authParams}`);
+        console.log("[FLAG] loadMediaTimeline: Fetching lightweight timeline metadata...");
+        const res = await fetch(`${MEDIA_SCRIPT_URL}?action=read_metadata&pageId=${encodeURIComponent(id)}${authParams}`);
         const json = await res.json();
         
-        if (json.status === 'success' && json.data.length > 0) {
+        if (json.status === 'success' && Array.isArray(json.data) && json.data.length > 0) {
             const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
             renderMediaTimeline(json.data, accentColor);
-            // --- NEW LINE: Enforce visibility after the chart is actually rendered ---
-        document.getElementById('chart-timeline').style.display = 'block'; 
+            document.getElementById('chart-timeline').style.display = 'block';
         } else {
-            document.getElementById('chart-timeline').style.display = 'none'; // Esconde se não houver imagens
+            document.getElementById('chart-timeline').style.display = 'none';
         }
     } catch (e) {
-        console.error("Erro ao carregar a Timeline de Mídia:", e);
+        console.error("Error loading Media Timeline metadata:", e);
+        document.getElementById('chart-timeline').style.display = 'none';
     }
 }
 
-// Constrói a linha plana (Y = 0) com pontos marcadores
+    // Helper to prevent UTC-to-local (-3h) day-shift on "YYYY-MM-DD" strings
+    function parseSafeLocalDate(dateStr) {
+        const clean = String(dateStr || "").trim();
+        if (/^\d{4}-\d{2}-\d{2}$/.test(clean)) {
+            const [y, m, d] = clean.split('-').map(Number);
+            return new Date(y, m - 1, d, 12, 0, 0); // Local noon never shifts day
+        }
+        return new Date(clean);
+    }
+    
+// 2. Build the timeline with Drive fileId + chronological same-day sorting
 function renderMediaTimeline(events, color) {
     const canvas = document.getElementById('timelineChart');
-    if(!canvas) return;
+    if (!canvas) return;
     const ctx = canvas.getContext('2d');
 
-    // Ordena pela data (Coluna 1) para garantir a ordem da mais antiga para a mais nova
-    events.sort((a, b) => new Date(a[1]) - new Date(b[1]));
+    // Sort by date first, then by upload timestamp for multiple photos on the same day
+    events.sort((a, b) => {
+        const diff = parseSafeLocalDate(a.date || a[1]) - parseSafeLocalDate(b.date || b[1]);
+        if (diff !== 0) return diff;
+        return (Number(a.timestamp || a[4]) || 0) - (Number(b.timestamp || b[4]) || 0);
+    });
 
     const labels = [];
     const dataY = [];
-    const imageUrls = [];
+    const pointMeta = [];
+    const dateOccurrenceMap = {};
 
     events.forEach(e => {
-        labels.push(formatDateDisplay(e[1])); 
-        dataY.push(0); // Força a linha a ficar 100% reta no meio do gráfico
-        imageUrls.push(e[2]);
+        const pageId = e.pageId || e[0] || currentPageId;
+        const rawDate = String(e.date || e[1] || "").trim();
+        const mediaType = e.type || e[2] || "IMAGE";
+        const fileId = e.fileId || e[3] || "";
+
+        const dateKey = `${pageId}_${rawDate}`;
+        dateOccurrenceMap[dateKey] = (dateOccurrenceMap[dateKey] || 0) + 1;
+        const sameDateIndex = dateOccurrenceMap[dateKey];
+
+        const d = parseSafeLocalDate(rawDate);
+        const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+        const formattedLabel = isNaN(d.getTime())
+            ? rawDate
+            : `${String(d.getDate()).padStart(2, '0')} / ${months[d.getMonth()]} / ${d.getFullYear()}`;
+
+        labels.push(formattedLabel);
+        dataY.push(0);
+
+        pointMeta.push({
+            pointKey: `${pageId}|${fileId || rawDate}|${sameDateIndex}`,
+            pageId: pageId,
+            rawDate: rawDate,
+            formattedDate: formattedLabel,
+            type: mediaType,
+            fileId: fileId,
+            sameDateIndex: sameDateIndex
+        });
     });
 
-    if(timelineChart) timelineChart.destroy();
+    pointMeta.forEach(meta => {
+        const totalOnDate = dateOccurrenceMap[`${meta.pageId}_${meta.rawDate}`];
+        meta.displayTitle = totalOnDate > 1
+            ? `${meta.formattedDate} (#${meta.sameDateIndex})`
+            : meta.formattedDate;
+    });
+
+    if (timelineChart) timelineChart.destroy();
 
     timelineChart = new Chart(ctx, {
         type: 'line',
         data: {
             labels: labels,
             datasets: [{
-                label: 'Registro Visual',
+                label: 'Visual Record',
                 data: dataY,
-                imageUrls: imageUrls, // Injetamos as URLs dentro do Dataset para o Tooltip ler depois
+                pointMeta: pointMeta,
                 borderColor: color,
                 backgroundColor: color,
                 borderWidth: 2,
@@ -2122,16 +2172,12 @@ function renderMediaTimeline(events, color) {
             plugins: {
                 legend: { display: false },
                 tooltip: {
-                    enabled: false, // Desliga o tooltip feio padrão
-                    external: customImageTooltip // Aciona nossa função injetora de HTML
+                    enabled: false,
+                    external: customImageTooltip
                 }
             },
             scales: {
-                y: {
-                    display: false, // Oculta o eixo Y (já que tudo é zero) criando a ilusão de varal
-                    min: -1,
-                    max: 1
-                },
+                y: { display: false, min: -1, max: 1 },
                 x: {
                     grid: { display: false, drawBorder: false },
                     ticks: { color: '#9ca3af', font: { size: 10 } }
@@ -2140,51 +2186,108 @@ function renderMediaTimeline(events, color) {
         }
     });
 }
-
-// Gera a janela flutuante elegante que segue o mouse
+// 3. On-Demand Image Loader inside the Floating Tooltip
 function customImageTooltip(context) {
     let tooltipEl = document.getElementById('chartjs-image-tooltip');
 
-    // Inicialização da DOM se não existir
     if (!tooltipEl) {
         tooltipEl = document.createElement('div');
         tooltipEl.id = 'chartjs-image-tooltip';
         tooltipEl.innerHTML = `
-            <div class="tooltip-inner" style="background: rgba(10, 12, 16, 0.95); backdrop-filter: blur(10px); border: 2px solid var(--accent); border-radius: 12px; padding: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); text-align: center; display: flex; flex-direction: column; gap: 8px;">
+            <div class="tooltip-inner" style="background: rgba(10, 12, 16, 0.95); backdrop-filter: blur(10px); border: 2px solid var(--accent); border-radius: 12px; padding: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); text-align: center; display: flex; flex-direction: column; gap: 8px; min-width: 220px;">
                 <span id="tooltip-date" style="font-family: 'Cinzel', serif; color: var(--accent); font-size: 0.85rem; letter-spacing: 1px; font-weight: bold;"></span>
-                <img id="tooltip-img" style="width: 250px; height: 250px; border-radius: 8px; object-fit: cover; display: block; border: 1px solid rgba(255,255,255,0.1);">
+                <div id="tooltip-loader" style="width: 250px; height: 180px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--accent); gap: 8px; font-size: 0.8rem;">
+                    <i class="fas fa-spinner fa-spin" style="font-size: 1.5rem;"></i>
+                    <span>Loading media...</span>
+                </div>
+                <img id="tooltip-img" style="width: 250px; height: 250px; border-radius: 8px; object-fit: cover; display: none; border: 1px solid rgba(255,255,255,0.1);">
             </div>`;
         tooltipEl.style.position = 'absolute';
         tooltipEl.style.pointerEvents = 'none';
-        tooltipEl.style.transition = 'opacity 0.2s ease, transform 0.1s ease'; // Movimento suave do mouse
+        tooltipEl.style.transition = 'opacity 0.2s ease, transform 0.1s ease';
         tooltipEl.style.zIndex = 99999;
         document.body.appendChild(tooltipEl);
     }
 
     const tooltipModel = context.tooltip;
-    
-    // Oculta se o mouse saiu da bolinha
+
+    // Hide tooltip and cancel pending fetch if cursor leaves bullet point
     if (tooltipModel.opacity === 0) {
         tooltipEl.style.opacity = 0;
+        activeHoverKey = null;
+        clearTimeout(hoverFetchTimer);
         return;
     }
 
-    // Injeta a foto certa com base no ponto onde o mouse está
-    if (tooltipModel.body) {
-        const dataIndex = tooltipModel.dataPoints[0].dataIndex;
-        const datasetIndex = tooltipModel.dataPoints[0].datasetIndex;
-        const chartData = context.chart.data.datasets[datasetIndex];
-        
-        document.getElementById('tooltip-img').src = chartData.imageUrls[dataIndex];
-        document.getElementById('tooltip-date').innerText = context.chart.data.labels[dataIndex];
-    }
-
-    // Posiciona fisicamente o balão centralizado acima da bolinha do gráfico
+    // Position tooltip above the hovered bullet point
     const position = context.chart.canvas.getBoundingClientRect();
     tooltipEl.style.opacity = 1;
     tooltipEl.style.left = position.left + window.scrollX + tooltipModel.caretX + 'px';
     tooltipEl.style.top = position.top + window.scrollY + tooltipModel.caretY - 20 + 'px';
     tooltipEl.style.transform = 'translate(-50%, -100%)';
+
+    if (!tooltipModel.body || !tooltipModel.dataPoints?.length) return;
+
+    const dataIndex = tooltipModel.dataPoints[0].dataIndex;
+    const datasetIndex = tooltipModel.dataPoints[0].datasetIndex;
+    const meta = context.chart.data.datasets[datasetIndex].pointMeta[dataIndex];
+
+    const dateEl = document.getElementById('tooltip-date');
+    const loaderEl = document.getElementById('tooltip-loader');
+    const imgEl = document.getElementById('tooltip-img');
+
+    dateEl.innerText = meta.displayTitle;
+
+    // If we are already processing this exact bullet point, avoid re-triggering
+    if (activeHoverKey === meta.pointKey) return;
+    activeHoverKey = meta.pointKey;
+    clearTimeout(hoverFetchTimer);
+
+    // A. Cache Hit: Render immediately with zero network latency
+    if (mediaImageCache.has(meta.pointKey)) {
+        loaderEl.style.display = 'none';
+        imgEl.src = mediaImageCache.get(meta.pointKey);
+        imgEl.style.display = 'block';
+        return;
+    }
+
+    // B. Cache Miss: Show spinner and debounce backend fetch by 150ms
+    imgEl.style.display = 'none';
+    loaderEl.innerHTML = `<i class="fas fa-spinner fa-spin" style="font-size: 1.5rem;"></i><span>Loading media...</span>`;
+    loaderEl.style.display = 'flex';
+
+    hoverFetchTimer = setTimeout(async () => {
+        try {
+            const query = new URLSearchParams({
+                action: 'get_image',
+                pageId: meta.pageId,
+                date: meta.rawDate,
+                type: meta.type,
+                fileId: meta.fileId,
+                sameDateIndex: meta.sameDateIndex
+            });
+            const res = await fetch(`${MEDIA_SCRIPT_URL}?${query.toString()}${authParams}`);
+            const json = await res.json();
+
+            if (json.status === 'success' && json.imageData) {
+                mediaImageCache.set(meta.pointKey, json.imageData);
+
+                // Only update DOM if the user is still hovering this same bullet point
+                if (activeHoverKey === meta.pointKey) {
+                    imgEl.src = json.imageData;
+                    loaderEl.style.display = 'none';
+                    imgEl.style.display = 'block';
+                }
+            } else if (activeHoverKey === meta.pointKey) {
+                loaderEl.innerHTML = `<i class="fas fa-exclamation-circle" style="color:#ff5f5f;"></i><span>Image unavailable</span>`;
+            }
+        } catch (err) {
+            console.error("Failed to lazy-load timeline image:", err);
+            if (activeHoverKey === meta.pointKey) {
+                loaderEl.innerHTML = `<i class="fas fa-exclamation-circle" style="color:#ff5f5f;"></i><span>Connection error</span>`;
+            }
+        }
+    }, 150);
 }
 
 async function processAndUploadImage() {
