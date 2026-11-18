@@ -137,15 +137,20 @@
     .main-header p { color: var(--text-muted); margin: 5px 0 0; }
     .management-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-bottom: 30px; }
 
-    .control-center-grid {display: flex;flex-wrap: wrap;gap: 12px;align-items: stretch;width: 100%;margin-bottom: 30px;}
-    .control-inputs-pack {flex: 2.2 1 720px;display: grid;grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));grid-auto-rows: minmax(100px, auto);grid-auto-flow: dense;gap: 12px;}
-
-    /* Tall cards span 2 rows so shorter cards stack cleanly in pairs beside them */
+    .control-center-grid { display: flex; flex-wrap: wrap; gap: 12px; align-items: stretch; width: 100%; margin-bottom: 30px; }
+    .control-inputs-pack { flex: 1.4 1 640px; display: grid; grid-template-columns: repeat(auto-fit, minmax(185px, 1fr)); grid-auto-rows: minmax(98px, auto); grid-auto-flow: dense; gap: 12px; }
+    .control-inputs-pack .input-group { padding: 0; }
+    
+    /* Tall cards and stacked pairs each occupy 2 grid rows */
     #inFeedWrapper,
-    #inImageWrapper {grid-row: span 2;}
-
-    #inNoteWrapper {flex: 1 1 320px;display: flex;flex-direction: column;gap: 8px;min-height: 212px;}
-    #inNoteWrapper textarea {flex: 1;min-height: 110px;resize: vertical;font-family: inherit;line-height: 1.4;}
+    #inImageWrapper,
+    .control-stack-col { grid-row: span 2; }
+    
+    .control-stack-col { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+    .control-stack-col .input-card { flex: 1; justify-content: space-between; }
+    
+    #inNoteWrapper { flex: 1.2 1 360px; display: flex; flex-direction: column; gap: 8px; min-height: 208px; }
+    #inNoteWrapper textarea { flex: 1; min-height: 110px; resize: vertical; font-family: inherit; line-height: 1.4; }
     
     .sensor-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 25px; }
     .summary-section { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin-bottom: 30px; }
@@ -613,6 +618,7 @@
                     
             <div class="control-center-grid">
                 <div class="control-inputs-pack">
+                    <!-- Column 1 (2 rows) -->
                     <div class="input-card" id="inFeedWrapper" style="gap: 8px;">
                         <div class="input-header"><i class="fas fa-utensils"></i> Add Feeding (g)</div>
                         <input type="number" id="inFeed" class="input-field" placeholder="Amount (g)">
@@ -624,6 +630,23 @@
                             <i class="fas fa-plus"></i> ADD RECORD
                         </button>
                     </div>
+                
+                    <!-- Column 2 (2 rows) -->
+                    <div class="input-card" id="inImageWrapper" style="gap: 8px;">
+                        <div class="input-header"><i class="fas fa-camera"></i> Picture Upload</div>
+                        <div class="input-group">
+                            <input type="date" id="imgUserDate" class="input-field" required>
+                        </div>
+                        <div class="input-group">
+                            <input type="file" id="imgFileInput" class="input-field" accept="image/*" style="font-size: 0.75rem; padding: 6px;">
+                        </div>
+                        <button class="btn-send" id="btnUploadImg" onclick="processAndUploadImage()" style="margin-top: 5px; justify-content: center;">
+                            <i class="fas fa-upload"></i> UPLOAD
+                        </button>
+                        <canvas id="hiddenImageCanvas" style="display:none;"></canvas>
+                    </div>
+                
+                    <!-- Column 3 (Row 1) -->
                     <div class="input-card" id="inShedWrapper">
                         <div class="input-header"><i class="fas fa-snake"></i> Add Shedd (Date)</div>
                         <div class="input-group">
@@ -631,39 +654,30 @@
                             <button class="btn-send" onclick="sendToCloud('Shedding', 'inShed')"><i class="fas fa-plus"></i></button>
                         </div>
                     </div>
-                    <div class="input-card" id="inWeightWrapper">
-                        <div class="input-header"><i class="fas fa-weight"></i> Add Weighting (g)</div>
-                        <div class="input-group">
-                            <input type="number" id="inWeight" class="input-field" placeholder="0">
-                            <button class="btn-send" onclick="sendToCloud('Weighting', 'inWeight')"><i class="fas fa-plus"></i></button>
+                
+                    <!-- Column 4 (2 rows: Weight stacked over Length/Height) -->
+                    <div class="control-stack-col">
+                        <div class="input-card" id="inWeightWrapper">
+                            <div class="input-header"><i class="fas fa-weight"></i> Add Weighting (g)</div>
+                            <div class="input-group">
+                                <input type="number" id="inWeight" class="input-field" placeholder="0">
+                                <button class="btn-send" onclick="sendToCloud('Weighting', 'inWeight')"><i class="fas fa-plus"></i></button>
+                            </div>
                         </div>
-                    </div>
-                    <div class="input-card" id="inHeightWrapper">
-                        <div class="input-header"><i class="fas fa-ruler-vertical"></i> Add Height (cm)</div>
-                        <div class="input-group">
-                            <input type="number" id="inHeight" class="input-field" placeholder="0">
-                            <button class="btn-send" onclick="sendToCloud('Height', 'inHeight')"><i class="fas fa-plus"></i></button>
+                        <div class="input-card" id="inHeightWrapper">
+                            <div class="input-header"><i class="fas fa-ruler-vertical"></i> Add Height (cm)</div>
+                            <div class="input-group">
+                                <input type="number" id="inHeight" class="input-field" placeholder="0">
+                                <button class="btn-send" onclick="sendToCloud('Height', 'inHeight')"><i class="fas fa-plus"></i></button>
+                            </div>
                         </div>
-                    </div>
-                    <div class="input-card" id="inLengthWrapper">
-                        <div class="input-header"><i class="fas fa-ruler-horizontal"></i> Add Length (cm)</div>
-                        <div class="input-group">
-                            <input type="number" id="inLength" class="input-field" placeholder="0">
-                            <button class="btn-send" onclick="sendToCloud('Length', 'inLength')"><i class="fas fa-plus"></i></button>
+                        <div class="input-card" id="inLengthWrapper">
+                            <div class="input-header"><i class="fas fa-ruler-horizontal"></i> Add Length (cm)</div>
+                            <div class="input-group">
+                                <input type="number" id="inLength" class="input-field" placeholder="0">
+                                <button class="btn-send" onclick="sendToCloud('Length', 'inLength')"><i class="fas fa-plus"></i></button>
+                            </div>
                         </div>
-                    </div>
-                    <div class="input-card" id="inImageWrapper" style="gap: 8px;">
-                        <div class="input-header"><i class="fas fa-camera"></i> Picture Upload</div>
-                        <div class="input-group" style="padding: 0;">
-                            <input type="date" id="imgUserDate" class="input-field" required>
-                        </div>
-                        <div class="input-group" style="padding: 0;">
-                            <input type="file" id="imgFileInput" class="input-field" accept="image/*" style="font-size: 0.75rem; padding: 6px;">
-                        </div>
-                        <button class="btn-send" id="btnUploadImg" onclick="processAndUploadImage()" style="margin-top: 5px; justify-content: center;">
-                            <i class="fas fa-upload"></i> UPLOAD
-                        </button>
-                        <canvas id="hiddenImageCanvas" style="display:none;"></canvas>
                     </div>
                 </div>
             
@@ -1235,6 +1249,13 @@ function removeLoader() {
 
 // NOVO: Função Global para verificar e ocultar seções sem nenhum conteúdo ativo
 function cleanUpEmptySections() {
+    document.querySelectorAll('.control-stack-col').forEach(col => {
+    const cards = col.querySelectorAll('.input-card');
+    const anyCardVisible = Array.from(cards).some(
+        c => c.style.display !== 'none' && window.getComputedStyle(c).display !== 'none'
+    );
+    col.style.display = anyCardVisible ? 'flex' : 'none';
+});
     const sections = document.querySelectorAll('div[id^="section-"], div#vet-section');
     sections.forEach(section => {
         // Se a seção já está oculta explicitamente, pula
