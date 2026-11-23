@@ -739,7 +739,8 @@
 
                 <div class="cam-status-bar">
                     <span id="camStatusText" style="color: #ff5f5f;">Status: Offline</span>
-                    <div>
+                    <div style="display: flex; gap: 6px;">
+                        <button id="btnResetCamIP" onclick="clearLocalCameraIP()" style="display:none; background:transparent; color:#ff5f5f; border:1px solid #ff5f5f; border-radius:3px; font-size:0.6rem; cursor:pointer; padding:3px 6px;">Use Auto</button>
                         <button onclick="setLocalCameraIP()" style="background:transparent; color:var(--text-light); border:1px solid var(--accent); border-radius:3px; font-size:0.6rem; cursor:pointer; padding:3px 6px;">Set Local IP</button>
                     </div>
                 </div>
@@ -1074,6 +1075,7 @@ async function fetchDatabaseRoutes() {
             EDU_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_Educational Training"]);
             CAREGUIDE_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_CareGuide"]);
             MEDIA_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_Media_API"]);
+            NGROK_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_Ngrok"]);
             return true;
         } else {
             console.error("[ERROR] Route fetch failed:", result.message);
@@ -1097,6 +1099,9 @@ async function fetchDatabaseRoutes() {
     let r1ChannelId = "", r1ReadKey = "";
     let gpsChannelId = "", gpsReadKey = "";
     let walkSensorIp = "";
+    let sheetCameraIp = "";
+    let sheetNgrokUrl = "";
+    let activeCamSource = "Auto";
     let isSosActive = false;
     let myChart; 
     let vetMap = null;
@@ -1426,14 +1431,18 @@ async function loadData() {
             }
             
             walkSensorIp = data[32];
+            sheetCameraIp = data[17] || "";
+            sheetNgrokUrl = data[35] || "";
             document.getElementById('dynChannel').innerText = mainChannelId || "---";
-
+            
             const photoURL = data[19];
             const photoBase = data[16];
             const imgEl = document.getElementById('dynPhoto');
             if (photoURL && photoURL.startsWith('http')) imgEl.src = photoURL;
             else if (photoBase && photoBase.length > 100) imgEl.src = photoBase;
 
+            resolveCameraStream();
+            
             let localCam = localStorage.getItem('camIP_' + currentPageId);
             if (localCam) {
                 document.getElementById('cameraStream').src = `http://${localCam}/stream`;
@@ -2588,25 +2597,110 @@ async function processAndUploadImage() {
 }
 
 
-    function showCamOverlay() {
-        document.getElementById('cameraOverlay').style.opacity = "1";
-        document.getElementById('camStatusText').innerText = "Status: Offline";
-        document.getElementById('camStatusText').style.color = "#ff5f5f";
-    }
+function isValidCamAddress(val) {
+    if (!val) return false;
+    const clean = String(val).trim();
+    return clean !== "" && clean !== "---" && clean.toLowerCase() !== "null";
+}
 
-    function hideCamOverlay() {
-        document.getElementById('cameraOverlay').style.opacity = "0";
-        document.getElementById('camStatusText').innerText = "Status: Online | Local Sec Link";
-        document.getElementById('camStatusText').style.color = "#a3b18a";
+function normalizeStreamUrl(rawAddress) {
+    let addr = String(rawAddress).trim().replace(/\/+$/, "");
+    // Add http:// only if protocol isn't already specified (supports both LAN IPs and https:// ngrok URLs)
+    if (!/^https?:\/\//i.test(addr)) {
+        addr = `http://${addr}`;
     }
+    // Append /stream unless the URL already points to a stream endpoint
+    if (!/\/stream$/i.test(addr)) {
+        addr = `${addr}/stream`;
+    }
+    return addr;
+}
 
-    function setLocalCameraIP() {
-        let ip = prompt("Enter local Camera IP (e.g. 192.168.0.100):");
-        if (ip) {
-            localStorage.setItem('camIP_' + currentPageId, ip);
-            document.getElementById('cameraStream').src = `http://${ip}/stream`;
+async function fetchNgrokAddress() {
+    // 1. Check NGROK column from TerraConnect_PageID (Column 36 / index 35)
+    if (isValidCamAddress(sheetNgrokUrl)) {
+        return sheetNgrokUrl.trim();
+    }
+    // 2. Optional: If TerraConnect_Ngrok API is configured in Master Directory, query it
+    if (typeof NGROK_SCRIPT_URL !== "undefined" && isValidCamAddress(NGROK_SCRIPT_URL)) {
+        try {
+            const res = await fetch(`${NGROK_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(currentPageId)}${authParams}`);
+            const json = await res.json();
+            if (json.status === "success" && isValidCamAddress(json.ngrokUrl)) {
+                return json.ngrokUrl.trim();
+            }
+        } catch (e) {
+            console.warn("NGROK lookup failed, falling back to Spreadsheet IP:", e);
         }
     }
+    return "";
+}
+
+async function resolveCameraStream() {
+    const streamEl = document.getElementById('cameraStream');
+    const resetBtn = document.getElementById('btnResetCamIP');
+    if (!streamEl) return;
+
+    // PRIORITY 1: Manual Input (localStorage) — ignores NGROK and Spreadsheet IP
+    const manualCam = localStorage.getItem('camIP_' + currentPageId);
+    if (isValidCamAddress(manualCam)) {
+        activeCamSource = "Manual IP";
+        if (resetBtn) resetBtn.style.display = "inline-block";
+        streamEl.src = normalizeStreamUrl(manualCam);
+        return;
+    }
+
+    if (resetBtn) resetBtn.style.display = "none";
+
+    // PRIORITY 2: NGROK Address
+    const ngrokAddr = await fetchNgrokAddress();
+    if (isValidCamAddress(ngrokAddr)) {
+        activeCamSource = "NGROK";
+        streamEl.src = normalizeStreamUrl(ngrokAddr);
+        return;
+    }
+
+    // PRIORITY 3: IP from Spreadsheet (TerraConnect_PageID Col 18 / data[17])
+    if (isValidCamAddress(sheetCameraIp)) {
+        activeCamSource = "Sheet IP";
+        streamEl.src = normalizeStreamUrl(sheetCameraIp);
+        return;
+    }
+
+    // None available
+    activeCamSource = "Unconfigured";
+    showCamOverlay();
+}
+
+function showCamOverlay() {
+    document.getElementById('cameraOverlay').style.opacity = "1";
+    document.getElementById('camStatusText').innerText = `Status: Offline (${activeCamSource})`;
+    document.getElementById('camStatusText').style.color = "#ff5f5f";
+}
+
+function hideCamOverlay() {
+    document.getElementById('cameraOverlay').style.opacity = "0";
+    document.getElementById('camStatusText').innerText = `Status: Online | ${activeCamSource}`;
+    document.getElementById('camStatusText').style.color = "#a3b18a";
+}
+
+function setLocalCameraIP() {
+    const currentManual = localStorage.getItem('camIP_' + currentPageId) || "";
+    const ip = prompt("Enter manual Camera IP or URL (leave empty to use Auto NGROK/Sheet IP):", currentManual);
+    if (ip === null) return; // User clicked Cancel
+
+    if (ip.trim() === "") {
+        clearLocalCameraIP();
+    } else {
+        localStorage.setItem('camIP_' + currentPageId, ip.trim());
+        resolveCameraStream();
+    }
+}
+
+function clearLocalCameraIP() {
+    localStorage.removeItem('camIP_' + currentPageId);
+    resolveCameraStream();
+}
 
 // FUNÇÃO PARA BUSCAR GPS NO THINGSPEAK
 async function fetchLatestGPS() {
