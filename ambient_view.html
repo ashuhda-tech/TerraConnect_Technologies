@@ -1075,7 +1075,6 @@ async function fetchDatabaseRoutes() {
             EDU_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_Educational Training"]);
             CAREGUIDE_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_CareGuide"]);
             MEDIA_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_Media_API"]);
-            NGROK_SCRIPT_URL = safeParseUrl(result.data["TerraConnect_Ngrok"]);
             return true;
         } else {
             console.error("[ERROR] Route fetch failed:", result.message);
@@ -1102,6 +1101,7 @@ async function fetchDatabaseRoutes() {
     let sheetCameraIp = "";
     let sheetNgrokUrl = "";
     let activeCamSource = "Auto";
+    let cameraPollInterval = null;
     let isSosActive = false;
     let myChart; 
     let vetMap = null;
@@ -1432,7 +1432,7 @@ async function loadData() {
             
             walkSensorIp = data[32];
             sheetCameraIp = data[17] || "";
-            sheetNgrokUrl = data[35] || "";
+            sheetNgrokUrl = data[34] || "";
             document.getElementById('dynChannel').innerText = mainChannelId || "---";
             
             const photoURL = data[19];
@@ -2596,7 +2596,7 @@ async function processAndUploadImage() {
     }
 }
 
-
+// Section Live Camera
 function isValidCamAddress(val) {
     if (!val) return false;
     const clean = String(val).trim();
@@ -2605,35 +2605,23 @@ function isValidCamAddress(val) {
 
 function normalizeStreamUrl(rawAddress) {
     let addr = String(rawAddress).trim().replace(/\/+$/, "");
-    // Add http:// only if protocol isn't already specified (supports both LAN IPs and https:// ngrok URLs)
     if (!/^https?:\/\//i.test(addr)) {
         addr = `http://${addr}`;
     }
-    // Append /stream unless the URL already points to a stream endpoint
     if (!/\/stream$/i.test(addr)) {
         addr = `${addr}/stream`;
     }
     return addr;
 }
 
-async function fetchNgrokAddress() {
-    // 1. Check NGROK column from TerraConnect_PageID (Column 36 / index 35)
-    if (isValidCamAddress(sheetNgrokUrl)) {
-        return sheetNgrokUrl.trim();
-    }
-    // 2. Optional: If TerraConnect_Ngrok API is configured in Master Directory, query it
-    if (typeof NGROK_SCRIPT_URL !== "undefined" && isValidCamAddress(NGROK_SCRIPT_URL)) {
-        try {
-            const res = await fetch(`${NGROK_SCRIPT_URL}?action=read&pageId=${encodeURIComponent(currentPageId)}${authParams}`);
-            const json = await res.json();
-            if (json.status === "success" && isValidCamAddress(json.ngrokUrl)) {
-                return json.ngrokUrl.trim();
-            }
-        } catch (e) {
-            console.warn("NGROK lookup failed, falling back to Spreadsheet IP:", e);
-        }
-    }
-    return "";
+function applyStreamSource(url) {
+    const streamEl = document.getElementById('cameraStream');
+    if (!streamEl) return;
+    // Reset src briefly so the browser re-attempts the connection even if the IP string is unchanged
+    streamEl.removeAttribute('src');
+    setTimeout(() => {
+        streamEl.src = url;
+    }, 50);
 }
 
 async function resolveCameraStream() {
@@ -2644,50 +2632,91 @@ async function resolveCameraStream() {
     // PRIORITY 1: Manual Input (localStorage) — ignores NGROK and Spreadsheet IP
     const manualCam = localStorage.getItem('camIP_' + currentPageId);
     if (isValidCamAddress(manualCam)) {
+        stopCameraAutoPoll();
         activeCamSource = "Manual IP";
         if (resetBtn) resetBtn.style.display = "inline-block";
-        streamEl.src = normalizeStreamUrl(manualCam);
+        applyStreamSource(normalizeStreamUrl(manualCam));
         return;
     }
 
     if (resetBtn) resetBtn.style.display = "none";
 
-    // PRIORITY 2: NGROK Address
-    const ngrokAddr = await fetchNgrokAddress();
-    if (isValidCamAddress(ngrokAddr)) {
+    // PRIORITY 2: NGROK Address from TerraConnect_PageID (Col AI / data[34])
+    if (isValidCamAddress(sheetNgrokUrl)) {
         activeCamSource = "NGROK";
-        streamEl.src = normalizeStreamUrl(ngrokAddr);
+        applyStreamSource(normalizeStreamUrl(sheetNgrokUrl));
         return;
     }
 
-    // PRIORITY 3: IP from Spreadsheet (TerraConnect_PageID Col 18 / data[17])
+    // PRIORITY 3: Local IP from TerraConnect_PageID (Col R / data[17])
     if (isValidCamAddress(sheetCameraIp)) {
         activeCamSource = "Sheet IP";
-        streamEl.src = normalizeStreamUrl(sheetCameraIp);
+        applyStreamSource(normalizeStreamUrl(sheetCameraIp));
         return;
     }
 
-    // None available
-    activeCamSource = "Unconfigured";
+    // None found yet — show offline overlay and keep polling spreadsheet every 15s
+    activeCamSource = "Searching Sheet...";
     showCamOverlay();
+}
+
+async function refreshCameraFromSheet() {
+    // Do not poll spreadsheet if user set a manual override
+    if (isValidCamAddress(localStorage.getItem('camIP_' + currentPageId))) {
+        stopCameraAutoPoll();
+        return;
+    }
+    if (!PAGEID_SCRIPT_URL || !loggedUser?.userID || !currentPageId) return;
+
+    try {
+        const url = `${PAGEID_SCRIPT_URL}?userID=${encodeURIComponent(loggedUser.userID)}&pageID=${encodeURIComponent(currentPageId)}${authParams}`;
+        const res = await fetch(url);
+        const json = await res.json();
+
+        if (json.status === "success" && Array.isArray(json.data)) {
+            sheetCameraIp = json.data[17] || "";
+            sheetNgrokUrl = json.data[34] || "";
+            resolveCameraStream();
+        }
+    } catch (e) {
+        console.warn("[Camera Auto-Poll] Failed to check spreadsheet:", e);
+    }
+}
+
+function startCameraAutoPoll() {
+    if (cameraPollInterval) return;
+    if (isValidCamAddress(localStorage.getItem('camIP_' + currentPageId))) return;
+
+    cameraPollInterval = setInterval(() => {
+        refreshCameraFromSheet();
+    }, 15000); // Re-checks spreadsheet & retries camera every 15 seconds while offline
+}
+
+function stopCameraAutoPoll() {
+    if (cameraPollInterval) {
+        clearInterval(cameraPollInterval);
+        cameraPollInterval = null;
+    }
 }
 
 function showCamOverlay() {
     document.getElementById('cameraOverlay').style.opacity = "1";
     document.getElementById('camStatusText').innerText = `Status: Offline (${activeCamSource})`;
     document.getElementById('camStatusText').style.color = "#ff5f5f";
+    startCameraAutoPoll();
 }
 
 function hideCamOverlay() {
     document.getElementById('cameraOverlay').style.opacity = "0";
     document.getElementById('camStatusText').innerText = `Status: Online | ${activeCamSource}`;
     document.getElementById('camStatusText').style.color = "#a3b18a";
+    stopCameraAutoPoll();
 }
 
 function setLocalCameraIP() {
     const currentManual = localStorage.getItem('camIP_' + currentPageId) || "";
     const ip = prompt("Enter manual Camera IP or URL (leave empty to use Auto NGROK/Sheet IP):", currentManual);
-    if (ip === null) return; // User clicked Cancel
+    if (ip === null) return;
 
     if (ip.trim() === "") {
         clearLocalCameraIP();
