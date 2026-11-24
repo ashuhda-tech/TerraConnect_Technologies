@@ -1994,14 +1994,79 @@ function renderWeight(events, color) {
 
 function renderShedding(processedData, color) {
     const canvas = document.getElementById('sheddingChart');
-    if(!canvas) return;
+    if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    
+
     const displayData = processedData.filter(d => d.interval > 0);
     const formattedData = displayData.map(d => [null, d.date, 'Shedding', d.interval]);
-    
-    if(sheddingChart) sheddingChart.destroy();
-    sheddingChart = new Chart(ctx, buildForecastChartConfig('Days between Sheds', formattedData, color, ctx));
+
+    if (sheddingChart) sheddingChart.destroy();
+
+    const config = buildForecastChartConfig('Days between Sheds', formattedData, color, ctx);
+
+    // Calculate days elapsed since the last recorded shedding event
+    const latestShedRecord = processedData.length > 0 ? processedData[processedData.length - 1] : null;
+    if (latestShedRecord && latestShedRecord.date) {
+        const lastShedDate = parseSafeLocalDate(latestShedRecord.date);
+        const now = new Date();
+        const todayNoon = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 0, 0);
+
+        if (!isNaN(lastShedDate.getTime())) {
+            const lastShedNoon = new Date(lastShedDate.getFullYear(), lastShedDate.getMonth(), lastShedDate.getDate(), 12, 0, 0);
+            const daysSinceLastShed = Math.max(0, Math.round((todayNoon - lastShedNoon) / (1000 * 60 * 60 * 24)));
+
+            if (daysSinceLastShed > 0) {
+                const historicalCount = formattedData.length;
+                const existingLabels = config.data.labels;
+                const histValues = config.data.datasets[0].data;
+                const forecastValues = config.data.datasets[1].data;
+
+                // Sort post-last-shed points (Today + Forecast points) chronologically
+                const futureSlots = [];
+
+                for (let i = historicalCount; i < existingLabels.length; i++) {
+                    futureSlots.push({
+                        time: parseSafeLocalDate(existingLabels[i]).getTime(),
+                        label: existingLabels[i],
+                        forecastVal: forecastValues[i],
+                        currentVal: null
+                    });
+                }
+
+                futureSlots.push({
+                    time: todayNoon.getTime(),
+                    label: todayNoon.toISOString(),
+                    forecastVal: null,
+                    currentVal: daysSinceLastShed
+                });
+
+                futureSlots.sort((a, b) => a.time - b.time);
+
+                const newLabels = existingLabels.slice(0, historicalCount);
+                const newHistValues = histValues.slice(0, historicalCount);
+                const newForecastValues = forecastValues.slice(0, historicalCount);
+                const currentElapsedValues = new Array(historicalCount).fill(null);
+
+                futureSlots.forEach(slot => {
+                    newLabels.push(slot.label);
+                    newHistValues.push(null);
+                    newForecastValues.push(slot.forecastVal);
+                    currentElapsedValues.push(slot.currentVal);
+                });
+
+                config.data.labels = newLabels;
+                config.data.datasets[0].data = newHistValues;
+                config.data.datasets[1].data = newForecastValues;
+                config.data.datasets[1].spanGaps = true; // Keep red dashed prediction line continuous across Today
+
+                // Yellow dot marking Today (X) and days since last shed (Y)
+                config.data.datasets.push({label: 'Days Since Last Shed (Today)',data: currentElapsedValues,borderColor: '#feca57',backgroundColor: '#feca57',pointBackgroundColor: '#feca57',pointBorderColor: '#ffffff',pointBorderWidth: 2,pointRadius: 7,pointHoverRadius: 10,showLine: false, fill: false
+                });
+            }
+        }
+    }
+
+    sheddingChart = new Chart(ctx, config);
 }
 
 function renderLength(events, color) {
