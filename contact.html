@@ -579,38 +579,101 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 });
 
-    // 5. FORM SUBMISSION HANDLER (AJAX)
+    // =========================================================
+    // 5. MASTER DIRECTORY ROUTE LOADER (BASE64 DECODER)
+    // =========================================================
+    const MASTER_DIRECTORY_B64 = 'aHR0cHM6Ly9zY3JpcHQuZ29vZ2xlLmNvbS9tYWNyb3Mvcy9BS2Z5Y2J6cTRZVWUzWjJQeGNsdlJtRWNxaVF1bk1KRXRXNVE5cmxOV21KOXF6RWdQcWM5OVVlVThud3VjYm91SFdzaE1Bdy9leGVj';
+
+    let CONTACT_FORM_SCRIPT_URL = "";
+    let CHAT_API_URL = "";
+    let WHATSAPP_PHONE = "";
+
+    function safeParseUrl(val) {
+        if (!val) return "";
+        let str = String(val).trim();
+        if (str.startsWith("http")) return str;
+        try { return atob(str).trim(); }
+        catch (e) { return str; }
+    }
+
+    async function fetchContactRoutes() {
+        try {
+            const masterUrl = atob(MASTER_DIRECTORY_B64).trim();
+            const response = await fetch(masterUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ pageName: "contact.html" })
+            });
+
+            const text = await response.text();
+            if (text.trim().startsWith("<")) {
+                console.error("[ERROR] Master Directory returned HTML instead of JSON.");
+                return false;
+            }
+
+            const result = JSON.parse(text);
+            if (result.status === "success" && result.data) {
+                CONTACT_FORM_SCRIPT_URL = safeParseUrl(result.data["HARPIA_Contact_Form"]);
+                CHAT_API_URL = safeParseUrl(result.data["HARPIA_WhatsApp_AI_Agent"]);
+                WHATSAPP_PHONE = safeParseUrl(result.data["HARPIA_WhatsApp_Phone"]).replace(/\D/g, "");
+
+                updateHandoffLinks();
+                return true;
+            } else {
+                console.error("[ERROR] Failed to load contact.html routes:", result.message);
+                return false;
+            }
+        } catch (err) {
+            console.error("[ERROR] Master Directory connection failed:", err);
+            return false;
+        }
+    }
+
+    // Start fetching secure routes immediately on page load
+    const contactRoutesReady = fetchContactRoutes();
+
+    // =========================================================
+    // 6. CONTACT FORM SUBMISSION HANDLER (AJAX)
+    // =========================================================
     const contactForm = document.getElementById('harpia-contact-form');
     const submitBtn = contactForm.querySelector('.btn-submit');
-    
-    // COLE A SUA URL DO APPS SCRIPT AQUI:
-    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxw7VmkLzkGOEN4CoevgYqCKKN3n9fzcMpKWvR2CfOGEQQfbj_AhLcV86IwAVAzv3E/exec';
 
-    contactForm.addEventListener('submit', function(e) {
-        e.preventDefault(); // Impede o recarregamento da página
-        
-        // Altera o botão para estado de carregamento
+    contactForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
         const originalBtnText = submitBtn.innerText;
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> SENDING...';
         submitBtn.style.pointerEvents = 'none';
         submitBtn.style.opacity = '0.7';
 
+        await contactRoutesReady;
+
+        if (!CONTACT_FORM_SCRIPT_URL) {
+            submitBtn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> ROUTE UNAVAILABLE';
+            submitBtn.style.backgroundColor = '#c62828';
+            setTimeout(() => {
+                submitBtn.innerText = originalBtnText;
+                submitBtn.style.backgroundColor = '';
+                submitBtn.style.pointerEvents = 'auto';
+                submitBtn.style.opacity = '1';
+            }, 4000);
+            return;
+        }
+
         const formData = new FormData(contactForm);
 
-        fetch(WEB_APP_URL, {
+        fetch(CONTACT_FORM_SCRIPT_URL, {
             method: 'POST',
             body: formData
         })
         .then(response => response.json())
         .then(data => {
             if (data.result === 'success') {
-                // Sucesso: Limpa o formulário e avisa o usuário
                 contactForm.reset();
                 submitBtn.innerHTML = '<i class="fas fa-check"></i> REQUEST SENT SUCCESSFULLY';
-                submitBtn.style.backgroundColor = '#2e7d32'; // Verde sutil
+                submitBtn.style.backgroundColor = '#2e7d32';
                 submitBtn.style.color = '#fff';
-                
-                // Retorna o botão ao normal após 4 segundos
+
                 setTimeout(() => {
                     submitBtn.innerText = originalBtnText;
                     submitBtn.style.backgroundColor = '';
@@ -625,8 +688,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         .catch(error => {
             console.error('Error!', error.message);
             submitBtn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> ERROR. PLEASE TRY AGAIN.';
-            submitBtn.style.backgroundColor = '#c62828'; // Vermelho sutil
-            
+            submitBtn.style.backgroundColor = '#c62828';
+
             setTimeout(() => {
                 submitBtn.innerText = originalBtnText;
                 submitBtn.style.backgroundColor = '';
@@ -637,17 +700,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     // =========================================================
-    // 6. WHATSAPP AI WEBCHAT & HANDOFF ENGINE
+    // 7. WHATSAPP AI WEBCHAT & HANDOFF ENGINE
     // =========================================================
-    const WHATSAPP_PHONE = "5511999999999"; // Replace with your WhatsApp number (country code + DDD + number)
-    const CHAT_API_URL = "YOUR_CHAT_APPS_SCRIPT_WEB_APP_URL"; // Will be generated in Step 3
-
     const waMessagesEl = document.getElementById('waMessages');
     const waChatForm = document.getElementById('waChatForm');
     const waUserInput = document.getElementById('waUserInput');
     const waDirectHandoff = document.getElementById('waDirectHandoff');
 
-    // Unique Session ID so you can audit full conversations in Google Sheets
     let chatSessionId = sessionStorage.getItem('harpia_chat_session');
     if (!chatSessionId) {
         chatSessionId = 'SES-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
@@ -658,6 +717,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     let lastVisitorQuestion = "Hello! I'd like to know more about HARPIA WorldConnect.";
 
     function buildWhatsAppUrl(customText) {
+        if (!WHATSAPP_PHONE) return "#";
         const msg = customText || `Hello HARPIA WorldConnect! I was chatting on the website (Session ${chatSessionId}) and wanted to ask: ${lastVisitorQuestion}`;
         return `https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(msg)}`;
     }
@@ -667,7 +727,18 @@ document.addEventListener('DOMContentLoaded', async () => {
             waDirectHandoff.href = buildWhatsAppUrl();
         }
     }
-    updateHandoffLinks();
+
+    if (waDirectHandoff) {
+        waDirectHandoff.addEventListener('click', async function(e) {
+            if (!WHATSAPP_PHONE) {
+                e.preventDefault();
+                await contactRoutesReady;
+                if (WHATSAPP_PHONE) {
+                    window.open(buildWhatsAppUrl(), '_blank', 'noopener,noreferrer');
+                }
+            }
+        });
+    }
 
     function escapeChatHtml(str) {
         return String(str || "")
@@ -696,7 +767,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         let contentHtml = sender === 'bot' ? formatBotReply(text) : escapeChatHtml(text);
 
-        if (sender === 'bot' && showEscalateBtn) {
+        if (sender === 'bot' && showEscalateBtn && WHATSAPP_PHONE) {
             const waUrl = buildWhatsAppUrl(`Hello! The web assistant couldn't fully answer my question: "${lastVisitorQuestion}"`);
             contentHtml += `<br><a href="${waUrl}" target="_blank" rel="noopener noreferrer" class="wa-inline-escalate"><i class="fab fa-whatsapp"></i> Ask directly on WhatsApp</a>`;
         }
@@ -731,25 +802,23 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!question) return;
 
         lastVisitorQuestion = question;
-        updateHandoffLinks();
-
         appendChatMessage('user', question);
         waUserInput.value = '';
         waUserInput.disabled = true;
         showTypingBubble();
 
-        // Check if backend URL is still placeholder before Step 3 deployment
-        if (!CHAT_API_URL || CHAT_API_URL === "YOUR_CHAT_APPS_SCRIPT_WEB_APP_URL") {
-            setTimeout(() => {
-                removeTypingBubble();
-                appendChatMessage(
-                    'bot',
-                    "The AI backend endpoint is not connected yet. Once we deploy Step 3 (Apps Script + Google Sheet), I will answer directly from your knowledge base!",
-                    true
-                );
-                waUserInput.disabled = false;
-                waUserInput.focus();
-            }, 600);
+        await contactRoutesReady;
+        updateHandoffLinks();
+
+        if (!CHAT_API_URL) {
+            removeTypingBubble();
+            appendChatMessage(
+                'bot',
+                "The AI assistant route is currently unavailable. Please reach out directly via WhatsApp below.",
+                true
+            );
+            waUserInput.disabled = false;
+            waUserInput.focus();
             return;
         }
 
@@ -785,7 +854,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             waUserInput.focus();
         }
     });
-
 </script>
 </body>
 </html>
